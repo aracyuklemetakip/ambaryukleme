@@ -699,6 +699,24 @@
     </div>
 </div>
 
+<!-- ══ PERSONEL SİL MODAL ══ -->
+<div class="modal-overlay" id="personelSilModal" onclick="if(event.target===this)this.classList.remove('show')">
+    <div class="modal-box" style="width:360px;max-width:95vw;">
+        <div style="font-size:44px;margin-bottom:10px;">🗑️</div>
+        <div class="modal-title" style="color:#ef4444;margin-bottom:6px;">Personeli Sil</div>
+        <div id="personelSilBilgi" style="color:#94a3b8;font-size:14px;font-weight:700;margin-bottom:6px;"></div>
+        <div style="color:#475569;font-size:11px;font-weight:700;letter-spacing:0.5px;margin-bottom:24px;">Bu işlem geri alınamaz.</div>
+        <div class="modal-btns" style="gap:10px;">
+            <button onclick="document.getElementById('personelSilModal').classList.remove('show')"
+                style="flex:1;padding:13px;border-radius:10px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.04);color:#94a3b8;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;letter-spacing:1px;cursor:pointer;transition:background 0.15s;"
+                onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='rgba(255,255,255,0.04)'">VAZGEÇ</button>
+            <button id="personelSilOnayBtn"
+                style="flex:1;padding:13px;border-radius:10px;border:1px solid rgba(239,68,68,0.4);background:rgba(239,68,68,0.12);color:#f87171;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;letter-spacing:1px;cursor:pointer;transition:background 0.15s;"
+                onmouseover="this.style.background='rgba(239,68,68,0.25)'" onmouseout="this.style.background='rgba(239,68,68,0.12)'">SİL</button>
+        </div>
+    </div>
+</div>
+
 <!-- ══ SİLME ONAY ══ -->
 <div class="confirm-overlay" id="confirmOverlay">
     <div class="confirm-box">
@@ -844,6 +862,11 @@
                 <input type="text" id="kaliteci" class="text-input" tabindex="13" placeholder="KALİTECİ ADI"
                     oninput="this.value=this.value.toUpperCase()">
             </div>
+            <div class="input-group">
+                <div class="input-label">Forkliftçi <span class="opt">(opsiyonel)</span></div>
+                <input type="text" id="forkliftci" class="text-input" tabindex="14" placeholder="FORKLİFTÇİ ADI"
+                    oninput="this.value=this.value.toUpperCase()">
+            </div>
 
             <div class="form-section-title">Duruşlar <span style="font-weight:500;color:var(--muted);text-transform:none;letter-spacing:0;font-size:9px;">(opsiyonel)</span></div>
             <div class="durus-list" id="durusList"></div>
@@ -859,9 +882,9 @@
             </div>
             <div class="input-group" style="margin-top:10px;">
                 <div class="input-label">Açıklama <span class="opt">(opsiyonel)</span></div>
-                <input type="text" id="aciklama" class="text-input" tabindex="14" placeholder="Varsa açıklama...">
+                <input type="text" id="aciklama" class="text-input" tabindex="15" placeholder="Varsa açıklama...">
             </div>
-            <button class="btn-submit" id="btnSubmit" tabindex="15" onclick="kaydetVeyaGuncelle()">✓ &nbsp;SİSTEME İŞLE</button>
+            <button class="btn-submit" id="btnSubmit" tabindex="16" onclick="kaydetVeyaGuncelle()">✓ &nbsp;SİSTEME İŞLE</button>
         </div>
 
         <div class="table-panel">
@@ -1225,13 +1248,13 @@
                         <div style="display:flex;flex-direction:column;gap:12px;">
                             <div class="filtre-group">
                                 <div class="filtre-label">Ad Soyad</div>
-                                <input type="text" id="yeniPersonelAd" class="filtre-input" placeholder="AHMET YILMAZ"
+                                <input type="text" id="yeniPersonelAd" class="filtre-input" placeholder="Buraya giriniz"
                                     style="width:100%;text-transform:uppercase;"
                                     oninput="this.value=this.value.toUpperCase()">
                             </div>
                             <div class="filtre-group">
                                 <div class="filtre-label">Sicil No</div>
-                                <input type="text" id="yeniPersonelSicil" class="filtre-input" placeholder="4000001" style="width:100%;">
+                                <input type="text" id="yeniPersonelSicil" class="filtre-input" placeholder="Buraya giriniz" style="width:100%;">
                             </div>
                             <button onclick="personelEkle()" style="width:100%;padding:12px;border-radius:10px;border:1px solid rgba(34,197,94,0.5);background:rgba(34,197,94,0.12);color:#4ade80;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;letter-spacing:1px;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.background='rgba(34,197,94,0.22)'" onmouseout="this.style.background='rgba(34,197,94,0.12)'">💾 KAYDET</button>
                             <div id="personelFormMsg" style="display:none;font-size:12px;font-weight:700;text-align:center;padding:8px;border-radius:8px;"></div>
@@ -1416,14 +1439,20 @@
     }
 
     async function personelSil(sicil) {
-        if (!confirm('Bu personeli silmek istediğinize emin misiniz?')) return;
-        try {
-            const { doc, deleteDoc, db } = window._fb;
-            await deleteDoc(doc(db, 'personel', sicil));
-            personelListesi = personelListesi.filter(p => p.sicil !== sicil);
-            personelListeRender();
-            showToast('🗑️ Personel silindi', 'warn');
-        } catch(e) { showToast('Hata: ' + e.message, 'warn'); }
+        const p = personelListesi.find(x => x.sicil === sicil);
+        if (!p) return;
+        document.getElementById('personelSilBilgi').textContent = p.ad + ' · ' + p.sicil;
+        document.getElementById('personelSilModal').classList.add('show');
+        document.getElementById('personelSilOnayBtn').onclick = async function() {
+            document.getElementById('personelSilModal').classList.remove('show');
+            try {
+                const { doc, deleteDoc, db } = window._fb;
+                await deleteDoc(doc(db, 'personel', sicil));
+                personelListesi = personelListesi.filter(x => x.sicil !== sicil);
+                personelListeRender();
+                showToast('🗑️ Personel silindi', 'warn');
+            } catch(e) { showToast('Hata: ' + e.message, 'warn'); }
+        };
     }
 
     function personelListeRender() {
@@ -1699,6 +1728,7 @@
         document.getElementById('baslama').value  = k.baslama;
         document.getElementById('bitis').value    = k.bitis;
         document.getElementById('kaliteci').value = k.kaliteci||'';
+        document.getElementById('forkliftci').value = k.forkliftci||'';
         document.getElementById('aciklama').value = k.aciklama||'';
         duruslar = (k.duruslar||[]).map(d=>({...d, id:durusId++}));
         renderDuruslar();
@@ -1730,6 +1760,7 @@
         const baslama  = document.getElementById('baslama').value;
         const bitis    = document.getElementById('bitis').value;
         const kaliteci = document.getElementById('kaliteci').value.trim();
+        const forkliftci = document.getElementById('forkliftci').value.trim();
         const aciklama = document.getElementById('aciklama').value.trim();
 
         if (!m3 || !ekip || !baslama || !bitis) { showToast('⚠️  M³, Ekip ve Saat zorunlu!','warn'); return; }
@@ -1746,12 +1777,12 @@
 
         if (duzenleId !== null) {
             const idx = kayitlar.findIndex(k=>k.id===duzenleId);
-            if (idx !== -1) kayitlar[idx] = {...kayitlar[idx], vardiya:secilenVardiya, aracTipi:secilenAracTipi, aracTuru:secilenAracTuru, m3:parseFloat(m3), shipment, ekip, baslama, bitis, kaliteci, aciklama, duruslar:[...duruslar], brut:sure.brut, net:sure.net, gec:sure.gec, fark:sure.fark};
+            if (idx !== -1) kayitlar[idx] = {...kayitlar[idx], vardiya:secilenVardiya, aracTipi:secilenAracTipi, aracTuru:secilenAracTuru, m3:parseFloat(m3), shipment, ekip, baslama, bitis, kaliteci, forkliftci, aciklama, duruslar:[...duruslar], brut:sure.brut, net:sure.net, gec:sure.gec, fark:sure.fark};
             
             if(window._fbSaveKayit) window._fbSaveKayit(kayitlar[kayitlar.findIndex(k=>k.id===duzenleId)]);
             iptalDuzenle(); renderTablo(); showToast('✓  Kayıt güncellendi','success');
         } else {
-            kayitlar.push({ id:Date.now(), tarih:kayitTarih, vardiya:secilenVardiya, aracTipi:secilenAracTipi, aracTuru:secilenAracTuru, m3:parseFloat(m3), shipment, ekip, baslama, bitis, kaliteci, aciklama, duruslar:[...duruslar], brut:sure.brut, net:sure.net, gec:sure.gec, fark:sure.fark });
+            kayitlar.push({ id:Date.now(), tarih:kayitTarih, vardiya:secilenVardiya, aracTipi:secilenAracTipi, aracTuru:secilenAracTuru, m3:parseFloat(m3), shipment, ekip, baslama, bitis, kaliteci, forkliftci, aciklama, duruslar:[...duruslar], brut:sure.brut, net:sure.net, gec:sure.gec, fark:sure.fark });
             
             if(window._fbSaveKayit) window._fbSaveKayit(kayitlar[kayitlar.length-1]);
             formTemizle(); renderTablo(); showToast('✓  Kayıt başarıyla eklendi','success');
@@ -1760,7 +1791,7 @@
     }
 
     function formTemizle() {
-        ['m3','shipment','ekip','kaliteci','aciklama','baslama','bitis'].forEach(id => document.getElementById(id).value='');
+        ['m3','shipment','ekip','kaliteci','forkliftci','aciklama','baslama','bitis'].forEach(id => document.getElementById(id).value='');
         duruslar=[]; renderDuruslar();
         // Araç tipi ve türü sıfırla
         document.getElementById('segTip').querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active-blue','active-yellow','active-red'));
