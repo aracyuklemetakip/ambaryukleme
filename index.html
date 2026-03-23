@@ -105,6 +105,11 @@
           mesaiDB = snap2.docs.map(d => d.data());
           mesaiRenderTablo();
           showToast('☁️ Veriler yüklendi', 'success');
+
+          // Personel listesi
+          setTimeout(async () => {
+            if (typeof personelIlkYukle === 'function') await personelIlkYukle();
+          }, 100);
         } catch(e) {
           console.error('Firestore yükleme hatası:', e);
           showToast('⚠️ Firestore erişim hatası', 'warn');
@@ -522,6 +527,12 @@
         .sekme-icerik { display:none; overflow:hidden; }
         .sekme-icerik.aktif { display:block; }
 
+        /* Autocomplete */
+        .ac-item:hover { background:rgba(37,99,235,0.2) !important; }
+        #ekipDropdown::-webkit-scrollbar { width:4px; }
+        #ekipDropdown::-webkit-scrollbar-track { background:transparent; }
+        #ekipDropdown::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.15); border-radius:4px; }
+
         /* Vardiya dashboard */
         .vardiya-dashboards { display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px; }
         .vd-panel { background:rgba(17,24,39,0.7);border:1px solid rgba(255,255,255,0.08);border-top:1px solid rgba(255,255,255,0.14);border-radius:12px;padding:18px 20px;box-shadow:0 4px 20px rgba(0,0,0,0.3);position:relative;overflow:hidden; }
@@ -810,10 +821,13 @@
             </div>
 
             <div class="form-section-title">Ekip & Saat</div>
-            <div class="input-group">
+            <div class="input-group" style="position:relative;">
                 <div class="input-label">Ekip İsimleri</div>
-                <input type="text" id="ekip" class="text-input" tabindex="10" placeholder="Buraya giriniz"
-                    oninput="this.value=this.value.toUpperCase()">
+                <input type="text" id="ekip" class="text-input" tabindex="10" placeholder="İsim yazın..."
+                    oninput="ekipAutocomplete(this)"
+                    onkeydown="ekipKeyDown(event)"
+                    autocomplete="off">
+                <div id="ekipDropdown" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:500;background:#111827;border:1px solid rgba(255,255,255,0.12);border-radius:10px;margin-top:4px;max-height:220px;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,0.6);"></div>
             </div>
             <div class="input-group">
                 <div class="input-label">Başlama / Bitiş Saati</div>
@@ -912,6 +926,7 @@
             <div class="sef-sekme" onclick="sekmeAc(this,'sekme2')">👥 Ekip Bazlı</div>
             <div class="sef-sekme" onclick="sekmeAc(this,'sekme3')">👤 Personel Bazlı</div>
             <div class="sef-sekme" onclick="sekmeAc(this,'sekme4')">⏱️ Mesai Takip</div>
+            <div class="sef-sekme" onclick="sekmeAc(this,'sekme5')">🧑‍💼 Personel Yönetimi</div>
         </div>
 
         <div class="sef-content">
@@ -1200,6 +1215,47 @@
                 </div>
             </div>
 
+            <!-- SEKME 5: PERSONEL YÖNETİMİ -->
+            <div id="sekme5" class="sekme-icerik">
+                <div style="display:grid;grid-template-columns:320px 1fr;gap:16px;">
+
+                    <!-- SOL: PERSONEL EKLE FORMU -->
+                    <div class="sef-bolum">
+                        <div class="sef-bolum-baslik">➕ Personel Ekle</div>
+                        <div style="display:flex;flex-direction:column;gap:12px;">
+                            <div class="filtre-group">
+                                <div class="filtre-label">Ad Soyad</div>
+                                <input type="text" id="yeniPersonelAd" class="filtre-input" placeholder="AHMET YILMAZ"
+                                    style="width:100%;text-transform:uppercase;"
+                                    oninput="this.value=this.value.toUpperCase()">
+                            </div>
+                            <div class="filtre-group">
+                                <div class="filtre-label">Sicil No</div>
+                                <input type="text" id="yeniPersonelSicil" class="filtre-input" placeholder="4000001" style="width:100%;">
+                            </div>
+                            <button onclick="personelEkle()" style="width:100%;padding:12px;border-radius:10px;border:1px solid rgba(34,197,94,0.5);background:rgba(34,197,94,0.12);color:#4ade80;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;letter-spacing:1px;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.background='rgba(34,197,94,0.22)'" onmouseout="this.style.background='rgba(34,197,94,0.12)'">💾 KAYDET</button>
+                            <div id="personelFormMsg" style="display:none;font-size:12px;font-weight:700;text-align:center;padding:8px;border-radius:8px;"></div>
+                        </div>
+                    </div>
+
+                    <!-- SAĞ: PERSONEL LİSTESİ -->
+                    <div class="sef-bolum">
+                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+                            <div class="sef-bolum-baslik" style="margin:0;">👥 Kayıtlı Personel <span id="personelSayac" style="font-size:13px;color:var(--muted);font-weight:600;"></span></div>
+                            <input type="text" id="personelAra" class="filtre-input" placeholder="Ara..." style="width:180px;font-size:12px;" oninput="personelListeFiltre()">
+                        </div>
+                        <div style="overflow-x:auto;">
+                            <table class="data-table" style="font-size:13px;">
+                                <thead><tr><th>#</th><th>Ad Soyad</th><th>Sicil No</th><th></th></tr></thead>
+                                <tbody id="personelTableBody"></tbody>
+                            </table>
+                        </div>
+                        <div id="personelEmptyState" style="text-align:center;padding:40px;color:var(--muted);font-size:13px;display:none;">Henüz personel yok</div>
+                    </div>
+
+                </div>
+            </div>
+
         </div>
     </div>
 </div>
@@ -1241,6 +1297,244 @@
     let duzenleId  = null;
     let silPendingId = null;
     const STANDART = { 'Tır':150, 'Kamyon':90, 'Konteyner':120 };
+
+    // ── PERSONEL LİSTESİ ──────────────────────────────────
+    let personelListesi = [];
+    let _acDropdownIdx = -1;
+
+    async function personelListeYukle() {
+        try {
+            const { collection, getDocs, db } = window._fb;
+            const snap = await getDocs(collection(db, 'personel'));
+            personelListesi = snap.docs.map(d => d.data()).sort((a,b) => a.ad.localeCompare(b.ad,'tr'));
+        } catch(e) {
+            // Firestore henüz boşsa sabit listeyle başla
+            personelListesi = BASLANGIC_PERSONEL.slice();
+        }
+        personelListeRender();
+    }
+
+    // Başlangıç personel listesi (sonradan Firestore'dan çekilir)
+    const BASLANGIC_PERSONEL = [
+        {ad:"ABDULLAH SAĞLAM", sicil:"4000001"},
+        {ad:"ABDULLAH ŞENOL", sicil:"4000002"},
+        {ad:"ABDULLAH UÇAR", sicil:"4000003"},
+        {ad:"ADEM HAYMANA", sicil:"4000004"},
+        {ad:"ADEM ŞAHİN", sicil:"4000005"},
+        {ad:"AHMET TERZİOĞLU", sicil:"4000006"},
+        {ad:"AHMET VATANSEVER", sicil:"4000007"},
+        {ad:"ATİLLA YILMAZ", sicil:"4000008"},
+        {ad:"ALAATTİN NEMLİ", sicil:"4000009"},
+        {ad:"ALİ ACAR", sicil:"4000010"},
+        {ad:"ALPER KAYA", sicil:"4000011"},
+        {ad:"AYHAN AVCI", sicil:"4000012"},
+        {ad:"BATUHAN KUŞAKLIOĞLU", sicil:"4000013"},
+        {ad:"CANER ŞAŞMAZ", sicil:"4000014"},
+        {ad:"CİHAN MUTLU", sicil:"4000015"},
+        {ad:"ENGİN AÇIKGÖZ", sicil:"4000016"},
+        {ad:"ERÇİN YÜMRÜ", sicil:"4000017"},
+        {ad:"ERHAN DERTLİOĞLU", sicil:"4000018"},
+        {ad:"EROL ACAR", sicil:"4000019"},
+        {ad:"ERTAN ÇAKIR", sicil:"4000020"},
+        {ad:"FATİH SAĞLAM", sicil:"4000021"},
+        {ad:"FATİH SEVİMLİ", sicil:"4000022"},
+        {ad:"FİKRET BİRKAN", sicil:"4000023"},
+        {ad:"GÖKHAN ELMAS", sicil:"4000024"},
+        {ad:"GÖKHAN MEHMET GÜLEK", sicil:"4000025"},
+        {ad:"H.İBRAHİM YILDIRAR", sicil:"4000026"},
+        {ad:"MEHMET BAYRAM", sicil:"4000027"},
+        {ad:"MEHMET KARAHAN", sicil:"4000028"},
+        {ad:"MURAT TÜZ", sicil:"4000029"},
+        {ad:"MÜKREMİN KARDAŞ", sicil:"4000030"},
+        {ad:"NAZİF SOYDAN", sicil:"4000031"},
+        {ad:"OĞUZ ÖZ", sicil:"4000032"},
+        {ad:"ONUR YALVAÇ", sicil:"4000033"},
+        {ad:"RAHMİ YAZICI", sicil:"4000034"},
+        {ad:"RAMAZAN KUŞAKLIOĞLU", sicil:"4000035"},
+        {ad:"RECEP ÖZEL", sicil:"4000036"},
+        {ad:"RECEP YURDAKUL", sicil:"4000037"},
+        {ad:"SEMİH KARADEMİR", sicil:"4000038"},
+        {ad:"SEYİT ALİ İNCE", sicil:"4000039"},
+        {ad:"SITKI KARATAŞ", sicil:"4000040"},
+        {ad:"ŞABAN ÇAKMAK", sicil:"4000041"},
+        {ad:"TUNCAY GÖYMEN", sicil:"4000042"},
+        {ad:"UTKUCAN KARADENİZ", sicil:"4000043"},
+        {ad:"YASİN HACILAR", sicil:"4000044"},
+        {ad:"YASİN MUSLU", sicil:"4000045"},
+        {ad:"YUNUS BAŞ", sicil:"4000046"},
+        {ad:"YUSUF CAN KELSOY", sicil:"4000047"}
+    ];
+
+    // İlk yüklemede Firestore boşsa sabit listeyi yükle
+    async function personelIlkYukle() {
+        try {
+            const { collection, getDocs, doc, setDoc, db } = window._fb;
+            const snap = await getDocs(collection(db, 'personel'));
+            if (snap.empty) {
+                // Firestore boş - sabit listeyi yükle
+                for (const p of BASLANGIC_PERSONEL) {
+                    await setDoc(doc(db, 'personel', p.sicil), p);
+                }
+                personelListesi = BASLANGIC_PERSONEL.slice();
+            } else {
+                personelListesi = snap.docs.map(d => d.data()).sort((a,b) => a.ad.localeCompare(b.ad,'tr'));
+            }
+        } catch(e) {
+            personelListesi = BASLANGIC_PERSONEL.slice();
+        }
+        personelListeRender();
+    }
+
+    async function personelEkle() {
+        const ad = document.getElementById('yeniPersonelAd').value.trim().toUpperCase();
+        const sicil = document.getElementById('yeniPersonelSicil').value.trim();
+        const msgEl = document.getElementById('personelFormMsg');
+        if (!ad || !sicil) {
+            msgEl.style.display='block'; msgEl.style.color='#f87171'; msgEl.style.background='rgba(239,68,68,0.1)'; msgEl.style.border='1px solid rgba(239,68,68,0.3)';
+            msgEl.textContent='Ad ve sicil no zorunlu!'; return;
+        }
+        if (personelListesi.find(p => p.sicil === sicil)) {
+            msgEl.style.display='block'; msgEl.style.color='#f87171'; msgEl.style.background='rgba(239,68,68,0.1)'; msgEl.style.border='1px solid rgba(239,68,68,0.3)';
+            msgEl.textContent='Bu sicil no zaten kayıtlı!'; return;
+        }
+        try {
+            const { doc, setDoc, db } = window._fb;
+            const yeni = { ad, sicil };
+            await setDoc(doc(db, 'personel', sicil), yeni);
+            personelListesi.push(yeni);
+            personelListesi.sort((a,b) => a.ad.localeCompare(b.ad,'tr'));
+            document.getElementById('yeniPersonelAd').value = '';
+            document.getElementById('yeniPersonelSicil').value = '';
+            msgEl.style.display='block'; msgEl.style.color='#4ade80'; msgEl.style.background='rgba(34,197,94,0.1)'; msgEl.style.border='1px solid rgba(34,197,94,0.3)';
+            msgEl.textContent='✓ Personel eklendi!';
+            setTimeout(() => { msgEl.style.display='none'; }, 2500);
+            personelListeRender();
+            showToast('✓ ' + ad + ' eklendi', 'success');
+        } catch(e) {
+            msgEl.style.display='block'; msgEl.style.color='#f87171'; msgEl.textContent='Hata: ' + e.message;
+        }
+    }
+
+    async function personelSil(sicil) {
+        if (!confirm('Bu personeli silmek istediğinize emin misiniz?')) return;
+        try {
+            const { doc, deleteDoc, db } = window._fb;
+            await deleteDoc(doc(db, 'personel', sicil));
+            personelListesi = personelListesi.filter(p => p.sicil !== sicil);
+            personelListeRender();
+            showToast('🗑️ Personel silindi', 'warn');
+        } catch(e) { showToast('Hata: ' + e.message, 'warn'); }
+    }
+
+    function personelListeRender() {
+        const filtre = (document.getElementById('personelAra')?.value || '').toUpperCase();
+        const liste = personelListesi.filter(p => p.ad.includes(filtre) || p.sicil.includes(filtre));
+        const tbody = document.getElementById('personelTableBody');
+        const empty = document.getElementById('personelEmptyState');
+        const sayac = document.getElementById('personelSayac');
+        if (!tbody) return;
+        if (sayac) sayac.textContent = '(' + personelListesi.length + ' kişi)';
+        if (liste.length === 0) {
+            tbody.innerHTML = '';
+            if (empty) empty.style.display = 'block';
+            return;
+        }
+        if (empty) empty.style.display = 'none';
+        tbody.innerHTML = liste.map((p, i) => `
+            <tr>
+                <td style="color:var(--muted);font-size:11px;">${i+1}</td>
+                <td style="font-weight:700;">${p.ad}</td>
+                <td style="color:var(--blue-light);font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:900;">${p.sicil}</td>
+                <td><button onclick="personelSil('${p.sicil}')" style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:#f87171;border-radius:6px;padding:3px 8px;cursor:pointer;font-size:11px;font-weight:700;">SİL</button></td>
+            </tr>`).join('');
+    }
+
+    function personelListeFiltre() { personelListeRender(); }
+
+    // ── AUTOCOMPLETE ──────────────────────────────────────
+    function ekipAutocomplete(input) {
+        const val = input.value.toUpperCase();
+        input.value = val;
+        const dd = document.getElementById('ekipDropdown');
+        if (!val.trim()) { dd.style.display='none'; _acDropdownIdx=-1; return; }
+
+        // Virgülle ayrılmış isimlerde son girilen kelimeyi bul
+        const parts = val.split(',');
+        const son = parts[parts.length - 1].trim();
+        if (!son) { dd.style.display='none'; _acDropdownIdx=-1; return; }
+
+        // Zaten seçili olanlar
+        const seciliAdlar = parts.slice(0, -1).map(s => s.trim()).filter(Boolean);
+
+        // Eşleşenleri filtrele
+        const eslesen = personelListesi.filter(p => {
+            if (seciliAdlar.includes(p.ad)) return false; // zaten seçili
+            return p.ad.includes(son);
+        });
+
+        if (eslesen.length === 0) { dd.style.display='none'; _acDropdownIdx=-1; return; }
+
+        // Aynı isimden birden fazla varsa sicil göster
+        const adSayisi = {};
+        personelListesi.forEach(p => { adSayisi[p.ad] = (adSayisi[p.ad]||0)+1; });
+
+        dd.innerHTML = eslesen.map((p, i) => {
+            const goster = adSayisi[p.ad] > 1 ? `${p.ad} <span style="color:var(--blue-light);font-size:11px;">· ${p.sicil}</span>` : p.ad;
+            return `<div class="ac-item" data-idx="${i}" data-ad="${p.ad}"
+                onclick="ekipSec('${p.ad}')"
+                onmouseenter="acHover(${i})"
+                style="padding:10px 14px;cursor:pointer;font-size:13px;font-weight:700;border-bottom:1px solid rgba(255,255,255,0.05);transition:background 0.1s;">
+                ${goster}
+            </div>`;
+        }).join('');
+        dd.style.display = 'block';
+        _acDropdownIdx = -1;
+    }
+
+    function ekipSec(ad) {
+        const input = document.getElementById('ekip');
+        const parts = input.value.toUpperCase().split(',');
+        parts[parts.length - 1] = ' ' + ad;
+        input.value = parts.join(',').replace(/^,\s*/, '') + ', ';
+        document.getElementById('ekipDropdown').style.display = 'none';
+        _acDropdownIdx = -1;
+        input.focus();
+    }
+
+    function acHover(idx) {
+        _acDropdownIdx = idx;
+        document.querySelectorAll('.ac-item').forEach((el, i) => {
+            el.style.background = i === idx ? 'rgba(37,99,235,0.2)' : '';
+        });
+    }
+
+    function ekipKeyDown(e) {
+        const dd = document.getElementById('ekipDropdown');
+        if (dd.style.display === 'none') return;
+        const items = dd.querySelectorAll('.ac-item');
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            _acDropdownIdx = Math.min(_acDropdownIdx + 1, items.length - 1);
+            items.forEach((el,i) => el.style.background = i===_acDropdownIdx?'rgba(37,99,235,0.2)':'');
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            _acDropdownIdx = Math.max(_acDropdownIdx - 1, 0);
+            items.forEach((el,i) => el.style.background = i===_acDropdownIdx?'rgba(37,99,235,0.2)':'');
+        } else if ((e.key === 'Enter' || e.key === ' ') && _acDropdownIdx >= 0) {
+            e.preventDefault();
+            const sec = items[_acDropdownIdx]?.getAttribute('data-ad');
+            if (sec) ekipSec(sec);
+        } else if (e.key === 'Escape') {
+            dd.style.display = 'none'; _acDropdownIdx = -1;
+        }
+    }
+
+    // Dropdown dışına tıklayınca kapat
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('#ekip') && !e.target.closest('#ekipDropdown')) {
+            document.getElementById('ekipDropdown').style.display = 'none';
+        }
+    });
 
     // ── EKİP KEY ──────────────────────────────────────────
     function ekipKey(isimler) {
