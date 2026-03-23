@@ -376,6 +376,10 @@
         .badge-konteyner { background:rgba(139,92,246,0.15);color:#a78bfa;border:1px solid rgba(139,92,246,0.3); }
         .status-ok  { color:var(--success);font-weight:800;font-size:11px; }
         .status-gec { color:var(--danger);font-weight:800;font-size:11px; }
+        .data-table tbody tr.ekip-grup-baslik { background:transparent;border-bottom:none;cursor:default; }
+        .data-table tbody tr.ekip-grup-baslik:hover { background:transparent; }
+        .data-table tbody tr.ekip-grup-bosluk { background:transparent;border-bottom:none;cursor:default; }
+        .data-table tbody tr.ekip-grup-bosluk:hover { background:transparent; }
         .del-btn { width:28px;height:28px;border-radius:7px; border:1px solid rgba(239,68,68,0.2);background:rgba(239,68,68,0.06); color:rgba(239,68,68,0.4);font-size:14px;cursor:pointer; display:flex;align-items:center;justify-content:center; transition:all 0.15s; }
         .del-btn:hover { background:rgba(239,68,68,0.2);border-color:rgba(239,68,68,0.6);color:var(--danger); }
         .empty-state { text-align:center;padding:60px 20px;color:var(--muted); }
@@ -777,14 +781,14 @@
             <div class="input-group">
                 <div class="input-label">Vardiya</div>
                 <div class="seg-group" id="segVardiya">
-                    <div class="seg-btn active-blue" tabindex="1" onclick="setSeg(this,'vardiya','A Vardiyası')">A Vardiyası</div>
+                    <div class="seg-btn" tabindex="1" onclick="setSeg(this,'vardiya','A Vardiyası')">A Vardiyası</div>
                     <div class="seg-btn" tabindex="2" onclick="setSeg(this,'vardiya','B Vardiyası')">B Vardiyası</div>
                 </div>
             </div>
             <div class="input-group">
                 <div class="input-label">Araç Tipi</div>
                 <div class="seg-group" id="segTip">
-                    <div class="seg-btn active-blue" tabindex="3" onclick="setSeg(this,'aracTipi','Tır')">🚛 Tır</div>
+                    <div class="seg-btn" tabindex="3" onclick="setSeg(this,'aracTipi','Tır')">🚛 Tır</div>
                     <div class="seg-btn" tabindex="4" onclick="setSeg(this,'aracTipi','Kamyon')">🚚 Kamyon</div>
                     <div class="seg-btn" tabindex="5" onclick="setSeg(this,'aracTipi','Konteyner')">📦 Konteyner</div>
                 </div>
@@ -808,7 +812,7 @@
             <div class="form-section-title">Ekip & Saat</div>
             <div class="input-group">
                 <div class="input-label">Ekip İsimleri</div>
-                <input type="text" id="ekip" class="text-input" tabindex="10" placeholder=""
+                <input type="text" id="ekip" class="text-input" tabindex="10" placeholder="Buraya giriniz"
                     oninput="this.value=this.value.toUpperCase()">
             </div>
             <div class="input-group">
@@ -1227,9 +1231,10 @@
     });
 
     // ── STATE ─────────────────────────────────────────────
-    let secilenVardiya  = 'A Vardiyası';
-    let secilenAracTipi = 'Tır';
+    let secilenVardiya  = '';
+    let secilenAracTipi = '';
     let secilenAracTuru = '';
+    let _ilkGiris = true;
     let duruslar   = [];
     let durusId    = 0;
     let kayitlar   = [];
@@ -1281,6 +1286,7 @@
             el.classList.add('active-blue'); secilenAracTipi = val;
         } else if (field === 'vardiya') {
             el.classList.add(val === 'A Vardiyası' ? 'active-blue' : 'active-yellow'); secilenVardiya = val;
+            _ilkGiris = false;
         } else {
             el.classList.add(val === 'O/E' ? 'active-red' : 'active-blue'); secilenAracTuru = val;
         }
@@ -1413,6 +1419,7 @@
     function iptalDuzenle() {
         duzenleId = null;
         secilenAracTuru = '';
+        secilenAracTipi = '';
         formTemizle();
         document.getElementById('editBanner').classList.remove('show');
         const btn = document.getElementById('btnSubmit');
@@ -1432,6 +1439,8 @@
         const aciklama = document.getElementById('aciklama').value.trim();
 
         if (!m3 || !ekip || !baslama || !bitis) { showToast('⚠️  M³, Ekip ve Saat zorunlu!','warn'); return; }
+        if (!secilenVardiya) { showToast('⚠️  Vardiya seçiniz!','warn'); return; }
+        if (!secilenAracTipi) { showToast('⚠️  Araç Tipi seçiniz!','warn'); return; }
         if (!secilenAracTuru) { showToast('⚠️  Araç Türü seçiniz (O/E veya Piyasa)!','warn'); return; }
 
         const cakisma = cakismaKontrol(ekip, baslama);
@@ -1459,6 +1468,17 @@
     function formTemizle() {
         ['m3','shipment','ekip','kaliteci','aciklama','baslama','bitis'].forEach(id => document.getElementById(id).value='');
         duruslar=[]; renderDuruslar();
+        // Araç tipi ve türü sıfırla
+        document.getElementById('segTip').querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active-blue','active-yellow','active-red'));
+        document.getElementById('segTur').querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active-blue','active-yellow','active-red'));
+        secilenAracTipi = '';
+        secilenAracTuru = '';
+        // Vardiya: eğer daha önce seçilmişse aynı vardiyayı seçili göster
+        if (!_ilkGiris && secilenVardiya) {
+            setSegByVal('segVardiya', secilenVardiya, secilenVardiya === 'A Vardiyası' ? 'active-blue' : 'active-yellow');
+        } else {
+            document.getElementById('segVardiya').querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active-blue','active-yellow','active-red'));
+        }
     }
 
     // ── SİL ───────────────────────────────────────────────
@@ -1516,31 +1536,62 @@
         const gruplar = Object.values(gruplari);
         const ekipWrap = document.getElementById('ekipOzetWrap');
         ekipWrap.style.display = gruplar.length ? 'block' : 'none';
-        document.getElementById('ekipOzetBody').innerHTML = gruplar.map(g=>`
+        document.getElementById('ekipOzetBody').innerHTML = gruplar.map(g=>{
+            const toplamArac = g.tir + g.kamyon + g.konteyner;
+            return `
             <div class="ekip-card">
                 <div class="ekip-card-name">${g.ad}</div>
                 <div class="ekip-card-badges">
                     ${g.tir>0?`<span class="ekip-mini-badge badge-tir">🚛 ${g.tir} Tır</span>`:''}
                     ${g.kamyon>0?`<span class="ekip-mini-badge badge-kamyon">🚚 ${g.kamyon} Kamyon</span>`:''}
                     ${g.konteyner>0?`<span class="ekip-mini-badge badge-konteyner">📦 ${g.konteyner} Konteyner</span>`:''}
+                    <span class="ekip-mini-badge" style="background:rgba(239,68,68,0.12);color:#f87171;border:1px solid rgba(239,68,68,0.3);">Toplam ${toplamArac} Araç</span>
                     <span class="ekip-mini-badge" style="background:rgba(34,197,94,0.12);color:#4ade80;border:1px solid rgba(34,197,94,0.3);">${g.m3.toFixed(1)} M³</span>
                 </div>
-            </div>`).join('');
-
-        // Detay tablosu
-        document.getElementById('tableBody').innerHTML = sirali.map((k,i)=>{
-            const tipBadge = k.aracTipi==='Tır'?'badge-tir':k.aracTipi==='Kamyon'?'badge-kamyon':'badge-konteyner';
-            const durum    = k.gec?`<span class="status-gec">Gecikti</span>`:`<span class="status-ok">✓ Uygun</span>`;
-            return `<tr class="${duzenleId===k.id?'selected':''}" data-id="${k.id}" onclick="formDoldur(${JSON.stringify(k).replace(/"/g,'&quot;')})">
-                <td style="color:var(--muted);font-size:11px;">${i+1}</td>
-                <td><span style="font-size:10px;font-weight:800;color:${k.vardiya==='A Vardiyası'?'var(--blue-light)':'var(--yellow)'};">${k.vardiya==='A Vardiyası'?'A':'B'}</span></td>
-                <td style="font-weight:700;font-size:11px;">${k.ekip}</td>
-                <td><span class="badge ${tipBadge}">${k.aracTipi}</span></td>
-                <td style="color:var(--text-dim);font-size:11px;">${k.baslama} - ${k.bitis}</td>
-                <td>${durum}</td>
-                <td><button class="del-btn" onclick="silKayit(${k.id},event)" title="Sil">🗑️</button></td>
-            </tr>`;
+            </div>`;
         }).join('');
+
+        // Detay tablosu - ekip bazlı kartlara grupla
+        const ekipGruplari = {};
+        const ekipSirasi = [];
+        sirali.forEach((k, i) => {
+            const key = ekipKey(k.ekip);
+            if (!ekipGruplari[key]) {
+                ekipGruplari[key] = { ad: k.ekip, satirlar: [] };
+                ekipSirasi.push(key);
+            }
+            ekipGruplari[key].satirlar.push({ kayit: k, siraNo: i + 1 });
+        });
+
+        let tableHTML = '';
+        ekipSirasi.forEach(key => {
+            const grp = ekipGruplari[key];
+            // Ekip başlığı satırı
+            tableHTML += `<tr class="ekip-grup-baslik">
+                <td colspan="7" style="padding:8px 12px 4px 12px;">
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        <span style="font-size:11px;font-weight:900;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);">👥 ${grp.ad}</span>
+                        <div style="flex:1;height:1px;background:var(--glass-border);"></div>
+                    </div>
+                </td>
+            </tr>`;
+            grp.satirlar.forEach(({ kayit: k, siraNo }) => {
+                const tipBadge = k.aracTipi==='Tır'?'badge-tir':k.aracTipi==='Kamyon'?'badge-kamyon':'badge-konteyner';
+                const durum    = k.gec?`<span class="status-gec">Gecikti</span>`:`<span class="status-ok">✓ Uygun</span>`;
+                tableHTML += `<tr class="${duzenleId===k.id?'selected':''}" data-id="${k.id}" onclick="formDoldur(${JSON.stringify(k).replace(/"/g,'&quot;')})">
+                    <td style="color:var(--muted);font-size:11px;">${siraNo}</td>
+                    <td><span style="font-size:10px;font-weight:800;color:${k.vardiya==='A Vardiyası'?'var(--blue-light)':'var(--yellow)'};">${k.vardiya==='A Vardiyası'?'A':'B'}</span></td>
+                    <td style="font-weight:700;font-size:11px;">${k.ekip}</td>
+                    <td><span class="badge ${tipBadge}">${k.aracTipi}</span></td>
+                    <td style="color:var(--text-dim);font-size:11px;">${k.baslama} - ${k.bitis}</td>
+                    <td>${durum}</td>
+                    <td><button class="del-btn" onclick="silKayit(${k.id},event)" title="Sil">🗑️</button></td>
+                </tr>`;
+            });
+            // Ekip altı boşluk satırı
+            tableHTML += `<tr class="ekip-grup-bosluk"><td colspan="7" style="height:6px;padding:0;background:transparent;"></td></tr>`;
+        });
+        document.getElementById('tableBody').innerHTML = tableHTML;
     }
 
     // ── TOAST ─────────────────────────────────────────────
