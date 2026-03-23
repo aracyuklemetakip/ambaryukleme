@@ -10,7 +10,7 @@
     <!-- Firebase -->
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
-      import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged }
+      import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, reload }
         from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
       import { getFirestore, collection, doc, setDoc, deleteDoc, getDocs, getDoc, onSnapshot, query, orderBy }
         from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
@@ -33,15 +33,17 @@
                      collection, doc, setDoc, deleteDoc, getDocs, getDoc, onSnapshot, query, orderBy };
 
       // ── Auth durumu izle ──
-      onAuthStateChanged(auth, user => {
+      onAuthStateChanged(auth, async user => {
         if (user) {
-          window._fbUser = user;
+          // Google'dan en guncel profil bilgisini zorla cek (isim degisikligi icin)
+          try { await reload(user); } catch(e) {}
+          const freshUser = auth.currentUser || user;
+          window._fbUser = freshUser;
           document.getElementById('loginScreen').style.display = 'none';
 
-          const displayName = user.displayName || user.email || 'Kullanıcı';
-          const photoURL    = user.photoURL || '';
+          const displayName = freshUser.displayName || freshUser.email || 'Kullanici';
+          const photoURL    = freshUser.photoURL || '';
 
-          // Operatör topbar
           const nameEl   = document.getElementById('userDisplayName');
           const avatarEl = document.getElementById('userAvatar');
           if (nameEl)   nameEl.textContent = displayName;
@@ -50,7 +52,6 @@
             else { avatarEl.style.display = 'none'; }
           }
 
-          // Şef / Yetkili topbar
           const sefName   = document.getElementById('sefUserName');
           const sefAvatar = document.getElementById('sefUserAvatar');
           if (sefName)   sefName.textContent = displayName;
@@ -565,9 +566,9 @@
       <span style="color:#3b82f6;">AMBAR</span> <span style="color:#fbbf24;">YÖNETİM</span>
     </div>
     <div style="font-size:11px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:#475569;margin-bottom:36px;">SİSTEMİ</div>
-    <button onclick="window._googleLogin()" style="width:100%;display:flex;align-items:center;justify-content:center;gap:12px;padding:14px 20px;border-radius:14px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.07);color:#f1f5f9;font-family:'Barlow',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:background 0.2s;letter-spacing:0.3px;"
-      onmouseover="this.style.background='rgba(255,255,255,0.13)'"
-      onmouseout="this.style.background='rgba(255,255,255,0.07)'">
+    <button onclick="window._googleLogin()" style="width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:14px 20px;border-radius:14px;border:1px solid rgba(59,130,246,0.4);background:rgba(37,99,235,0.12);color:#93c5fd;font-family:'Barlow',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:background 0.2s;letter-spacing:0.3px;"
+      onmouseover="this.style.background='rgba(37,99,235,0.22)'"
+      onmouseout="this.style.background='rgba(37,99,235,0.12)'">
       <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
         <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
         <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
