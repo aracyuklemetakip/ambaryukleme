@@ -909,6 +909,16 @@
                 <div style="font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--glass-border);">Ekip Özeti</div>
                 <div id="ekipOzetBody"></div>
             </div>
+
+            <!-- Tarihli yükleme listesi başlığı -->
+            <div id="yuklemeListesiBaslik" style="display:flex;align-items:center;gap:12px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--glass-border);">
+                <div style="width:3px;height:32px;background:linear-gradient(to bottom,var(--blue-light),var(--yellow));border-radius:4px;flex-shrink:0;"></div>
+                <div>
+                    <div id="yuklemeListesiTarihText" style="font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;color:var(--text);line-height:1.1;"></div>
+                    <div style="font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:2px;">AMBAR YÜKLEME LİSTESİ</div>
+                </div>
+            </div>
+
             <table class="data-table">
                 <thead><tr><th>#</th><th>Vardiya</th><th>Ekip</th><th>Araç</th><th>Saat</th><th>Durum</th><th></th></tr></thead>
                 <tbody id="tableBody"></tbody>
@@ -945,9 +955,9 @@
 
         <!-- SEKMELER -->
         <div class="sef-sekmeler">
-            <div class="sef-sekme" onclick="sekmeAc(this,'sekme1')">📦 Toplam Yükleme</div>
-            <div class="sef-sekme" onclick="sekmeAc(this,'sekme2')">👥 Ekip Bazlı</div>
-            <div class="sef-sekme" onclick="sekmeAc(this,'sekme3')">👤 Personel Bazlı</div>
+            <div class="sef-sekme" onclick="sekmeAc(this,'sekme1')">📦 Toplam Yüklenen Araç Sayısı Özet</div>
+            <div class="sef-sekme" onclick="sekmeAc(this,'sekme2')">👥 Ekip Analizi</div>
+            <div class="sef-sekme" onclick="sekmeAc(this,'sekme3')">👤 Personel Analiz</div>
             <div class="sef-sekme" onclick="sekmeAc(this,'sekme4')">⏱️ Mesai Takip</div>
             <div class="sef-sekme" onclick="sekmeAc(this,'sekme5')">🧑‍💼 Personel Yönetimi</div>
         </div>
@@ -1830,14 +1840,27 @@
         // Başlık ve bugün butonu
         const bugunBtn = document.getElementById('bugunBtn');
         const tableTitle = document.getElementById('tableTitle');
+        const gunler = ['Pazar','Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'];
+        const aylar  = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+        const dt = new Date(tarih + 'T00:00:00');
+        const gunAdi = gunler[dt.getDay()];
+        const ayAdi  = aylar[dt.getMonth()];
+
         if (tarih === today) {
             tableTitle.textContent = 'Günün Kayıtları';
             if (bugunBtn) bugunBtn.style.display = 'none';
         } else {
-            const dt = new Date(tarih + 'T00:00:00');
-            const aylar = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
-            tableTitle.textContent = `${dt.getDate()} ${aylar[dt.getMonth()]} ${dt.getFullYear()}`;
+            tableTitle.textContent = `${dt.getDate()} ${ayAdi} ${dt.getFullYear()}`;
             if (bugunBtn) bugunBtn.style.display = 'inline-block';
+        }
+
+        // Tarihli yükleme listesi başlığı
+        const baslikEl = document.getElementById('yuklemeListesiTarihText');
+        if (baslikEl) {
+            const gun2 = String(dt.getDate()).padStart(2,'0');
+            const ay2  = String(dt.getMonth()+1).padStart(2,'0');
+            const yil  = dt.getFullYear();
+            baslikEl.textContent = `${gun2}.${ay2}.${yil} ${gunAdi}`;
         }
 
         document.getElementById('kayitCount').textContent   = `${bugun.length} kayıt`;
