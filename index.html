@@ -2381,32 +2381,31 @@
         const r = window._ekipRapor;
         if (!r) return;
         if (typeof window.jspdf === 'undefined') { showToast('⚠️ PDF kütüphanesi yükleniyor','warn'); return; }
-
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF({ orientation:'landscape', unit:'mm', format:'a4' });
         const mavi = [37,99,235], sari = [217,119,6];
+        const AYLAR = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+        const isYillik = e2Donem === 'yil';
 
-        let y = 10;
-        r.ekipler.forEach((ekip, ei) => {
-            if (ei > 0) { doc.addPage(); y = 10; }
-
-            // Başlık
+        // ── ORTAK BAŞLIK FONKSİYONU ──
+        function sayfaBaslik(baslik, alt) {
             doc.setFillColor(...mavi);
             doc.rect(0, 0, 297, 22, 'F');
             doc.setTextColor(255,255,255);
             doc.setFontSize(14); doc.setFont('helvetica','bold');
-            doc.text(`EKIP RAPORU: ${ekip.ad}`, 148, 10, {align:'center'});
+            doc.text(baslik, 148, 10, {align:'center'});
             doc.setFontSize(9); doc.setFont('helvetica','normal');
-            doc.text(`${r.donemLabel}${r.vardiya !== 'hepsi' ? ' · ' + r.vardiya : ''}`, 148, 18, {align:'center'});
-            y = 28;
+            doc.text(alt, 148, 18, {align:'center'});
+        }
 
-            // Özet
+        // ── ÖZET KARTLAR FONKSİYONU ──
+        function ozetKartlar(y, tir, kamyon, konteyner, toplam, m3) {
             const ozet = [
-                {lbl:'TIR', val:ekip.tir, renk:mavi},
-                {lbl:'KAMYON', val:ekip.kamyon, renk:sari},
-                {lbl:'KONTEYNER', val:ekip.konteyner, renk:[139,92,246]},
-                {lbl:'TOPLAM ARAÇ', val:ekip.kayitlar.length, renk:[244,114,182]},
-                {lbl:'TOPLAM M3', val:ekip.m3.toFixed(1), renk:[34,197,94]},
+                {lbl:'TIR', val:tir, renk:mavi},
+                {lbl:'KAMYON', val:kamyon, renk:sari},
+                {lbl:'KONTEYNER', val:konteyner, renk:[139,92,246]},
+                {lbl:'TOPLAM ARAÇ', val:toplam, renk:[244,114,182]},
+                {lbl:'TOPLAM M3', val:m3, renk:[34,197,94]},
             ];
             const kw=50, kh=16, gap=2, kx0=10;
             ozet.forEach((o,i) => {
@@ -2418,30 +2417,97 @@
                 doc.setTextColor(100,116,139); doc.setFontSize(6); doc.setFont('helvetica','normal');
                 doc.text(o.lbl, x+kw/2, y+14, {align:'center'});
             });
-            y += kh + 6;
+            return y + kh + 6;
+        }
 
-            // Detay tablo
-            doc.autoTable({
-                startY: y,
-                head: [['#','VARDİYA','TİP','TÜR','M³','SHİPMENT','SAAT','NET','DURUŞLAR','KALİTECİ','AÇIKLAMA']],
-                body: ekip.kayitlar.map((k,i) => [
-                    i+1,
-                    k.vardiya === 'A Vardiyası' ? 'A' : 'B',
-                    k.aracTipi, k.aracTuru, k.m3,
-                    k.shipment || '—',
-                    `${k.baslama} - ${k.bitis}`,
-                    k.net,
-                    (k.duruslar||[]).filter(d=>d.sure).map(d=>`${d.sebep}(${d.sure}dk)`).join(', ') || '—',
-                    k.kaliteci || '—',
-                    k.aciklama || '—'
-                ]),
-                theme: 'grid',
-                headStyles: { fillColor: mavi, textColor:255, fontStyle:'bold', fontSize:7 },
-                bodyStyles: { fontSize:7 },
-                alternateRowStyles: { fillColor:[245,247,255] },
-                margin: { left:10, right:10 },
+        if (isYillik) {
+            // ════════════════════════════════
+            // YILLIK MOD: Her ekip için 1 sayfa, satırlar = aylar
+            // ════════════════════════════════
+            r.ekipler.forEach((ekip, ei) => {
+                if (ei > 0) doc.addPage();
+                sayfaBaslik(`EKİP YILLIK ÖZET: ${ekip.ad}`, `${r.donemLabel}${r.vardiya !== 'hepsi' ? ' · ' + r.vardiya : ''}`);
+                let y = ozetKartlar(28, ekip.tir, ekip.kamyon, ekip.konteyner, ekip.kayitlar.length, ekip.m3.toFixed(1));
+
+                // Aylara göre grupla
+                const ayMap = {};
+                ekip.kayitlar.forEach(k => {
+                    const ay = parseInt(k.tarih.split('-')[1]) - 1;
+                    if (!ayMap[ay]) ayMap[ay] = {tir:0,kamyon:0,konteyner:0,m3:0,toplam:0};
+                    if (k.aracTipi==='Tır') ayMap[ay].tir++;
+                    else if (k.aracTipi==='Kamyon') ayMap[ay].kamyon++;
+                    else ayMap[ay].konteyner++;
+                    ayMap[ay].m3 += (k.m3||0);
+                    ayMap[ay].toplam++;
+                });
+
+                const ayBody = Object.keys(ayMap).sort((a,b)=>a-b).map(ay => [
+                    AYLAR[ay],
+                    ayMap[ay].tir,
+                    ayMap[ay].kamyon,
+                    ayMap[ay].konteyner,
+                    ayMap[ay].toplam,
+                    ayMap[ay].m3.toFixed(1)
+                ]);
+
+                // Yıllık toplam satırı
+                ayBody.push([
+                    'YILLIK TOPLAM',
+                    ekip.tir, ekip.kamyon, ekip.konteyner,
+                    ekip.kayitlar.length, ekip.m3.toFixed(1)
+                ]);
+
+                doc.autoTable({
+                    startY: y,
+                    head: [['AY','TIR','KAMYON','KONTEYNER','TOPLAM ARAÇ','TOPLAM M³']],
+                    body: ayBody,
+                    theme: 'grid',
+                    headStyles: { fillColor: mavi, textColor:255, fontStyle:'bold', fontSize:9 },
+                    bodyStyles: { fontSize:9, halign:'center' },
+                    columnStyles: { 0: { halign:'left', fontStyle:'bold' } },
+                    alternateRowStyles: { fillColor:[245,247,255] },
+                    didParseCell: (d) => {
+                        if (d.row.index === ayBody.length - 1) {
+                            d.cell.styles.fillColor = [37,99,235];
+                            d.cell.styles.textColor = 255;
+                            d.cell.styles.fontStyle = 'bold';
+                        }
+                    },
+                    margin: { left:10, right:10 },
+                });
             });
-        });
+
+        } else {
+            // ════════════════════════════════
+            // GÜNLÜK / AYLIK / ARALIK MOD: Detay satırlar
+            // ════════════════════════════════
+            r.ekipler.forEach((ekip, ei) => {
+                if (ei > 0) doc.addPage();
+                sayfaBaslik(`EKİP RAPORU: ${ekip.ad}`, `${r.donemLabel}${r.vardiya !== 'hepsi' ? ' · ' + r.vardiya : ''}`);
+                let y = ozetKartlar(28, ekip.tir, ekip.kamyon, ekip.konteyner, ekip.kayitlar.length, ekip.m3.toFixed(1));
+
+                doc.autoTable({
+                    startY: y,
+                    head: [['#','VARDİYA','TİP','TÜR','M³','SHİPMENT','SAAT','NET','DURUŞLAR','KALİTECİ','AÇIKLAMA']],
+                    body: ekip.kayitlar.map((k,i) => [
+                        i+1,
+                        k.vardiya === 'A Vardiyası' ? 'A' : 'B',
+                        k.aracTipi, k.aracTuru, k.m3,
+                        k.shipment || '—',
+                        `${k.baslama} - ${k.bitis}`,
+                        k.net,
+                        (k.duruslar||[]).filter(d=>d.sure).map(d=>`${d.sebep}(${d.sure}dk)`).join(', ') || '—',
+                        k.kaliteci || '—',
+                        k.aciklama || '—'
+                    ]),
+                    theme: 'grid',
+                    headStyles: { fillColor: mavi, textColor:255, fontStyle:'bold', fontSize:7 },
+                    bodyStyles: { fontSize:7 },
+                    alternateRowStyles: { fillColor:[245,247,255] },
+                    margin: { left:10, right:10 },
+                });
+            });
+        }
 
         const pc = doc.internal.getNumberOfPages();
         for (let i=1; i<=pc; i++) {
@@ -2592,7 +2658,10 @@
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF({ orientation:'landscape', unit:'mm', format:'a4' });
         const mavi = [37,99,235], sari = [217,119,6];
+        const AYLAR = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+        const isYillik = e3Donem === 'yil';
 
+        // Başlık
         doc.setFillColor(...mavi); doc.rect(0,0,297,22,'F');
         doc.setTextColor(255,255,255);
         doc.setFontSize(14); doc.setFont('helvetica','bold');
@@ -2601,6 +2670,7 @@
         doc.text(r.donemLabel, 148, 18, {align:'center'});
 
         let y = 28;
+        // Özet kartlar
         const ozet = [
             {lbl:'TIR',val:r.tir,renk:mavi},
             {lbl:'KAMYON',val:r.kamyon,renk:sari},
@@ -2620,29 +2690,80 @@
         });
         y += kh + 6;
 
-        doc.autoTable({
-            startY: y,
-            head: [['#','TARİH','VARDİYA','EKİP','TİP','TÜR','M³','SHİPMENT','SAAT','NET','DURUŞLAR','KALİTECİ']],
-            body: r.liste.map((k,i) => {
-                const dt = new Date(k.tarih+'T00:00:00');
-                const tarihStr = `${dt.getDate().toString().padStart(2,'0')}.${(dt.getMonth()+1).toString().padStart(2,'0')}.${dt.getFullYear()}`;
-                return [
-                    i+1, tarihStr,
-                    k.vardiya==='A Vardiyası'?'A':'B',
-                    k.ekip, k.aracTipi, k.aracTuru, k.m3,
-                    k.shipment||'—',
-                    `${k.baslama} - ${k.bitis}`,
-                    k.net,
-                    (k.duruslar||[]).filter(d=>d.sure).map(d=>`${d.sebep}(${d.sure}dk)`).join(', ')||'—',
-                    k.kaliteci||'—'
-                ];
-            }),
-            theme: 'grid',
-            headStyles: { fillColor: mavi, textColor:255, fontStyle:'bold', fontSize:7 },
-            bodyStyles: { fontSize:7 },
-            alternateRowStyles: { fillColor:[245,247,255] },
-            margin: { left:10, right:10 },
-        });
+        if (isYillik) {
+            // ════════════════════════════════
+            // YILLIK MOD: Satırlar = aylar özeti
+            // ════════════════════════════════
+            const ayMap = {};
+            r.liste.forEach(k => {
+                const ay = parseInt(k.tarih.split('-')[1]) - 1;
+                if (!ayMap[ay]) ayMap[ay] = {tir:0,kamyon:0,konteyner:0,m3:0,toplam:0};
+                if (k.aracTipi==='Tır') ayMap[ay].tir++;
+                else if (k.aracTipi==='Kamyon') ayMap[ay].kamyon++;
+                else ayMap[ay].konteyner++;
+                ayMap[ay].m3 += (k.m3||0);
+                ayMap[ay].toplam++;
+            });
+
+            const ayBody = Object.keys(ayMap).sort((a,b)=>a-b).map(ay => [
+                AYLAR[ay],
+                ayMap[ay].tir,
+                ayMap[ay].kamyon,
+                ayMap[ay].konteyner,
+                ayMap[ay].toplam,
+                ayMap[ay].m3.toFixed(1)
+            ]);
+
+            // Yıllık toplam satırı
+            ayBody.push(['YILLIK TOPLAM', r.tir, r.kamyon, r.konteyner, r.toplam, r.m3top.toFixed(1)]);
+
+            doc.autoTable({
+                startY: y,
+                head: [['AY','TIR','KAMYON','KONTEYNER','TOPLAM ARAÇ','TOPLAM M³']],
+                body: ayBody,
+                theme: 'grid',
+                headStyles: { fillColor: mavi, textColor:255, fontStyle:'bold', fontSize:9 },
+                bodyStyles: { fontSize:9, halign:'center' },
+                columnStyles: { 0: { halign:'left', fontStyle:'bold' } },
+                alternateRowStyles: { fillColor:[245,247,255] },
+                didParseCell: (d) => {
+                    if (d.row.index === ayBody.length - 1) {
+                        d.cell.styles.fillColor = [37,99,235];
+                        d.cell.styles.textColor = 255;
+                        d.cell.styles.fontStyle = 'bold';
+                    }
+                },
+                margin: { left:10, right:10 },
+            });
+
+        } else {
+            // ════════════════════════════════
+            // GÜNLÜK / AYLIK / ARALIK MOD: Detay satırlar
+            // ════════════════════════════════
+            doc.autoTable({
+                startY: y,
+                head: [['#','TARİH','VARDİYA','EKİP','TİP','TÜR','M³','SHİPMENT','SAAT','NET','DURUŞLAR','KALİTECİ']],
+                body: r.liste.map((k,i) => {
+                    const dt = new Date(k.tarih+'T00:00:00');
+                    const tarihStr = `${dt.getDate().toString().padStart(2,'0')}.${(dt.getMonth()+1).toString().padStart(2,'0')}.${dt.getFullYear()}`;
+                    return [
+                        i+1, tarihStr,
+                        k.vardiya==='A Vardiyası'?'A':'B',
+                        k.ekip, k.aracTipi, k.aracTuru, k.m3,
+                        k.shipment||'—',
+                        `${k.baslama} - ${k.bitis}`,
+                        k.net,
+                        (k.duruslar||[]).filter(d=>d.sure).map(d=>`${d.sebep}(${d.sure}dk)`).join(', ')||'—',
+                        k.kaliteci||'—'
+                    ];
+                }),
+                theme: 'grid',
+                headStyles: { fillColor: mavi, textColor:255, fontStyle:'bold', fontSize:7 },
+                bodyStyles: { fontSize:7 },
+                alternateRowStyles: { fillColor:[245,247,255] },
+                margin: { left:10, right:10 },
+            });
+        }
 
         const pc = doc.internal.getNumberOfPages();
         for (let i=1; i<=pc; i++) {
