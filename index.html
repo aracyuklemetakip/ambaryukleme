@@ -905,7 +905,7 @@
             <div id="yuklemeListesiBaslik" style="display:none;"><div id="yuklemeListesiTarihText"></div></div>
 
             <table class="data-table">
-                <thead><tr><th>#</th><th>Vardiya</th><th>Ekip</th><th>Araç</th><th>Saat</th><th>Durum</th><th></th></tr></thead>
+                <thead><tr><th>#</th><th style="width:30px;">Var.</th><th>Ekip</th><th>Araç</th><th>Saat</th><th>Durum</th><th></th></tr></thead>
                 <tbody id="tableBody"></tbody>
             </table>
             <div class="empty-state" id="emptyState">
@@ -1475,6 +1475,16 @@
 
     function personelListeFiltre() { personelListeRender(); }
 
+    // ── TÜRKÇE NORMALİZE ──────────────────────────────────
+    function turkceNormalize(str) {
+        return str
+            .replace(/I/g,'İ').replace(/i/g,'İ')
+            .replace(/C/g,'C')
+            .toUpperCase()
+            .replace(/Ğ/g,'G').replace(/Ü/g,'U').replace(/Ş/g,'S')
+            .replace(/İ/g,'I').replace(/Ö/g,'O').replace(/Ç/g,'C');
+    }
+
     // ── AUTOCOMPLETE ──────────────────────────────────────
     function ekipAutocomplete(input) {
         const val = input.value.toUpperCase();
@@ -1493,7 +1503,7 @@
         // Eşleşenleri filtrele
         const eslesen = personelListesi.filter(p => {
             if (seciliAdlar.includes(p.ad)) return false; // zaten seçili
-            return p.ad.includes(son);
+            return turkceNormalize(p.ad).includes(turkceNormalize(son));
         });
 
         if (eslesen.length === 0) { dd.style.display='none'; _acDropdownIdx=-1; return; }
@@ -1536,7 +1546,7 @@
         const dd = document.getElementById('forkliftciDropdown');
         if (!val.trim()) { dd.style.display='none'; _fkDropdownIdx=-1; return; }
 
-        const eslesen = personelListesi.filter(p => p.ad.includes(val));
+        const eslesen = personelListesi.filter(p => turkceNormalize(p.ad).includes(turkceNormalize(val)));
         if (eslesen.length === 0) { dd.style.display='none'; _fkDropdownIdx=-1; return; }
 
         const adSayisi = {};
@@ -1818,6 +1828,24 @@
         document.querySelectorAll('#tableBody tr').forEach(tr => tr.classList.remove('selected'));
     }
 
+    // ── EKİP KISA GÖSTER ─────────────────────────────────
+    function ekipKisaGoster(ekipStr, tumKayitlar, idx) {
+        // Ekipdeki her ismi sadece ada (ilk kelimeye) çevir
+        const isimler = ekipStr.split(',').map(s => s.trim()).filter(Boolean);
+        return isimler.map(tam => {
+            const parcalar = tam.split(' ');
+            const ad = parcalar[0]; // Sadece ilk kelime (ad)
+            // Aynı ada sahip başka biri var mı personel listesinde?
+            const ayniAdlar = personelListesi.filter(p => p.ad.split(' ')[0] === ad);
+            if (ayniAdlar.length > 1) {
+                // Sicil nosunu bul
+                const bulunan = personelListesi.find(p => p.ad === tam);
+                return bulunan ? `${ad} <span style="color:var(--muted);font-size:10px;">${bulunan.sicil}</span>` : ad;
+            }
+            return ad;
+        }).join(', ');
+    }
+
     // ── KAYDET / GÜNCELLE ─────────────────────────────────
     function kaydetVeyaGuncelle() {
         const m3       = document.getElementById('m3').value;
@@ -1852,7 +1880,7 @@
             
             if(window._fbSaveKayit) window._fbSaveKayit(kayitlar[kayitlar.length-1]);
             formTemizle(); renderTablo(); showToast('✓  Kayıt başarıyla eklendi','success');
-            document.getElementById('m3').focus();
+            document.querySelector('#segTip .seg-btn').focus();
         }
     }
 
@@ -1963,7 +1991,7 @@
             tableHTML += `<tr class="${duzenleId===k.id?'selected':''}" data-id="${k.id}" onclick="formDoldur(${JSON.stringify(k).replace(/"/g,'&quot;')})">
                 <td style="color:var(--muted);font-size:11px;">${i+1}</td>
                 <td><span style="font-size:10px;font-weight:800;color:${k.vardiya==='A Vardiyası'?'var(--blue-light)':'var(--yellow)'};">${k.vardiya==='A Vardiyası'?'A':'B'}</span></td>
-                <td style="font-weight:400;font-size:11px;">${k.ekip}</td>
+                <td style="font-weight:400;font-size:11px;">${ekipKisaGoster(k.ekip, sirali, i)}</td>
                 <td><span class="badge ${tipBadge}">${k.aracTipi}</span></td>
                 <td style="color:var(--text-dim);font-size:11px;">${k.baslama} - ${k.bitis}</td>
                 <td>${durum}</td>
