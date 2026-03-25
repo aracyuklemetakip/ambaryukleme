@@ -864,9 +864,8 @@
             </div>
             <div class="input-group">
                 <div class="input-label">Forkliftçi <span class="opt">(opsiyonel)</span></div>
-                <select id="forkliftci" class="text-input" tabindex="14" style="cursor:pointer;">
-                    <option value="">— Seçiniz —</option>
-                </select>
+                <input type="text" id="forkliftci" class="text-input" tabindex="14" placeholder="FORKLİFTÇİ ADI"
+                    oninput="this.value=this.value.toUpperCase()">
             </div>
 
             <div class="form-section-title">Duruşlar <span style="font-weight:500;color:var(--muted);text-transform:none;letter-spacing:0;font-size:9px;">(opsiyonel)</span></div>
@@ -1461,14 +1460,6 @@
         };
     }
 
-    function forkliftciDropdownGuncelle() {
-        const sel = document.getElementById('forkliftci');
-        if (!sel) return;
-        const mevcutVal = sel.value;
-        sel.innerHTML = '<option value="">— Seçiniz —</option>' +
-            personelListesi.map(p => `<option value="${p.ad}"${p.ad===mevcutVal?' selected':''}>${p.ad}</option>`).join('');
-    }
-
     function personelListeRender() {
         const filtre = (document.getElementById('personelAra')?.value || '').toUpperCase();
         const liste = personelListesi.filter(p => p.ad.includes(filtre) || p.sicil.includes(filtre));
@@ -1477,7 +1468,6 @@
         const sayac = document.getElementById('personelSayac');
         if (!tbody) return;
         if (sayac) sayac.textContent = '(' + personelListesi.length + ' kişi)';
-        forkliftciDropdownGuncelle();
         if (liste.length === 0) {
             tbody.innerHTML = '';
             if (empty) empty.style.display = 'block';
@@ -1920,32 +1910,18 @@
         });
 
         let tableHTML = '';
-        ekipSirasi.forEach(key => {
-            const grp = ekipGruplari[key];
-            // Ekip başlığı satırı
-            tableHTML += `<tr class="ekip-grup-baslik">
-                <td colspan="7" style="padding:4px 10px 2px 10px;">
-                    <div style="display:flex;align-items:center;gap:8px;">
-                        <span style="font-size:11px;font-weight:900;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);">👥 ${grp.ad}</span>
-                        <div style="flex:1;height:1px;background:var(--glass-border);"></div>
-                    </div>
-                </td>
+        sirali.forEach((k, i) => {
+            const tipBadge = k.aracTipi==='Tır'?'badge-tir':k.aracTipi==='Kamyon'?'badge-kamyon':'badge-konteyner';
+            const durum    = k.gec?`<span class="status-gec">Gecikti</span>`:`<span class="status-ok">✓ Uygun</span>`;
+            tableHTML += `<tr class="${duzenleId===k.id?'selected':''}" data-id="${k.id}" onclick="formDoldur(${JSON.stringify(k).replace(/"/g,'&quot;')})">
+                <td style="color:var(--muted);font-size:11px;">${i+1}</td>
+                <td><span style="font-size:10px;font-weight:800;color:${k.vardiya==='A Vardiyası'?'var(--blue-light)':'var(--yellow)'};">${k.vardiya==='A Vardiyası'?'A':'B'}</span></td>
+                <td style="font-weight:400;font-size:11px;">${k.ekip}</td>
+                <td><span class="badge ${tipBadge}">${k.aracTipi}</span></td>
+                <td style="color:var(--text-dim);font-size:11px;">${k.baslama} - ${k.bitis}</td>
+                <td>${durum}</td>
+                <td><button class="del-btn" onclick="silKayit(${k.id},event)" title="Sil">🗑️</button></td>
             </tr>`;
-            grp.satirlar.forEach(({ kayit: k, siraNo }) => {
-                const tipBadge = k.aracTipi==='Tır'?'badge-tir':k.aracTipi==='Kamyon'?'badge-kamyon':'badge-konteyner';
-                const durum    = k.gec?`<span class="status-gec">Gecikti</span>`:`<span class="status-ok">✓ Uygun</span>`;
-                tableHTML += `<tr class="${duzenleId===k.id?'selected':''}" data-id="${k.id}" onclick="formDoldur(${JSON.stringify(k).replace(/"/g,'&quot;')})">
-                    <td style="color:var(--muted);font-size:11px;">${siraNo}</td>
-                    <td><span style="font-size:10px;font-weight:800;color:${k.vardiya==='A Vardiyası'?'var(--blue-light)':'var(--yellow)'};">${k.vardiya==='A Vardiyası'?'A':'B'}</span></td>
-                    <td style="font-weight:400;font-size:11px;">${k.ekip}</td>
-                    <td><span class="badge ${tipBadge}">${k.aracTipi}</span></td>
-                    <td style="color:var(--text-dim);font-size:11px;">${k.baslama} - ${k.bitis}</td>
-                    <td>${durum}</td>
-                    <td><button class="del-btn" onclick="silKayit(${k.id},event)" title="Sil">🗑️</button></td>
-                </tr>`;
-            });
-            // Ekip altı boşluk satırı
-            tableHTML += `<tr class="ekip-grup-bosluk"><td colspan="7" style="height:6px;padding:0;background:transparent;"></td></tr>`;
         });
         document.getElementById('tableBody').innerHTML = tableHTML;
     }
