@@ -631,7 +631,7 @@
         <input type="password" id="sifreInput" placeholder="••••••"
             style="width:100%;padding:12px 16px;border-radius:10px;border:1px solid rgba(251,191,36,0.3);background:rgba(251,191,36,0.05);color:#f1f5f9;font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;letter-spacing:6px;text-align:center;outline:none;margin-bottom:8px;transition:border-color 0.2s;"
             onkeydown="if(event.key==='Enter')sifreKontrol()"
-            oninput="document.getElementById('sifreHata').style.display='none'"
+            oninput="document.getElementById('sifreHata').style.display='none'; if(this.value.length===4) sifreKontrol();"
             onfocus="this.style.borderColor='rgba(251,191,36,0.6)'"
             onblur="this.style.borderColor='rgba(251,191,36,0.3)'">
         <div id="sifreHata" style="display:none;color:#ef4444;font-size:11px;font-weight:700;letter-spacing:1px;margin-bottom:10px;">YANLIŞ ŞİFRE</div>
@@ -1081,10 +1081,13 @@
                             <div style="color:var(--muted);font-size:18px;font-weight:900;padding-bottom:8px;">—</div>
                             <div><div class="filtre-label">Bitiş</div><input type="date" id="e3AralikBit" class="filtre-input" onchange="personelSorgula()"></div>
                         </div>
-                        <div class="filtre-group" style="min-width:200px;">
+                        <div class="filtre-group" style="min-width:200px;position:relative;">
                             <div class="filtre-label">Personel Adı</div>
                             <input type="text" id="e3Isim" class="filtre-input" placeholder="İSİM YAZ..."
-                                oninput="this.value=this.value.toUpperCase();personelSorgula()" style="width:100%;">
+                                oninput="this.value=this.value.toUpperCase();personelSorgula();e3Autocomplete(this)"
+                                onkeydown="e3KeyDown(event)"
+                                autocomplete="off" style="width:100%;">
+                            <div id="e3Dropdown" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:500;background:#111827;border:1px solid rgba(255,255,255,0.12);border-radius:10px;margin-top:4px;max-height:220px;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,0.6);"></div>
                         </div>
                         <button class="btn-pdf" id="btnPdf3" style="display:none;margin-left:auto;" onclick="personelPdfIndir()">📄 PDF</button>
                     </div>
@@ -1599,6 +1602,50 @@
         }
     }
 
+    // ── PERSONEL ANALİZ AUTOCOMPLETE ────────────────────
+    let _e3DropIdx = -1;
+
+    function e3Autocomplete(input) {
+        const val = input.value.toUpperCase();
+        const dd = document.getElementById('e3Dropdown');
+        if (!val.trim()) { dd.style.display='none'; _e3DropIdx=-1; return; }
+        const eslesen = personelListesi.filter(p => turkceNormalize(p.ad).includes(turkceNormalize(val)));
+        if (eslesen.length === 0) { dd.style.display='none'; _e3DropIdx=-1; return; }
+        dd.innerHTML = eslesen.map((p, i) => `<div class="ac-item" data-ad="${p.ad}"
+            onclick="e3Sec('${p.ad}')" onmouseenter="e3Hover(${i})"
+            style="padding:10px 14px;cursor:pointer;font-size:13px;font-weight:700;border-bottom:1px solid rgba(255,255,255,0.05);transition:background 0.1s;">${p.ad}</div>`).join('');
+        dd.style.display = 'block'; _e3DropIdx = -1;
+    }
+
+    function e3Sec(ad) {
+        document.getElementById('e3Isim').value = ad;
+        document.getElementById('e3Dropdown').style.display = 'none';
+        _e3DropIdx = -1;
+        personelSorgula();
+    }
+
+    function e3Hover(idx) {
+        _e3DropIdx = idx;
+        document.querySelectorAll('#e3Dropdown .ac-item').forEach((el,i) => {
+            el.style.background = i===idx ? 'rgba(37,99,235,0.2)' : '';
+        });
+    }
+
+    function e3KeyDown(e) {
+        const dd = document.getElementById('e3Dropdown');
+        if (dd.style.display === 'none') return;
+        const items = dd.querySelectorAll('.ac-item');
+        if (e.key === 'ArrowDown') { e.preventDefault(); _e3DropIdx = Math.min(_e3DropIdx+1, items.length-1); items.forEach((el,i) => el.style.background = i===_e3DropIdx?'rgba(37,99,235,0.2)':''); }
+        else if (e.key === 'ArrowUp') { e.preventDefault(); _e3DropIdx = Math.max(_e3DropIdx-1, 0); items.forEach((el,i) => el.style.background = i===_e3DropIdx?'rgba(37,99,235,0.2)':''); }
+        else if (e.key === 'Enter' && _e3DropIdx >= 0) { e.preventDefault(); const s = items[_e3DropIdx]?.getAttribute('data-ad'); if(s) e3Sec(s); }
+        else if (e.key === 'Escape') { dd.style.display='none'; _e3DropIdx=-1; }
+    }
+
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('#e3Isim') && !e.target.closest('#e3Dropdown'))
+            document.getElementById('e3Dropdown').style.display = 'none';
+    });
+
     // Forkliftci dropdown dışına tıklayınca kapat
     document.addEventListener('click', function(e) {
         if (!e.target.closest('#forkliftci') && !e.target.closest('#forkliftciDropdown')) {
@@ -1831,20 +1878,24 @@
     }
 
     // ── EKİP KISA GÖSTER ─────────────────────────────────
-    function ekipKisaGoster(ekipStr, tumKayitlar, idx) {
-        // Ekipdeki her ismi sadece ada (ilk kelimeye) çevir
+    function ekipKisaGoster(ekipStr) {
         const isimler = ekipStr.split(',').map(s => s.trim()).filter(Boolean);
         return isimler.map(tam => {
-            const parcalar = tam.split(' ');
-            const ad = parcalar[0]; // Sadece ilk kelime (ad)
-            // Aynı ada sahip başka biri var mı personel listesinde?
+            const parcalar = tam.trim().split(' ');
+            const ad = parcalar[0];
+            const soyad = parcalar.slice(1).join(' ');
+            // Aynı ada sahip kaç kişi var?
             const ayniAdlar = personelListesi.filter(p => p.ad.split(' ')[0] === ad);
-            if (ayniAdlar.length > 1) {
-                // Sicil nosunu bul
+            if (ayniAdlar.length <= 1) return ad; // Tekse sadece ad
+            // Aynı ad+soyad kaç kişi var?
+            const ayniTamIsim = personelListesi.filter(p => p.ad === tam);
+            if (ayniTamIsim.length > 1) {
+                // Tamamen aynı isimler var → sicil göster
                 const bulunan = personelListesi.find(p => p.ad === tam);
                 return bulunan ? `${ad} <span style="color:var(--muted);font-size:10px;">${bulunan.sicil}</span>` : ad;
             }
-            return ad;
+            // Ad aynı ama soyad farklı → soyadı göster
+            return soyad ? `${ad} ${soyad}` : ad;
         }).join(', ');
     }
 
@@ -1882,7 +1933,9 @@
             
             if(window._fbSaveKayit) window._fbSaveKayit(kayitlar[kayitlar.length-1]);
             formTemizle(); renderTablo(); showToast('✓  Kayıt başarıyla eklendi','success');
-            document.querySelector('#segTip .seg-btn').focus();
+            // Tır'ı seçili getir
+            const tirBtn = document.querySelector('#segTip .seg-btn');
+            if (tirBtn) { tirBtn.classList.add('active-blue'); secilenAracTipi = 'Tır'; tirBtn.focus(); }
         }
     }
 
@@ -1993,7 +2046,7 @@
             tableHTML += `<tr class="${duzenleId===k.id?'selected':''}" data-id="${k.id}" onclick="formDoldur(${JSON.stringify(k).replace(/"/g,'&quot;')})">
                 <td style="color:var(--muted);font-size:11px;">${i+1}</td>
                 <td><span style="font-size:10px;font-weight:800;color:${k.vardiya==='A Vardiyası'?'var(--blue-light)':'var(--yellow)'};">${k.vardiya==='A Vardiyası'?'A':'B'}</span></td>
-                <td style="font-weight:400;font-size:11px;">${ekipKisaGoster(k.ekip, sirali, i)}</td>
+                <td style="font-weight:400;font-size:11px;">${ekipKisaGoster(k.ekip)}</td>
                 <td><span class="badge ${tipBadge}">${k.aracTipi}</span></td>
                 <td style="color:var(--text-dim);font-size:11px;">${k.baslama} - ${k.bitis}</td>
                 <td>${durum}</td>
