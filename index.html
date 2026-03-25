@@ -118,6 +118,13 @@
           setTimeout(async () => {
             if (typeof personelIlkYukle === 'function') await personelIlkYukle();
           }, 100);
+
+          // Sayfa yenileme: bekleyen sayfaya geç
+          if (window._pendingSayfa) {
+            var ps = window._pendingSayfa;
+            window._pendingSayfa = null;
+            setTimeout(function() { if (typeof showSayfa === 'function') showSayfa(ps); }, 200);
+          }
         } catch(e) {
           console.error('Firestore yükleme hatası:', e);
           showToast('⚠️ Firestore erişim hatası', 'warn');
@@ -950,7 +957,6 @@
         <div class="sef-sekmeler">
             <div class="sef-sekme" onclick="sekmeAc(this,'sekme1')">📦 Toplam Yüklenen Araç Sayısı Özet</div>
             <div class="sef-sekme" onclick="sekmeAc(this,'sekme2')">👥 Ekip Analizi</div>
-            <div class="sef-sekme" onclick="sekmeAc(this,'sekme3')">👤 Personel Analiz</div>
             <div class="sef-sekme" onclick="sekmeAc(this,'sekme4')">⏱️ Mesai Takip</div>
             <div class="sef-sekme" onclick="sekmeAc(this,'sekme5')">🧑‍💼 Personel Yönetimi</div>
             <div class="sef-sekme" onclick="sekmeAc(this,'sekme6')">🔍 Detaylı Filtrele</div>
@@ -1061,54 +1067,6 @@
             </div>
 
             <!-- SEKME 3: PERSONEL BAZLI -->
-            <div id="sekme3" class="sekme-icerik">
-                <div class="filtre-panel">
-                    <div class="filtre-row">
-                        <div class="filtre-group">
-                            <div class="filtre-label">Dönem</div>
-                            <div class="filtre-seg" id="e3DonemSeg">
-                                <div class="filtre-seg-btn aktif" onclick="e3DonemSec(this,'gun')">Günlük</div>
-                                <div class="filtre-seg-btn" onclick="e3DonemSec(this,'ay')">Aylık</div>
-                                <div class="filtre-seg-btn" onclick="e3DonemSec(this,'yil')">Yıllık</div>
-                                <div class="filtre-seg-btn" onclick="e3DonemSec(this,'aralik')">Tarih Aralığı Seç</div>
-                            </div>
-                        </div>
-                        <div class="filtre-group" id="e3Gun">
-                            <div class="filtre-label">Tarih</div>
-                            <input type="date" id="e3Tarih" class="filtre-input" onchange="personelSorgula()">
-                        </div>
-                        <div class="filtre-group" id="e3Ay" style="display:none;">
-                            <div class="filtre-label">Ay / Yıl</div>
-                            <input type="month" id="e3AyTarih" class="filtre-input" onchange="personelSorgula()">
-                        </div>
-                        <div class="filtre-group" id="e3Yil" style="display:none;">
-                            <div class="filtre-label">Yıl</div>
-                            <input type="number" id="e3YilSayi" class="filtre-input" style="width:110px;" min="2020" max="2099" onchange="personelSorgula()">
-                        </div>
-                        <div class="filtre-group" id="e3Aralik" style="display:none;flex-direction:row;gap:8px;align-items:flex-end;">
-                            <div><div class="filtre-label">Başlangıç</div><input type="date" id="e3AralikBas" class="filtre-input" onchange="personelSorgula()"></div>
-                            <div style="color:var(--muted);font-size:18px;font-weight:900;padding-bottom:8px;">—</div>
-                            <div><div class="filtre-label">Bitiş</div><input type="date" id="e3AralikBit" class="filtre-input" onchange="personelSorgula()"></div>
-                        </div>
-                        <div class="filtre-group" style="min-width:200px;position:relative;">
-                            <div class="filtre-label">Personel Adı</div>
-                            <input type="text" id="e3Isim" class="filtre-input" placeholder="İSİM YAZ..."
-                                oninput="this.value=this.value.toUpperCase();personelSorgula();e3Autocomplete(this)"
-                                onkeydown="e3KeyDown(event)"
-                                autocomplete="off" style="width:100%;">
-                            <div id="e3Dropdown" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:500;background:#111827;border:1px solid rgba(255,255,255,0.12);border-radius:10px;margin-top:4px;max-height:220px;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,0.6);"></div>
-                        </div>
-                        <button class="btn-pdf" id="btnPdf3" style="margin-left:auto;" onclick="personelPdfIndir()">📥 PDF İNDİR</button>
-                    </div>
-                </div>
-                <div id="personelSonuc">
-                    <div class="sef-bos">
-                        <div class="sef-bos-icon">👤</div>
-                        <div class="sef-bos-text">Dönem ve personel adı seçin</div>
-                    </div>
-                </div>
-            </div>
-
             <!-- SEKME 4: MESAİ TAKİP -->
             <div id="sekme4" class="sekme-icerik">
                 <div style="display:grid;grid-template-columns:280px 1fr 320px;gap:16px;">
@@ -1393,10 +1351,26 @@
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.getElementById(id).classList.add('active');
         if (id === 'operatorSayfa') { tarihGoster(); renderTablo(); }
+        if (id !== 'anaSayfa') {
+            try { sessionStorage.setItem('aktifSayfa', id); } catch(e) {}
+        } else {
+            try { sessionStorage.removeItem('aktifSayfa'); } catch(e) {}
+        }
     }
 
-    // Geri ok
-    window.addEventListener('popstate', () => showSayfa('anaSayfa'));
+    // Sayfa yenilenince aynı sayfada kal
+    (function() {
+        try {
+            var s = sessionStorage.getItem('aktifSayfa');
+            if (s && document.getElementById(s)) {
+                // Auth yüklenene kadar bekle, sonra sayfayı göster
+                window._pendingSayfa = s;
+            }
+        } catch(e) {}
+    })();
+
+    // Geri ok - popstate artık anasayfaya döndürmez
+    window.addEventListener('popstate', function() {});
 
     function showModal(id) { document.getElementById(id).classList.add('show'); }
     function closeModal(id) { document.getElementById(id).classList.remove('show'); }
@@ -2199,7 +2173,7 @@
             const toplamArac = g.tir + g.kamyon + g.konteyner;
             return `
             <div class="ekip-card">
-                <div class="ekip-card-name">${g.ad}</div>
+                <div class="ekip-card-name">${ekipKisaGoster(g.ad)}</div>
                 <div class="ekip-card-badges">
                     ${g.tir>0?`<span class="ekip-mini-badge badge-tir">🚛 ${g.tir} Tır</span>`:''}
                     ${g.kamyon>0?`<span class="ekip-mini-badge badge-kamyon">🚚 ${g.kamyon} Kamyon</span>`:''}
@@ -2640,7 +2614,7 @@
                 <div class="sef-bolum"><div style="overflow-x:auto;"><table class="data-table" style="font-size:12px;">
                     <thead><tr><th>Ay</th><th>Ekip</th><th style="color:var(--blue-light)">Tır</th><th style="color:var(--yellow)">Kamyon</th><th style="color:#a78bfa">Konteyner</th><th style="color:#f472b6">Toplam</th><th style="color:var(--success)">M³</th></tr></thead>
                     <tbody>
-                        ${satirlar.map(r=>`<tr><td style="font-weight:700;color:var(--text-dim);">${r.grupLabel}</td><td style="font-weight:400;font-size:11px;">${r.ekipAd}</td><td style="color:var(--blue-light);font-weight:700;">${r.tir||'—'}</td><td style="color:var(--yellow);font-weight:700;">${r.kamyon||'—'}</td><td style="color:#a78bfa;font-weight:700;">${r.konteyner||'—'}</td><td style="color:#f472b6;font-weight:800;">${r.toplam}</td><td style="color:var(--success);font-weight:700;">${r.m3.toFixed(1)}</td></tr>`).join('')}
+                        ${satirlar.map(r=>`<tr><td style="font-weight:700;color:var(--text-dim);">${r.grupLabel}</td><td style="font-weight:400;font-size:11px;">${ekipKisaGoster(r.ekipAd)}</td><td style="color:var(--blue-light);font-weight:700;">${r.tir||'—'}</td><td style="color:var(--yellow);font-weight:700;">${r.kamyon||'—'}</td><td style="color:#a78bfa;font-weight:700;">${r.konteyner||'—'}</td><td style="color:#f472b6;font-weight:800;">${r.toplam}</td><td style="color:var(--success);font-weight:700;">${r.m3.toFixed(1)}</td></tr>`).join('')}
                         <tr style="background:rgba(37,99,235,0.15);border-top:2px solid rgba(37,99,235,0.4);"><td style="font-weight:900;color:var(--blue-light);" colspan="2">YILLIK TOPLAM</td><td style="font-weight:900;color:var(--blue-light);">${genTir}</td><td style="font-weight:900;color:var(--yellow);">${genKamyon}</td><td style="font-weight:900;color:#a78bfa;">${genKonteyner}</td><td style="font-weight:900;color:#f472b6;">${genToplam}</td><td style="font-weight:900;color:var(--success);">${genM3.toFixed(1)}</td></tr>
                     </tbody></table></div></div>`;
         } else if (e2Donem === 'ay' || e2Donem === 'aralik') {
@@ -2653,7 +2627,7 @@
                 <div class="sef-bolum"><div style="overflow-x:auto;"><table class="data-table" style="font-size:12px;">
                     <thead><tr><th>Ekip</th><th style="color:var(--blue-light)">Tır</th><th style="color:var(--yellow)">Kamyon</th><th style="color:#a78bfa">Konteyner</th><th style="color:#f472b6">Toplam</th><th style="color:var(--success)">M³</th></tr></thead>
                     <tbody>
-                        ${ekipler.map(e=>`<tr><td style="font-weight:400;font-size:11px;">${e.ad}</td><td style="color:var(--blue-light);font-weight:700;">${e.tir||'—'}</td><td style="color:var(--yellow);font-weight:700;">${e.kamyon||'—'}</td><td style="color:#a78bfa;font-weight:700;">${e.konteyner||'—'}</td><td style="color:#f472b6;font-weight:800;">${e.kayitlar.length}</td><td style="color:var(--success);font-weight:700;">${e.m3.toFixed(1)}</td></tr>`).join('')}
+                        ${ekipler.map(e=>`<tr><td style="font-weight:400;font-size:11px;">${ekipKisaGoster(e.ad)}</td><td style="color:var(--blue-light);font-weight:700;">${e.tir||'—'}</td><td style="color:var(--yellow);font-weight:700;">${e.kamyon||'—'}</td><td style="color:#a78bfa;font-weight:700;">${e.konteyner||'—'}</td><td style="color:#f472b6;font-weight:800;">${e.kayitlar.length}</td><td style="color:var(--success);font-weight:700;">${e.m3.toFixed(1)}</td></tr>`).join('')}
                         <tr style="background:rgba(37,99,235,0.15);border-top:2px solid rgba(37,99,235,0.4);"><td style="font-weight:900;color:var(--blue-light);">GENEL TOPLAM</td><td style="font-weight:900;color:var(--blue-light);">${genTir}</td><td style="font-weight:900;color:var(--yellow);">${genKamyon}</td><td style="font-weight:900;color:#a78bfa;">${genKonteyner}</td><td style="font-weight:900;color:#f472b6;">${genToplam}</td><td style="font-weight:900;color:var(--success);">${genM3.toFixed(1)}</td></tr>
                     </tbody></table></div></div>`;
         } else {
@@ -2663,7 +2637,7 @@
                 ${ekipler.map(ekip => `
                     <div class="sef-bolum" style="margin-bottom:16px;">
                         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
-                            <div style="font-size:13px;font-weight:400;color:var(--text);">${ekip.ad}</div>
+                            <div style="font-size:13px;font-weight:400;color:var(--text);">${ekipKisaGoster(ekip.ad)}</div>
                             <div style="display:flex;gap:6px;flex-wrap:wrap;">
                                 ${ekip.tir>0?`<span class="stat-pill badge-tir">🚛 ${ekip.tir} Tır</span>`:''}
                                 ${ekip.kamyon>0?`<span class="stat-pill badge-kamyon">🚚 ${ekip.kamyon} Kamyon</span>`:''}
@@ -2721,13 +2695,23 @@
 
         // ── ORTAK BAŞLIK FONKSİYONU ──
         function sayfaBaslik(baslik, alt) {
+            const W = 297;
+            doc.setFont('helvetica','bold');
+            let fs = 13;
+            doc.setFontSize(fs);
+            while (doc.getTextWidth(baslik) > W - 16 && fs > 6) { fs -= 0.5; doc.setFontSize(fs); }
+            const satirlar = doc.splitTextToSize(baslik, W - 16);
+            const headerH = Math.max(22, satirlar.length * (fs * 0.42 + 1) + 10);
             doc.setFillColor(...mavi);
-            doc.rect(0, 0, 297, 22, 'F');
+            doc.rect(0, 0, W, headerH, 'F');
             doc.setTextColor(255,255,255);
-            doc.setFontSize(14); doc.setFont('helvetica','bold');
-            doc.text(baslik, 148, 10, {align:'center'});
-            doc.setFontSize(9); doc.setFont('helvetica','normal');
-            doc.text(alt, 148, 18, {align:'center'});
+            doc.setFontSize(fs); doc.setFont('helvetica','bold');
+            satirlar.forEach((line, li) => {
+                doc.text(line, W/2, 8 + li * (fs * 0.45 + 1), {align:'center'});
+            });
+            doc.setFontSize(8); doc.setFont('helvetica','normal');
+            doc.text(alt, W/2, headerH - 4, {align:'center'});
+            return headerH;
         }
 
         // ── ÖZET KARTLAR FONKSİYONU ──
@@ -2757,14 +2741,14 @@
             // ÖZET MOD (Yıllık/Aylık/Aralık): Tek tablo, tarih x ekip
             // ════════════════════════════════
             const baslikTip = isYillik ? 'YILLIK' : e2Donem === 'ay' ? 'AYLIK' : 'DÖNEM';
-            sayfaBaslik(`EKİP ${baslikTip} ÖZET`, `${r.donemLabel}${r.vardiya !== 'hepsi' ? ' · ' + r.vardiya : ''}`);
+            const hh1 = sayfaBaslik(`EKİP ${baslikTip} ÖZET`, `${r.donemLabel}${r.vardiya !== 'hepsi' ? ' · ' + r.vardiya : ''}`);
 
             const genTir = r.ekipler.reduce((s,e)=>s+e.tir,0);
             const genKamyon = r.ekipler.reduce((s,e)=>s+e.kamyon,0);
             const genKonteyner = r.ekipler.reduce((s,e)=>s+e.konteyner,0);
             const genToplam = r.ekipler.reduce((s,e)=>s+e.kayitlar.length,0);
             const genM3 = r.ekipler.reduce((s,e)=>s+e.m3,0);
-            let y = ozetKartlar(28, genTir, genKamyon, genKonteyner, genToplam, genM3.toFixed(1));
+            let y = ozetKartlar(hh1 + 4, genTir, genKamyon, genKonteyner, genToplam, genM3.toFixed(1));
 
             // tarih-ekip bazlı grupla
             const grupMap = {};
@@ -2837,8 +2821,8 @@
             // ════════════════════════════════
             r.ekipler.forEach((ekip, ei) => {
                 if (ei > 0) doc.addPage();
-                sayfaBaslik(`EKİP RAPORU: ${ekip.ad}`, `${r.donemLabel}${r.vardiya !== 'hepsi' ? ' · ' + r.vardiya : ''}`);
-                let y = ozetKartlar(28, ekip.tir, ekip.kamyon, ekip.konteyner, ekip.kayitlar.length, ekip.m3.toFixed(1));
+                const hh2 = sayfaBaslik(`EKİP RAPORU: ${ekip.ad}`, `${r.donemLabel}${r.vardiya !== 'hepsi' ? ' · ' + r.vardiya : ''}`);
+                let y = ozetKartlar(hh2 + 4, ekip.tir, ekip.kamyon, ekip.konteyner, ekip.kayitlar.length, ekip.m3.toFixed(1));
 
                 doc.autoTable({
                     startY: y,
@@ -3012,14 +2996,20 @@
         const isYillik = e3Donem === 'yil';
 
         // Başlık
-        doc.setFillColor(...mavi); doc.rect(0,0,297,22,'F');
+        const _pW = 297, _pBaslik = `PERSONEL RAPORU: ${r.isim}`;
+        doc.setFont('helvetica','bold');
+        let _pFs = 13; doc.setFontSize(_pFs);
+        while (doc.getTextWidth(_pBaslik) > _pW - 16 && _pFs > 6) { _pFs -= 0.5; doc.setFontSize(_pFs); }
+        const _pSatirlar = doc.splitTextToSize(_pBaslik, _pW - 16);
+        const _pHeaderH = Math.max(22, _pSatirlar.length * (_pFs * 0.42 + 1) + 10);
+        doc.setFillColor(...mavi); doc.rect(0, 0, _pW, _pHeaderH, 'F');
         doc.setTextColor(255,255,255);
-        doc.setFontSize(14); doc.setFont('helvetica','bold');
-        doc.text(`PERSONEL RAPORU: ${r.isim}`, 148, 10, {align:'center'});
-        doc.setFontSize(9); doc.setFont('helvetica','normal');
-        doc.text(r.donemLabel, 148, 18, {align:'center'});
+        doc.setFontSize(_pFs); doc.setFont('helvetica','bold');
+        _pSatirlar.forEach((line, li) => { doc.text(line, _pW/2, 8 + li * (_pFs * 0.45 + 1), {align:'center'}); });
+        doc.setFontSize(8); doc.setFont('helvetica','normal');
+        doc.text(r.donemLabel, _pW/2, _pHeaderH - 4, {align:'center'});
 
-        let y = 28;
+        let y = _pHeaderH + 4;
         // Özet kartlar
         const ozet = [
             {lbl:'TIR',val:r.tir,renk:mavi},
