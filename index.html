@@ -862,10 +862,13 @@
                 <input type="text" id="kaliteci" class="text-input" tabindex="13" placeholder="KALİTECİ ADI"
                     oninput="this.value=this.value.toUpperCase()">
             </div>
-            <div class="input-group">
+            <div class="input-group" style="position:relative;">
                 <div class="input-label">Forkliftçi <span class="opt">(opsiyonel)</span></div>
-                <input type="text" id="forkliftci" class="text-input" tabindex="14" placeholder="FORKLİFTÇİ ADI"
-                    oninput="this.value=this.value.toUpperCase()">
+                <input type="text" id="forkliftci" class="text-input" tabindex="14" placeholder="İsim yazın..."
+                    oninput="forkliftciAutocomplete(this)"
+                    onkeydown="forkliftciKeyDown(event)"
+                    autocomplete="off">
+                <div id="forkliftciDropdown" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:500;background:#111827;border:1px solid rgba(255,255,255,0.12);border-radius:10px;margin-top:4px;max-height:220px;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,0.6);"></div>
             </div>
 
             <div class="form-section-title">Duruşlar <span style="font-weight:500;color:var(--muted);text-transform:none;letter-spacing:0;font-size:9px;">(opsiyonel)</span></div>
@@ -1532,6 +1535,75 @@
         _acDropdownIdx = -1;
         input.focus();
     }
+
+    // ── FORKLİFTÇİ AUTOCOMPLETE ──────────────────────────
+    let _fkDropdownIdx = -1;
+
+    function forkliftciAutocomplete(input) {
+        const val = input.value.toUpperCase();
+        input.value = val;
+        const dd = document.getElementById('forkliftciDropdown');
+        if (!val.trim()) { dd.style.display='none'; _fkDropdownIdx=-1; return; }
+
+        const eslesen = personelListesi.filter(p => p.ad.includes(val));
+        if (eslesen.length === 0) { dd.style.display='none'; _fkDropdownIdx=-1; return; }
+
+        const adSayisi = {};
+        personelListesi.forEach(p => { adSayisi[p.ad] = (adSayisi[p.ad]||0)+1; });
+
+        dd.innerHTML = eslesen.map((p, i) => {
+            const goster = adSayisi[p.ad] > 1 ? `${p.ad} <span style="color:var(--blue-light);font-size:11px;">· ${p.sicil}</span>` : p.ad;
+            return `<div class="ac-item" data-idx="${i}" data-ad="${p.ad}"
+                onclick="forkliftciSec('${p.ad}')"
+                onmouseenter="fkHover(${i})"
+                style="padding:10px 14px;cursor:pointer;font-size:13px;font-weight:700;border-bottom:1px solid rgba(255,255,255,0.05);transition:background 0.1s;">
+                ${goster}
+            </div>`;
+        }).join('');
+        dd.style.display = 'block';
+        _fkDropdownIdx = -1;
+    }
+
+    function forkliftciSec(ad) {
+        document.getElementById('forkliftci').value = ad;
+        document.getElementById('forkliftciDropdown').style.display = 'none';
+        _fkDropdownIdx = -1;
+    }
+
+    function fkHover(idx) {
+        _fkDropdownIdx = idx;
+        document.querySelectorAll('#forkliftciDropdown .ac-item').forEach((el, i) => {
+            el.style.background = i === idx ? 'rgba(37,99,235,0.2)' : '';
+        });
+    }
+
+    function forkliftciKeyDown(e) {
+        const dd = document.getElementById('forkliftciDropdown');
+        if (dd.style.display === 'none') return;
+        const items = dd.querySelectorAll('.ac-item');
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            _fkDropdownIdx = Math.min(_fkDropdownIdx + 1, items.length - 1);
+            items.forEach((el,i) => el.style.background = i===_fkDropdownIdx?'rgba(37,99,235,0.2)':'');
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            _fkDropdownIdx = Math.max(_fkDropdownIdx - 1, 0);
+            items.forEach((el,i) => el.style.background = i===_fkDropdownIdx?'rgba(37,99,235,0.2)':'');
+        } else if (e.key === 'Enter' && _fkDropdownIdx >= 0) {
+            e.preventDefault();
+            const sec = items[_fkDropdownIdx]?.getAttribute('data-ad');
+            if (sec) forkliftciSec(sec);
+        } else if (e.key === 'Escape') {
+            dd.style.display = 'none'; _fkDropdownIdx = -1;
+        }
+    }
+
+    // Forkliftci dropdown dışına tıklayınca kapat
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('#forkliftci') && !e.target.closest('#forkliftciDropdown')) {
+            document.getElementById('forkliftciDropdown').style.display = 'none';
+        }
+    });
 
     function acHover(idx) {
         _acDropdownIdx = idx;
