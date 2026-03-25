@@ -277,7 +277,7 @@
         ══════════════════════════════════════ */
         #operatorSayfa.active { display:block; }
 
-        .layout { position:relative; z-index:1; display:grid; grid-template-columns:480px; grid-template-rows:auto 1fr; min-height:100vh; }
+        .layout { position:relative; z-index:1; display:grid; grid-template-columns:400px 1fr; grid-template-rows:auto 1fr; min-height:100vh; }
 
         .topbar { grid-column:1/-1; display:flex; align-items:center; justify-content:space-between; padding:14px 28px; background:rgba(6,8,16,0.85); backdrop-filter:blur(20px); border-bottom:1px solid var(--glass-border); position:sticky;top:0;z-index:100; }
         .topbar-left { display:flex; align-items:center; gap:16px; }
@@ -890,14 +890,28 @@
             <button class="btn-submit" id="btnSubmit" tabindex="16" onclick="kaydetVeyaGuncelle()">✓ &nbsp;SİSTEME İŞLE</button>
         </div>
 
-        <div style="display:none;">
-            <span id="tableTitle"></span><span id="kayitCount"></span>
-            <input id="secilenTarih" type="date"><button id="bugunBtn"></button>
-            <span id="sumTir"></span><span id="sumKamyon"></span><span id="sumKonteyner"></span><span id="sumArac"></span><span id="sumM3"></span>
-            <div id="ekipOzetWrap"><div id="ekipOzetBody"></div></div>
-            <div id="yuklemeListesiBaslik"><div id="yuklemeListesiTarihText"></div></div>
-            <tbody id="tableBody"></tbody>
-            <div id="emptyState"></div>
+        <div class="table-panel">
+            <div class="table-header">
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <button onclick="tarihDegistir(-1)" style="width:28px;height:28px;border-radius:8px;border:1px solid var(--glass-border);background:var(--glass);color:var(--text-dim);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--glass-border-hover)'" onmouseout="this.style.borderColor='var(--glass-border)'">‹</button>
+                    <input type="date" id="secilenTarih" style="background:var(--input-bg);border:1px solid var(--glass-border);border-radius:8px;color:var(--text);font-family:'Barlow',sans-serif;font-size:12px;font-weight:700;padding:5px 10px;outline:none;cursor:pointer;" onchange="renderTablo()">
+                    <button onclick="tarihDegistir(1)" style="width:28px;height:28px;border-radius:8px;border:1px solid var(--glass-border);background:var(--glass);color:var(--text-dim);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--glass-border-hover)'" onmouseout="this.style.borderColor='var(--glass-border)'">›</button>
+                    <button onclick="buguneGit()" id="bugunBtn" style="display:none;padding:5px 12px;border-radius:8px;border:1px solid rgba(59,130,246,0.3);background:rgba(37,99,235,0.12);color:var(--blue-light);font-family:'Barlow',sans-serif;font-size:11px;font-weight:800;cursor:pointer;letter-spacing:0.5px;">Bugün</button>
+                    <div class="table-count" id="kayitCount">0 kayıt</div>
+                </div>
+            </div>
+            <div style="display:none;"><span id="tableTitle"></span><span id="sumTir"></span><span id="sumKamyon"></span><span id="sumKonteyner"></span><span id="sumArac"></span><span id="sumM3"></span></div>
+            <div id="ekipOzetWrap" style="display:none;"><div id="ekipOzetBody"></div></div>
+            <div id="yuklemeListesiBaslik" style="display:none;"><div id="yuklemeListesiTarihText"></div></div>
+
+            <table class="data-table">
+                <thead><tr><th>#</th><th>Vardiya</th><th>Ekip</th><th>Araç</th><th>Saat</th><th>Durum</th><th></th></tr></thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+            <div class="empty-state" id="emptyState">
+                <div class="empty-state-icon">📋</div>
+                <div class="empty-state-text">Henüz kayıt yok</div>
+            </div>
         </div>
     </div>
 </div>
