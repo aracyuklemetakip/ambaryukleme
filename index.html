@@ -368,13 +368,13 @@
         .ekip-card-name { font-size:13px;font-weight:800;color:var(--text);flex:1; }
         .ekip-card-badges { display:flex;gap:6px;align-items:center;flex-wrap:wrap; }
         .ekip-mini-badge { display:inline-flex;align-items:center;gap:4px; padding:3px 10px;border-radius:100px; font-size:11px;font-weight:800; }
-        .data-table { width:100%;border-collapse:collapse;font-size:11px; } .data-table td { font-weight:400; }
+        .data-table { width:100%;border-collapse:collapse;font-size:12px; }
         .data-table thead tr { background:var(--glass);border-bottom:1px solid var(--glass-border); }
-        .data-table th { padding:5px 10px;text-align:left;font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);white-space:nowrap; }
+        .data-table th { padding:10px 12px;text-align:left;font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);white-space:nowrap; }
         .data-table tbody tr { border-bottom:1px solid rgba(255,255,255,0.03);transition:background 0.15s;cursor:pointer; }
         .data-table tbody tr:hover { background:rgba(255,255,255,0.04); }
         .data-table tbody tr.selected { background:rgba(251,191,36,0.06);outline:1px solid rgba(251,191,36,0.2); }
-        .data-table td { padding:5px 10px;vertical-align:middle; }
+        .data-table td { padding:10px 12px;vertical-align:middle; }
         .badge { display:inline-block;padding:2px 8px;border-radius:100px;font-size:10px;font-weight:800;letter-spacing:0.5px; }
         .badge-tir       { background:rgba(59,130,246,0.15);color:#60a5fa;border:1px solid rgba(59,130,246,0.3); }
         .badge-kamyon    { background:rgba(251,191,36,0.12);color:#fbbf24;border:1px solid rgba(251,191,36,0.3); }
@@ -898,11 +898,7 @@
                     <div class="table-count" id="kayitCount">0 kayıt</div>
                 </div>
             </div>
-            <!-- Hidden summary elements (JS referanslari icin) -->
-            <div style="display:none;">
-                <span id="sumTir">0</span><span id="sumKamyon">0</span>
-                <span id="sumKonteyner">0</span><span id="sumArac">0</span><span id="sumM3">0</span>
-            </div>
+            <div style="display:none;"><span id="sumTir"></span><span id="sumKamyon"></span><span id="sumKonteyner"></span><span id="sumArac"></span><span id="sumM3"></span></div>
             <div id="ekipOzetWrap" style="display:none;"><div id="ekipOzetBody"></div></div>
 
             <!-- Tarihli yükleme listesi başlığı -->
@@ -1530,7 +1526,6 @@
         const parts = input.value.toUpperCase().split(',');
         parts[parts.length - 1] = ' ' + ad;
         const joined = parts.join(',').replace(/^,\s*/, '');
-        // 4. kişiden sonra virgül ekleme
         const sayim = joined.split(',').filter(s => s.trim()).length;
         input.value = sayim >= 4 ? joined : joined + ', ';
         document.getElementById('ekipDropdown').style.display = 'none';
@@ -1897,22 +1892,11 @@
             </div>`;
         }).join('');
 
-        // Detay tablosu - ekip bazlı kartlara grupla
-        const ekipGruplari = {};
-        const ekipSirasi = [];
-        sirali.forEach((k, i) => {
-            const key = ekipKey(k.ekip);
-            if (!ekipGruplari[key]) {
-                ekipGruplari[key] = { ad: k.ekip, satirlar: [] };
-                ekipSirasi.push(key);
-            }
-            ekipGruplari[key].satirlar.push({ kayit: k, siraNo: i + 1 });
-        });
-
+        // Düz liste - her kayıt alt alta
         let tableHTML = '';
         sirali.forEach((k, i) => {
             const tipBadge = k.aracTipi==='Tır'?'badge-tir':k.aracTipi==='Kamyon'?'badge-kamyon':'badge-konteyner';
-            const durum    = k.gec?`<span class="status-gec">Gecikti</span>`:`<span class="status-ok">✓ Uygun</span>`;
+            const durum    = k.gec?`<span class="status-gec">Gecikti</span>`:`<span class="status-ok">✓</span>`;
             tableHTML += `<tr class="${duzenleId===k.id?'selected':''}" data-id="${k.id}" onclick="formDoldur(${JSON.stringify(k).replace(/"/g,'&quot;')})">
                 <td style="color:var(--muted);font-size:11px;">${i+1}</td>
                 <td><span style="font-size:10px;font-weight:800;color:${k.vardiya==='A Vardiyası'?'var(--blue-light)':'var(--yellow)'};">${k.vardiya==='A Vardiyası'?'A':'B'}</span></td>
