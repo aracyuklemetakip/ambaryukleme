@@ -1939,7 +1939,7 @@
         });
         const gruplar = Object.values(gruplari);
         const ekipWrap = document.getElementById('ekipOzetWrap');
-        ekipWrap.style.display = gruplar.length ? 'block' : 'none';
+        ekipWrap.style.display = 'none';
         document.getElementById('ekipOzetBody').innerHTML = gruplar.map(g=>{
             const toplamArac = g.tir + g.kamyon + g.konteyner;
             return `
