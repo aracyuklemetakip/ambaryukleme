@@ -2971,10 +2971,14 @@
                 <div class="sef-bolum-baslik">Tüm Yükleme Kayıtları (${liste.length} kayıt)</div>
                 <div style="overflow-x:auto;">
                     <table class="data-table" style="font-size:11px;">
-                        <thead><tr><th>#</th><th>Tarih</th><th>Var.</th><th>Ekip</th><th>Tip</th><th>Tür</th><th>M³</th><th>Shipment</th><th>Saat</th><th>Net</th><th>Duruşlar</th><th>Kaliteci</th></tr></thead>
+                        <thead><tr><th>#</th><th>Tarih</th><th>Var.</th><th>Ekip</th><th>Tip</th><th>Tür</th><th>M³</th><th>Shipment</th><th>Saat</th><th>Net</th><th>Durum</th><th>Duruşlar</th><th>Kaliteci</th></tr></thead>
                         <tbody>${liste.map((k,i)=>{
                             const tipBadge = k.aracTipi==='Tır'?'badge-tir':k.aracTipi==='Kamyon'?'badge-kamyon':'badge-konteyner';
-                            return '<tr>' +
+                            const rowBg = k.gec ? 'background:rgba(239,68,68,0.08);' : 'background:rgba(34,197,94,0.06);';
+                            const durumBadge = k.gec
+                                ? '<span style="background:rgba(239,68,68,0.15);color:#f87171;border:1px solid rgba(239,68,68,0.4);border-radius:5px;padding:1px 6px;font-size:10px;font-weight:800;">Gecikti</span>'
+                                : '<span style="background:rgba(34,197,94,0.12);color:#4ade80;border:1px solid rgba(34,197,94,0.3);border-radius:5px;padding:1px 6px;font-size:10px;font-weight:800;">Uygun</span>';
+                            return '<tr style="' + rowBg + '">' +
                                 '<td style="color:var(--muted)">' + (i+1) + '</td>' +
                                 '<td style="white-space:nowrap;">' + tarihFmt(k.tarih) + '</td>' +
                                 '<td style="font-weight:800;color:' + (k.vardiya==='A Vardiyası'?'var(--blue-light)':'var(--yellow)') + ';">' + (k.vardiya==='A Vardiyası'?'A':'B') + '</td>' +
@@ -2985,6 +2989,7 @@
                                 '<td style="color:var(--text-dim)">' + (k.shipment||'—') + '</td>' +
                                 '<td style="white-space:nowrap;">' + k.baslama + ' - ' + k.bitis + '</td>' +
                                 '<td style="font-weight:700;">' + k.net + '</td>' +
+                                '<td>' + durumBadge + '</td>' +
                                 '<td style="color:var(--warning);font-size:10px;">' + durusStr(k) + '</td>' +
                                 '<td style="color:var(--text-dim)">' + (k.kaliteci||'—') + '</td>' +
                             '</tr>';
@@ -3866,10 +3871,10 @@
     });
 
     // ── SORGULA ──
-    function df6Sorgula() {
+    function df6Sorgula(showUI = true) {
         const donem = df6TarihAralik();
         const sonuc = document.getElementById('df6Sonuc');
-        if (!donem) { showToast('⚠️ Tarih seçiniz', 'warn'); return; }
+        if (!donem) { if (showUI) showToast('⚠️ Tarih seçiniz', 'warn'); return; }
 
         const durusStr = k => (k.duruslar||[]).filter(d=>d.sure).length > 0
             ? k.duruslar.filter(d=>d.sure).map(d=>`${d.sebep}(${d.sure}dk)`).join(', ')
@@ -3881,7 +3886,7 @@
         };
 
         if (df6Tur === 'ekip') {
-            if (!df6EkipListesi.length) { showToast('⚠️ En az bir isim ekleyin', 'warn'); return; }
+            if (!df6EkipListesi.length) { if (showUI) showToast('⚠️ En az bir isim ekleyin', 'warn'); return; }
 
             // Ekip kombinasyonunu bul: girilen isimlerin hepsi ekipte olmalı
             const aranan = df6EkipListesi.map(n => n.toUpperCase());
@@ -3898,8 +3903,9 @@
             const m3top = liste.reduce((s,k)=>s+(k.m3||0),0);
 
             _df6Rapor = { tur:'ekip', baslik: df6EkipListesi.join(', '), liste, donemLabel: donem.label, tir, kamyon, konteyner, toplam, m3top };
-            document.getElementById('df6PdfBtn').style.display = 'block';
+            if (showUI) document.getElementById('df6PdfBtn').style.display = 'block';
 
+            if (showUI) {
             if (!liste.length) {
                     sonuc.innerHTML = `<div class="sef-bos"><div class="sef-bos-icon">🔍</div><div class="sef-bos-text">Kayıt bulunamadı</div></div>`;
                 return;
@@ -3919,10 +3925,14 @@
                     <div class="sef-bolum-baslik">Tüm Yükleme Kayıtları (${liste.length} kayıt)</div>
                     <div style="overflow-x:auto;">
                         <table class="data-table" style="font-size:11px;">
-                            <thead><tr><th>#</th><th>Tarih</th><th>Var.</th><th>Ekip</th><th>Tip</th><th>Tür</th><th>M³</th><th>Shipment</th><th>Saat</th><th>Net</th><th>Duruşlar</th><th>Kaliteci</th><th>Açıklama</th></tr></thead>
+                            <thead><tr><th>#</th><th>Tarih</th><th>Var.</th><th>Ekip</th><th>Tip</th><th>Tür</th><th>M³</th><th>Shipment</th><th>Saat</th><th>Net</th><th>Durum</th><th>Duruşlar</th><th>Kaliteci</th><th>Açıklama</th></tr></thead>
                             <tbody>${liste.map((k,i)=>{
                                 const tipBadge = k.aracTipi==='Tır'?'badge-tir':k.aracTipi==='Kamyon'?'badge-kamyon':'badge-konteyner';
-                                return `<tr>
+                                const rowBg = k.gec ? 'background:rgba(239,68,68,0.08);' : 'background:rgba(34,197,94,0.06);';
+                                const durumBadge = k.gec
+                                    ? '<span style="background:rgba(239,68,68,0.15);color:#f87171;border:1px solid rgba(239,68,68,0.4);border-radius:5px;padding:1px 6px;font-size:10px;font-weight:800;">Gecikti</span>'
+                                    : '<span style="background:rgba(34,197,94,0.12);color:#4ade80;border:1px solid rgba(34,197,94,0.3);border-radius:5px;padding:1px 6px;font-size:10px;font-weight:800;">Uygun</span>';
+                                return `<tr style="${rowBg}">
                                     <td style="color:var(--muted)">${i+1}</td>
                                     <td style="white-space:nowrap;">${tarihFmt(k.tarih)}</td>
                                     <td style="font-weight:800;color:${k.vardiya==='A Vardiyası'?'var(--blue-light)':'var(--yellow)'};">${k.vardiya==='A Vardiyası'?'A':'B'}</td>
@@ -3933,6 +3943,7 @@
                                     <td style="color:var(--text-dim)">${k.shipment||'—'}</td>
                                     <td style="white-space:nowrap;">${k.baslama} - ${k.bitis}</td>
                                     <td style="font-weight:700;">${k.net}</td>
+                                    <td>${durumBadge}</td>
                                     <td style="color:var(--warning);font-size:10px;">${durusStr(k)}</td>
                                     <td style="color:var(--text-dim)">${k.kaliteci||'—'}</td>
                                     <td style="color:var(--text-dim)">${k.aciklama||'—'}</td>
@@ -3941,10 +3952,11 @@
                         </table>
                     </div>
                 </div>`;
+            } // end if(showUI) ekip
         } else {
             // PERSONEL MODU
             const isim = document.getElementById('df6PersonelInput').value.trim();
-            if (!isim) { showToast('⚠️ Personel adı giriniz', 'warn'); return; }
+            if (!isim) { if (showUI) showToast('⚠️ Personel adı giriniz', 'warn'); return; }
 
             const liste = kayitlar.filter(k =>
                 k.tarih >= donem.bas && k.tarih <= donem.bit &&
@@ -3962,8 +3974,9 @@
             const m3top = liste.reduce((s,k)=>s+(k.m3||0),0);
 
             _df6Rapor = { tur:'personel', baslik: tamIsim, sicilNo, liste, donemLabel: donem.label, tir, kamyon, konteyner, toplam, m3top };
-            document.getElementById('df6PdfBtn').style.display = 'block';
+            if (showUI) document.getElementById('df6PdfBtn').style.display = 'block';
 
+            if (showUI) {
             if (!liste.length) {
                     sonuc.innerHTML = `<div class="sef-bos"><div class="sef-bos-icon">🔍</div><div class="sef-bos-text">"${isim}" için kayıt bulunamadı</div></div>`;
                 return;
@@ -4005,49 +4018,58 @@
                         </table>
                     </div>
                 </div>`;
+            } // end if(showUI) personel
         }
     }
 
     // ── PDF ──
     function df6PdfIndir() {
-        // Önce sorgula
-        df6Sorgula();
+        // Önce sorgula (sadece veri hazırlık — UI'ya yazmaz)
+        df6Sorgula(false);
         const r = _df6Rapor;
         if (!r || !r.liste.length) { showToast('⚠️ Filtre seçin ve veri olduğundan emin olun', 'warn'); return; }
-        if (typeof window.jspdf === 'undefined') { showToast('⚠️ PDF yükleniyor','warn'); return; }
+        if (typeof window.jspdf === 'undefined') { showToast('⚠️ PDF yükleniyor, tekrar dene', 'warn'); return; }
 
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF({ orientation:'landscape', unit:'mm', format:'a4' });
         const mavi = [37,99,235];
         const sari = [217,119,6];
-        const W = 297; // landscape A4 genişliği
+        const W = 297;
         const MARGIN = 8;
-        const tableW = W - MARGIN * 2; // 281mm kullanılabilir
+        const tableW = W - MARGIN * 2;
 
-        // ── BAŞLIK ALANI ──
+        // ── BAŞLIK ALANI (taşmayan, satır sar) ──
         const turLabel = r.tur === 'ekip' ? 'EKİP RAPORU' : 'PERSONEL RAPORU';
-        // Başlığı max 2 satırda sığdır — uzun isimleri kes
-        doc.setFillColor(...mavi);
-        doc.rect(0, 0, W, 24, 'F');
-        doc.setTextColor(255,255,255);
+        const fullBaslik = turLabel + ': ' + r.baslik;
 
-        // Ana başlık: isim çok uzunsa küçült
-        const fullBaslik = `${turLabel}: ${r.baslik}`;
+        // Font boyutunu dinamik ayarla — taşmayacak şekilde
         doc.setFont('helvetica','bold');
-        let fs = 11;
+        let fs = 12;
         doc.setFontSize(fs);
-        // Genişliğe göre font küçült
-        while (doc.getTextWidth(fullBaslik) > W - 20 && fs > 7) {
+        while (doc.getTextWidth(fullBaslik) > W - 20 && fs > 6) {
             fs -= 0.5;
             doc.setFontSize(fs);
         }
-        doc.text(fullBaslik, W/2, 10, {align:'center', maxWidth: W - 16});
+        // Çok uzunsa sarmalayarak yaz (splitTextToSize)
+        const baslikSatirlar = doc.splitTextToSize(fullBaslik, W - 20);
+        const baslikYukseklik = baslikSatirlar.length * (fs * 0.4) + 10;
+        const headerH = Math.max(22, baslikYukseklik + 8);
+
+        doc.setFillColor(...mavi);
+        doc.rect(0, 0, W, headerH, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(fs);
+        doc.setFont('helvetica','bold');
+        // Başlık satırlarını ortaya hizala
+        baslikSatirlar.forEach((line, li) => {
+            doc.text(line, W/2, 9 + li * (fs * 0.42), { align: 'center' });
+        });
 
         doc.setFontSize(8); doc.setFont('helvetica','normal');
-        const altBaslik = `${r.donemLabel}${r.sicilNo ? '  ·  Sicil: ' + r.sicilNo : ''}`;
-        doc.text(altBaslik, W/2, 19, {align:'center'});
+        const altBaslik = r.donemLabel + (r.sicilNo ? '  ·  Sicil: ' + r.sicilNo : '');
+        doc.text(altBaslik, W/2, headerH - 4, { align: 'center' });
 
-        let y = 28;
+        let y = headerH + 4;
 
         // ── ÖZET KARTLAR ──
         const ozet = [
@@ -4057,12 +4079,12 @@
             {lbl:'TOPLAM',    val: r.toplam,           renk: [244,63,94]},
             {lbl:'TOPLAM M3', val: r.m3top.toFixed(1), renk: [34,197,94]},
         ];
-        const kw = (tableW) / 5 - 2;
+        const kw = tableW / 5 - 2;
         ozet.forEach((o, i) => {
             const x = MARGIN + i * (kw + 2);
             doc.setFillColor(245,247,255); doc.roundedRect(x, y, kw, 14, 1.5, 1.5, 'F');
             doc.setDrawColor(...o.renk); doc.setLineWidth(0.5); doc.roundedRect(x, y, kw, 14, 1.5, 1.5, 'S');
-            doc.setTextColor(...o.renk); doc.setFontSize(14); doc.setFont('helvetica','bold');
+            doc.setTextColor(...o.renk); doc.setFontSize(13); doc.setFont('helvetica','bold');
             doc.text(String(o.val), x + kw/2, y + 8, {align:'center'});
             doc.setTextColor(100,116,139); doc.setFontSize(6); doc.setFont('helvetica','normal');
             doc.text(o.lbl, x + kw/2, y + 13, {align:'center'});
@@ -4070,12 +4092,13 @@
         y += 18;
 
         // ── DETAY TABLO ──
-        const durusStr = k => (k.duruslar||[]).filter(d=>d.sure).map(d=>`${d.sebep}(${d.sure}dk)`).join(', ') || '—';
+        const durusStr = k => (k.duruslar||[]).filter(d=>d.sure).map(d=>d.sebep+'('+d.sure+'dk)').join(', ') || '—';
         const tarihFmt = t => {
             const dt = new Date(t + 'T00:00:00');
-            return `${String(dt.getDate()).padStart(2,'0')}.${String(dt.getMonth()+1).padStart(2,'0')}.${dt.getFullYear()}`;
+            return String(dt.getDate()).padStart(2,'0') + '.' + String(dt.getMonth()+1).padStart(2,'0') + '.' + dt.getFullYear();
         };
 
+        // Toplam satırı YOK — sadece veri satırları
         const dataBody = r.liste.map((k, i) => [
             i + 1,
             tarihFmt(k.tarih),
@@ -4083,29 +4106,16 @@
             k.aracTuru,
             k.m3 != null ? String(k.m3) : '—',
             k.shipment || '—',
-            `${k.baslama}-${k.bitis}`,
+            k.baslama + '-' + k.bitis,
+            k.gec ? 'Gecikti' : 'Uygun',
             k.kaliteci || '—',
             durusStr(k),
             k.aciklama || '—'
         ]);
 
-        // Toplam satırı — her hücre kendi sütununda doğru bilgiyle
-        dataBody.push([
-            '',
-            'TOPLAM',
-            `Tır: ${r.tir}  Kmy: ${r.kamyon}  Knt: ${r.konteyner}`,
-            '',
-            `${r.m3top.toFixed(1)}`,
-            '',
-            `${r.toplam} araç`,
-            '', '', ''
-        ]);
-
-        // Sütun genişlikleri: toplam 281mm
-        // #4  Tarih20  Tip22  Tur14  M312  Ship28  Saat22  Kalit22  Durus50  Acikl=auto
         doc.autoTable({
             startY: y,
-            head: [['#', 'Tarih', 'Araç Tipi', 'Tür', 'M³', 'Shipment', 'Saat', 'Kaliteci', 'Duruşlar', 'Açıklama']],
+            head: [['#', 'Tarih', 'Araç Tipi', 'Tür', 'M³', 'Shipment', 'Saat', 'Durum', 'Kaliteci', 'Duruşlar', 'Açıklama']],
             body: dataBody,
             theme: 'grid',
             headStyles: {
@@ -4125,23 +4135,32 @@
             },
             alternateRowStyles: { fillColor: [246, 248, 255] },
             columnStyles: {
-                0: { halign: 'center', cellWidth: 8 },
-                1: { cellWidth: 22, halign: 'center' },
-                2: { cellWidth: 25 },
-                3: { cellWidth: 15, halign: 'center' },
-                4: { cellWidth: 14, halign: 'center' },
-                5: { cellWidth: 30 },
-                6: { cellWidth: 24, halign: 'center' },
-                7: { cellWidth: 28 },
-                8: { cellWidth: 45 },
-                9: { cellWidth: 'auto' },
+                0: { halign: 'center', cellWidth: 7 },
+                1: { cellWidth: 20, halign: 'center' },
+                2: { cellWidth: 22 },
+                3: { cellWidth: 13, halign: 'center' },
+                4: { cellWidth: 12, halign: 'center' },
+                5: { cellWidth: 28 },
+                6: { cellWidth: 22, halign: 'center' },
+                7: { cellWidth: 18, halign: 'center' },
+                8: { cellWidth: 26 },
+                9: { cellWidth: 42 },
+                10: { cellWidth: 'auto' },
             },
             didParseCell: (data) => {
-                if (data.row.index === dataBody.length - 1) {
-                    data.cell.styles.fillColor = [30, 60, 180];
-                    data.cell.styles.textColor = 255;
-                    data.cell.styles.fontStyle = 'bold';
-                    data.cell.styles.fontSize  = 7.5;
+                // Satır rengi: Gecikti = açık kırmızı, Uygun = açık yeşil
+                if (data.section === 'body') {
+                    const isGec = r.liste[data.row.index] && r.liste[data.row.index].gec;
+                    if (isGec) {
+                        data.cell.styles.fillColor = [255, 235, 235];
+                    } else {
+                        data.cell.styles.fillColor = [235, 255, 240];
+                    }
+                    // Durum sütunu (index 7) bold renk
+                    if (data.column.index === 7) {
+                        data.cell.styles.textColor = isGec ? [185, 28, 28] : [21, 128, 61];
+                        data.cell.styles.fontStyle = 'bold';
+                    }
                 }
             },
             margin: { left: MARGIN, right: MARGIN },
@@ -4153,14 +4172,46 @@
             doc.setPage(i);
             doc.setFontSize(7); doc.setFont('helvetica','normal'); doc.setTextColor(150);
             doc.text(
-                `Sayfa ${i}/${pc}  ·  Ambar Yönetim Sistemi  ·  ${new Date().toLocaleDateString('tr-TR')}`,
+                'Sayfa ' + i + '/' + pc + '  ·  Ambar Yönetim Sistemi  ·  ' + new Date().toLocaleDateString('tr-TR'),
                 W/2, 206, { align: 'center' }
             );
         }
 
-        const safeName = (r.baslik || 'rapor').replace(/[^a-zA-Z0-9ğüşıöçĞÜŞİÖÇ\s]/g,'_').replace(/\s+/g,'_').substring(0,40);
+        const safeName = (r.baslik || 'rapor').replace(/[^a-zA-Z0-9]/g,'_').substring(0,40);
         const safeDon  = (r.donemLabel || '').replace(/[^a-zA-Z0-9]/g,'_');
-        doc.save(`DetayliFiltre_${safeName}_${safeDon}.pdf`);
+        doc.save('DetayliFiltre_' + safeName + '_' + safeDon + '.pdf');
+
+        // ── İNDİRME SONRASI: formu sıfırla, panel temizle, toast göster ──
+        df6Temizle();
+        showToast('✅ PDF başarıyla indirildi', 'success');
+    }
+
+    function df6Temizle() {
+        // Ekip listesini sıfırla
+        df6EkipListesi = [];
+        df6EkipTagRender();
+        document.getElementById('df6EkipInput').value = '';
+        document.getElementById('df6EkipDropdown').style.display = 'none';
+
+        // Personel inputu sıfırla
+        document.getElementById('df6PersonelInput').value = '';
+        document.getElementById('df6PersonelDropdown').style.display = 'none';
+
+        // Tarih inputlarını bugüne sıfırla
+        const now = new Date();
+        const bugun = now.toISOString().split('T')[0];
+        const ayStr = String(now.getMonth()+1).padStart(2,'0');
+        document.getElementById('df6Gun').value       = bugun;
+        document.getElementById('df6Ay').value        = now.getFullYear() + '-' + ayStr;
+        document.getElementById('df6Yil').value       = now.getFullYear();
+        document.getElementById('df6AralikBas').value = bugun;
+        document.getElementById('df6AralikBit').value = bugun;
+
+        // Raporu sıfırla
+        _df6Rapor = null;
+
+        // Sonuç paneli temizle
+        document.getElementById('df6Sonuc').innerHTML = '<div class="sef-bos"><div class="sef-bos-icon">🔍</div><div class="sef-bos-text">Filtre seçip PDF İndir\'e bas</div></div>';
     }
 
     function df6Init() {
