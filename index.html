@@ -3948,58 +3948,71 @@
         if (typeof window.jspdf === 'undefined') { showToast('⚠️ PDF yükleniyor','warn'); return; }
 
         const { jsPDF } = window.jspdf;
-        // Landscape A4
         const doc = new jsPDF({ orientation:'landscape', unit:'mm', format:'a4' });
         const mavi = [37,99,235];
         const sari = [217,119,6];
-        const W = 297; // landscape genişlik
+        const W = 297; // landscape A4 genişliği
+        const MARGIN = 8;
+        const tableW = W - MARGIN * 2; // 281mm kullanılabilir
 
-        // ── BAŞLIK ──
+        // ── BAŞLIK ALANI ──
+        const turLabel = r.tur === 'ekip' ? 'EKİP RAPORU' : 'PERSONEL RAPORU';
+        // Başlığı max 2 satırda sığdır — uzun isimleri kes
         doc.setFillColor(...mavi);
-        doc.rect(0, 0, W, 20, 'F');
+        doc.rect(0, 0, W, 24, 'F');
         doc.setTextColor(255,255,255);
-        doc.setFontSize(12); doc.setFont('helvetica','bold');
-        const tur = r.tur === 'ekip' ? 'EKİP RAPORU' : 'PERSONEL RAPORU';
-        doc.text(`${tur}: ${r.baslik}`, W/2, 9, {align:'center'});
+
+        // Ana başlık: isim çok uzunsa küçült
+        const fullBaslik = `${turLabel}: ${r.baslik}`;
+        doc.setFont('helvetica','bold');
+        let fs = 11;
+        doc.setFontSize(fs);
+        // Genişliğe göre font küçült
+        while (doc.getTextWidth(fullBaslik) > W - 20 && fs > 7) {
+            fs -= 0.5;
+            doc.setFontSize(fs);
+        }
+        doc.text(fullBaslik, W/2, 10, {align:'center', maxWidth: W - 16});
+
         doc.setFontSize(8); doc.setFont('helvetica','normal');
         const altBaslik = `${r.donemLabel}${r.sicilNo ? '  ·  Sicil: ' + r.sicilNo : ''}`;
-        doc.text(altBaslik, W/2, 16, {align:'center'});
+        doc.text(altBaslik, W/2, 19, {align:'center'});
 
-        let y = 24;
+        let y = 28;
 
-        // ── ÖZET KARTLAR (5 kutu, yatay) ──
+        // ── ÖZET KARTLAR ──
         const ozet = [
-            {lbl:'TIR',      val: r.tir,            renk: mavi},
-            {lbl:'KAMYON',   val: r.kamyon,          renk: sari},
-            {lbl:'KONTEYNER',val: r.konteyner,       renk: [139,92,246]},
-            {lbl:'TOPLAM',   val: r.toplam,          renk: [244,63,94]},
-            {lbl:'TOPLAM M³',val: r.m3top.toFixed(1),renk: [34,197,94]},
+            {lbl:'TIR',       val: r.tir,             renk: mavi},
+            {lbl:'KAMYON',    val: r.kamyon,           renk: sari},
+            {lbl:'KONTEYNER', val: r.konteyner,        renk: [139,92,246]},
+            {lbl:'TOPLAM',    val: r.toplam,           renk: [244,63,94]},
+            {lbl:'TOPLAM M3', val: r.m3top.toFixed(1), renk: [34,197,94]},
         ];
-        const kw = (W - 20) / 5 - 2;
+        const kw = (tableW) / 5 - 2;
         ozet.forEach((o, i) => {
-            const x = 10 + i * (kw + 2);
+            const x = MARGIN + i * (kw + 2);
             doc.setFillColor(245,247,255); doc.roundedRect(x, y, kw, 14, 1.5, 1.5, 'F');
             doc.setDrawColor(...o.renk); doc.setLineWidth(0.5); doc.roundedRect(x, y, kw, 14, 1.5, 1.5, 'S');
-            doc.setTextColor(...o.renk); doc.setFontSize(13); doc.setFont('helvetica','bold');
-            doc.text(String(o.val), x + kw/2, y + 7.5, {align:'center'});
-            doc.setTextColor(100,116,139); doc.setFontSize(5.5); doc.setFont('helvetica','normal');
-            doc.text(o.lbl, x + kw/2, y + 12.5, {align:'center'});
+            doc.setTextColor(...o.renk); doc.setFontSize(14); doc.setFont('helvetica','bold');
+            doc.text(String(o.val), x + kw/2, y + 8, {align:'center'});
+            doc.setTextColor(100,116,139); doc.setFontSize(6); doc.setFont('helvetica','normal');
+            doc.text(o.lbl, x + kw/2, y + 13, {align:'center'});
         });
         y += 18;
 
-        // ── DETAY TABLO (compact, ufak font, satır aralığı az) ──
+        // ── DETAY TABLO ──
         const durusStr = k => (k.duruslar||[]).filter(d=>d.sure).map(d=>`${d.sebep}(${d.sure}dk)`).join(', ') || '—';
         const tarihFmt = t => {
             const dt = new Date(t + 'T00:00:00');
             return `${String(dt.getDate()).padStart(2,'0')}.${String(dt.getMonth()+1).padStart(2,'0')}.${dt.getFullYear()}`;
         };
 
-        const body = r.liste.map((k, i) => [
+        const dataBody = r.liste.map((k, i) => [
             i + 1,
             tarihFmt(k.tarih),
             k.aracTipi,
             k.aracTuru,
-            k.m3 != null ? k.m3 : '—',
+            k.m3 != null ? String(k.m3) : '—',
             k.shipment || '—',
             `${k.baslama}-${k.bitis}`,
             k.kaliteci || '—',
@@ -4007,65 +4020,78 @@
             k.aciklama || '—'
         ]);
 
-        // Toplam satırı
-        body.push([
-            '', 'TOPLAM',
-            `Tır:${r.tir} Kmyn:${r.kamyon} Knt:${r.konteyner}`,
-            '', `${r.m3top.toFixed(1)} m³`,
-            '', `${r.toplam} araç`, '', '', ''
+        // Toplam satırı — her hücre kendi sütununda doğru bilgiyle
+        dataBody.push([
+            '',
+            'TOPLAM',
+            `Tır: ${r.tir}  Kmy: ${r.kamyon}  Knt: ${r.konteyner}`,
+            '',
+            `${r.m3top.toFixed(1)}`,
+            '',
+            `${r.toplam} araç`,
+            '', '', ''
         ]);
 
+        // Sütun genişlikleri: toplam 281mm
+        // #4  Tarih20  Tip22  Tur14  M312  Ship28  Saat22  Kalit22  Durus50  Acikl=auto
         doc.autoTable({
             startY: y,
-            head: [['#','Tarih','Araç Tipi','Tür','M³','Shipment','Saat','Kaliteci','Duruşlar','Açıklama']],
-            body,
+            head: [['#', 'Tarih', 'Araç Tipi', 'Tür', 'M³', 'Shipment', 'Saat', 'Kaliteci', 'Duruşlar', 'Açıklama']],
+            body: dataBody,
             theme: 'grid',
             headStyles: {
-                fillColor: mavi, textColor: 255,
-                fontStyle: 'bold', fontSize: 7,
-                cellPadding: { top: 2, bottom: 2, left: 1.5, right: 1.5 }
+                fillColor: mavi,
+                textColor: 255,
+                fontStyle: 'bold',
+                fontSize: 7.5,
+                cellPadding: { top: 2.5, bottom: 2.5, left: 2, right: 2 },
+                halign: 'center',
             },
             bodyStyles: {
-                fontSize: 6.5,
-                cellPadding: { top: 1.2, bottom: 1.2, left: 1.5, right: 1.5 },
-                lineColor: [220, 225, 235],
-                lineWidth: 0.1
+                fontSize: 7,
+                cellPadding: { top: 1.8, bottom: 1.8, left: 2, right: 2 },
+                lineColor: [210, 218, 235],
+                lineWidth: 0.15,
+                valign: 'middle',
             },
-            alternateRowStyles: { fillColor: [247, 249, 255] },
+            alternateRowStyles: { fillColor: [246, 248, 255] },
             columnStyles: {
-                0: { halign:'center', cellWidth: 7 },
-                1: { cellWidth: 20 },
-                2: { cellWidth: 20 },
-                3: { cellWidth: 14 },
-                4: { halign:'center', cellWidth: 12 },
-                5: { cellWidth: 22 },
-                6: { cellWidth: 22 },
-                7: { cellWidth: 22 },
-                8: { cellWidth: 28 },
-                9: { cellWidth: 'auto' }
+                0: { halign: 'center', cellWidth: 8 },
+                1: { cellWidth: 22, halign: 'center' },
+                2: { cellWidth: 25 },
+                3: { cellWidth: 15, halign: 'center' },
+                4: { cellWidth: 14, halign: 'center' },
+                5: { cellWidth: 30 },
+                6: { cellWidth: 24, halign: 'center' },
+                7: { cellWidth: 28 },
+                8: { cellWidth: 45 },
+                9: { cellWidth: 'auto' },
             },
             didParseCell: (data) => {
-                // Son satır = toplam
-                if (data.row.index === body.length - 1) {
-                    data.cell.styles.fillColor = [37, 99, 235];
+                if (data.row.index === dataBody.length - 1) {
+                    data.cell.styles.fillColor = [30, 60, 180];
                     data.cell.styles.textColor = 255;
                     data.cell.styles.fontStyle = 'bold';
-                    data.cell.styles.fontSize   = 7;
+                    data.cell.styles.fontSize  = 7.5;
                 }
             },
-            margin: { left: 8, right: 8 },
+            margin: { left: MARGIN, right: MARGIN },
         });
 
-        // Alt sayfa numarası
+        // Alt bilgi
         const pc = doc.internal.getNumberOfPages();
         for (let i = 1; i <= pc; i++) {
             doc.setPage(i);
-            doc.setFontSize(6.5); doc.setTextColor(160);
-            doc.text(`Sayfa ${i}/${pc}  ·  Ambar Yönetim Sistemi  ·  ${new Date().toLocaleDateString('tr-TR')}`, W/2, 205, {align:'center'});
+            doc.setFontSize(7); doc.setFont('helvetica','normal'); doc.setTextColor(150);
+            doc.text(
+                `Sayfa ${i}/${pc}  ·  Ambar Yönetim Sistemi  ·  ${new Date().toLocaleDateString('tr-TR')}`,
+                W/2, 206, { align: 'center' }
+            );
         }
 
-        const dosyaAd = `DetayliFiltره_${r.baslik.replace(/[^a-zA-Z0-9ğüşıöçĞÜŞİÖÇ\s]/g,'_').replace(/\s+/g,'_')}_${r.donemLabel.replace(/[^a-zA-Z0-9]/g,'_')}.pdf`;
-        doc.save(dosyaAd);
+        const safeName = (r.baslik || 'rapor').replace(/[^a-zA-Z0-9ğüşıöçĞÜŞİÖÇ\s]/g,'_').replace(/\s+/g,'_').substring(0,40);
+        const safeDon  = (r.donemLabel || '').replace(/[^a-zA-Z0-9]/g,'_');
+        doc.save(`DetayliFiltre_${safeName}_${safeDon}.pdf`);
     }
 
     function df6Init() {
