@@ -368,13 +368,13 @@
         .ekip-card-name { font-size:13px;font-weight:800;color:var(--text);flex:1; }
         .ekip-card-badges { display:flex;gap:6px;align-items:center;flex-wrap:wrap; }
         .ekip-mini-badge { display:inline-flex;align-items:center;gap:4px; padding:3px 10px;border-radius:100px; font-size:11px;font-weight:800; }
-        .data-table { width:100%;border-collapse:collapse;font-size:12px; }
+        .data-table { width:100%;border-collapse:collapse;font-size:11px; } .data-table td { font-weight:400; }
         .data-table thead tr { background:var(--glass);border-bottom:1px solid var(--glass-border); }
-        .data-table th { padding:10px 12px;text-align:left;font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);white-space:nowrap; }
+        .data-table th { padding:5px 10px;text-align:left;font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);white-space:nowrap; }
         .data-table tbody tr { border-bottom:1px solid rgba(255,255,255,0.03);transition:background 0.15s;cursor:pointer; }
         .data-table tbody tr:hover { background:rgba(255,255,255,0.04); }
         .data-table tbody tr.selected { background:rgba(251,191,36,0.06);outline:1px solid rgba(251,191,36,0.2); }
-        .data-table td { padding:10px 12px;vertical-align:middle; }
+        .data-table td { padding:5px 10px;vertical-align:middle; }
         .badge { display:inline-block;padding:2px 8px;border-radius:100px;font-size:10px;font-weight:800;letter-spacing:0.5px; }
         .badge-tir       { background:rgba(59,130,246,0.15);color:#60a5fa;border:1px solid rgba(59,130,246,0.3); }
         .badge-kamyon    { background:rgba(251,191,36,0.12);color:#fbbf24;border:1px solid rgba(251,191,36,0.3); }
@@ -864,8 +864,9 @@
             </div>
             <div class="input-group">
                 <div class="input-label">Forkliftçi <span class="opt">(opsiyonel)</span></div>
-                <input type="text" id="forkliftci" class="text-input" tabindex="14" placeholder="FORKLİFTÇİ ADI"
-                    oninput="this.value=this.value.toUpperCase()">
+                <select id="forkliftci" class="text-input" tabindex="14" style="cursor:pointer;">
+                    <option value="">— Seçiniz —</option>
+                </select>
             </div>
 
             <div class="form-section-title">Duruşlar <span style="font-weight:500;color:var(--muted);text-transform:none;letter-spacing:0;font-size:9px;">(opsiyonel)</span></div>
@@ -898,17 +899,12 @@
                     <div class="table-count" id="kayitCount">0 kayıt</div>
                 </div>
             </div>
-            <div class="summary-cards">
-                <div class="summary-card"><div class="summary-num" style="color:var(--blue-light)" id="sumTir">0</div><div class="summary-lbl">Tır</div></div>
-                <div class="summary-card"><div class="summary-num" style="color:var(--yellow)" id="sumKamyon">0</div><div class="summary-lbl">Kamyon</div></div>
-                <div class="summary-card"><div class="summary-num" style="color:#a78bfa" id="sumKonteyner">0</div><div class="summary-lbl">Konteyner</div></div>
-                <div class="summary-card"><div class="summary-num" style="color:#ef4444;animation:pulseRed 2.5s ease-in-out infinite" id="sumArac">0</div><div class="summary-lbl">Toplam Araç</div></div>
-                <div class="summary-card"><div class="summary-num" style="color:var(--success)" id="sumM3">0</div><div class="summary-lbl">Toplam M³</div></div>
+            <!-- Hidden summary elements (JS referanslari icin) -->
+            <div style="display:none;">
+                <span id="sumTir">0</span><span id="sumKamyon">0</span>
+                <span id="sumKonteyner">0</span><span id="sumArac">0</span><span id="sumM3">0</span>
             </div>
-            <div id="ekipOzetWrap" style="display:none;margin-bottom:20px;">
-                <div style="font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--glass-border);">Ekip Özeti</div>
-                <div id="ekipOzetBody"></div>
-            </div>
+            <div id="ekipOzetWrap" style="display:none;"><div id="ekipOzetBody"></div></div>
 
             <!-- Tarihli yükleme listesi başlığı -->
             <div id="yuklemeListesiBaslik" style="display:flex;align-items:center;gap:12px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--glass-border);">
@@ -1465,6 +1461,14 @@
         };
     }
 
+    function forkliftciDropdownGuncelle() {
+        const sel = document.getElementById('forkliftci');
+        if (!sel) return;
+        const mevcutVal = sel.value;
+        sel.innerHTML = '<option value="">— Seçiniz —</option>' +
+            personelListesi.map(p => `<option value="${p.ad}"${p.ad===mevcutVal?' selected':''}>${p.ad}</option>`).join('');
+    }
+
     function personelListeRender() {
         const filtre = (document.getElementById('personelAra')?.value || '').toUpperCase();
         const liste = personelListesi.filter(p => p.ad.includes(filtre) || p.sicil.includes(filtre));
@@ -1473,6 +1477,7 @@
         const sayac = document.getElementById('personelSayac');
         if (!tbody) return;
         if (sayac) sayac.textContent = '(' + personelListesi.length + ' kişi)';
+        forkliftciDropdownGuncelle();
         if (liste.length === 0) {
             tbody.innerHTML = '';
             if (empty) empty.style.display = 'block';
@@ -1534,7 +1539,10 @@
         const input = document.getElementById('ekip');
         const parts = input.value.toUpperCase().split(',');
         parts[parts.length - 1] = ' ' + ad;
-        input.value = parts.join(',').replace(/^,\s*/, '') + ', ';
+        const joined = parts.join(',').replace(/^,\s*/, '');
+        // 4. kişiden sonra virgül ekleme
+        const sayim = joined.split(',').filter(s => s.trim()).length;
+        input.value = sayim >= 4 ? joined : joined + ', ';
         document.getElementById('ekipDropdown').style.display = 'none';
         _acDropdownIdx = -1;
         input.focus();
@@ -1916,7 +1924,7 @@
             const grp = ekipGruplari[key];
             // Ekip başlığı satırı
             tableHTML += `<tr class="ekip-grup-baslik">
-                <td colspan="7" style="padding:8px 12px 4px 12px;">
+                <td colspan="7" style="padding:4px 10px 2px 10px;">
                     <div style="display:flex;align-items:center;gap:8px;">
                         <span style="font-size:11px;font-weight:900;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);">👥 ${grp.ad}</span>
                         <div style="flex:1;height:1px;background:var(--glass-border);"></div>
@@ -1929,7 +1937,7 @@
                 tableHTML += `<tr class="${duzenleId===k.id?'selected':''}" data-id="${k.id}" onclick="formDoldur(${JSON.stringify(k).replace(/"/g,'&quot;')})">
                     <td style="color:var(--muted);font-size:11px;">${siraNo}</td>
                     <td><span style="font-size:10px;font-weight:800;color:${k.vardiya==='A Vardiyası'?'var(--blue-light)':'var(--yellow)'};">${k.vardiya==='A Vardiyası'?'A':'B'}</span></td>
-                    <td style="font-weight:700;font-size:11px;">${k.ekip}</td>
+                    <td style="font-weight:400;font-size:11px;">${k.ekip}</td>
                     <td><span class="badge ${tipBadge}">${k.aracTipi}</span></td>
                     <td style="color:var(--text-dim);font-size:11px;">${k.baslama} - ${k.bitis}</td>
                     <td>${durum}</td>
