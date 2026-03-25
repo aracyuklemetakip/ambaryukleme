@@ -2442,89 +2442,47 @@
         const ekipler = Object.values(ekipMap).sort((a,b) => b.kayitlar.length - a.kayitlar.length);
         window._ekipRapor = { ekipler, donemLabel: donem.label, vardiya: e2Vardiya, liste };
 
-        if (e2Donem === 'yil' || e2Donem === 'ay' || e2Donem === 'aralik') {
-            // ══ ÖZET TABLO (Yıllık/Aylık/Aralık) ══
+        if (e2Donem === 'yil') {
+            // ══ YILLIK: ay bazlı tablo ══
             const AYLAR = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
-            const isYillik = e2Donem === 'yil';
-
-            // tarih-ekip bazlı grupla
-            // Yıllık → ay bazlı, Aylık/Aralık → gün bazlı
             const grupMap = {};
             sirali.forEach(k => {
                 const dt = new Date(k.tarih + 'T00:00:00');
                 const ek = ekipKey(k.ekip);
-                let grupLabel, grupSira;
-                if (isYillik) {
-                    const ay = dt.getMonth();
-                    grupLabel = AYLAR[ay];
-                    grupSira = ay * 10000;
-                } else {
-                    const gun = String(dt.getDate()).padStart(2,'0');
-                    const ay  = String(dt.getMonth()+1).padStart(2,'0');
-                    const yil = dt.getFullYear();
-                    grupLabel = `${gun}.${ay}.${yil}`;
-                    grupSira = dt.getTime();
-                }
-                const key = `${grupSira}_${ek}`;
-                if (!grupMap[key]) grupMap[key] = { grupLabel, grupSira, ekipAd: k.ekip, tir:0, kamyon:0, konteyner:0, m3:0, toplam:0 };
+                const ay = dt.getMonth();
+                const key = `${ay}_${ek}`;
+                if (!grupMap[key]) grupMap[key] = { grupLabel: AYLAR[ay], grupSira: ay, ekipAd: k.ekip, tir:0, kamyon:0, konteyner:0, m3:0, toplam:0 };
                 if (k.aracTipi==='Tır') grupMap[key].tir++;
                 else if (k.aracTipi==='Kamyon') grupMap[key].kamyon++;
                 else grupMap[key].konteyner++;
                 grupMap[key].m3 += (k.m3||0);
                 grupMap[key].toplam++;
             });
-
-            // Sıralama: tarih sırası, aynı tarihte en çok yükleyen ekip önce
-            const satirlar = Object.values(grupMap).sort((a,b) => {
-                if (a.grupSira !== b.grupSira) return a.grupSira - b.grupSira;
-                return b.toplam - a.toplam;
-            });
-
-            // Genel toplam
-            const genTir = ekipler.reduce((s,e)=>s+e.tir,0);
-            const genKamyon = ekipler.reduce((s,e)=>s+e.kamyon,0);
-            const genKonteyner = ekipler.reduce((s,e)=>s+e.konteyner,0);
-            const genToplam = ekipler.reduce((s,e)=>s+e.kayitlar.length,0);
+            const satirlar = Object.values(grupMap).sort((a,b) => a.grupSira !== b.grupSira ? a.grupSira - b.grupSira : b.toplam - a.toplam);
+            const genTir = ekipler.reduce((s,e)=>s+e.tir,0), genKamyon = ekipler.reduce((s,e)=>s+e.kamyon,0);
+            const genKonteyner = ekipler.reduce((s,e)=>s+e.konteyner,0), genToplam = ekipler.reduce((s,e)=>s+e.kayitlar.length,0);
             const genM3 = ekipler.reduce((s,e)=>s+e.m3,0);
-            const toplamLabel = isYillik ? 'YILLIK TOPLAM' : 'GENEL TOPLAM';
-            const kolonBaslik = isYillik ? 'Ay' : 'Tarih';
-
             sonuc.innerHTML = `
                 <div class="donem-badge">📅 ${donem.label}${e2Vardiya !== 'hepsi' ? ' · ' + e2Vardiya : ''} · ${genToplam} araç</div>
-                <div class="sef-bolum">
-                    <div style="overflow-x:auto;">
-                        <table class="data-table" style="font-size:12px;">
-                            <thead><tr>
-                                <th>${kolonBaslik}</th>
-                                <th>Ekip</th>
-                                <th style="color:var(--blue-light)">Tır</th>
-                                <th style="color:var(--yellow)">Kamyon</th>
-                                <th style="color:#a78bfa">Konteyner</th>
-                                <th style="color:#f472b6">Toplam</th>
-                                <th style="color:var(--success)">M³</th>
-                            </tr></thead>
-                            <tbody>
-                                ${satirlar.map(r => `<tr>
-                                    <td style="font-weight:800;color:var(--text-dim);white-space:nowrap;">${r.grupLabel}</td>
-                                    <td style="font-weight:700;">${r.ekipAd}</td>
-                                    <td style="color:var(--blue-light);font-weight:700;">${r.tir||'—'}</td>
-                                    <td style="color:var(--yellow);font-weight:700;">${r.kamyon||'—'}</td>
-                                    <td style="color:#a78bfa;font-weight:700;">${r.konteyner||'—'}</td>
-                                    <td style="color:#f472b6;font-weight:800;">${r.toplam}</td>
-                                    <td style="color:var(--success);font-weight:700;">${r.m3.toFixed(1)}</td>
-                                </tr>`).join('')}
-                                <tr style="background:rgba(37,99,235,0.15);border-top:2px solid rgba(37,99,235,0.4);">
-                                    <td style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:900;color:var(--blue-light);" colspan="2">${toplamLabel}</td>
-                                    <td style="font-weight:900;color:var(--blue-light);">${genTir}</td>
-                                    <td style="font-weight:900;color:var(--yellow);">${genKamyon}</td>
-                                    <td style="font-weight:900;color:#a78bfa;">${genKonteyner}</td>
-                                    <td style="font-weight:900;color:#f472b6;">${genToplam}</td>
-                                    <td style="font-weight:900;color:var(--success);">${genM3.toFixed(1)}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>`;
+                <div class="sef-bolum"><div style="overflow-x:auto;"><table class="data-table" style="font-size:12px;">
+                    <thead><tr><th>Ay</th><th>Ekip</th><th style="color:var(--blue-light)">Tır</th><th style="color:var(--yellow)">Kamyon</th><th style="color:#a78bfa">Konteyner</th><th style="color:#f472b6">Toplam</th><th style="color:var(--success)">M³</th></tr></thead>
+                    <tbody>
+                        ${satirlar.map(r=>`<tr><td style="font-weight:700;color:var(--text-dim);">${r.grupLabel}</td><td style="font-weight:400;font-size:11px;">${r.ekipAd}</td><td style="color:var(--blue-light);font-weight:700;">${r.tir||'—'}</td><td style="color:var(--yellow);font-weight:700;">${r.kamyon||'—'}</td><td style="color:#a78bfa;font-weight:700;">${r.konteyner||'—'}</td><td style="color:#f472b6;font-weight:800;">${r.toplam}</td><td style="color:var(--success);font-weight:700;">${r.m3.toFixed(1)}</td></tr>`).join('')}
+                        <tr style="background:rgba(37,99,235,0.15);border-top:2px solid rgba(37,99,235,0.4);"><td style="font-weight:900;color:var(--blue-light);" colspan="2">YILLIK TOPLAM</td><td style="font-weight:900;color:var(--blue-light);">${genTir}</td><td style="font-weight:900;color:var(--yellow);">${genKamyon}</td><td style="font-weight:900;color:#a78bfa;">${genKonteyner}</td><td style="font-weight:900;color:#f472b6;">${genToplam}</td><td style="font-weight:900;color:var(--success);">${genM3.toFixed(1)}</td></tr>
+                    </tbody></table></div></div>`;
+        } else if (e2Donem === 'ay' || e2Donem === 'aralik') {
+            // ══ AYLIK/ARALIK: Ekip bazlı toplam (tarih göstermeden) ══
+            const genTir = ekipler.reduce((s,e)=>s+e.tir,0), genKamyon = ekipler.reduce((s,e)=>s+e.kamyon,0);
+            const genKonteyner = ekipler.reduce((s,e)=>s+e.konteyner,0), genToplam = ekipler.reduce((s,e)=>s+e.kayitlar.length,0);
+            const genM3 = ekipler.reduce((s,e)=>s+e.m3,0);
+            sonuc.innerHTML = `
+                <div class="donem-badge">📅 ${donem.label}${e2Vardiya !== 'hepsi' ? ' · ' + e2Vardiya : ''} · ${genToplam} araç</div>
+                <div class="sef-bolum"><div style="overflow-x:auto;"><table class="data-table" style="font-size:12px;">
+                    <thead><tr><th>Ekip</th><th style="color:var(--blue-light)">Tır</th><th style="color:var(--yellow)">Kamyon</th><th style="color:#a78bfa">Konteyner</th><th style="color:#f472b6">Toplam</th><th style="color:var(--success)">M³</th></tr></thead>
+                    <tbody>
+                        ${ekipler.map(e=>`<tr><td style="font-weight:400;font-size:11px;">${e.ad}</td><td style="color:var(--blue-light);font-weight:700;">${e.tir||'—'}</td><td style="color:var(--yellow);font-weight:700;">${e.kamyon||'—'}</td><td style="color:#a78bfa;font-weight:700;">${e.konteyner||'—'}</td><td style="color:#f472b6;font-weight:800;">${e.kayitlar.length}</td><td style="color:var(--success);font-weight:700;">${e.m3.toFixed(1)}</td></tr>`).join('')}
+                        <tr style="background:rgba(37,99,235,0.15);border-top:2px solid rgba(37,99,235,0.4);"><td style="font-weight:900;color:var(--blue-light);">GENEL TOPLAM</td><td style="font-weight:900;color:var(--blue-light);">${genTir}</td><td style="font-weight:900;color:var(--yellow);">${genKamyon}</td><td style="font-weight:900;color:#a78bfa;">${genKonteyner}</td><td style="font-weight:900;color:#f472b6;">${genToplam}</td><td style="font-weight:900;color:var(--success);">${genM3.toFixed(1)}</td></tr>
+                    </tbody></table></div></div>`;
         } else {
             // ══ GÜNLÜK / AYLIK / ARALIK: Detay ══
             sonuc.innerHTML = `
@@ -2532,7 +2490,7 @@
                 ${ekipler.map(ekip => `
                     <div class="sef-bolum" style="margin-bottom:16px;">
                         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
-                            <div style="font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:900;color:var(--text);">${ekip.ad}</div>
+                            <div style="font-size:13px;font-weight:400;color:var(--text);">${ekip.ad}</div>
                             <div style="display:flex;gap:6px;flex-wrap:wrap;">
                                 ${ekip.tir>0?`<span class="stat-pill badge-tir">🚛 ${ekip.tir} Tır</span>`:''}
                                 ${ekip.kamyon>0?`<span class="stat-pill badge-kamyon">🚚 ${ekip.kamyon} Kamyon</span>`:''}
@@ -2796,11 +2754,15 @@
             return;
         }
 
-        // O ismin geçtiği tüm kayıtları bul (A ve B vardiyası dahil)
+        // O ismin geçtiği tüm kayıtları bul (virgülle ayrılmış isimler içinde ara)
         const liste = kayitlar.filter(k =>
             k.tarih >= donem.bas && k.tarih <= donem.bit &&
-            k.ekip.toUpperCase().split(/\s+/).includes(isim)
+            k.ekip.toUpperCase().split(',').map(s=>s.trim()).some(ad => turkceNormalize(ad).includes(turkceNormalize(isim)))
         ).sort((a,b) => a.id - b.id);
+        // Personelin sicil nosunu bul
+        const bulunanPersonel = personelListesi.find(p => turkceNormalize(p.ad).includes(turkceNormalize(isim)));
+        const sicilNo = bulunanPersonel ? bulunanPersonel.sicil : '';
+        const tamIsim = bulunanPersonel ? bulunanPersonel.ad : isim;
 
         if (liste.length === 0) {
             btn3.style.display = 'none';
@@ -2824,7 +2786,7 @@
             : '—';
 
         sonuc.innerHTML = `
-            <div class="donem-badge">👤 ${isim} · 📅 ${donem.label}</div>
+            <div class="donem-badge">👤 ${tamIsim}${sicilNo ? ' · <span style="font-size:11px;opacity:0.7;">Sicil: '+sicilNo+'</span>' : ''} · 📅 ${donem.label}</div>
 
             <!-- Özet kartlar -->
             <div class="vd-panel" style="margin-bottom:16px;">
