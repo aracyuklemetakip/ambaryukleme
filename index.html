@@ -1237,7 +1237,7 @@
 
                     <!-- SOL: PERSONEL EKLE FORMU -->
                     <div class="sef-bolum">
-                        <div class="sef-bolum-baslik">➕ Personel Ekle</div>
+                        <div class="sef-bolum-baslik" id="personelFormBaslik">➕ Personel Ekle / Güncelle</div>
                         <div style="display:flex;flex-direction:column;gap:12px;">
                             <div class="filtre-group">
                                 <div class="filtre-label">Ad Soyad</div>
@@ -1249,7 +1249,8 @@
                                 <div class="filtre-label">Sicil No</div>
                                 <input type="text" id="yeniPersonelSicil" class="filtre-input" placeholder="Buraya giriniz" style="width:100%;">
                             </div>
-                            <button onclick="personelEkle()" style="width:100%;padding:12px;border-radius:10px;border:1px solid rgba(34,197,94,0.5);background:rgba(34,197,94,0.12);color:#4ade80;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;letter-spacing:1px;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.background='rgba(34,197,94,0.22)'" onmouseout="this.style.background='rgba(34,197,94,0.12)'">💾 KAYDET</button>
+                            <button id="personelKaydetBtn" onclick="personelEkle()" style="width:100%;padding:12px;border-radius:10px;border:1px solid rgba(34,197,94,0.5);background:rgba(34,197,94,0.12);color:#4ade80;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;letter-spacing:1px;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.background='rgba(34,197,94,0.22)'" onmouseout="this.style.background='rgba(34,197,94,0.12)'">💾 KAYDET</button>
+                            <button id="personelGuncelleIptal" onclick="personelGuncelleSifirla()" style="display:none;width:100%;padding:10px;border-radius:10px;border:1px solid rgba(148,163,184,0.3);background:rgba(148,163,184,0.08);color:#94a3b8;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:900;letter-spacing:1px;cursor:pointer;margin-top:6px;">✕ İPTAL</button>
                             <div id="personelFormMsg" style="display:none;font-size:12px;font-weight:700;text-align:center;padding:8px;border-radius:8px;"></div>
                         </div>
                     </div>
@@ -1294,7 +1295,7 @@
                             <div style="font-size:10px;color:var(--muted);margin-bottom:8px;">Virgülle ayırarak birden fazla isim girin</div>
                             <div style="position:relative;">
                                 <input type="text" id="df6EkipInput" class="filtre-input" style="width:100%;"
-                                    placeholder="İsim yazın..."
+                                    placeholder="İsim yazın, virgülle ayırın..."
                                     oninput="df6EkipAutocomplete(this)"
                                     onkeydown="df6EkipKeyDown(event)"
                                     autocomplete="off">
@@ -1350,8 +1351,7 @@
                         </div>
 
                         <!-- BUTONLAR -->
-                        <button onclick="df6Sorgula()" style="width:100%;padding:13px;border-radius:12px;border:1px solid rgba(59,130,246,0.5);background:rgba(37,99,235,0.15);color:var(--blue-light);font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;letter-spacing:1px;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.background='rgba(37,99,235,0.28)'" onmouseout="this.style.background='rgba(37,99,235,0.15)'">🔍 SORGULA</button>
-                        <button id="df6PdfBtn" onclick="df6PdfIndir()" style="display:none;width:100%;padding:13px;border-radius:12px;border:1px solid rgba(34,197,94,0.5);background:rgba(34,197,94,0.12);color:#4ade80;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;letter-spacing:1px;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.background='rgba(34,197,94,0.25)'" onmouseout="this.style.background='rgba(34,197,94,0.12)'">📥 PDF İNDİR</button>
+                        <button id="df6PdfBtn" onclick="df6PdfIndir()" style="width:100%;padding:13px;border-radius:12px;border:1px solid rgba(34,197,94,0.5);background:rgba(34,197,94,0.12);color:#4ade80;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;letter-spacing:1px;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.background='rgba(34,197,94,0.25)'" onmouseout="this.style.background='rgba(34,197,94,0.12)'">📥 PDF İNDİR</button>
                     </div>
 
                     <!-- SAĞ: SONUÇ -->
@@ -1359,7 +1359,7 @@
                         <div id="df6Sonuc">
                             <div class="sef-bos">
                                 <div class="sef-bos-icon">🔍</div>
-                                <div class="sef-bos-text">Filtre seçip Sorgula'ya bas</div>
+                                <div class="sef-bos-text">Filtre seçip PDF İndir'e bas</div>
                             </div>
                         </div>
                     </div>
@@ -1558,15 +1558,83 @@
         }
         if (empty) empty.style.display = 'none';
         tbody.innerHTML = liste.map((p, i) => `
-            <tr>
+            <tr id="personelRow_${p.sicil}" onclick="personelDuzenlemeSec('${p.sicil.replace(/'/g,"\\'")}')" style="cursor:pointer;transition:background 0.15s;" onmouseover="this.style.background='rgba(59,130,246,0.08)'" onmouseout="this.style.background=''">
                 <td style="color:var(--muted);font-size:11px;">${i+1}</td>
                 <td style="font-weight:700;">${p.ad}</td>
                 <td style="color:var(--blue-light);font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:900;">${p.sicil}</td>
-                <td><button onclick="personelSil('${p.sicil}')" style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:#f87171;border-radius:6px;padding:3px 8px;cursor:pointer;font-size:11px;font-weight:700;">SİL</button></td>
+                <td onclick="event.stopPropagation()"><button onclick="personelSil('${p.sicil}')" style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:#f87171;border-radius:6px;padding:3px 8px;cursor:pointer;font-size:11px;font-weight:700;">SİL</button></td>
             </tr>`).join('');
     }
 
     function personelListeFiltre() { personelListeRender(); }
+
+    // ── PERSONEL DÜZENLEME SEÇ ──
+    let _personelDuzenleSicil = null;
+    function personelDuzenlemeSec(sicil) {
+        const p = personelListesi.find(x => x.sicil === sicil);
+        if (!p) return;
+        _personelDuzenleSicil = sicil;
+        document.getElementById('yeniPersonelAd').value = p.ad;
+        document.getElementById('yeniPersonelSicil').value = p.sicil;
+        const baslik = document.getElementById('personelFormBaslik');
+        if (baslik) baslik.textContent = '✏️ Personel Güncelle';
+        const btnEl = document.getElementById('personelKaydetBtn');
+        if (btnEl) { btnEl.textContent = '💾 GÜNCELLE'; btnEl.onclick = personelGuncelle; }
+        const iptalBtn = document.getElementById('personelGuncelleIptal');
+        if (iptalBtn) iptalBtn.style.display = 'block';
+        document.querySelectorAll('#personelTableBody tr').forEach(tr => {
+            tr.style.background = tr.id === 'personelRow_' + sicil ? 'rgba(251,191,36,0.1)' : '';
+        });
+        showToast('✏️ Düzenleme modu: ' + p.ad, 'warn');
+    }
+
+    function personelGuncelleSifirla() {
+        _personelDuzenleSicil = null;
+        document.getElementById('yeniPersonelAd').value = '';
+        document.getElementById('yeniPersonelSicil').value = '';
+        const baslik = document.getElementById('personelFormBaslik');
+        if (baslik) baslik.textContent = '➕ Personel Ekle / Güncelle';
+        const btnEl = document.getElementById('personelKaydetBtn');
+        if (btnEl) { btnEl.textContent = '💾 KAYDET'; btnEl.onclick = personelEkle; }
+        const iptalBtn = document.getElementById('personelGuncelleIptal');
+        if (iptalBtn) iptalBtn.style.display = 'none';
+        const msgEl = document.getElementById('personelFormMsg');
+        if (msgEl) msgEl.style.display = 'none';
+        document.querySelectorAll('#personelTableBody tr').forEach(tr => { tr.style.background = ''; });
+    }
+
+    async function personelGuncelle() {
+        const ad = document.getElementById('yeniPersonelAd').value.trim().toUpperCase();
+        const yeniSicil = document.getElementById('yeniPersonelSicil').value.trim();
+        const eskiSicil = _personelDuzenleSicil;
+        const msgEl = document.getElementById('personelFormMsg');
+        if (!ad || !yeniSicil) {
+            msgEl.style.display='block'; msgEl.style.color='#f87171'; msgEl.style.background='rgba(239,68,68,0.1)'; msgEl.style.border='1px solid rgba(239,68,68,0.3)';
+            msgEl.textContent='Ad ve sicil no zorunlu!'; return;
+        }
+        if (yeniSicil !== eskiSicil && personelListesi.find(p => p.sicil === yeniSicil)) {
+            msgEl.style.display='block'; msgEl.style.color='#f87171'; msgEl.style.background='rgba(239,68,68,0.1)'; msgEl.style.border='1px solid rgba(239,68,68,0.3)';
+            msgEl.textContent='Bu sicil no başka bir personelde kayıtlı!'; return;
+        }
+        try {
+            const { doc, setDoc, deleteDoc, db } = window._fb;
+            if (yeniSicil !== eskiSicil) await deleteDoc(doc(db, 'personel', eskiSicil));
+            const guncellendi = { ad, sicil: yeniSicil };
+            await setDoc(doc(db, 'personel', yeniSicil), guncellendi);
+            const idx = personelListesi.findIndex(p => p.sicil === eskiSicil);
+            if (idx !== -1) personelListesi[idx] = guncellendi;
+            else personelListesi.push(guncellendi);
+            personelListesi.sort((a,b) => a.ad.localeCompare(b.ad,'tr'));
+            msgEl.style.display='block'; msgEl.style.color='#4ade80'; msgEl.style.background='rgba(34,197,94,0.1)'; msgEl.style.border='1px solid rgba(34,197,94,0.3)';
+            msgEl.textContent='✓ Güncellendi!';
+            setTimeout(() => { msgEl.style.display='none'; }, 2000);
+            personelGuncelleSifirla();
+            personelListeRender();
+            showToast('✓ ' + ad + ' güncellendi', 'success');
+        } catch(e) {
+            msgEl.style.display='block'; msgEl.style.color='#f87171'; msgEl.textContent='Hata: ' + e.message;
+        }
+    }
 
     // ── TÜRKÇE NORMALİZE ──────────────────────────────────
     function turkceNormalize(str) {
@@ -2254,6 +2322,7 @@
         const k = document.getElementById('sekmeKarsilama');
         if (k) k.style.display = 'none';
         if (id === 'sekme4') mesaiInit();
+        if (id === 'sekme6') df6Init();
     }
 
     function sefRaporGoster(liste, donemLabel) {
@@ -3563,7 +3632,7 @@
         df6Tur = tur;
         document.getElementById('df6EkipBlok').style.display    = tur === 'ekip'     ? 'block' : 'none';
         document.getElementById('df6PersonelBlok').style.display = tur === 'personel' ? 'block' : 'none';
-        document.getElementById('df6Sonuc').innerHTML = '<div class="sef-bos"><div class="sef-bos-icon">🔍</div><div class="sef-bos-text">Filtre seçip Sorgula\'ya bas</div></div>';
+        document.getElementById('df6Sonuc').innerHTML = '<div class="sef-bos"><div class="sef-bos-icon">🔍</div><div class="sef-bos-text">Filtre seçip PDF İndir\'e bas</div></div>';
         document.getElementById('df6PdfBtn').style.display = 'none';
     }
 
@@ -3656,6 +3725,26 @@
 
     function df6EkipKeyDown(e) {
         const dd = document.getElementById('df6EkipDropdown');
+        // Virgül tuşu: dropdown açıksa seçili olanı ekle, yoksa mevcut input içeriğini tag yap
+        if (e.key === ',' || e.key === 'Tab') {
+            e.preventDefault();
+            if (dd.style.display !== 'none' && _df6EkipDropIdx >= 0) {
+                const items = dd.querySelectorAll('.ac-item');
+                const s = items[_df6EkipDropIdx]?.getAttribute('data-ad');
+                if (s) { df6EkipSec(s); return; }
+            }
+            // Dropdown kapalıysa veya seçim yoksa — mevcut input değerini direkt tag yap
+            const inp = document.getElementById('df6EkipInput');
+            const val = inp.value.trim().toUpperCase();
+            if (val) {
+                const eslesen = personelListesi.find(p => turkceNormalize(p.ad) === turkceNormalize(val));
+                const eklenecek = eslesen ? eslesen.ad : val;
+                if (!df6EkipListesi.includes(eklenecek)) { df6EkipListesi.push(eklenecek); df6EkipTagRender(); }
+                inp.value = '';
+                dd.style.display = 'none'; _df6EkipDropIdx = -1;
+            }
+            return;
+        }
         if (dd.style.display === 'none') return;
         const items = dd.querySelectorAll('.ac-item');
         if (e.key === 'ArrowDown') { e.preventDefault(); _df6EkipDropIdx = Math.min(_df6EkipDropIdx+1, items.length-1); items.forEach((el,i) => el.style.background = i===_df6EkipDropIdx?'rgba(37,99,235,0.2)':''); }
@@ -3713,7 +3802,6 @@
     function df6Sorgula() {
         const donem = df6TarihAralik();
         const sonuc = document.getElementById('df6Sonuc');
-        const pdfBtn = document.getElementById('df6PdfBtn');
         if (!donem) { showToast('⚠️ Tarih seçiniz', 'warn'); return; }
 
         const durusStr = k => (k.duruslar||[]).filter(d=>d.sure).length > 0
@@ -3745,11 +3833,9 @@
             _df6Rapor = { tur:'ekip', baslik: df6EkipListesi.join(', '), liste, donemLabel: donem.label, tir, kamyon, konteyner, toplam, m3top };
 
             if (!liste.length) {
-                pdfBtn.style.display = 'none';
-                sonuc.innerHTML = `<div class="sef-bos"><div class="sef-bos-icon">🔍</div><div class="sef-bos-text">Kayıt bulunamadı</div></div>`;
+                    sonuc.innerHTML = `<div class="sef-bos"><div class="sef-bos-icon">🔍</div><div class="sef-bos-text">Kayıt bulunamadı</div></div>`;
                 return;
             }
-            pdfBtn.style.display = 'block';
             sonuc.innerHTML = `
                 <div class="donem-badge">👥 ${df6EkipListesi.join(' · ')} &nbsp;·&nbsp; 📅 ${donem.label}</div>
                 <div class="vd-panel" style="margin-bottom:16px;">
@@ -3810,11 +3896,9 @@
             _df6Rapor = { tur:'personel', baslik: tamIsim, sicilNo, liste, donemLabel: donem.label, tir, kamyon, konteyner, toplam, m3top };
 
             if (!liste.length) {
-                pdfBtn.style.display = 'none';
-                sonuc.innerHTML = `<div class="sef-bos"><div class="sef-bos-icon">🔍</div><div class="sef-bos-text">"${isim}" için kayıt bulunamadı</div></div>`;
+                    sonuc.innerHTML = `<div class="sef-bos"><div class="sef-bos-icon">🔍</div><div class="sef-bos-text">"${isim}" için kayıt bulunamadı</div></div>`;
                 return;
             }
-            pdfBtn.style.display = 'block';
             sonuc.innerHTML = `
                 <div class="donem-badge">👤 ${tamIsim}${sicilNo?' · <span style="font-size:11px;opacity:0.7;">Sicil: '+sicilNo+'</span>':''} &nbsp;·&nbsp; 📅 ${donem.label}</div>
                 <div class="vd-panel" style="margin-bottom:16px;">
@@ -3857,16 +3941,18 @@
 
     // ── PDF ──
     function df6PdfIndir() {
+        // Önce sorgula
+        df6Sorgula();
         const r = _df6Rapor;
-        if (!r || !r.liste.length) return;
+        if (!r || !r.liste.length) { showToast('⚠️ Filtre seçin ve veri olduğundan emin olun', 'warn'); return; }
         if (typeof window.jspdf === 'undefined') { showToast('⚠️ PDF yükleniyor','warn'); return; }
 
         const { jsPDF } = window.jspdf;
-        // Portrait A4 — daha fazla satır sığar
-        const doc = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
+        // Landscape A4
+        const doc = new jsPDF({ orientation:'landscape', unit:'mm', format:'a4' });
         const mavi = [37,99,235];
         const sari = [217,119,6];
-        const W = 210; // portrait genişlik
+        const W = 297; // landscape genişlik
 
         // ── BAŞLIK ──
         doc.setFillColor(...mavi);
@@ -3975,11 +4061,23 @@
         for (let i = 1; i <= pc; i++) {
             doc.setPage(i);
             doc.setFontSize(6.5); doc.setTextColor(160);
-            doc.text(`Sayfa ${i}/${pc}  ·  Ambar Yönetim Sistemi  ·  ${new Date().toLocaleDateString('tr-TR')}`, W/2, 291, {align:'center'});
+            doc.text(`Sayfa ${i}/${pc}  ·  Ambar Yönetim Sistemi  ·  ${new Date().toLocaleDateString('tr-TR')}`, W/2, 205, {align:'center'});
         }
 
         const dosyaAd = `DetayliFiltره_${r.baslik.replace(/[^a-zA-Z0-9ğüşıöçĞÜŞİÖÇ\s]/g,'_').replace(/\s+/g,'_')}_${r.donemLabel.replace(/[^a-zA-Z0-9]/g,'_')}.pdf`;
         doc.save(dosyaAd);
+    }
+
+    function df6Init() {
+        const now = new Date();
+        const bugun = now.toISOString().split('T')[0];
+        const ayStr = String(now.getMonth()+1).padStart(2,'0');
+        document.getElementById('df6Gun').value       = bugun;
+        document.getElementById('df6Ay').value        = now.getFullYear() + '-' + ayStr;
+        document.getElementById('df6Yil').value       = now.getFullYear();
+        document.getElementById('df6AralikBas').value = bugun;
+        document.getElementById('df6AralikBit').value = bugun;
+        _df6Rapor = null;
     }
 
     function analizInit() {
