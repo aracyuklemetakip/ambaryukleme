@@ -1643,7 +1643,9 @@
 
     // ── EKİP KEY ──────────────────────────────────────────
     function ekipKey(isimler) {
-        return isimler.trim().toUpperCase().split(/\s+/).sort().join('|');
+        return isimler.trim().toUpperCase()
+            .split(',').map(s => s.trim()).filter(Boolean)
+            .sort().join('|');
     }
 
     // ── INIT ──────────────────────────────────────────────
