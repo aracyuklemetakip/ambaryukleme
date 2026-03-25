@@ -4,6 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ambar Yonetim Sistemi</title>
+    <!--
+        LOGO (Tarayıcı sekmesi ikonu) DEĞİŞTİRMEK İÇİN:
+        Logonuzu PNG formatında hazırlayın (önerilen: 32x32 veya 64x64 piksel)
+        Aşağıdaki satırdaki URL kısmını kendi logo dosyanızın adresiyle değiştirin.
+        Örnek: href="logo.png"  (dosyayı index.html ile aynı klasöre koyun)
+        Ya da:  href="https://cdn.orneksite.com/logo.png"  (online link de olur)
+    -->
+    <link rel="icon" type="image/png" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%232563eb'/><text y='.9em' font-size='70' x='50%' dominant-baseline='auto' text-anchor='middle' fill='white'>A</text></svg>">
     <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;900&family=Barlow Condensed:wght@700;900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
@@ -863,8 +871,8 @@
                     oninput="this.value=this.value.toUpperCase()">
             </div>
             <div class="input-group" style="position:relative;">
-                <div class="input-label">Forkliftçi <span class="opt">(opsiyonel)</span></div>
-                <input type="text" id="forkliftci" class="text-input" tabindex="14" placeholder="İsim yazın..."
+                <div class="input-label">Forkliftçi</div>
+                <input type="text" id="forkliftci" class="text-input" tabindex="14" placeholder="Forkliftçi ismi girin..."
                     oninput="forkliftciAutocomplete(this)"
                     onkeydown="forkliftciKeyDown(event)"
                     autocomplete="off">
@@ -1091,6 +1099,12 @@
                             <div id="e3Dropdown" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:500;background:#111827;border:1px solid rgba(255,255,255,0.12);border-radius:10px;margin-top:4px;max-height:220px;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,0.6);"></div>
                         </div>
                         <button class="btn-pdf" id="btnPdf3" style="margin-left:auto;" onclick="personelPdfIndir()">📥 PDF İNDİR</button>
+                    </div>
+                </div>
+                <div id="personelSonuc">
+                    <div class="sef-bos">
+                        <div class="sef-bos-icon">👤</div>
+                        <div class="sef-bos-text">Dönem ve personel adı seçin</div>
                     </div>
                 </div>
             </div>
@@ -2902,10 +2916,15 @@
     }
 
     function personelSorgula() {
-        // Veriyi hazırla — önizleme yok, kullanıcı PDF butonuyla indirir
         const donem = e3TarihAralik();
         const isim  = document.getElementById('e3Isim').value.trim();
-        if (!donem || !isim) { window._personelRapor = null; return; }
+        const sonuc = document.getElementById('personelSonuc');
+
+        if (!donem || !isim) {
+            window._personelRapor = null;
+            if (sonuc) sonuc.innerHTML = '<div class="sef-bos"><div class="sef-bos-icon">👤</div><div class="sef-bos-text">Dönem ve personel adı seçin</div></div>';
+            return;
+        }
 
         const liste = kayitlar.filter(k =>
             k.tarih >= donem.bas && k.tarih <= donem.bit &&
@@ -2913,9 +2932,14 @@
         ).sort((a,b) => a.id - b.id);
 
         const bulunanPersonel = personelListesi.find(p => turkceNormalize(p.ad).includes(turkceNormalize(isim)));
-        const tamIsim = bulunanPersonel ? bulunanPersonel.ad : isim;
+        const tamIsim = bulunanPersonel ? bulunanPersonel.ad : isim.toUpperCase();
+        const sicilNo = bulunanPersonel ? bulunanPersonel.sicil : '';
 
-        if (liste.length === 0) { window._personelRapor = null; return; }
+        if (liste.length === 0) {
+            window._personelRapor = null;
+            if (sonuc) sonuc.innerHTML = '<div class="sef-bos"><div class="sef-bos-icon">🔍</div><div class="sef-bos-text">"' + tamIsim + '" için kayıt bulunamadı</div></div>';
+            return;
+        }
 
         const tir       = liste.filter(k=>k.aracTipi==='Tır').length;
         const kamyon    = liste.filter(k=>k.aracTipi==='Kamyon').length;
@@ -2924,6 +2948,50 @@
         const m3top     = liste.reduce((s,k)=>s+(k.m3||0),0);
 
         window._personelRapor = { isim: tamIsim, liste, donemLabel: donem.label, tir, kamyon, konteyner, toplam, m3top };
+
+        const tarihFmt = t => {
+            const dt = new Date(t + 'T00:00:00');
+            return String(dt.getDate()).padStart(2,'0') + '.' + String(dt.getMonth()+1).padStart(2,'0') + '.' + dt.getFullYear();
+        };
+        const durusStr = k => (k.duruslar||[]).filter(d=>d.sure).length > 0
+            ? k.duruslar.filter(d=>d.sure).map(d=>d.sebep+'('+d.sure+'dk)').join(', ') : '—';
+
+        if (sonuc) sonuc.innerHTML = `
+            <div class="donem-badge">👤 ${tamIsim}${sicilNo ? ' · <span style="font-size:11px;opacity:0.7;">Sicil: ' + sicilNo + '</span>' : ''} &nbsp;·&nbsp; 📅 ${donem.label}</div>
+            <div class="vd-panel" style="margin-bottom:16px;">
+                <div class="vd-kartlar" style="grid-template-columns:repeat(5,1fr);">
+                    <div class="vd-kart"><div class="vd-kart-num" style="color:var(--blue-light)">${tir}</div><div class="vd-kart-lbl">Tır</div></div>
+                    <div class="vd-kart"><div class="vd-kart-num" style="color:var(--yellow)">${kamyon}</div><div class="vd-kart-lbl">Kamyon</div></div>
+                    <div class="vd-kart"><div class="vd-kart-num" style="color:#a78bfa">${konteyner}</div><div class="vd-kart-lbl">Konteyner</div></div>
+                    <div class="vd-kart"><div class="vd-kart-num" style="color:#ef4444">${toplam}</div><div class="vd-kart-lbl">Toplam Araç</div></div>
+                    <div class="vd-kart"><div class="vd-kart-num" style="color:var(--success);font-size:22px;">${m3top.toFixed(1)}</div><div class="vd-kart-lbl">Toplam M³</div></div>
+                </div>
+            </div>
+            <div class="sef-bolum">
+                <div class="sef-bolum-baslik">Tüm Yükleme Kayıtları (${liste.length} kayıt)</div>
+                <div style="overflow-x:auto;">
+                    <table class="data-table" style="font-size:11px;">
+                        <thead><tr><th>#</th><th>Tarih</th><th>Var.</th><th>Ekip</th><th>Tip</th><th>Tür</th><th>M³</th><th>Shipment</th><th>Saat</th><th>Net</th><th>Duruşlar</th><th>Kaliteci</th></tr></thead>
+                        <tbody>${liste.map((k,i)=>{
+                            const tipBadge = k.aracTipi==='Tır'?'badge-tir':k.aracTipi==='Kamyon'?'badge-kamyon':'badge-konteyner';
+                            return '<tr>' +
+                                '<td style="color:var(--muted)">' + (i+1) + '</td>' +
+                                '<td style="white-space:nowrap;">' + tarihFmt(k.tarih) + '</td>' +
+                                '<td style="font-weight:800;color:' + (k.vardiya==='A Vardiyası'?'var(--blue-light)':'var(--yellow)') + ';">' + (k.vardiya==='A Vardiyası'?'A':'B') + '</td>' +
+                                '<td style="font-size:10px;font-weight:700;">' + k.ekip + '</td>' +
+                                '<td><span class="badge ' + tipBadge + '">' + k.aracTipi + '</span></td>' +
+                                '<td><span class="badge ' + (k.aracTuru==='O/E'?'badge-oe':'badge-piyasa') + '">' + k.aracTuru + '</span></td>' +
+                                '<td style="color:var(--success);font-weight:800;">' + k.m3 + '</td>' +
+                                '<td style="color:var(--text-dim)">' + (k.shipment||'—') + '</td>' +
+                                '<td style="white-space:nowrap;">' + k.baslama + ' - ' + k.bitis + '</td>' +
+                                '<td style="font-weight:700;">' + k.net + '</td>' +
+                                '<td style="color:var(--warning);font-size:10px;">' + durusStr(k) + '</td>' +
+                                '<td style="color:var(--text-dim)">' + (k.kaliteci||'—') + '</td>' +
+                            '</tr>';
+                        }).join('')}</tbody>
+                    </table>
+                </div>
+            </div>`;
     }
     function personelPdfIndir() {
         // Rapor yoksa önce sorgula
@@ -3633,7 +3701,6 @@
         document.getElementById('df6EkipBlok').style.display    = tur === 'ekip'     ? 'block' : 'none';
         document.getElementById('df6PersonelBlok').style.display = tur === 'personel' ? 'block' : 'none';
         document.getElementById('df6Sonuc').innerHTML = '<div class="sef-bos"><div class="sef-bos-icon">🔍</div><div class="sef-bos-text">Filtre seçip PDF İndir\'e bas</div></div>';
-        document.getElementById('df6PdfBtn').style.display = 'none';
     }
 
     function df6DonemSec(el, tip) {
@@ -3831,6 +3898,7 @@
             const m3top = liste.reduce((s,k)=>s+(k.m3||0),0);
 
             _df6Rapor = { tur:'ekip', baslik: df6EkipListesi.join(', '), liste, donemLabel: donem.label, tir, kamyon, konteyner, toplam, m3top };
+            document.getElementById('df6PdfBtn').style.display = 'block';
 
             if (!liste.length) {
                     sonuc.innerHTML = `<div class="sef-bos"><div class="sef-bos-icon">🔍</div><div class="sef-bos-text">Kayıt bulunamadı</div></div>`;
@@ -3894,6 +3962,7 @@
             const m3top = liste.reduce((s,k)=>s+(k.m3||0),0);
 
             _df6Rapor = { tur:'personel', baslik: tamIsim, sicilNo, liste, donemLabel: donem.label, tir, kamyon, konteyner, toplam, m3top };
+            document.getElementById('df6PdfBtn').style.display = 'block';
 
             if (!liste.length) {
                     sonuc.innerHTML = `<div class="sef-bos"><div class="sef-bos-icon">🔍</div><div class="sef-bos-text">"${isim}" için kayıt bulunamadı</div></div>`;
