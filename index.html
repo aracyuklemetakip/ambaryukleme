@@ -945,6 +945,7 @@
             <div class="sef-sekme" onclick="sekmeAc(this,'sekme3')">👤 Personel Analiz</div>
             <div class="sef-sekme" onclick="sekmeAc(this,'sekme4')">⏱️ Mesai Takip</div>
             <div class="sef-sekme" onclick="sekmeAc(this,'sekme5')">🧑‍💼 Personel Yönetimi</div>
+            <div class="sef-sekme" onclick="sekmeAc(this,'sekme6')">🔍 Detaylı Filtrele</div>
         </div>
 
         <div class="sef-content">
@@ -1272,6 +1273,101 @@
                             </table>
                         </div>
                         <div id="personelEmptyState" style="text-align:center;padding:40px;color:var(--muted);font-size:13px;display:none;">Henüz personel yok</div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- SEKME 6: DETAYLI FİLTRELE -->
+            <div id="sekme6" class="sekme-icerik">
+                <div style="display:grid;grid-template-columns:340px 1fr;gap:16px;align-items:start;">
+
+                    <!-- SOL: FİLTRE PANELI -->
+                    <div style="display:flex;flex-direction:column;gap:14px;">
+
+                        <!-- FİLTRE TÜRÜ SEÇİMİ -->
+                        <div class="sef-bolum" style="margin-bottom:0;">
+                            <div class="sef-bolum-baslik">🔍 Filtre Türü</div>
+                            <div class="filtre-seg" id="df6TurSeg" style="flex-direction:column;gap:6px;">
+                                <div class="filtre-seg-btn aktif" onclick="df6TurSec(this,'ekip')">👥 Ekip Filtreleme</div>
+                                <div class="filtre-seg-btn" onclick="df6TurSec(this,'personel')">👤 Personel Filtreleme</div>
+                            </div>
+                        </div>
+
+                        <!-- EKİP GİRİŞİ -->
+                        <div class="sef-bolum" id="df6EkipBlok" style="margin-bottom:0;">
+                            <div class="sef-bolum-baslik">👥 Ekip İsimleri</div>
+                            <div style="font-size:10px;color:var(--muted);margin-bottom:8px;">Virgülle ayırarak birden fazla isim girin</div>
+                            <div style="position:relative;">
+                                <input type="text" id="df6EkipInput" class="filtre-input" style="width:100%;"
+                                    placeholder="İsim yazın..."
+                                    oninput="df6EkipAutocomplete(this)"
+                                    onkeydown="df6EkipKeyDown(event)"
+                                    autocomplete="off">
+                                <div id="df6EkipDropdown" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:500;background:#111827;border:1px solid rgba(255,255,255,0.12);border-radius:10px;margin-top:4px;max-height:200px;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,0.6);"></div>
+                            </div>
+                            <div id="df6EkipTaglar" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;"></div>
+                        </div>
+
+                        <!-- PERSONEL GİRİŞİ -->
+                        <div class="sef-bolum" id="df6PersonelBlok" style="margin-bottom:0;display:none;">
+                            <div class="sef-bolum-baslik">👤 Personel Adı</div>
+                            <div style="position:relative;">
+                                <input type="text" id="df6PersonelInput" class="filtre-input" style="width:100%;text-transform:uppercase;"
+                                    placeholder="İsim yazın..."
+                                    oninput="this.value=this.value.toUpperCase();df6PersonelAutocomplete(this)"
+                                    onkeydown="df6PersonelKeyDown(event)"
+                                    autocomplete="off">
+                                <div id="df6PersonelDropdown" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:500;background:#111827;border:1px solid rgba(255,255,255,0.12);border-radius:10px;margin-top:4px;max-height:200px;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,0.6);"></div>
+                            </div>
+                        </div>
+
+                        <!-- TARİH FİLTRESİ -->
+                        <div class="sef-bolum" style="margin-bottom:0;">
+                            <div class="sef-bolum-baslik">📅 Tarih Seçimi</div>
+                            <div class="filtre-seg" id="df6DonemSeg" style="flex-wrap:wrap;gap:4px;margin-bottom:10px;">
+                                <div class="filtre-seg-btn aktif" onclick="df6DonemSec(this,'gun')" style="font-size:11px;padding:6px 10px;">Günlük</div>
+                                <div class="filtre-seg-btn" onclick="df6DonemSec(this,'ay')" style="font-size:11px;padding:6px 10px;">Aylık</div>
+                                <div class="filtre-seg-btn" onclick="df6DonemSec(this,'yil')" style="font-size:11px;padding:6px 10px;">Yıllık</div>
+                                <div class="filtre-seg-btn" onclick="df6DonemSec(this,'aralik')" style="font-size:11px;padding:6px 10px;">Tarih Aralığı</div>
+                            </div>
+                            <div id="df6GunGrup" class="filtre-group">
+                                <div class="filtre-label">Tarih</div>
+                                <input type="date" id="df6Gun" class="filtre-input" style="width:100%;">
+                            </div>
+                            <div id="df6AyGrup" class="filtre-group" style="display:none;">
+                                <div class="filtre-label">Ay / Yıl</div>
+                                <input type="month" id="df6Ay" class="filtre-input" style="width:100%;">
+                            </div>
+                            <div id="df6YilGrup" class="filtre-group" style="display:none;">
+                                <div class="filtre-label">Yıl</div>
+                                <input type="number" id="df6Yil" class="filtre-input" style="width:100%;" min="2020" max="2099">
+                            </div>
+                            <div id="df6AralikGrup" style="display:none;flex-direction:column;gap:8px;">
+                                <div class="filtre-group">
+                                    <div class="filtre-label">Başlangıç</div>
+                                    <input type="date" id="df6AralikBas" class="filtre-input" style="width:100%;">
+                                </div>
+                                <div class="filtre-group">
+                                    <div class="filtre-label">Bitiş</div>
+                                    <input type="date" id="df6AralikBit" class="filtre-input" style="width:100%;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- BUTONLAR -->
+                        <button onclick="df6Sorgula()" style="width:100%;padding:13px;border-radius:12px;border:1px solid rgba(59,130,246,0.5);background:rgba(37,99,235,0.15);color:var(--blue-light);font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;letter-spacing:1px;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.background='rgba(37,99,235,0.28)'" onmouseout="this.style.background='rgba(37,99,235,0.15)'">🔍 SORGULA</button>
+                        <button id="df6PdfBtn" onclick="df6PdfIndir()" style="display:none;width:100%;padding:13px;border-radius:12px;border:1px solid rgba(34,197,94,0.5);background:rgba(34,197,94,0.12);color:#4ade80;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;letter-spacing:1px;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.background='rgba(34,197,94,0.25)'" onmouseout="this.style.background='rgba(34,197,94,0.12)'">📥 PDF İNDİR</button>
+                    </div>
+
+                    <!-- SAĞ: SONUÇ -->
+                    <div>
+                        <div id="df6Sonuc">
+                            <div class="sef-bos">
+                                <div class="sef-bos-icon">🔍</div>
+                                <div class="sef-bos-text">Filtre seçip Sorgula'ya bas</div>
+                            </div>
+                        </div>
                     </div>
 
                 </div>
@@ -3522,6 +3618,441 @@
                 </div>
             </div>` : ''}
         `;
+    }
+
+    // ══════════════════════════════════════════════════════
+    // SEKME 6: DETAYLI FİLTRELE
+    // ══════════════════════════════════════════════════════
+    let df6Tur = 'ekip';        // 'ekip' | 'personel'
+    let df6Donem = 'gun';
+    let df6EkipListesi = [];    // seçilen ekip isimleri (tags)
+    let _df6EkipDropIdx = -1;
+    let _df6PerDropIdx  = -1;
+    let _df6Rapor = null;       // son sorgu sonucu (PDF için)
+
+    function df6TurSec(el, tur) {
+        document.querySelectorAll('#df6TurSeg .filtre-seg-btn').forEach(b => b.classList.remove('aktif'));
+        el.classList.add('aktif');
+        df6Tur = tur;
+        document.getElementById('df6EkipBlok').style.display    = tur === 'ekip'     ? 'block' : 'none';
+        document.getElementById('df6PersonelBlok').style.display = tur === 'personel' ? 'block' : 'none';
+        document.getElementById('df6Sonuc').innerHTML = '<div class="sef-bos"><div class="sef-bos-icon">🔍</div><div class="sef-bos-text">Filtre seçip Sorgula\'ya bas</div></div>';
+        document.getElementById('df6PdfBtn').style.display = 'none';
+    }
+
+    function df6DonemSec(el, tip) {
+        document.querySelectorAll('#df6DonemSeg .filtre-seg-btn').forEach(b => b.classList.remove('aktif'));
+        el.classList.add('aktif');
+        df6Donem = tip;
+        document.getElementById('df6GunGrup').style.display    = tip === 'gun'    ? 'flex' : 'none';
+        document.getElementById('df6AyGrup').style.display     = tip === 'ay'     ? 'flex' : 'none';
+        document.getElementById('df6YilGrup').style.display    = tip === 'yil'    ? 'flex' : 'none';
+        document.getElementById('df6AralikGrup').style.display = tip === 'aralik' ? 'flex' : 'none';
+    }
+
+    function df6TarihAralik() {
+        const aylar = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+        let bas, bit, label;
+        if (df6Donem === 'gun') {
+            bas = bit = document.getElementById('df6Gun').value;
+            if (!bas) return null;
+            const dt = new Date(bas + 'T00:00:00');
+            label = `${dt.getDate()} ${aylar[dt.getMonth()]} ${dt.getFullYear()}`;
+        } else if (df6Donem === 'ay') {
+            const ay = document.getElementById('df6Ay').value;
+            if (!ay) return null;
+            bas = ay + '-01';
+            const dt = new Date(bas);
+            bit = new Date(dt.getFullYear(), dt.getMonth()+1, 0).toISOString().split('T')[0];
+            label = `${aylar[dt.getMonth()]} ${dt.getFullYear()}`;
+        } else if (df6Donem === 'yil') {
+            const yil = document.getElementById('df6Yil').value;
+            if (!yil) return null;
+            bas = `${yil}-01-01`; bit = `${yil}-12-31`;
+            label = `${yil} Yılı`;
+        } else {
+            bas = document.getElementById('df6AralikBas').value;
+            bit = document.getElementById('df6AralikBit').value;
+            if (!bas || !bit) return null;
+            label = `${bas.split('-').reverse().join('.')} — ${bit.split('-').reverse().join('.')}`;
+        }
+        return { bas, bit, label };
+    }
+
+    // ── EKİP TAG SİSTEMİ ──
+    function df6EkipTagRender() {
+        const wrap = document.getElementById('df6EkipTaglar');
+        wrap.innerHTML = df6EkipListesi.map(isim => `
+            <div style="display:inline-flex;align-items:center;gap:5px;background:rgba(37,99,235,0.15);border:1px solid rgba(59,130,246,0.4);border-radius:20px;padding:4px 10px 4px 12px;font-size:11px;font-weight:800;color:var(--blue-light);">
+                ${isim}
+                <button onclick="df6EkipSil('${isim.replace(/'/g,"\\'")}\')" style="background:none;border:none;color:rgba(148,163,184,0.7);cursor:pointer;font-size:13px;line-height:1;padding:0;margin-left:2px;" title="Kaldır">×</button>
+            </div>`).join('');
+    }
+
+    function df6EkipSil(isim) {
+        df6EkipListesi = df6EkipListesi.filter(n => n !== isim);
+        df6EkipTagRender();
+    }
+
+    function df6EkipAutocomplete(input) {
+        const dd = document.getElementById('df6EkipDropdown');
+        // Son virgülden sonraki kısmı al
+        const parts = input.value.split(',');
+        const val = parts[parts.length - 1].trim().toUpperCase();
+        if (!val) { dd.style.display = 'none'; _df6EkipDropIdx = -1; return; }
+        const eslesen = personelListesi.filter(p =>
+            turkceNormalize(p.ad).includes(turkceNormalize(val)) &&
+            !df6EkipListesi.includes(p.ad)
+        );
+        if (!eslesen.length) { dd.style.display = 'none'; return; }
+        dd.innerHTML = eslesen.map((p, i) => `
+            <div class="ac-item" data-idx="${i}" data-ad="${p.ad}"
+                onclick="df6EkipSec('${p.ad.replace(/'/g,"\\'")}\')"
+                onmouseenter="df6EkipHover(${i})"
+                style="padding:9px 14px;cursor:pointer;font-size:13px;font-weight:700;border-bottom:1px solid rgba(255,255,255,0.05);transition:background 0.1s;">${p.ad}</div>`).join('');
+        dd.style.display = 'block'; _df6EkipDropIdx = -1;
+    }
+
+    function df6EkipSec(ad) {
+        if (!df6EkipListesi.includes(ad)) df6EkipListesi.push(ad);
+        document.getElementById('df6EkipInput').value = '';
+        document.getElementById('df6EkipDropdown').style.display = 'none';
+        _df6EkipDropIdx = -1;
+        df6EkipTagRender();
+    }
+
+    function df6EkipHover(idx) {
+        _df6EkipDropIdx = idx;
+        document.querySelectorAll('#df6EkipDropdown .ac-item').forEach((el,i) =>
+            el.style.background = i === idx ? 'rgba(37,99,235,0.2)' : '');
+    }
+
+    function df6EkipKeyDown(e) {
+        const dd = document.getElementById('df6EkipDropdown');
+        if (dd.style.display === 'none') return;
+        const items = dd.querySelectorAll('.ac-item');
+        if (e.key === 'ArrowDown') { e.preventDefault(); _df6EkipDropIdx = Math.min(_df6EkipDropIdx+1, items.length-1); items.forEach((el,i) => el.style.background = i===_df6EkipDropIdx?'rgba(37,99,235,0.2)':''); }
+        else if (e.key === 'ArrowUp') { e.preventDefault(); _df6EkipDropIdx = Math.max(_df6EkipDropIdx-1, 0); items.forEach((el,i) => el.style.background = i===_df6EkipDropIdx?'rgba(37,99,235,0.2)':''); }
+        else if (e.key === 'Enter' && _df6EkipDropIdx >= 0) { e.preventDefault(); const s = items[_df6EkipDropIdx]?.getAttribute('data-ad'); if(s) df6EkipSec(s); }
+        else if (e.key === 'Escape') { dd.style.display='none'; _df6EkipDropIdx=-1; }
+    }
+
+    // ── PERSONEL AUTOCOMPLETE ──
+    function df6PersonelAutocomplete(input) {
+        const dd = document.getElementById('df6PersonelDropdown');
+        const val = input.value.toUpperCase();
+        if (!val.trim()) { dd.style.display='none'; _df6PerDropIdx=-1; return; }
+        const eslesen = personelListesi.filter(p => turkceNormalize(p.ad).includes(turkceNormalize(val)));
+        if (!eslesen.length) { dd.style.display='none'; return; }
+        dd.innerHTML = eslesen.map((p,i) => `
+            <div class="ac-item" data-idx="${i}" data-ad="${p.ad}"
+                onclick="df6PersonelSec('${p.ad.replace(/'/g,"\\'")}\')"
+                onmouseenter="df6PerHover(${i})"
+                style="padding:9px 14px;cursor:pointer;font-size:13px;font-weight:700;border-bottom:1px solid rgba(255,255,255,0.05);transition:background 0.1s;">${p.ad}</div>`).join('');
+        dd.style.display = 'block'; _df6PerDropIdx = -1;
+    }
+
+    function df6PersonelSec(ad) {
+        document.getElementById('df6PersonelInput').value = ad;
+        document.getElementById('df6PersonelDropdown').style.display = 'none';
+        _df6PerDropIdx = -1;
+    }
+
+    function df6PerHover(idx) {
+        _df6PerDropIdx = idx;
+        document.querySelectorAll('#df6PersonelDropdown .ac-item').forEach((el,i) =>
+            el.style.background = i===idx ? 'rgba(37,99,235,0.2)' : '');
+    }
+
+    function df6PersonelKeyDown(e) {
+        const dd = document.getElementById('df6PersonelDropdown');
+        if (dd.style.display === 'none') return;
+        const items = dd.querySelectorAll('.ac-item');
+        if (e.key === 'ArrowDown') { e.preventDefault(); _df6PerDropIdx = Math.min(_df6PerDropIdx+1, items.length-1); items.forEach((el,i) => el.style.background = i===_df6PerDropIdx?'rgba(37,99,235,0.2)':''); }
+        else if (e.key === 'ArrowUp') { e.preventDefault(); _df6PerDropIdx = Math.max(_df6PerDropIdx-1, 0); items.forEach((el,i) => el.style.background = i===_df6PerDropIdx?'rgba(37,99,235,0.2)':''); }
+        else if (e.key === 'Enter' && _df6PerDropIdx >= 0) { e.preventDefault(); const s = items[_df6PerDropIdx]?.getAttribute('data-ad'); if(s) df6PersonelSec(s); }
+        else if (e.key === 'Escape') { dd.style.display='none'; _df6PerDropIdx=-1; }
+    }
+
+    // Dropdown dışı tıklama
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('#df6EkipInput') && !e.target.closest('#df6EkipDropdown'))
+            document.getElementById('df6EkipDropdown').style.display = 'none';
+        if (!e.target.closest('#df6PersonelInput') && !e.target.closest('#df6PersonelDropdown'))
+            document.getElementById('df6PersonelDropdown').style.display = 'none';
+    });
+
+    // ── SORGULA ──
+    function df6Sorgula() {
+        const donem = df6TarihAralik();
+        const sonuc = document.getElementById('df6Sonuc');
+        const pdfBtn = document.getElementById('df6PdfBtn');
+        if (!donem) { showToast('⚠️ Tarih seçiniz', 'warn'); return; }
+
+        const durusStr = k => (k.duruslar||[]).filter(d=>d.sure).length > 0
+            ? k.duruslar.filter(d=>d.sure).map(d=>`${d.sebep}(${d.sure}dk)`).join(', ')
+            : '—';
+
+        const tarihFmt = t => {
+            const dt = new Date(t + 'T00:00:00');
+            return `${String(dt.getDate()).padStart(2,'0')}.${String(dt.getMonth()+1).padStart(2,'0')}.${dt.getFullYear()}`;
+        };
+
+        if (df6Tur === 'ekip') {
+            if (!df6EkipListesi.length) { showToast('⚠️ En az bir isim ekleyin', 'warn'); return; }
+
+            // Ekip kombinasyonunu bul: girilen isimlerin hepsi ekipte olmalı
+            const aranan = df6EkipListesi.map(n => n.toUpperCase());
+            const liste = kayitlar.filter(k => {
+                if (k.tarih < donem.bas || k.tarih > donem.bit) return false;
+                const ekipAd = k.ekip.toUpperCase().split(',').map(s=>s.trim());
+                return aranan.every(ad => ekipAd.some(ea => turkceNormalize(ea).includes(turkceNormalize(ad))));
+            }).sort((a,b) => new Date(a.tarih) - new Date(b.tarih) || a.id - b.id);
+
+            const tir = liste.filter(k=>k.aracTipi==='Tır').length;
+            const kamyon = liste.filter(k=>k.aracTipi==='Kamyon').length;
+            const konteyner = liste.filter(k=>k.aracTipi==='Konteyner').length;
+            const toplam = liste.length;
+            const m3top = liste.reduce((s,k)=>s+(k.m3||0),0);
+
+            _df6Rapor = { tur:'ekip', baslik: df6EkipListesi.join(', '), liste, donemLabel: donem.label, tir, kamyon, konteyner, toplam, m3top };
+
+            if (!liste.length) {
+                pdfBtn.style.display = 'none';
+                sonuc.innerHTML = `<div class="sef-bos"><div class="sef-bos-icon">🔍</div><div class="sef-bos-text">Kayıt bulunamadı</div></div>`;
+                return;
+            }
+            pdfBtn.style.display = 'block';
+            sonuc.innerHTML = `
+                <div class="donem-badge">👥 ${df6EkipListesi.join(' · ')} &nbsp;·&nbsp; 📅 ${donem.label}</div>
+                <div class="vd-panel" style="margin-bottom:16px;">
+                    <div class="vd-kartlar" style="grid-template-columns:repeat(5,1fr);">
+                        <div class="vd-kart"><div class="vd-kart-num" style="color:var(--blue-light)">${tir}</div><div class="vd-kart-lbl">Tır</div></div>
+                        <div class="vd-kart"><div class="vd-kart-num" style="color:var(--yellow)">${kamyon}</div><div class="vd-kart-lbl">Kamyon</div></div>
+                        <div class="vd-kart"><div class="vd-kart-num" style="color:#a78bfa">${konteyner}</div><div class="vd-kart-lbl">Konteyner</div></div>
+                        <div class="vd-kart"><div class="vd-kart-num" style="color:#ef4444">${toplam}</div><div class="vd-kart-lbl">Toplam Araç</div></div>
+                        <div class="vd-kart"><div class="vd-kart-num" style="color:var(--success);font-size:22px;">${m3top.toFixed(1)}</div><div class="vd-kart-lbl">Toplam M³</div></div>
+                    </div>
+                </div>
+                <div class="sef-bolum">
+                    <div class="sef-bolum-baslik">Tüm Yükleme Kayıtları (${liste.length} kayıt)</div>
+                    <div style="overflow-x:auto;">
+                        <table class="data-table" style="font-size:11px;">
+                            <thead><tr><th>#</th><th>Tarih</th><th>Var.</th><th>Ekip</th><th>Tip</th><th>Tür</th><th>M³</th><th>Shipment</th><th>Saat</th><th>Net</th><th>Duruşlar</th><th>Kaliteci</th><th>Açıklama</th></tr></thead>
+                            <tbody>${liste.map((k,i)=>{
+                                const tipBadge = k.aracTipi==='Tır'?'badge-tir':k.aracTipi==='Kamyon'?'badge-kamyon':'badge-konteyner';
+                                return `<tr>
+                                    <td style="color:var(--muted)">${i+1}</td>
+                                    <td style="white-space:nowrap;">${tarihFmt(k.tarih)}</td>
+                                    <td style="font-weight:800;color:${k.vardiya==='A Vardiyası'?'var(--blue-light)':'var(--yellow)'};">${k.vardiya==='A Vardiyası'?'A':'B'}</td>
+                                    <td style="font-size:10px;font-weight:700;">${k.ekip}</td>
+                                    <td><span class="badge ${tipBadge}">${k.aracTipi}</span></td>
+                                    <td><span class="badge ${k.aracTuru==='O/E'?'badge-oe':'badge-piyasa'}">${k.aracTuru}</span></td>
+                                    <td style="color:var(--success);font-weight:800;">${k.m3}</td>
+                                    <td style="color:var(--text-dim)">${k.shipment||'—'}</td>
+                                    <td style="white-space:nowrap;">${k.baslama} - ${k.bitis}</td>
+                                    <td style="font-weight:700;">${k.net}</td>
+                                    <td style="color:var(--warning);font-size:10px;">${durusStr(k)}</td>
+                                    <td style="color:var(--text-dim)">${k.kaliteci||'—'}</td>
+                                    <td style="color:var(--text-dim)">${k.aciklama||'—'}</td>
+                                </tr>`;
+                            }).join('')}</tbody>
+                        </table>
+                    </div>
+                </div>`;
+        } else {
+            // PERSONEL MODU
+            const isim = document.getElementById('df6PersonelInput').value.trim();
+            if (!isim) { showToast('⚠️ Personel adı giriniz', 'warn'); return; }
+
+            const liste = kayitlar.filter(k =>
+                k.tarih >= donem.bas && k.tarih <= donem.bit &&
+                k.ekip.toUpperCase().split(',').map(s=>s.trim()).some(ad => turkceNormalize(ad).includes(turkceNormalize(isim)))
+            ).sort((a,b) => new Date(a.tarih) - new Date(b.tarih) || a.id - b.id);
+
+            const bulunan = personelListesi.find(p => turkceNormalize(p.ad).includes(turkceNormalize(isim)));
+            const tamIsim = bulunan ? bulunan.ad : isim.toUpperCase();
+            const sicilNo = bulunan ? bulunan.sicil : '';
+
+            const tir = liste.filter(k=>k.aracTipi==='Tır').length;
+            const kamyon = liste.filter(k=>k.aracTipi==='Kamyon').length;
+            const konteyner = liste.filter(k=>k.aracTipi==='Konteyner').length;
+            const toplam = liste.length;
+            const m3top = liste.reduce((s,k)=>s+(k.m3||0),0);
+
+            _df6Rapor = { tur:'personel', baslik: tamIsim, sicilNo, liste, donemLabel: donem.label, tir, kamyon, konteyner, toplam, m3top };
+
+            if (!liste.length) {
+                pdfBtn.style.display = 'none';
+                sonuc.innerHTML = `<div class="sef-bos"><div class="sef-bos-icon">🔍</div><div class="sef-bos-text">"${isim}" için kayıt bulunamadı</div></div>`;
+                return;
+            }
+            pdfBtn.style.display = 'block';
+            sonuc.innerHTML = `
+                <div class="donem-badge">👤 ${tamIsim}${sicilNo?' · <span style="font-size:11px;opacity:0.7;">Sicil: '+sicilNo+'</span>':''} &nbsp;·&nbsp; 📅 ${donem.label}</div>
+                <div class="vd-panel" style="margin-bottom:16px;">
+                    <div class="vd-kartlar" style="grid-template-columns:repeat(5,1fr);">
+                        <div class="vd-kart"><div class="vd-kart-num" style="color:var(--blue-light)">${tir}</div><div class="vd-kart-lbl">Tır</div></div>
+                        <div class="vd-kart"><div class="vd-kart-num" style="color:var(--yellow)">${kamyon}</div><div class="vd-kart-lbl">Kamyon</div></div>
+                        <div class="vd-kart"><div class="vd-kart-num" style="color:#a78bfa">${konteyner}</div><div class="vd-kart-lbl">Konteyner</div></div>
+                        <div class="vd-kart"><div class="vd-kart-num" style="color:#ef4444">${toplam}</div><div class="vd-kart-lbl">Toplam Araç</div></div>
+                        <div class="vd-kart"><div class="vd-kart-num" style="color:var(--success);font-size:22px;">${m3top.toFixed(1)}</div><div class="vd-kart-lbl">Toplam M³</div></div>
+                    </div>
+                </div>
+                <div class="sef-bolum">
+                    <div class="sef-bolum-baslik">Tüm Yükleme Kayıtları (${liste.length} kayıt)</div>
+                    <div style="overflow-x:auto;">
+                        <table class="data-table" style="font-size:11px;">
+                            <thead><tr><th>#</th><th>Tarih</th><th>Var.</th><th>Ekip</th><th>Tip</th><th>Tür</th><th>M³</th><th>Shipment</th><th>Saat</th><th>Net</th><th>Duruşlar</th><th>Kaliteci</th><th>Açıklama</th></tr></thead>
+                            <tbody>${liste.map((k,i)=>{
+                                const tipBadge = k.aracTipi==='Tır'?'badge-tir':k.aracTipi==='Kamyon'?'badge-kamyon':'badge-konteyner';
+                                return `<tr>
+                                    <td style="color:var(--muted)">${i+1}</td>
+                                    <td style="white-space:nowrap;">${tarihFmt(k.tarih)}</td>
+                                    <td style="font-weight:800;color:${k.vardiya==='A Vardiyası'?'var(--blue-light)':'var(--yellow)'};">${k.vardiya==='A Vardiyası'?'A':'B'}</td>
+                                    <td style="font-size:10px;font-weight:700;">${k.ekip}</td>
+                                    <td><span class="badge ${tipBadge}">${k.aracTipi}</span></td>
+                                    <td><span class="badge ${k.aracTuru==='O/E'?'badge-oe':'badge-piyasa'}">${k.aracTuru}</span></td>
+                                    <td style="color:var(--success);font-weight:800;">${k.m3}</td>
+                                    <td style="color:var(--text-dim)">${k.shipment||'—'}</td>
+                                    <td style="white-space:nowrap;">${k.baslama} - ${k.bitis}</td>
+                                    <td style="font-weight:700;">${k.net}</td>
+                                    <td style="color:var(--warning);font-size:10px;">${durusStr(k)}</td>
+                                    <td style="color:var(--text-dim)">${k.kaliteci||'—'}</td>
+                                    <td style="color:var(--text-dim)">${k.aciklama||'—'}</td>
+                                </tr>`;
+                            }).join('')}</tbody>
+                        </table>
+                    </div>
+                </div>`;
+        }
+    }
+
+    // ── PDF ──
+    function df6PdfIndir() {
+        const r = _df6Rapor;
+        if (!r || !r.liste.length) return;
+        if (typeof window.jspdf === 'undefined') { showToast('⚠️ PDF yükleniyor','warn'); return; }
+
+        const { jsPDF } = window.jspdf;
+        // Portrait A4 — daha fazla satır sığar
+        const doc = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
+        const mavi = [37,99,235];
+        const sari = [217,119,6];
+        const W = 210; // portrait genişlik
+
+        // ── BAŞLIK ──
+        doc.setFillColor(...mavi);
+        doc.rect(0, 0, W, 20, 'F');
+        doc.setTextColor(255,255,255);
+        doc.setFontSize(12); doc.setFont('helvetica','bold');
+        const tur = r.tur === 'ekip' ? 'EKİP RAPORU' : 'PERSONEL RAPORU';
+        doc.text(`${tur}: ${r.baslik}`, W/2, 9, {align:'center'});
+        doc.setFontSize(8); doc.setFont('helvetica','normal');
+        const altBaslik = `${r.donemLabel}${r.sicilNo ? '  ·  Sicil: ' + r.sicilNo : ''}`;
+        doc.text(altBaslik, W/2, 16, {align:'center'});
+
+        let y = 24;
+
+        // ── ÖZET KARTLAR (5 kutu, yatay) ──
+        const ozet = [
+            {lbl:'TIR',      val: r.tir,            renk: mavi},
+            {lbl:'KAMYON',   val: r.kamyon,          renk: sari},
+            {lbl:'KONTEYNER',val: r.konteyner,       renk: [139,92,246]},
+            {lbl:'TOPLAM',   val: r.toplam,          renk: [244,63,94]},
+            {lbl:'TOPLAM M³',val: r.m3top.toFixed(1),renk: [34,197,94]},
+        ];
+        const kw = (W - 20) / 5 - 2;
+        ozet.forEach((o, i) => {
+            const x = 10 + i * (kw + 2);
+            doc.setFillColor(245,247,255); doc.roundedRect(x, y, kw, 14, 1.5, 1.5, 'F');
+            doc.setDrawColor(...o.renk); doc.setLineWidth(0.5); doc.roundedRect(x, y, kw, 14, 1.5, 1.5, 'S');
+            doc.setTextColor(...o.renk); doc.setFontSize(13); doc.setFont('helvetica','bold');
+            doc.text(String(o.val), x + kw/2, y + 7.5, {align:'center'});
+            doc.setTextColor(100,116,139); doc.setFontSize(5.5); doc.setFont('helvetica','normal');
+            doc.text(o.lbl, x + kw/2, y + 12.5, {align:'center'});
+        });
+        y += 18;
+
+        // ── DETAY TABLO (compact, ufak font, satır aralığı az) ──
+        const durusStr = k => (k.duruslar||[]).filter(d=>d.sure).map(d=>`${d.sebep}(${d.sure}dk)`).join(', ') || '—';
+        const tarihFmt = t => {
+            const dt = new Date(t + 'T00:00:00');
+            return `${String(dt.getDate()).padStart(2,'0')}.${String(dt.getMonth()+1).padStart(2,'0')}.${dt.getFullYear()}`;
+        };
+
+        const body = r.liste.map((k, i) => [
+            i + 1,
+            tarihFmt(k.tarih),
+            k.aracTipi,
+            k.aracTuru,
+            k.m3 != null ? k.m3 : '—',
+            k.shipment || '—',
+            `${k.baslama}-${k.bitis}`,
+            k.kaliteci || '—',
+            durusStr(k),
+            k.aciklama || '—'
+        ]);
+
+        // Toplam satırı
+        body.push([
+            '', 'TOPLAM',
+            `Tır:${r.tir} Kmyn:${r.kamyon} Knt:${r.konteyner}`,
+            '', `${r.m3top.toFixed(1)} m³`,
+            '', `${r.toplam} araç`, '', '', ''
+        ]);
+
+        doc.autoTable({
+            startY: y,
+            head: [['#','Tarih','Araç Tipi','Tür','M³','Shipment','Saat','Kaliteci','Duruşlar','Açıklama']],
+            body,
+            theme: 'grid',
+            headStyles: {
+                fillColor: mavi, textColor: 255,
+                fontStyle: 'bold', fontSize: 7,
+                cellPadding: { top: 2, bottom: 2, left: 1.5, right: 1.5 }
+            },
+            bodyStyles: {
+                fontSize: 6.5,
+                cellPadding: { top: 1.2, bottom: 1.2, left: 1.5, right: 1.5 },
+                lineColor: [220, 225, 235],
+                lineWidth: 0.1
+            },
+            alternateRowStyles: { fillColor: [247, 249, 255] },
+            columnStyles: {
+                0: { halign:'center', cellWidth: 7 },
+                1: { cellWidth: 20 },
+                2: { cellWidth: 20 },
+                3: { cellWidth: 14 },
+                4: { halign:'center', cellWidth: 12 },
+                5: { cellWidth: 22 },
+                6: { cellWidth: 22 },
+                7: { cellWidth: 22 },
+                8: { cellWidth: 28 },
+                9: { cellWidth: 'auto' }
+            },
+            didParseCell: (data) => {
+                // Son satır = toplam
+                if (data.row.index === body.length - 1) {
+                    data.cell.styles.fillColor = [37, 99, 235];
+                    data.cell.styles.textColor = 255;
+                    data.cell.styles.fontStyle = 'bold';
+                    data.cell.styles.fontSize   = 7;
+                }
+            },
+            margin: { left: 8, right: 8 },
+        });
+
+        // Alt sayfa numarası
+        const pc = doc.internal.getNumberOfPages();
+        for (let i = 1; i <= pc; i++) {
+            doc.setPage(i);
+            doc.setFontSize(6.5); doc.setTextColor(160);
+            doc.text(`Sayfa ${i}/${pc}  ·  Ambar Yönetim Sistemi  ·  ${new Date().toLocaleDateString('tr-TR')}`, W/2, 291, {align:'center'});
+        }
+
+        const dosyaAd = `DetayliFiltره_${r.baslik.replace(/[^a-zA-Z0-9ğüşıöçĞÜŞİÖÇ\s]/g,'_').replace(/\s+/g,'_')}_${r.donemLabel.replace(/[^a-zA-Z0-9]/g,'_')}.pdf`;
+        doc.save(dosyaAd);
     }
 
     function analizInit() {
