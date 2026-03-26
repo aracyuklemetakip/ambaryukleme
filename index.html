@@ -4586,50 +4586,68 @@ function va7Sorgula() {
     function liderSatir(ekipler, renk) {
         if (!ekipler.length) return '<tr><td colspan="6" style="color:var(--muted);text-align:center;">Kayıt yok</td></tr>';
         return ekipler.map((e, i) => {
-            const madalya = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i+1}.`;
+            let rankBadge;
+            if (i === 0) {
+                rankBadge = `<div style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;font-size:11px;font-weight:900;box-shadow:0 2px 8px rgba(217,119,6,0.5);">1</div>`;
+            } else if (i === 1) {
+                rankBadge = `<div style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#94a3b8,#64748b);color:#fff;font-size:11px;font-weight:900;box-shadow:0 2px 8px rgba(100,116,139,0.5);">2</div>`;
+            } else if (i === 2) {
+                rankBadge = `<div style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#c97c3a,#a16207);color:#fff;font-size:11px;font-weight:900;box-shadow:0 2px 8px rgba(161,98,7,0.5);">3</div>`;
+            } else {
+                rankBadge = `<div style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:rgba(163,177,198,0.3);color:var(--text-dim);font-size:11px;font-weight:700;">${i+1}</div>`;
+            }
             return `<tr>
-                <td style="font-weight:900;font-size:16px;text-align:center;">${madalya}</td>
+                <td style="text-align:center;">${rankBadge}</td>
                 <td style="font-weight:700;color:var(--text);font-size:12px;">${ekipKisaGoster(e.ad)}</td>
-                <td style="color:${renk};font-weight:800;text-align:center;">${e.arac}</td>
+                <td style="color:var(--blue-light);font-weight:800;text-align:center;">${e.tir || '—'}</td>
+                <td style="color:var(--yellow);font-weight:800;text-align:center;">${e.kamyon || '—'}</td>
+                <td style="color:#a16207;font-weight:800;text-align:center;">${e.konteyner || '—'}</td>
                 <td style="color:var(--success);font-weight:700;text-align:center;">${e.m3.toFixed(1)}</td>
-                <td style="text-align:center;font-size:11px;">
-                    ${e.tir ? `<span style="color:var(--blue-light);font-weight:700;">${e.tir}T</span>` : ''}
-                    ${e.kamyon ? `<span style="color:var(--yellow);font-weight:700;margin-left:4px;">${e.kamyon}K</span>` : ''}
-                    ${e.konteyner ? `<span style="color:#a16207;font-weight:700;margin-left:4px;">${e.konteyner}Ko</span>` : ''}
-                </td>
-                <td style="text-align:right;">
-                    <div style="background:rgba(163,177,198,0.3);border-radius:100px;height:6px;width:80px;display:inline-block;vertical-align:middle;">
-                        <div style="background:${renk};border-radius:100px;height:6px;width:${Math.round((e.arac/ekipler[0].arac)*80)}px;"></div>
-                    </div>
-                </td>
             </tr>`;
         }).join('');
     }
 
-    function tabloOlustur(baslik, renk, emoji, ekipler, toplamArac, toplamM3, listeLen) {
+    function tabloOlustur(baslik, renk, rankNo, ekipler, toplamArac, toplamM3, listeLen) {
+        // Totals
+        const topTir = ekipler.reduce((s,e)=>s+e.tir,0);
+        const topKamyon = ekipler.reduce((s,e)=>s+e.kamyon,0);
+        const topKonteyner = ekipler.reduce((s,e)=>s+e.konteyner,0);
+
+        // Rank badge for section header
+        const rankColors = { 1: 'linear-gradient(135deg,#2563eb,#1d4ed8)', 2: 'linear-gradient(135deg,#d97706,#b45309)', 3: 'linear-gradient(135deg,#7c3aed,#6d28d9)' };
+        const rankIcons  = { 1: '▲', 2: '▲', 3: '★' };
+
         if (!listeLen) return `
             <div class="sef-bolum" style="margin-bottom:16px;">
                 <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
-                    <div style="font-size:26px;">${emoji}</div>
+                    <div style="width:36px;height:36px;border-radius:10px;background:${rankColors[rankNo]||renk};display:flex;align-items:center;justify-content:center;">
+                        <span style="color:#fff;font-size:14px;font-weight:900;">${rankIcons[rankNo]||'·'}</span>
+                    </div>
                     <div>
                         <div style="font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900;letter-spacing:1px;color:${renk};">${baslik}</div>
                         <div style="font-size:11px;color:var(--muted);">Bu dönemde kayıt yok</div>
                     </div>
                 </div>
             </div>`;
+
         return `
             <div class="sef-bolum" style="margin-bottom:16px;">
                 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
                     <div style="display:flex;align-items:center;gap:10px;">
-                        <div style="font-size:26px;">${emoji}</div>
+                        <div style="width:36px;height:36px;border-radius:10px;background:${rankColors[rankNo]||renk};display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,0.2);">
+                            <span style="color:#fff;font-size:14px;font-weight:900;">${rankIcons[rankNo]||'·'}</span>
+                        </div>
                         <div>
                             <div style="font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900;letter-spacing:1px;color:${renk};">${baslik}</div>
-                            <div style="font-size:11px;color:var(--muted);">${ekipler.length} ekip · ${toplamArac} araç</div>
+                            <div style="font-size:11px;color:var(--muted);">${ekipler.length} ekip</div>
                         </div>
                     </div>
-                    <div style="display:flex;gap:8px;flex-wrap:wrap;">
-                        <span class="stat-pill" style="background:rgba(244,114,182,0.12);color:#f472b6;border:1px solid rgba(244,114,182,0.3);">🚗 ${toplamArac} Araç</span>
-                        <span class="stat-pill" style="background:rgba(34,197,94,0.12);color:#4ade80;border:1px solid rgba(34,197,94,0.3);">📦 ${toplamM3.toFixed(1)} M³</span>
+                    <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                        <span class="stat-pill" style="background:rgba(37,99,235,0.12);color:var(--blue-light);border:1px solid rgba(37,99,235,0.3);">🚛 ${topTir} Tır</span>
+                        <span class="stat-pill" style="background:rgba(217,119,6,0.12);color:var(--yellow);border:1px solid rgba(217,119,6,0.3);">🚚 ${topKamyon} Kamyon</span>
+                        <span class="stat-pill" style="background:rgba(161,98,7,0.12);color:#a16207;border:1px solid rgba(161,98,7,0.3);">📦 ${topKonteyner} Konteyner</span>
+                        <span class="stat-pill" style="background:rgba(244,114,182,0.12);color:#f472b6;border:1px solid rgba(244,114,182,0.3);">Toplam: ${toplamArac} Araç</span>
+                        <span class="stat-pill" style="background:rgba(34,197,94,0.12);color:#4ade80;border:1px solid rgba(34,197,94,0.3);">${toplamM3.toFixed(1)} M³</span>
                     </div>
                 </div>
                 <div style="overflow-x:auto;">
@@ -4637,10 +4655,10 @@ function va7Sorgula() {
                         <thead><tr>
                             <th style="width:36px;">#</th>
                             <th>Ekip</th>
-                            <th style="color:${renk};text-align:center;">Araç</th>
+                            <th style="color:var(--blue-light);text-align:center;">Tır</th>
+                            <th style="color:var(--yellow);text-align:center;">Kamyon</th>
+                            <th style="color:#a16207;text-align:center;">Konteyner</th>
                             <th style="color:var(--success);text-align:center;">M³</th>
-                            <th style="text-align:center;">Tır / Kamyon / Ko</th>
-                            <th style="text-align:right;">Oran</th>
                         </tr></thead>
                         <tbody>${liderSatir(ekipler, renk)}</tbody>
                     </table>
@@ -4650,16 +4668,32 @@ function va7Sorgula() {
 
     sonuc.innerHTML = `
         <div class="donem-badge">📅 ${donem.label} · Toplam ${topT} araç · ${m3T.toFixed(1)} M³</div>
-        ${tabloOlustur('A VARDİYASI', '#2563eb', '🔵', ekipA, topA, m3A, listeA.length)}
-        ${tabloOlustur('B VARDİYASI', '#d97706', '🟡', ekipB, topB, m3B, listeB.length)}
-        ${tabloOlustur('GENEL TOPLAM', '#7c3aed', '🏆', ekipT, topT, m3T, liste.length)}
+        ${tabloOlustur('A VARDİYASI', '#2563eb', 1, ekipA, topA, m3A, listeA.length)}
+        ${tabloOlustur('B VARDİYASI', '#d97706', 2, ekipB, topB, m3B, listeB.length)}
+        ${tabloOlustur('GENEL TOPLAM', '#7c3aed', 3, ekipT, topT, m3T, liste.length)}
     `;
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    const bugun = new Date().toISOString().split('T')[0];
+    const now = new Date();
+    const bugun = now.toISOString().split('T')[0];
+
     const inp = document.getElementById('va7Tarih');
     if (inp && !inp.value) inp.value = bugun;
+
+    const ayInp = document.getElementById('va7AyTarih');
+    if (ayInp && !ayInp.value) {
+        const ay = String(now.getMonth()+1).padStart(2,'0');
+        ayInp.value = `${now.getFullYear()}-${ay}`;
+    }
+
+    const yilInp = document.getElementById('va7YilSayi');
+    if (yilInp && !yilInp.value) yilInp.value = now.getFullYear();
+
+    const aralikBas = document.getElementById('va7AralikBas');
+    const aralikBit = document.getElementById('va7AralikBit');
+    if (aralikBas && !aralikBas.value) aralikBas.value = bugun;
+    if (aralikBit && !aralikBit.value) aralikBit.value = bugun;
 });
 </script>
 </body>
