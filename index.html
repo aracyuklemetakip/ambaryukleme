@@ -4016,30 +4016,7 @@
         const MARGIN = 8;
         const tableW = W - MARGIN * 2;
 
-        // ── BAŞLIK ALANI (tek satır, font küçülür, asla taşmaz) ──
-        const turLabel = r.tur === 'ekip' ? 'EKİP RAPORU' : 'PERSONEL RAPORU';
-        const fullBaslik = turLabel + ': ' + r.baslik;
-
-        doc.setFont('helvetica','bold');
-        let fs = 13;
-        doc.setFontSize(fs);
-        while (doc.getTextWidth(fullBaslik) > W - 10 && fs > 5) {
-            fs -= 0.25;
-            doc.setFontSize(fs);
-        }
-        const headerH = 22;
-        doc.setFillColor(...mavi);
-        doc.rect(0, 0, W, headerH, 'F');
-        doc.setTextColor(255, 255, 255);
-        doc.setFontSize(fs);
-        doc.setFont('helvetica','bold');
-        doc.text(fullBaslik, W/2, 11, { align: 'center' });
-
-        doc.setFontSize(8); doc.setFont('helvetica','normal');
-        const altBaslik = r.donemLabel + (r.sicilNo ? '  ·  Sicil: ' + r.sicilNo : '');
-        doc.text(altBaslik, W/2, 19, { align: 'center' });
-
-        let y = headerH + 4;
+        let y = 6;
 
         // ── ÖZET KARTLAR ──
         const ozet = [
