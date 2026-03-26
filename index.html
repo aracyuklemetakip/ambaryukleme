@@ -165,32 +165,29 @@
     </script>
     <style>
         :root {
-            --blue: #003c88; --blue-light: #0070d2;
-            --yellow: #e8a000; --yellow-dim: rgba(232,160,0,0.15);
-            --bg: #f7f7f7; --surface: #ffffff;
-            --glass: #ffffff;
-            --glass-border: #a9b4be;
-            --glass-border-hover: #6e8898;
-            --text: #1a2027; --text-dim: #556b82; --muted: #8a9ba8;
-            --success: #107e3e; --danger: #bb0000; --warning: #e8a000;
-            --input-bg: #ffffff;
-            --sap-toolbar: #003c88;
-            --sap-toolbar2: #0070d2;
-            --sap-border: #a9b4be;
-            --sap-row-alt: #f2f7fc;
-            --sap-header: #e8eef2;
-            --sap-selected: #d6e8f5;
+            --blue: #2563eb; --blue-light: #2563eb;
+            --yellow: #d97706; --yellow-dim: rgba(217,119,6,0.1);
+            --bg: #e0e5ec; --surface: #e0e5ec;
+            --glass: #e0e5ec;
+            --glass-border: rgba(163,177,198,0.4);
+            --glass-border-hover: rgba(163,177,198,0.7);
+            --text: #3d4f6e; --text-dim: #6b7a96; --muted: #9aa5b8;
+            --success: #16a34a; --danger: #dc2626; --warning: #d97706;
+            --input-bg: #e8ecf4;
+            --neu-shadow: 6px 6px 14px rgba(163,177,198,0.75), -4px -4px 10px rgba(255,255,255,0.9);
+            --neu-shadow-sm: 4px 4px 10px rgba(163,177,198,0.7), -3px -3px 8px rgba(255,255,255,0.85);
+            --neu-inset: inset 3px 3px 8px rgba(163,177,198,0.6), inset -2px -2px 6px rgba(255,255,255,0.8);
         }
         * { margin:0; padding:0; box-sizing:border-box; }
         button:focus { outline:none; }
-        body { font-family:'Arial',sans-serif; background:#f7f7f7; color:#1a2027; min-height:100vh; overflow-x:hidden; font-size:13px; }
+        body { font-family:'Barlow',sans-serif; background:#e0e5ec; color:var(--text); min-height:100vh; overflow-x:hidden; }
 
         /* ARKA PLAN */
-        .bg-blobs { position:fixed; inset:0; z-index:0; pointer-events:none; background:#f7f7f7; }
+        .bg-blobs { position:fixed; inset:0; z-index:0; pointer-events:none; background:#e0e5ec; }
         .blob { position:absolute; border-radius:50%; filter:blur(90px); }
-        .blob-1 { display:none; }
-        .blob-2 { display:none; }
-        .blob-3 { display:none; }
+        .blob-1 { width:500px;height:500px; background:radial-gradient(circle,rgba(255,255,255,0.7),transparent 70%); top:-100px;left:-100px; }
+        .blob-2 { width:400px;height:400px; background:radial-gradient(circle,rgba(163,177,198,0.4),transparent 70%); bottom:-80px;right:-80px; }
+        .blob-3 { width:300px;height:300px; background:radial-gradient(circle,rgba(255,255,255,0.5),transparent 70%); bottom:100px;left:200px; }
         .grid-bg { position:fixed; inset:0; z-index:0; pointer-events:none;
             background-image: linear-gradient(rgba(255,255,255,0.02) 1px,transparent 1px), linear-gradient(90deg,rgba(255,255,255,0.02) 1px,transparent 1px);
             background-size:50px 50px; }
@@ -203,7 +200,7 @@
            ANA SAYFA
         ══════════════════════════════════════ */
         #anaSayfa.active {
-            display:flex; align-items:center; justify-content:center; min-height:100vh; background:#f7f7f7;
+            display:flex; align-items:center; justify-content:center; min-height:100vh;
         }
         .ana-wrapper {
             position:relative; z-index:1;
@@ -215,10 +212,10 @@
 
         .status-pill {
             display:inline-flex; align-items:center; gap:8px;
-            background:#f7f7f7; border-radius:100px;
+            background:#e0e5ec; border-radius:100px;
             padding:8px 20px 8px 14px;
             font-size:13px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:#3a7d44;
-            box-shadow:none;
+            box-shadow:4px 4px 10px rgba(163,177,198,0.7),-3px -3px 8px rgba(255,255,255,0.85);
         }
         .status-dot { width:7px;height:7px; background:#22c55e; border-radius:50%; box-shadow:0 0 8px #22c55e; animation:pulseDot 2s infinite; }
         @keyframes pulseDot { 0%,100%{box-shadow:0 0 6px #22c55e} 50%{box-shadow:0 0 14px #22c55e,0 0 24px rgba(34,197,94,0.4)} }
@@ -230,61 +227,61 @@
         .ana-cards { display:flex; align-items:center; gap:0; }
         .ana-card {
             position:relative; width:260px; padding:32px 28px; border-radius:24px;
-            background:#f7f7f7; cursor:pointer; color:#1a2027;
+            background:#e0e5ec; cursor:pointer; color:#3d4f6e;
             display:flex; flex-direction:column; gap:20px; border:none;
-            box-shadow:0 1px 2px rgba(0,0,0,0.15);
+            box-shadow:10px 10px 24px rgba(163,177,198,0.8),-7px -7px 18px rgba(255,255,255,0.9);
             transition:transform 0.2s ease, box-shadow 0.2s ease; overflow:hidden;
         }
         .ana-card::before { display:none; }
         .ana-card::after { display:none; }
-        .ana-card:hover { transform:translateY(-5px); box-shadow:0 2px 4px rgba(0,0,0,0.2); }
-        .ana-card:active { transform:translateY(0); box-shadow:none; }
-        .card-icon-wrap { width:52px;height:52px; border-radius:14px; display:flex;align-items:center;justify-content:center; font-size:24px; background:#f7f7f7; box-shadow:none; }
+        .ana-card:hover { transform:translateY(-5px); box-shadow:13px 13px 28px rgba(163,177,198,0.85),-9px -9px 22px rgba(255,255,255,0.95); }
+        .ana-card:active { transform:translateY(0); box-shadow:inset 4px 4px 10px rgba(163,177,198,0.7),inset -3px -3px 8px rgba(255,255,255,0.85); }
+        .card-icon-wrap { width:52px;height:52px; border-radius:14px; display:flex;align-items:center;justify-content:center; font-size:24px; background:#e0e5ec; box-shadow:4px 4px 10px rgba(163,177,198,0.7),-3px -3px 8px rgba(255,255,255,0.85); }
         .card-type { font-size:10px; font-weight:800; letter-spacing:2.5px; text-transform:uppercase; }
         .card-blue  .card-type { color:#2563eb; }
         .card-yellow .card-type { color:#d97706; }
-        .card-name { font-family:'Barlow Condensed',sans-serif; font-size:32px; font-weight:900; text-transform:uppercase; line-height:1; margin-top:2px; color:#1a2027; }
+        .card-name { font-family:'Barlow Condensed',sans-serif; font-size:32px; font-weight:900; text-transform:uppercase; line-height:1; margin-top:2px; color:#3d4f6e; }
         .card-enter { margin-top:auto; display:flex; align-items:center; gap:8px; font-size:12px; font-weight:700; letter-spacing:1px; text-transform:uppercase; opacity:0.4; transition:opacity 0.2s,gap 0.2s; }
         .ana-card:hover .card-enter { opacity:1; gap:12px; }
         .card-blue  .card-enter { color:#2563eb; }
         .card-yellow .card-enter { color:#d97706; }
-        .ana-sep { display:flex; flex-direction:column; align-items:center; gap:10px; padding:0 24px; color:#8a9ba8; font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; }
-        .ana-sep::before,.ana-sep::after { content:''; width:1px; height:50px; background:linear-gradient(to bottom,transparent,#a9b4be,transparent); }
-        .ana-footer { display:flex; background:#f7f7f7; border-radius:16px; overflow:hidden; box-shadow:0 1px 2px rgba(0,0,0,0.1); }
-        .footer-item { padding:12px 28px; text-align:center; border-right:1px solid #a9b4be; }
+        .ana-sep { display:flex; flex-direction:column; align-items:center; gap:10px; padding:0 24px; color:#9aa5b8; font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; }
+        .ana-sep::before,.ana-sep::after { content:''; width:1px; height:50px; background:linear-gradient(to bottom,transparent,rgba(163,177,198,0.5),transparent); }
+        .ana-footer { display:flex; background:#e0e5ec; border-radius:16px; overflow:hidden; box-shadow:6px 6px 14px rgba(163,177,198,0.7),-4px -4px 10px rgba(255,255,255,0.85); }
+        .footer-item { padding:12px 28px; text-align:center; border-right:1px solid rgba(163,177,198,0.3); }
         .footer-item:last-child { border-right:none; }
         .footer-num { font-family:'Barlow Condensed',sans-serif; font-size:20px; font-weight:900; color:#d97706; }
-        .footer-lbl { font-size:9px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:#8a9ba8; margin-top:2px; }
-        .ver { position:fixed; bottom:18px;right:20px; font-size:10px; font-weight:700; letter-spacing:1px; color:#8a9ba8; text-transform:uppercase; z-index:1; }
+        .footer-lbl { font-size:9px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:#9aa5b8; margin-top:2px; }
+        .ver { position:fixed; bottom:18px;right:20px; font-size:10px; font-weight:700; letter-spacing:1px; color:#9aa5b8; text-transform:uppercase; z-index:1; }
 
         /* VARDİYA MODAL */
-        .modal-overlay { display:none; position:fixed; inset:0; z-index:999; background:#a9b4be; backdrop-filter:blur(6px); align-items:center; justify-content:center; }
+        .modal-overlay { display:none; position:fixed; inset:0; z-index:999; background:rgba(163,177,198,0.6); backdrop-filter:blur(6px); align-items:center; justify-content:center; }
         .modal-overlay.show { display:flex; }
-        .modal-box { background:#f7f7f7; border:none; border-radius:24px; padding:36px 32px; text-align:center; width:320px; animation:popIn 0.2s cubic-bezier(0.22,1,0.36,1); box-shadow:0 1px 3px rgba(0,0,0,0.2); }
+        .modal-box { background:#e0e5ec; border:none; border-radius:24px; padding:36px 32px; text-align:center; width:320px; animation:popIn 0.2s cubic-bezier(0.22,1,0.36,1); box-shadow:12px 12px 28px rgba(163,177,198,0.8),-8px -8px 20px rgba(255,255,255,0.9); }
         .modal-icon { font-size:28px; margin-bottom:12px; }
         .modal-title { font-family:'Barlow Condensed',sans-serif; font-size:24px; font-weight:900; text-transform:uppercase; margin-bottom:6px; }
-        .modal-sub { font-size:12px; color:#8a9ba8; margin-bottom:24px; }
+        .modal-sub { font-size:12px; color:var(--muted); margin-bottom:24px; }
         .modal-btns { display:flex; gap:12px; }
-        .modal-vardiya-btn { flex:1; padding:16px; border-radius:14px; cursor:pointer; font-family:'Barlow Condensed',sans-serif; font-size:22px; font-weight:900; transition:all 0.15s; border:none; background:#f7f7f7; box-shadow:none; }
+        .modal-vardiya-btn { flex:1; padding:16px; border-radius:14px; cursor:pointer; font-family:'Barlow Condensed',sans-serif; font-size:22px; font-weight:900; transition:all 0.15s; border:none; background:#e0e5ec; box-shadow:5px 5px 12px rgba(163,177,198,0.75),-4px -4px 10px rgba(255,255,255,0.9); }
         .modal-vardiya-btn.a { color:#2563eb; }
         .modal-vardiya-btn.b { color:#d97706; }
-        .modal-vardiya-btn:hover { transform:translateY(-2px); box-shadow:none; }
-        .modal-vardiya-btn:active { box-shadow:none; transform:translateY(0); }
-        .modal-cancel { margin-top:14px; background:none; border:none; color:#8a9ba8; font-size:12px; font-weight:700; cursor:pointer; letter-spacing:1px; text-transform:uppercase; }
+        .modal-vardiya-btn:hover { transform:translateY(-2px); box-shadow:7px 7px 16px rgba(163,177,198,0.8),-5px -5px 12px rgba(255,255,255,0.95); }
+        .modal-vardiya-btn:active { box-shadow:inset 3px 3px 8px rgba(163,177,198,0.6),inset -2px -2px 6px rgba(255,255,255,0.8); transform:translateY(0); }
+        .modal-cancel { margin-top:14px; background:none; border:none; color:var(--muted); font-size:12px; font-weight:700; cursor:pointer; letter-spacing:1px; text-transform:uppercase; }
 
         /* SİLME ONAY MODALI */
-        .confirm-overlay { display:none; position:fixed; inset:0; z-index:9998; background:#a9b4be; backdrop-filter:blur(4px); align-items:center; justify-content:center; }
+        .confirm-overlay { display:none; position:fixed; inset:0; z-index:9998; background:rgba(163,177,198,0.5); backdrop-filter:blur(4px); align-items:center; justify-content:center; }
         .confirm-overlay.show { display:flex; }
-        .confirm-box { background:#f7f7f7; border:none; border-radius:24px; padding:28px 32px; text-align:center; max-width:320px; width:90%; animation:popIn 0.2s cubic-bezier(0.22,1,0.36,1); box-shadow:0 1px 3px rgba(0,0,0,0.2); }
+        .confirm-box { background:#e0e5ec; border:none; border-radius:24px; padding:28px 32px; text-align:center; max-width:320px; width:90%; animation:popIn 0.2s cubic-bezier(0.22,1,0.36,1); box-shadow:12px 12px 28px rgba(163,177,198,0.8),-8px -8px 20px rgba(255,255,255,0.9); }
         .confirm-icon { font-size:32px; margin-bottom:12px; }
-        .confirm-title { font-family:'Barlow Condensed',sans-serif; font-size:22px; font-weight:900; text-transform:uppercase; margin-bottom:8px; color:#1a2027; }
-        .confirm-text { font-size:13px; color:#556b82; margin-bottom:24px; line-height:1.5; }
+        .confirm-title { font-family:'Barlow Condensed',sans-serif; font-size:22px; font-weight:900; text-transform:uppercase; margin-bottom:8px; color:#3d4f6e; }
+        .confirm-text { font-size:13px; color:var(--text-dim); margin-bottom:24px; line-height:1.5; }
         .confirm-btns { display:flex; gap:10px; }
         .confirm-btn { flex:1; padding:10px; border-radius:12px; border:none; font-family:'Barlow',sans-serif; font-size:13px; font-weight:800; cursor:pointer; transition:all 0.15s; letter-spacing:0.5px; }
-        .confirm-btn-cancel { background:#f7f7f7; color:#556b82; box-shadow:none; }
-        .confirm-btn-cancel:hover { box-shadow:none; color:#1a2027; }
-        .confirm-btn-ok { background:#f7f7f7; color:#bb0000; box-shadow:none; }
-        .confirm-btn-ok:hover { box-shadow:none; }
+        .confirm-btn-cancel { background:#e0e5ec; color:var(--text-dim); box-shadow:4px 4px 10px rgba(163,177,198,0.7),-3px -3px 8px rgba(255,255,255,0.85); }
+        .confirm-btn-cancel:hover { box-shadow:5px 5px 12px rgba(163,177,198,0.75),-4px -4px 10px rgba(255,255,255,0.9); color:var(--text); }
+        .confirm-btn-ok { background:#e0e5ec; color:var(--danger); box-shadow:4px 4px 10px rgba(163,177,198,0.7),-3px -3px 8px rgba(255,255,255,0.85); }
+        .confirm-btn-ok:hover { box-shadow:5px 5px 12px rgba(163,177,198,0.75),-4px -4px 10px rgba(255,255,255,0.9); }
 
         /* ══════════════════════════════════════
            OPERATÖR SAYFASI
@@ -293,55 +290,55 @@
 
         .layout { position:relative; z-index:1; display:grid; grid-template-columns:400px 1fr; grid-template-rows:auto 1fr; min-height:100vh; }
 
-        .topbar { grid-column:1/-1; display:flex; align-items:center; justify-content:space-between; padding:14px 28px; background:rgba(224,229,236,0.95); backdrop-filter:blur(20px); border-bottom:1px solid #a9b4be; position:sticky;top:0;z-index:100; }
+        .topbar { grid-column:1/-1; display:flex; align-items:center; justify-content:space-between; padding:14px 28px; background:rgba(224,229,236,0.95); backdrop-filter:blur(20px); border-bottom:1px solid rgba(163,177,198,0.4); position:sticky;top:0;z-index:100; }
         .topbar-left { display:flex; align-items:center; gap:16px; }
-        .back-btn { display:flex;align-items:center;gap:6px; background:#f7f7f7; border:none; border-radius:8px; padding:6px 12px; font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase; color:#556b82; cursor:pointer; transition:all 0.15s; box-shadow:none; }
-        .back-btn:hover { color:#1a2027; box-shadow:none; }
+        .back-btn { display:flex;align-items:center;gap:6px; background:#e0e5ec; border:none; border-radius:8px; padding:6px 12px; font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase; color:var(--text-dim); cursor:pointer; transition:all 0.15s; box-shadow:3px 3px 8px rgba(163,177,198,0.6),-2px -2px 6px rgba(255,255,255,0.8); }
+        .back-btn:hover { color:var(--text); box-shadow:4px 4px 10px rgba(163,177,198,0.7),-3px -3px 8px rgba(255,255,255,0.85); }
         .page-title { font-family:'Barlow Condensed',sans-serif; font-size:20px;font-weight:900;text-transform:uppercase;letter-spacing:1px; }
-        .page-title span { color:#0070d2; }
+        .page-title span { color:var(--blue-light); }
         .vardiya-bar { display:flex;align-items:center;gap:8px; }
-        .vardiya-label { font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#556b82; }
+        .vardiya-label { font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim); }
         .vardiya-pills { display:flex;gap:4px; }
-        .vardiya-pill { padding:5px 14px;border-radius:100px; font-size:12px;font-weight:700;letter-spacing:0.5px; border:none;background:#f7f7f7; color:#556b82;cursor:pointer;transition:all 0.15s;user-select:none; box-shadow:none; }
-        .vardiya-pill:hover { color:#1a2027; box-shadow:none; }
-        .vardiya-pill.active-a { background:#2563eb;border:none; color:#fff;box-shadow:none; }
-        .vardiya-pill.active-b { background:#d97706;border:none; color:#fff;box-shadow:none; }
-        .tarih-display { font-size:12px;font-weight:600;color:#556b82; background:#f7f7f7;border:none; border-radius:8px;padding:6px 12px; box-shadow:none; }
+        .vardiya-pill { padding:5px 14px;border-radius:100px; font-size:12px;font-weight:700;letter-spacing:0.5px; border:none;background:#e0e5ec; color:var(--text-dim);cursor:pointer;transition:all 0.15s;user-select:none; box-shadow:3px 3px 8px rgba(163,177,198,0.6),-2px -2px 6px rgba(255,255,255,0.8); }
+        .vardiya-pill:hover { color:var(--text); box-shadow:4px 4px 10px rgba(163,177,198,0.7),-3px -3px 8px rgba(255,255,255,0.85); }
+        .vardiya-pill.active-a { background:#2563eb;border:none; color:#fff;box-shadow:3px 3px 8px rgba(163,177,198,0.6),-2px -2px 6px rgba(255,255,255,0.8); }
+        .vardiya-pill.active-b { background:#d97706;border:none; color:#fff;box-shadow:3px 3px 8px rgba(163,177,198,0.6),-2px -2px 6px rgba(255,255,255,0.8); }
+        .tarih-display { font-size:12px;font-weight:600;color:var(--text-dim); background:#e0e5ec;border:none; border-radius:8px;padding:6px 12px; box-shadow:inset 2px 2px 5px rgba(163,177,198,0.5),inset -1px -1px 4px rgba(255,255,255,0.8); }
 
-        .form-panel { background:rgba(224,229,236,0.9); backdrop-filter:blur(20px); border-right:1px solid #a9b4be; padding:24px 20px; overflow-y:auto; max-height:calc(100vh - 53px); }
+        .form-panel { background:rgba(224,229,236,0.9); backdrop-filter:blur(20px); border-right:1px solid rgba(163,177,198,0.3); padding:24px 20px; overflow-y:auto; max-height:calc(100vh - 53px); }
         .edit-banner { display:none; align-items:center; gap:10px; background:rgba(217,119,6,0.08); border:1px solid rgba(217,119,6,0.25); border-radius:10px; padding:10px 14px; margin-bottom:16px; font-size:12px;font-weight:700; color:#d97706; }
         .edit-banner.show { display:flex; }
-        .edit-cancel { margin-left:auto; background:none;border:none; color:#556b82;font-size:18px;cursor:pointer; line-height:1;padding:0 2px; transition:color 0.15s; }
-        .edit-cancel:hover { color:#bb0000; }
-        .form-section-title { font-size:10px;font-weight:800;letter-spacing:2px; text-transform:uppercase;color:#8a9ba8; margin-bottom:12px;margin-top:20px; padding-bottom:6px;border-bottom:1px solid #a9b4be; }
+        .edit-cancel { margin-left:auto; background:none;border:none; color:var(--text-dim);font-size:18px;cursor:pointer; line-height:1;padding:0 2px; transition:color 0.15s; }
+        .edit-cancel:hover { color:var(--danger); }
+        .form-section-title { font-size:10px;font-weight:800;letter-spacing:2px; text-transform:uppercase;color:var(--muted); margin-bottom:12px;margin-top:20px; padding-bottom:6px;border-bottom:1px solid rgba(163,177,198,0.4); }
         .form-section-title:first-of-type { margin-top:0; }
         .input-group { display:flex;flex-direction:column;gap:5px;margin-bottom:10px; }
-        .input-label { font-size:10px;font-weight:800;letter-spacing:1.5px; text-transform:uppercase;color:#556b82; }
-        .input-label .opt { font-weight:600;color:#8a9ba8;letter-spacing:0; text-transform:none;font-size:9px;margin-left:4px; }
+        .input-label { font-size:10px;font-weight:800;letter-spacing:1.5px; text-transform:uppercase;color:var(--text-dim); }
+        .input-label .opt { font-weight:600;color:var(--muted);letter-spacing:0; text-transform:none;font-size:9px;margin-left:4px; }
         .seg-group { display:flex;gap:4px; }
-        .seg-btn { flex:1;padding:9px 6px;border-radius:10px; border:none;background:#f7f7f7; color:#556b82;font-family:'Barlow',sans-serif; font-size:12px;font-weight:700;cursor:pointer; transition:all 0.15s;text-align:center;user-select:none;outline:none; box-shadow:none; }
-        .seg-btn:hover { border-color:var(--glass-border-hover);color:#1a2027; }
-        .seg-btn.active-blue { background:#2563eb;border:none; color:#fff;box-shadow:none; }
-        .seg-btn.active-yellow { background:#d97706;border:none; color:#fff;box-shadow:none; }
-        .seg-btn.active-red { background:#dc2626;border:none; color:#fff;box-shadow:none; }
-        .text-input { width:100%;background:#ffffff; border:1px solid #a9b4be;border-radius:10px; color:#1a2027;font-family:'Barlow',sans-serif; font-size:13px;font-weight:600;padding:9px 12px; outline:none;transition:all 0.15s; box-shadow:none; }
-        .text-input:focus { border-color:rgba(37,99,235,0.4);box-shadow:none,0 0 0 3px rgba(37,99,235,0.1); }
-        .text-input::placeholder { color:#8a9ba8;font-weight:500; }
+        .seg-btn { flex:1;padding:9px 6px;border-radius:10px; border:none;background:#e0e5ec; color:var(--text-dim);font-family:'Barlow',sans-serif; font-size:12px;font-weight:700;cursor:pointer; transition:all 0.15s;text-align:center;user-select:none;outline:none; box-shadow:3px 3px 8px rgba(163,177,198,0.6),-2px -2px 6px rgba(255,255,255,0.8); }
+        .seg-btn:hover { border-color:var(--glass-border-hover);color:var(--text); }
+        .seg-btn.active-blue { background:#2563eb;border:none; color:#fff;box-shadow:3px 3px 8px rgba(163,177,198,0.6),-2px -2px 6px rgba(255,255,255,0.8); }
+        .seg-btn.active-yellow { background:#d97706;border:none; color:#fff;box-shadow:3px 3px 8px rgba(163,177,198,0.6),-2px -2px 6px rgba(255,255,255,0.8); }
+        .seg-btn.active-red { background:#dc2626;border:none; color:#fff;box-shadow:3px 3px 8px rgba(163,177,198,0.6),-2px -2px 6px rgba(255,255,255,0.8); }
+        .text-input { width:100%;background:#e8ecf4; border:1px solid rgba(163,177,198,0.3);border-radius:10px; color:var(--text);font-family:'Barlow',sans-serif; font-size:13px;font-weight:600;padding:9px 12px; outline:none;transition:all 0.15s; box-shadow:inset 2px 2px 6px rgba(163,177,198,0.5),inset -2px -2px 4px rgba(255,255,255,0.8); }
+        .text-input:focus { border-color:rgba(37,99,235,0.4);box-shadow:inset 2px 2px 6px rgba(163,177,198,0.5),inset -2px -2px 4px rgba(255,255,255,0.8),0 0 0 3px rgba(37,99,235,0.1); }
+        .text-input::placeholder { color:var(--muted);font-weight:500; }
         .time-row { display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center; }
-        .time-sep { font-size:18px;font-weight:900;color:#8a9ba8;text-align:center; }
+        .time-sep { font-size:18px;font-weight:900;color:var(--muted);text-align:center; }
         .durus-list { display:flex;flex-direction:column;gap:6px;margin-bottom:8px; }
         .durus-item { display:grid;grid-template-columns:1fr 70px 28px; gap:6px;align-items:center; animation:fadeIn 0.2s ease; }
         @keyframes fadeIn { from{opacity:0;transform:translateY(-4px)} to{opacity:1;transform:translateY(0)} }
-        .durus-dk { text-align:center;font-weight:800;color:#e8a000; }
-        .durus-remove { width:28px;height:28px;border-radius:8px; border:1px solid rgba(239,68,68,0.3);background:rgba(239,68,68,0.08); color:#bb0000;font-size:14px;cursor:pointer; display:flex;align-items:center;justify-content:center; transition:all 0.15s; }
+        .durus-dk { text-align:center;font-weight:800;color:var(--yellow); }
+        .durus-remove { width:28px;height:28px;border-radius:8px; border:1px solid rgba(239,68,68,0.3);background:rgba(239,68,68,0.08); color:var(--danger);font-size:14px;cursor:pointer; display:flex;align-items:center;justify-content:center; transition:all 0.15s; }
         .durus-remove:hover { background:rgba(239,68,68,0.18);border-color:rgba(239,68,68,0.6); }
         .durus-dropdown-wrap { position:relative; }
-        .btn-add-durus { width:100%;padding:8px;border-radius:10px; border:1px dashed var(--muted);background:transparent; color:#556b82;font-family:'Barlow',sans-serif; font-size:11px;font-weight:700;letter-spacing:1px; text-transform:uppercase;cursor:pointer;transition:all 0.15s; }
-        .btn-add-durus:hover { border-color:#0070d2;color:#0070d2; }
-        .durus-menu { display:none; position:absolute; bottom:calc(100% + 6px); left:0;right:0; background:#f0f4f7; border:1px solid var(--glass-border); border-radius:12px;overflow:hidden; z-index:200; box-shadow:0 8px 32px rgba(0,0,0,0.25); }
+        .btn-add-durus { width:100%;padding:8px;border-radius:10px; border:1px dashed var(--muted);background:transparent; color:var(--text-dim);font-family:'Barlow',sans-serif; font-size:11px;font-weight:700;letter-spacing:1px; text-transform:uppercase;cursor:pointer;transition:all 0.15s; }
+        .btn-add-durus:hover { border-color:var(--blue-light);color:var(--blue-light); }
+        .durus-menu { display:none; position:absolute; bottom:calc(100% + 6px); left:0;right:0; background:#dde3ef; border:1px solid var(--glass-border); border-radius:12px;overflow:hidden; z-index:200; box-shadow:0 8px 32px rgba(163,177,198,0.45); }
         .durus-menu.open { display:block; }
         @keyframes menuPop { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
-        .durus-menu-item { padding:11px 16px; font-size:13px;font-weight:600; cursor:pointer;transition:background 0.1s; border-bottom:1px solid #a9b4be; }
+        .durus-menu-item { padding:11px 16px; font-size:13px;font-weight:600; cursor:pointer;transition:background 0.1s; border-bottom:1px solid rgba(163,177,198,0.4); }
         .durus-menu-item:last-child { border-bottom:none; }
         .durus-menu-item:hover { background:rgba(37,99,235,0.08);color:#2563eb; }
         .btn-submit { width:100%;margin-top:20px;padding:14px;border-radius:12px; border:none;background:linear-gradient(135deg,var(--blue),#1d4ed8); color:white;font-family:'Barlow Condensed',sans-serif; font-size:18px;font-weight:900;letter-spacing:2px; text-transform:uppercase;cursor:pointer;transition:all 0.2s; box-shadow:0 4px 20px rgba(37,99,235,0.3); animation:submitPulse 2s ease-in-out infinite; }
@@ -375,72 +372,72 @@
         .table-title { font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900;text-transform:uppercase;letter-spacing:1px; }
         .table-count { background:rgba(37,99,235,0.1);border:1px solid rgba(37,99,235,0.25); border-radius:100px;padding:3px 12px; font-size:11px;font-weight:800;color:#2563eb; }
         .summary-cards { display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:20px; }
-        .summary-card { background:#f7f7f7;border:none;border-radius:14px; padding:12px 16px;text-align:center; box-shadow:none; }
+        .summary-card { background:#e0e5ec;border:none;border-radius:14px; padding:12px 16px;text-align:center; box-shadow:5px 5px 12px rgba(163,177,198,0.7),-4px -4px 10px rgba(255,255,255,0.85); }
         .summary-num { font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900; }
-        .summary-lbl { font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:#556b82;margin-top:2px; }
-        .ekip-card { display:flex;align-items:center;gap:12px; background:#f7f7f7;border:none; border-radius:12px;padding:10px 14px;margin-bottom:8px; box-shadow:none; }
-        .ekip-card-name { font-size:13px;font-weight:800;color:#1a2027;flex:1; }
+        .summary-lbl { font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);margin-top:2px; }
+        .ekip-card { display:flex;align-items:center;gap:12px; background:#e0e5ec;border:none; border-radius:12px;padding:10px 14px;margin-bottom:8px; box-shadow:4px 4px 10px rgba(163,177,198,0.65),-3px -3px 8px rgba(255,255,255,0.85); }
+        .ekip-card-name { font-size:13px;font-weight:800;color:var(--text);flex:1; }
         .ekip-card-badges { display:flex;gap:6px;align-items:center;flex-wrap:wrap; }
         .ekip-mini-badge { display:inline-flex;align-items:center;gap:4px; padding:3px 10px;border-radius:100px; font-size:11px;font-weight:800; }
         .data-table { width:100%;border-collapse:collapse;font-size:12px; }
-        .data-table thead tr { background:var(--glass);border-bottom:1px solid #a9b4be; }
-        .data-table th { padding:10px 12px;text-align:left;font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:#556b82;white-space:nowrap; }
-        .data-table tbody tr { border-bottom:1px solid rgba(163,177,198,0.2);transition:background 0.15s;cursor:pointer; background:#ffffff; }
-        .data-table tbody tr:hover { background:#f0f4f7; }
+        .data-table thead tr { background:var(--glass);border-bottom:1px solid rgba(163,177,198,0.4); }
+        .data-table th { padding:10px 12px;text-align:left;font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);white-space:nowrap; }
+        .data-table tbody tr { border-bottom:1px solid rgba(163,177,198,0.2);transition:background 0.15s;cursor:pointer; background:#e8ecf4; }
+        .data-table tbody tr:hover { background:#dde3ef; }
         .data-table tbody tr.selected { background:rgba(217,119,6,0.08);outline:1px solid rgba(217,119,6,0.25); }
         .data-table td { padding:10px 12px;vertical-align:middle; }
         .badge { display:inline-block;padding:2px 8px;border-radius:100px;font-size:10px;font-weight:800;letter-spacing:0.5px; }
         .badge-tir       { background:rgba(59,130,246,0.15);color:#2563eb;border:1px solid rgba(59,130,246,0.3); }
         .badge-kamyon    { background:rgba(217,119,6,0.1);color:#b45309;border:1px solid rgba(217,119,6,0.25); }
         .badge-konteyner { background:rgba(234,179,8,0.15);color:#a16207;border:1px solid rgba(234,179,8,0.4); }
-        .status-ok  { color:#107e3e;font-weight:800;font-size:11px; }
-        .status-gec { color:#bb0000;font-weight:800;font-size:11px; }
+        .status-ok  { color:var(--success);font-weight:800;font-size:11px; }
+        .status-gec { color:var(--danger);font-weight:800;font-size:11px; }
         .data-table tbody tr.ekip-grup-baslik { background:transparent;border-bottom:none;cursor:default; }
         .data-table tbody tr.ekip-grup-baslik:hover { background:transparent; }
         .data-table tbody tr.ekip-grup-bosluk { background:transparent;border-bottom:none;cursor:default; }
         .data-table tbody tr.ekip-grup-bosluk:hover { background:transparent; }
         .del-btn { width:28px;height:28px;border-radius:7px; border:1px solid rgba(239,68,68,0.2);background:rgba(239,68,68,0.06); color:rgba(239,68,68,0.4);font-size:14px;cursor:pointer; display:flex;align-items:center;justify-content:center; transition:all 0.15s; }
-        .del-btn:hover { background:rgba(239,68,68,0.2);border-color:rgba(239,68,68,0.6);color:#bb0000; }
-        .empty-state { text-align:center;padding:60px 20px;color:#8a9ba8; }
+        .del-btn:hover { background:rgba(239,68,68,0.2);border-color:rgba(239,68,68,0.6);color:var(--danger); }
+        .empty-state { text-align:center;padding:60px 20px;color:var(--muted); }
         .empty-state-icon { font-size:40px;margin-bottom:12px;opacity:0.4; }
         .empty-state-text { font-size:13px;font-weight:600; }
 
         /* TOAST */
         .toast { position:fixed;bottom:24px;left:50%; transform:translateX(-50%) translateY(80px); backdrop-filter:blur(12px);border-radius:12px; padding:12px 24px;font-size:13px;font-weight:700; z-index:9999;transition:transform 0.3s cubic-bezier(0.22,1,0.36,1),opacity 0.3s; opacity:0;pointer-events:none;white-space:nowrap; }
         .toast.show { transform:translateX(-50%) translateY(0);opacity:1; }
-        .toast.success { background:rgba(220,252,231,0.95);border:1px solid rgba(22,163,74,0.4);color:#107e3e; }
+        .toast.success { background:rgba(220,252,231,0.95);border:1px solid rgba(22,163,74,0.4);color:var(--success); }
         .toast.warn    { background:rgba(254,243,199,0.95);border:1px solid rgba(217,119,6,0.4);color:var(--warning); }
 
         ::-webkit-scrollbar { width:4px; }
         ::-webkit-scrollbar-track { background:transparent; }
-        ::-webkit-scrollbar-thumb { background:#6e8898;border-radius:4px; }
+        ::-webkit-scrollbar-thumb { background:rgba(163,177,198,0.7);border-radius:4px; }
 
         /* ══ ŞEF SAYFASI ══ */
         .sef-layout { position:relative;z-index:1; min-height:100vh; }
-        .sef-topbar { display:flex;align-items:center;justify-content:space-between; padding:14px 28px; background:rgba(224,229,236,0.95);backdrop-filter:blur(20px); border-bottom:1px solid #a9b4be; position:sticky;top:0;z-index:100; }
+        .sef-topbar { display:flex;align-items:center;justify-content:space-between; padding:14px 28px; background:rgba(224,229,236,0.95);backdrop-filter:blur(20px); border-bottom:1px solid rgba(163,177,198,0.4); position:sticky;top:0;z-index:100; }
         .sef-content { padding:28px 32px; max-width:1400px; margin:0 auto; }
 
-        .filtre-panel { background:#ffffff;border:1px solid #a9b4be;border-top:1px solid rgba(255,255,255,0.8);border-radius:14px;padding:20px 24px;margin-bottom:24px;box-shadow:0 4px 24px rgba(0,0,0,0.3); }
+        .filtre-panel { background:#e8ecf4;border:1px solid rgba(163,177,198,0.4);border-top:1px solid rgba(255,255,255,0.8);border-radius:14px;padding:20px 24px;margin-bottom:24px;box-shadow:0 4px 24px rgba(0,0,0,0.3); }
         .filtre-row { display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap; }
         .filtre-group { display:flex;flex-direction:column;gap:5px; }
-        .filtre-label { font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:#556b82; }
-        .filtre-input { background:#f0f4f7;border:1px solid #a9b4be;border-radius:8px;color:#1a2027;font-family:'Barlow',sans-serif;font-size:13px;font-weight:600;padding:8px 12px;outline:none;transition:border-color 0.15s; }
+        .filtre-label { font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim); }
+        .filtre-input { background:#dde3ef;border:1px solid rgba(163,177,198,0.4);border-radius:8px;color:var(--text);font-family:'Barlow',sans-serif;font-size:13px;font-weight:600;padding:8px 12px;outline:none;transition:border-color 0.15s; }
         .filtre-input:focus { border-color:rgba(59,130,246,0.6);box-shadow:0 0 0 2px rgba(37,99,235,0.15); }
         .filtre-seg { display:flex;gap:4px; }
 
         .filtre-seg-btn {
             padding:8px 16px;border-radius:6px;
-            border:1px solid #a9b4be;
-            background:#f7f7f7;
-            color:#8a9ba8;font-family:'Barlow',sans-serif;
+            border:1px solid rgba(163,177,198,0.4);
+            background:#e0e5ec;
+            color:#9aa5b8;font-family:'Barlow',sans-serif;
             font-size:12px;font-weight:600;cursor:pointer;
             user-select:none;
             outline:none;
         }
         .filtre-seg-btn:hover {
             border-color:#2d3748;
-            background:#f0f4f7;
-            color:#556b82;
+            background:#dde3ef;
+            color:#6b7a96;
         }
         .filtre-seg-btn.aktif {
             border-color:rgba(59,130,246,0.7);
@@ -456,7 +453,7 @@
         .btn-pdf {
             padding:9px 20px;border-radius:50px;
             border:1px solid rgba(37,99,235,0.5);
-            background: #f7f7f7;
+            background: #e0e5ec;
             color:#2563eb;font-family:'Barlow Condensed',sans-serif;
             font-size:14px;font-weight:900;letter-spacing:1px;text-transform:uppercase;
             cursor:pointer;transition:all 0.2s;white-space:nowrap;outline:none;
@@ -464,18 +461,18 @@
         }
         .btn-pdf:hover {
             border-color:rgba(37,99,235,0.8);
-            background: #e8eef2;
-            box-shadow: 3px 3px 8px #6e8898, -2px -2px 6px rgba(255,255,255,0.85);
+            background: #d8dde8;
+            box-shadow: 3px 3px 8px rgba(163,177,198,0.7), -2px -2px 6px rgba(255,255,255,0.85);
             color:#1d4ed8;
         }
 
         .sef-ozet-kartlar { display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:20px; }
-        .sef-kart { background:#ffffff;border:1px solid #a9b4be;border-top:1px solid rgba(255,255,255,0.8);border-radius:12px;padding:14px;text-align:center;box-shadow:0 4px 16px rgba(0,0,0,0.3); }
+        .sef-kart { background:#e8ecf4;border:1px solid rgba(163,177,198,0.4);border-top:1px solid rgba(255,255,255,0.8);border-radius:12px;padding:14px;text-align:center;box-shadow:0 4px 16px rgba(0,0,0,0.3); }
         .sef-kart-num { font-family:'Barlow Condensed',sans-serif;font-size:34px;font-weight:900;line-height:1; }
-        .sef-kart-lbl { font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:#556b82;margin-top:4px; }
+        .sef-kart-lbl { font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);margin-top:4px; }
 
-        .sef-bolum-baslik { font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#8a9ba8;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid rgba(163,177,198,0.2); }
-        .sef-bolum { background:#ffffff;border:1px solid #a9b4be;border-top:1px solid rgba(255,255,255,0.8);border-radius:12px;padding:16px 18px;margin-bottom:14px;box-shadow:0 4px 16px rgba(0,0,0,0.25); }
+        .sef-bolum-baslik { font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid rgba(163,177,198,0.2); }
+        .sef-bolum { background:#e8ecf4;border:1px solid rgba(163,177,198,0.4);border-top:1px solid rgba(255,255,255,0.8);border-radius:12px;padding:16px 18px;margin-bottom:14px;box-shadow:0 4px 16px rgba(0,0,0,0.25); }
 
         .ekip-stat-row { display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid rgba(163,177,198,0.2); }
         .ekip-stat-row:last-child { border-bottom:none; }
@@ -483,43 +480,43 @@
         .ekip-stat-badges { display:flex;gap:6px;flex-wrap:wrap; }
         .stat-pill { display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:100px;font-size:11px;font-weight:800; }
 
-        .sef-bos { text-align:center;padding:60px 20px;color:#8a9ba8; }
+        .sef-bos { text-align:center;padding:60px 20px;color:var(--muted); }
         .sef-bos-icon { font-size:40px;margin-bottom:12px;opacity:0.3; }
         .sef-bos-text { font-size:13px;font-weight:600; }
 
-        .sef-sekmeler { display:flex;gap:6px;padding:12px 28px 0;background:#f7f7f7;border-bottom:2px solid #a9b4be;position:relative;z-index:10; }
+        .sef-sekmeler { display:flex;gap:6px;padding:12px 28px 0;background:#e0e5ec;border-bottom:2px solid rgba(163,177,198,0.3);position:relative;z-index:10; }
         .sef-sekme {
             padding:9px 18px;border-radius:12px 12px 0 0;
             font-size:12px;font-weight:700;letter-spacing:0.3px;
             border:none;
-            cursor:pointer;color:#8a9ba8;
+            cursor:pointer;color:#9aa5b8;
             user-select:none;outline:none;
-            background:#f7f7f7;
-            box-shadow:none;
+            background:#e0e5ec;
+            box-shadow:3px 3px 8px rgba(163,177,198,0.6),-2px -2px 6px rgba(255,255,255,0.8);
             transition:all 0.2s cubic-bezier(0.22,1,0.36,1);
         }
         .sef-sekme:hover {
             color:#2563eb;
-            box-shadow:none;
+            box-shadow:4px 4px 10px rgba(163,177,198,0.7),-3px -3px 8px rgba(255,255,255,0.85);
             transform:translateY(-2px);
         }
         .sef-sekme.aktif {
             background:#2563eb;color:#fff;font-weight:800;
-            box-shadow:none;
+            box-shadow:3px 3px 8px rgba(163,177,198,0.6),-2px -2px 6px rgba(255,255,255,0.8);
             margin-bottom:-2px;z-index:1;position:relative;
         }
 
         /* Mesai Takvim */
-        .mtkv { background:#ffffff;border:1px solid #a9b4be;border-radius:14px;padding:12px;width:260px;box-shadow:0 8px 32px rgba(0,0,0,0.25); }
+        .mtkv { background:#e8ecf4;border:1px solid rgba(163,177,198,0.4);border-radius:14px;padding:12px;width:260px;box-shadow:0 8px 32px rgba(163,177,198,0.45); }
         .mtkv-nav { display:flex;align-items:center;justify-content:space-between;margin-bottom:10px; }
-        .mtkv-nav button { background:none;border:1px solid #a9b4be;border-radius:8px;color:#556b82;width:28px;height:28px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all 0.15s; }
-        .mtkv-nav button:hover { border-color:rgba(255,255,255,0.25);color:#1a2027; }
-        .mtkv-title { font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:900;color:#1a2027;letter-spacing:0.5px; }
+        .mtkv-nav button { background:none;border:1px solid rgba(163,177,198,0.4);border-radius:8px;color:#6b7a96;width:28px;height:28px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all 0.15s; }
+        .mtkv-nav button:hover { border-color:rgba(255,255,255,0.25);color:#3d4f6e; }
+        .mtkv-title { font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:900;color:#3d4f6e;letter-spacing:0.5px; }
         .mtkv-days { display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:4px; }
-        .mtkv-day-lbl { text-align:center;font-size:9px;font-weight:800;color:#8a9ba8;padding:2px 0;letter-spacing:0.5px; }
-        .mtkv-cell { position:relative;text-align:center;padding:5px 2px 8px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:700;color:#556b82;transition:all 0.12s;min-height:32px; }
-        .mtkv-cell:hover { background:rgba(163,177,198,0.2);color:#1a2027; }
-        .mtkv-cell.today { color:#1a2027;border:1px solid rgba(255,255,255,0.2); }
+        .mtkv-day-lbl { text-align:center;font-size:9px;font-weight:800;color:#9aa5b8;padding:2px 0;letter-spacing:0.5px; }
+        .mtkv-cell { position:relative;text-align:center;padding:5px 2px 8px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:700;color:#6b7a96;transition:all 0.12s;min-height:32px; }
+        .mtkv-cell:hover { background:rgba(163,177,198,0.2);color:#3d4f6e; }
+        .mtkv-cell.today { color:#3d4f6e;border:1px solid rgba(255,255,255,0.2); }
         .mtkv-cell.selected { background:rgba(37,99,235,0.3);border:1px solid rgba(59,130,246,0.5);color:#2563eb; }
         .mtkv-cell.empty { cursor:default; }
         .mtkv-cell.empty:hover { background:none; }
@@ -533,838 +530,30 @@
         .ac-item:hover { background:rgba(37,99,235,0.2) !important; }
         #ekipDropdown::-webkit-scrollbar { width:4px; }
         #ekipDropdown::-webkit-scrollbar-track { background:transparent; }
-        #ekipDropdown::-webkit-scrollbar-thumb { background:#a9b4be; border-radius:4px; }
+        #ekipDropdown::-webkit-scrollbar-thumb { background:rgba(163,177,198,0.5); border-radius:4px; }
 
         /* Vardiya dashboard */
         .vardiya-dashboards { display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px; }
-        .vd-panel { background:#ffffff;border:1px solid #a9b4be;border-top:1px solid rgba(255,255,255,0.8);border-radius:12px;padding:18px 20px;box-shadow:0 4px 20px rgba(0,0,0,0.3);position:relative;overflow:hidden; }
+        .vd-panel { background:#e8ecf4;border:1px solid rgba(163,177,198,0.4);border-top:1px solid rgba(255,255,255,0.8);border-radius:12px;padding:18px 20px;box-shadow:0 4px 20px rgba(0,0,0,0.3);position:relative;overflow:hidden; }
         .vd-panel::before { content:'';position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,0.04) 50%,transparent 60%);pointer-events:none;z-index:0; }
         .vd-panel > * { position:relative;z-index:1; }
         .vd-a { border-left:3px solid rgba(217,119,6,0.6);box-shadow:0 4px 20px rgba(0,0,0,0.3),0 0 20px rgba(251,191,36,0.05); }
         .vd-b { border-left:3px solid rgba(37,99,235,0.6);box-shadow:0 4px 20px rgba(0,0,0,0.3),0 0 20px rgba(59,130,246,0.06); }
         .vd-baslik { display:flex;align-items:center;gap:10px;margin-bottom:14px; }
         .vd-baslik-text { font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:900;text-transform:uppercase; }
-        .vd-a .vd-baslik-text { color:#e8a000; }
-        .vd-b .vd-baslik-text { color:#0070d2; }
+        .vd-a .vd-baslik-text { color:var(--yellow); }
+        .vd-b .vd-baslik-text { color:var(--blue-light); }
         .vd-kartlar { display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px; }
-        .vd-kart { background:#ffffff;border:1px solid #a9b4be;border-top:1px solid rgba(255,255,255,0.8);border-radius:8px;padding:10px 6px;text-align:center;transition:background 0.15s; }
+        .vd-kart { background:#e8ecf4;border:1px solid rgba(163,177,198,0.4);border-top:1px solid rgba(255,255,255,0.8);border-radius:8px;padding:10px 6px;text-align:center;transition:background 0.15s; }
         .vd-kart:hover { background:rgba(163,177,198,0.15); }
         .vd-kart-num { font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:900;line-height:1; }
-        .vd-kart-lbl { font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#8a9ba8;margin-top:3px; }
+        .vd-kart-lbl { font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-top:3px; }
         .vd-toplam { display:flex;gap:8px;margin-top:6px; }
-        .vd-toplam-item { flex:1;background:#ffffff;border:1px solid #a9b4be;border-top:1px solid rgba(255,255,255,0.8);border-radius:8px;padding:8px 6px;text-align:center; }
+        .vd-toplam-item { flex:1;background:#e8ecf4;border:1px solid rgba(163,177,198,0.4);border-top:1px solid rgba(255,255,255,0.8);border-radius:8px;padding:8px 6px;text-align:center; }
 
         @keyframes pulseRed { 0%,100%{opacity:1} 50%{opacity:0.45} }
-        .donem-badge { display:inline-flex;align-items:center;gap:8px;background:rgba(217,119,6,0.08);border:1px solid rgba(217,119,6,0.3);border-radius:100px;padding:5px 14px;font-size:12px;font-weight:800;color:#e8a000;margin-bottom:14px;box-shadow:0 0 16px rgba(251,191,36,0.08); }
-    
-        /* ═══════════════════════════════
-           SAP GUI OVERRIDE STİLLERİ
-        ═══════════════════════════════ */
-
-        body { font-family:Arial,Helvetica,sans-serif !important; font-size:12px !important; background:#f7f7f7 !important; }
-
-        /* TOPBAR - SAP mavi toolbar */
-        .topbar, .sef-topbar {
-            background:linear-gradient(180deg,#0070d2 0%,#003c88 100%) !important;
-            border-bottom:2px solid #003c88 !important;
-            padding:6px 16px !important;
-            min-height:36px !important;
-            backdrop-filter:none !important;
-        }
-        .page-title { font-family:Arial,sans-serif !important; font-size:13px !important; color:#ffffff !important; font-weight:bold !important; letter-spacing:0 !important; }
-        .page-title span { color:#ffdd00 !important; }
-        .back-btn { background:#0070d2 !important; border:1px solid #6bb8f0 !important; color:#ffffff !important; border-radius:3px !important; font-size:11px !important; padding:3px 10px !important; }
-        .back-btn:hover { background:#005aaa !important; }
-        .vardiya-pill { background:#e8eef2 !important; border:1px solid #a9b4be !important; color:#1a2027 !important; border-radius:2px !important; font-size:11px !important; padding:3px 10px !important; }
-        .vardiya-pill.active-a { background:#003c88 !important; color:#fff !important; border:1px solid #003c88 !important; }
-        .vardiya-pill.active-b { background:#e8a000 !important; color:#fff !important; border:1px solid #e8a000 !important; }
-        .tarih-display { background:#ffffff !important; border:1px solid #a9b4be !important; color:#1a2027 !important; border-radius:2px !important; font-size:11px !important; }
-
-        /* FORM PANELİ */
-        .form-panel { background:#f7f7f7 !important; border-right:1px solid #a9b4be !important; padding:12px 14px !important; }
-        .form-section-title { color:#003c88 !important; font-size:11px !important; font-weight:bold !important; border-bottom:1px solid #a9b4be !important; letter-spacing:0 !important; padding-bottom:4px !important; margin-bottom:8px !important; margin-top:14px !important; background:transparent !important; }
-        .input-label { font-size:11px !important; color:#556b82 !important; font-weight:normal !important; letter-spacing:0 !important; }
-
-        /* INPUTlar - SAP flat */
-        .text-input {
-            background:#ffffff !important;
-            border:1px solid #a9b4be !important;
-            border-radius:2px !important;
-            color:#1a2027 !important;
-            font-family:Arial,sans-serif !important;
-            font-size:12px !important;
-            padding:4px 6px !important;
-            height:26px !important;
-            box-shadow:none !important;
-        }
-        .text-input:focus { border:1px solid #0070d2 !important; outline:none !important; box-shadow:none !important; }
-        .text-input::placeholder { color:#8a9ba8 !important; }
-        .filtre-input {
-            background:#ffffff !important;
-            border:1px solid #a9b4be !important;
-            border-radius:2px !important;
-            color:#1a2027 !important;
-            font-size:12px !important;
-            padding:4px 6px !important;
-            height:26px !important;
-            box-shadow:none !important;
-        }
-        .filtre-input:focus { border:1px solid #0070d2 !important; }
-
-        /* SEG BUTONLAR - SAP radio/tab butonu */
-        .seg-btn {
-            background:#ffffff !important;
-            border:1px solid #a9b4be !important;
-            border-radius:2px !important;
-            color:#1a2027 !important;
-            font-family:Arial,sans-serif !important;
-            font-size:11px !important;
-            padding:4px 8px !important;
-            box-shadow:none !important;
-            font-weight:normal !important;
-        }
-        .seg-btn:hover { background:#e8eef2 !important; border-color:#6e8898 !important; }
-        .seg-btn.active-blue { background:#003c88 !important; color:#ffffff !important; border:1px solid #003c88 !important; font-weight:bold !important; box-shadow:none !important; }
-        .seg-btn.active-yellow { background:#e8a000 !important; color:#ffffff !important; border:1px solid #e8a000 !important; font-weight:bold !important; box-shadow:none !important; }
-        .seg-btn.active-red { background:#bb0000 !important; color:#ffffff !important; border:1px solid #bb0000 !important; font-weight:bold !important; box-shadow:none !important; }
-
-        /* FİLTRE SEG BUTONLAR */
-        .filtre-seg-btn {
-            background:#ffffff !important;
-            border:1px solid #a9b4be !important;
-            border-radius:2px !important;
-            color:#1a2027 !important;
-            font-family:Arial,sans-serif !important;
-            font-size:11px !important;
-            padding:4px 10px !important;
-            box-shadow:none !important;
-            font-weight:normal !important;
-        }
-        .filtre-seg-btn:hover { background:#e8eef2 !important; }
-        .filtre-seg-btn.aktif { background:#003c88 !important; color:#ffffff !important; border:1px solid #003c88 !important; font-weight:bold !important; }
-        .filtre-seg-btn.aktif-red { background:#bb0000 !important; color:#ffffff !important; border:1px solid #bb0000 !important; font-weight:bold !important; }
-
-        /* SUBMIT BUTONU - SAP action button */
-        .btn-submit {
-            background:linear-gradient(180deg,#0070d2 0%,#005aaa 100%) !important;
-            border:1px solid #003c88 !important;
-            border-radius:3px !important;
-            color:#ffffff !important;
-            font-family:Arial,sans-serif !important;
-            font-size:13px !important;
-            font-weight:bold !important;
-            letter-spacing:0 !important;
-            padding:6px 20px !important;
-            box-shadow:0 1px 0 rgba(255,255,255,0.2) inset !important;
-            animation:none !important;
-            height:auto !important;
-        }
-        .btn-submit:hover { background:linear-gradient(180deg,#005aaa 0%,#003c88 100%) !important; }
-        .btn-submit.update-mode { background:linear-gradient(180deg,#e8a000 0%,#c87800 100%) !important; border:1px solid #a05800 !important; }
-
-        /* PDF BUTONU */
-        .btn-pdf {
-            background:linear-gradient(180deg,#0070d2 0%,#005aaa 100%) !important;
-            border:1px solid #003c88 !important;
-            border-radius:3px !important;
-            color:#ffffff !important;
-            font-family:Arial,sans-serif !important;
-            font-size:11px !important;
-            font-weight:bold !important;
-            letter-spacing:0 !important;
-            padding:4px 14px !important;
-            box-shadow:none !important;
-            text-shadow:none !important;
-        }
-        .btn-pdf:hover { background:linear-gradient(180deg,#005aaa 0%,#003c88 100%) !important; color:#fff !important; }
-
-        /* TABLO */
-        .data-table thead tr { background:linear-gradient(180deg,#e8eef2 0%,#d0dae2 100%) !important; border-bottom:2px solid #a9b4be !important; }
-        .data-table th { font-size:11px !important; font-weight:bold !important; color:#1a2027 !important; padding:5px 8px !important; letter-spacing:0 !important; }
-        .data-table tbody tr { background:#ffffff !important; border-bottom:1px solid #d0dae2 !important; }
-        .data-table tbody tr:nth-child(even) { background:#f2f7fc !important; }
-        .data-table tbody tr:hover { background:#d6e8f5 !important; }
-        .data-table tbody tr.selected { background:#b0d4ee !important; outline:none !important; }
-        .data-table td { font-size:12px !important; padding:4px 8px !important; color:#1a2027 !important; }
-
-        /* SUMMARY KARTLAR */
-        .summary-card {
-            background:#ffffff !important;
-            border:1px solid #a9b4be !important;
-            border-top:2px solid #0070d2 !important;
-            border-radius:2px !important;
-            padding:8px 10px !important;
-            box-shadow:0 1px 2px rgba(0,0,0,0.08) !important;
-        }
-        .summary-num { font-size:22px !important; font-family:Arial,sans-serif !important; }
-        .summary-lbl { font-size:10px !important; color:#556b82 !important; letter-spacing:0 !important; }
-
-        /* SEKMELEr */
-        .sef-sekmeler { background:#e8eef2 !important; border-bottom:2px solid #0070d2 !important; padding:6px 16px 0 !important; gap:2px !important; }
-        .sef-sekme {
-            background:#d0dae2 !important;
-            border:1px solid #a9b4be !important;
-            border-bottom:none !important;
-            border-radius:3px 3px 0 0 !important;
-            color:#1a2027 !important;
-            font-family:Arial,sans-serif !important;
-            font-size:11px !important;
-            font-weight:normal !important;
-            padding:5px 14px !important;
-            box-shadow:none !important;
-        }
-        .sef-sekme:hover { background:#e8eef2 !important; color:#003c88 !important; transform:none !important; }
-        .sef-sekme.aktif { background:#ffffff !important; color:#003c88 !important; font-weight:bold !important; border-bottom:2px solid #ffffff !important; margin-bottom:-2px !important; box-shadow:none !important; }
-
-        /* MODAL */
-        .modal-overlay { background:rgba(0,0,0,0.4) !important; backdrop-filter:none !important; }
-        .modal-box {
-            background:#ffffff !important;
-            border:1px solid #a9b4be !important;
-            border-radius:4px !important;
-            box-shadow:0 4px 16px rgba(0,0,0,0.25) !important;
-            padding:20px 24px !important;
-        }
-        .modal-title { font-family:Arial,sans-serif !important; font-size:14px !important; color:#003c88 !important; }
-        .modal-sub { color:#556b82 !important; font-size:12px !important; }
-        .modal-vardiya-btn {
-            background:linear-gradient(180deg,#f7f7f7 0%,#e8eef2 100%) !important;
-            border:1px solid #a9b4be !important;
-            border-radius:3px !important;
-            font-family:Arial,sans-serif !important;
-            box-shadow:none !important;
-        }
-        .modal-vardiya-btn.a { color:#003c88 !important; border-top:2px solid #003c88 !important; }
-        .modal-vardiya-btn.b { color:#e8a000 !important; border-top:2px solid #e8a000 !important; }
-        .modal-vardiya-btn:hover { background:#d6e8f5 !important; transform:none !important; }
-        .modal-cancel { color:#556b82 !important; font-size:11px !important; }
-
-        /* CONFIRM */
-        .confirm-overlay { background:rgba(0,0,0,0.4) !important; backdrop-filter:none !important; }
-        .confirm-box {
-            background:#ffffff !important;
-            border:1px solid #a9b4be !important;
-            border-radius:4px !important;
-            box-shadow:0 4px 16px rgba(0,0,0,0.25) !important;
-        }
-        .confirm-title { color:#1a2027 !important; font-family:Arial,sans-serif !important; }
-        .confirm-btn-cancel { background:#e8eef2 !important; border:1px solid #a9b4be !important; color:#1a2027 !important; border-radius:3px !important; }
-        .confirm-btn-cancel:hover { background:#d0dae2 !important; }
-        .confirm-btn-ok { background:#bb0000 !important; color:#fff !important; border:1px solid #880000 !important; border-radius:3px !important; }
-        .confirm-btn-ok:hover { background:#990000 !important; }
-
-        /* SEF KART / BÖLÜM */
-        .sef-kart {
-            background:#ffffff !important;
-            border:1px solid #a9b4be !important;
-            border-top:2px solid #0070d2 !important;
-            border-radius:2px !important;
-            box-shadow:0 1px 2px rgba(0,0,0,0.08) !important;
-        }
-        .sef-bolum {
-            background:#ffffff !important;
-            border:1px solid #a9b4be !important;
-            border-radius:2px !important;
-            box-shadow:0 1px 2px rgba(0,0,0,0.08) !important;
-        }
-        .sef-bolum-baslik { color:#003c88 !important; border-bottom:1px solid #a9b4be !important; font-size:11px !important; letter-spacing:0 !important; }
-
-        /* FİLTRE PANELİ */
-        .filtre-panel {
-            background:#ffffff !important;
-            border:1px solid #a9b4be !important;
-            border-radius:2px !important;
-            box-shadow:0 1px 2px rgba(0,0,0,0.08) !important;
-        }
-        .filtre-label { color:#556b82 !important; font-size:11px !important; letter-spacing:0 !important; }
-
-        /* EKIP KART */
-        .ekip-card {
-            background:#ffffff !important;
-            border:1px solid #a9b4be !important;
-            border-radius:2px !important;
-            box-shadow:none !important;
-        }
-
-        /* BADGE */
-        .badge-tir       { background:#dceeff !important; color:#003c88 !important; border:1px solid #7ab8e8 !important; }
-        .badge-kamyon    { background:#fff3cc !important; color:#8a5000 !important; border:1px solid #e8a000 !important; }
-        .badge-konteyner { background:#fffacc !important; color:#7a6000 !important; border:1px solid #d4b800 !important; }
-
-        /* TABLE COUNT */
-        .table-count { background:#dceeff !important; border:1px solid #7ab8e8 !important; color:#003c88 !important; border-radius:2px !important; }
-
-        /* TOAST */
-        .toast.success { background:#eaf6e5 !important; border:1px solid #107e3e !important; color:#107e3e !important; border-radius:3px !important; }
-        .toast.warn    { background:#fff3cc !important; border:1px solid #e8a000 !important; color:#8a5000 !important; border-radius:3px !important; }
-
-        /* DURUS */
-        .durus-menu { background:#ffffff !important; border:1px solid #a9b4be !important; box-shadow:0 4px 8px rgba(0,0,0,0.15) !important; border-radius:2px !important; }
-        .durus-menu-item { border-bottom:1px solid #e8eef2 !important; font-size:12px !important; }
-        .durus-menu-item:hover { background:#d6e8f5 !important; color:#003c88 !important; }
-        .durus-remove { background:#fff0f0 !important; border:1px solid #e8a0a0 !important; color:#bb0000 !important; border-radius:2px !important; }
-
-        /* VARDİYA DASHBOARD */
-        .vd-panel {
-            background:#ffffff !important;
-            border:1px solid #a9b4be !important;
-            border-radius:2px !important;
-            box-shadow:0 1px 2px rgba(0,0,0,0.08) !important;
-        }
-        .vd-panel::before { display:none !important; }
-        .vd-a { border-top:3px solid #e8a000 !important; border-left:none !important; }
-        .vd-b { border-top:3px solid #003c88 !important; border-left:none !important; }
-        .vd-kart { background:#f7f7f7 !important; border:1px solid #d0dae2 !important; border-radius:2px !important; }
-        .vd-kart:hover { background:#e8eef2 !important; }
-        .vd-toplam-item { background:#f7f7f7 !important; border:1px solid #d0dae2 !important; border-radius:2px !important; }
-
-        /* TAKVİM */
-        .mtkv { background:#ffffff !important; border:1px solid #a9b4be !important; border-radius:2px !important; box-shadow:0 2px 8px rgba(0,0,0,0.15) !important; }
-        .mtkv-nav button { background:#e8eef2 !important; border:1px solid #a9b4be !important; color:#1a2027 !important; border-radius:2px !important; }
-        .mtkv-nav button:hover { background:#d6e8f5 !important; }
-        .mtkv-title { color:#003c88 !important; }
-        .mtkv-cell { color:#1a2027 !important; font-size:11px !important; }
-        .mtkv-cell:hover { background:#d6e8f5 !important; color:#1a2027 !important; }
-        .mtkv-cell.today { border:1px solid #0070d2 !important; color:#003c88 !important; font-weight:bold !important; }
-        .mtkv-cell.selected { background:#0070d2 !important; color:#ffffff !important; border:1px solid #003c88 !important; }
-        .mtkv-day-lbl { color:#556b82 !important; font-size:10px !important; }
-
-        /* DONEM BADGE */
-        .donem-badge { background:#fff3cc !important; border:1px solid #e8a000 !important; color:#8a5000 !important; border-radius:2px !important; }
-
-        /* EDIT BANNER */
-        .edit-banner { background:#fff3cc !important; border:1px solid #e8a000 !important; color:#8a5000 !important; border-radius:2px !important; }
-
-        /* SCROLLBAR */
-        ::-webkit-scrollbar { width:8px; }
-        ::-webkit-scrollbar-track { background:#f7f7f7; }
-        ::-webkit-scrollbar-thumb { background:#a9b4be; border-radius:0; }
-        ::-webkit-scrollbar-thumb:hover { background:#6e8898; }
-
-        /* STATUS PILL */
-        .status-pill { background:#eaf6e5 !important; border:1px solid #107e3e !important; color:#107e3e !important; border-radius:2px !important; box-shadow:none !important; font-size:11px !important; }
-
-        /* VD BASLIK TEXT */
-        .vd-a .vd-baslik-text { color:#e8a000 !important; }
-        .vd-b .vd-baslik-text { color:#003c88 !important; }
-
-        /* LAYOUT */
-        .form-panel { backdrop-filter:none !important; }
-        .layout { background:#f7f7f7 !important; }
-
-        /* AUTOCOMPLETE */
-        #ekipSonuclar, [id*="Dropdown"] { background:#ffffff !important; border:1px solid #a9b4be !important; border-radius:2px !important; box-shadow:0 4px 8px rgba(0,0,0,0.15) !important; }
-        .ac-item:hover { background:#d6e8f5 !important; }
-
-        /* ANA SAYFA SAP */
-        #anaSayfa.active { background:#f7f7f7 !important; }
-        .ana-title { font-family:Arial,sans-serif !important; font-size:28px !important; color:#003c88 !important; letter-spacing:0 !important; }
-        .ana-title .blue { color:#003c88 !important; }
-        .ana-title .yellow { color:#e8a000 !important; }
-        .ana-card {
-            background:#ffffff !important;
-            border:1px solid #a9b4be !important;
-            border-top:3px solid #0070d2 !important;
-            border-radius:3px !important;
-            box-shadow:0 2px 6px rgba(0,0,0,0.12) !important;
-        }
-        .ana-card:hover { transform:translateY(-2px) !important; box-shadow:0 4px 12px rgba(0,0,0,0.18) !important; }
-        .ana-card:active { transform:none !important; box-shadow:0 1px 3px rgba(0,0,0,0.1) !important; }
-        .card-blue { border-top-color:#003c88 !important; }
-        .card-yellow { border-top-color:#e8a000 !important; }
-        .card-icon-wrap { background:#e8eef2 !important; border:1px solid #a9b4be !important; border-radius:2px !important; box-shadow:none !important; }
-        .card-name { color:#1a2027 !important; font-family:Arial,sans-serif !important; }
-        .card-type { color:#556b82 !important; }
-        .card-blue .card-type { color:#003c88 !important; }
-        .card-yellow .card-type { color:#e8a000 !important; }
-        .card-blue .card-enter { color:#003c88 !important; }
-        .card-yellow .card-enter { color:#e8a000 !important; }
-        .ana-sep { color:#8a9ba8 !important; }
-        .ver { color:#8a9ba8 !important; }
-
-        /* LOGIN SAP */
-        .neu-bg { background:#f7f7f7 !important; background-image:none !important; }
-        .neu-card {
-            background:#ffffff !important;
-            border:1px solid #a9b4be !important;
-            border-radius:4px !important;
-            box-shadow:0 4px 16px rgba(0,0,0,0.2) !important;
-            border-top:4px solid #003c88 !important;
-        }
-        .neu-icon-wrap { background:#e8eef2 !important; box-shadow:none !important; border:1px solid #a9b4be !important; border-radius:4px !important; }
-        .neu-title { color:#003c88 !important; font-family:Arial,sans-serif !important; font-size:20px !important; }
-        .neu-title .acc-blue { color:#003c88 !important; }
-        .neu-title .acc-yellow { color:#e8a000 !important; }
-        .neu-sub { color:#8a9ba8 !important; letter-spacing:1px !important; }
-        .neu-btn-google {
-            background:linear-gradient(180deg,#f7f7f7 0%,#e8eef2 100%) !important;
-            border:1px solid #a9b4be !important;
-            border-radius:3px !important;
-            color:#1a2027 !important;
-            font-family:Arial,sans-serif !important;
-            box-shadow:0 1px 2px rgba(0,0,0,0.1) !important;
-        }
-        .neu-btn-google:hover { background:linear-gradient(180deg,#e8eef2 0%,#d6e8f5 100%) !important; transform:none !important; }
-        .neu-btn-google:active { background:#d6e8f5 !important; box-shadow:none !important; }
-        .neu-hint { color:#8a9ba8 !important; }
-        .neu-error { background:#fff0f0 !important; border:1px solid #e8a0a0 !important; border-radius:3px !important; box-shadow:none !important; }
-        .neu-error-title { color:#bb0000 !important; }
-
-        /* ═══════════════════════════════
-           SAP EWM RF TERMİNAL TEMASI
-        ═══════════════════════════════ */
-
-        body {
-            background: linear-gradient(180deg, #1a6bb5 0%, #0d4a8f 30%, #0a7a5a 100%) !important;
-            background-attachment: fixed !important;
-            min-height: 100vh !important;
-            font-family: 'Courier New', Courier, monospace !important;
-            font-size: 13px !important;
-            color: #ffffff !important;
-        }
-
-        .bg-blobs { background: transparent !important; }
-
-        /* TOOLBAR - sarı şerit */
-        .topbar, .sef-topbar {
-            background: #f5c400 !important;
-            border-bottom: 2px solid #c9a200 !important;
-            padding: 4px 12px !important;
-            min-height: 28px !important;
-            backdrop-filter: none !important;
-        }
-        .topbar *, .sef-topbar * { color: #1a1a1a !important; }
-        .page-title { font-family:'Courier New',monospace !important; font-size:13px !important; color:#1a1a1a !important; font-weight:bold !important; letter-spacing:0 !important; }
-        .page-title span { color:#003c88 !important; }
-        .back-btn {
-            background: #e8e8e8 !important;
-            border: 1px solid #999 !important;
-            color: #1a1a1a !important;
-            border-radius: 2px !important;
-            font-size: 11px !important;
-            padding: 2px 8px !important;
-            box-shadow: none !important;
-        }
-        .back-btn:hover { background: #d0d0d0 !important; }
-        .vardiya-pill {
-            background: #e8e8e8 !important;
-            border: 1px solid #999 !important;
-            color: #1a1a1a !important;
-            border-radius: 2px !important;
-            font-size: 11px !important;
-            box-shadow: none !important;
-        }
-        .vardiya-pill.active-a { background: #003c88 !important; color: #fff !important; border-color: #003c88 !important; }
-        .vardiya-pill.active-b { background: #8a6000 !important; color: #fff !important; border-color: #8a6000 !important; }
-        .tarih-display {
-            background: #1a3a6a !important;
-            border: 1px solid #f5c400 !important;
-            color: #f5c400 !important;
-            font-family: 'Courier New',monospace !important;
-            box-shadow: none !important;
-        }
-
-        /* FORM PANELİ */
-        .form-panel {
-            background: rgba(0,30,80,0.75) !important;
-            border-right: 2px solid #f5c400 !important;
-            backdrop-filter: none !important;
-        }
-        .form-section-title {
-            color: #f5c400 !important;
-            font-family: 'Courier New',monospace !important;
-            font-size: 11px !important;
-            border-bottom: 1px solid #f5c400 !important;
-            background: transparent !important;
-            letter-spacing: 1px !important;
-        }
-        .input-label { color: #c8e0ff !important; font-size: 11px !important; font-family:'Courier New',monospace !important; }
-
-        /* INPUTlar */
-        .text-input {
-            background: #ffffff !important;
-            border: 2px solid #f5c400 !important;
-            border-radius: 2px !important;
-            color: #1a1a1a !important;
-            font-family: 'Courier New',monospace !important;
-            font-size: 13px !important;
-            padding: 4px 8px !important;
-            height: 28px !important;
-            box-shadow: none !important;
-            font-weight: bold !important;
-        }
-        .text-input:focus { border-color: #ffffff !important; background: #fffbe6 !important; }
-        .text-input::placeholder { color: #999 !important; font-weight:normal !important; }
-        .filtre-input {
-            background: #ffffff !important;
-            border: 2px solid #f5c400 !important;
-            border-radius: 2px !important;
-            color: #1a1a1a !important;
-            font-family: 'Courier New',monospace !important;
-            font-size: 12px !important;
-            padding: 4px 8px !important;
-            box-shadow: none !important;
-        }
-        .filtre-input:focus { border-color: #fff !important; }
-
-        /* SEG BUTONLAR */
-        .seg-btn {
-            background: #1a3a6a !important;
-            border: 1px solid #f5c400 !important;
-            border-radius: 2px !important;
-            color: #ffffff !important;
-            font-family: 'Courier New',monospace !important;
-            font-size: 12px !important;
-            padding: 5px 8px !important;
-            box-shadow: none !important;
-        }
-        .seg-btn:hover { background: #254d8a !important; }
-        .seg-btn.active-blue { background: #f5c400 !important; color: #1a1a1a !important; border-color: #f5c400 !important; font-weight: bold !important; }
-        .seg-btn.active-yellow { background: #f5c400 !important; color: #1a1a1a !important; border-color: #f5c400 !important; font-weight: bold !important; }
-        .seg-btn.active-red { background: #cc0000 !important; color: #fff !important; border-color: #ff4444 !important; font-weight: bold !important; }
-
-        /* FİLTRE SEG BUTONLAR */
-        .filtre-seg-btn {
-            background: #1a3a6a !important;
-            border: 1px solid #f5c400 !important;
-            border-radius: 2px !important;
-            color: #ffffff !important;
-            font-family: 'Courier New',monospace !important;
-            font-size: 11px !important;
-            padding: 4px 10px !important;
-            box-shadow: none !important;
-        }
-        .filtre-seg-btn:hover { background: #254d8a !important; }
-        .filtre-seg-btn.aktif { background: #f5c400 !important; color: #1a1a1a !important; font-weight: bold !important; border-color: #f5c400 !important; }
-        .filtre-seg-btn.aktif-red { background: #cc0000 !important; color: #fff !important; border-color: #ff4444 !important; font-weight: bold !important; }
-
-        /* SUBMIT BUTON */
-        .btn-submit {
-            background: #f5c400 !important;
-            border: 2px solid #c9a200 !important;
-            border-radius: 3px !important;
-            color: #1a1a1a !important;
-            font-family: 'Courier New',monospace !important;
-            font-size: 14px !important;
-            font-weight: bold !important;
-            letter-spacing: 1px !important;
-            padding: 10px 20px !important;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.4) !important;
-            animation: none !important;
-            text-transform: uppercase !important;
-        }
-        .btn-submit:hover { background: #ffd700 !important; }
-        .btn-submit.update-mode { background: #ff9900 !important; border-color: #cc7700 !important; color: #1a1a1a !important; }
-
-        /* PDF BUTONU */
-        .btn-pdf {
-            background: #f5c400 !important;
-            border: 1px solid #c9a200 !important;
-            border-radius: 2px !important;
-            color: #1a1a1a !important;
-            font-family: 'Courier New',monospace !important;
-            font-size: 11px !important;
-            font-weight: bold !important;
-            box-shadow: none !important;
-            text-shadow: none !important;
-        }
-        .btn-pdf:hover { background: #ffd700 !important; color: #1a1a1a !important; }
-
-        /* TABLO */
-        .data-table thead tr {
-            background: #f5c400 !important;
-            border-bottom: 2px solid #c9a200 !important;
-        }
-        .data-table th {
-            font-size: 11px !important;
-            font-weight: bold !important;
-            color: #1a1a1a !important;
-            font-family: 'Courier New',monospace !important;
-            padding: 5px 8px !important;
-        }
-        .data-table tbody tr { background: rgba(10,40,100,0.7) !important; border-bottom: 1px solid rgba(245,196,0,0.3) !important; }
-        .data-table tbody tr:nth-child(even) { background: rgba(10,60,130,0.7) !important; }
-        .data-table tbody tr:hover { background: rgba(245,196,0,0.2) !important; }
-        .data-table tbody tr.selected { background: rgba(245,196,0,0.35) !important; }
-        .data-table td {
-            font-size: 12px !important;
-            padding: 5px 8px !important;
-            color: #ffffff !important;
-            font-family: 'Courier New',monospace !important;
-        }
-
-        /* SUMMARY KARTLAR */
-        .summary-card {
-            background: rgba(0,30,80,0.8) !important;
-            border: 2px solid #f5c400 !important;
-            border-radius: 3px !important;
-            padding: 8px 10px !important;
-            box-shadow: none !important;
-        }
-        .summary-num { color: #f5c400 !important; font-family:'Courier New',monospace !important; }
-        .summary-lbl { color: #c8e0ff !important; font-size: 10px !important; }
-
-        /* SEKMELER */
-        .sef-sekmeler {
-            background: rgba(0,20,60,0.9) !important;
-            border-bottom: 3px solid #f5c400 !important;
-            padding: 6px 12px 0 !important;
-            gap: 4px !important;
-        }
-        .sef-sekme {
-            background: #1a3a6a !important;
-            border: 1px solid #f5c400 !important;
-            border-bottom: none !important;
-            border-radius: 3px 3px 0 0 !important;
-            color: #c8e0ff !important;
-            font-family: 'Courier New',monospace !important;
-            font-size: 11px !important;
-            padding: 5px 14px !important;
-            box-shadow: none !important;
-        }
-        .sef-sekme:hover { background: #254d8a !important; color: #f5c400 !important; transform: none !important; }
-        .sef-sekme.aktif {
-            background: #f5c400 !important;
-            color: #1a1a1a !important;
-            font-weight: bold !important;
-            border-color: #c9a200 !important;
-            margin-bottom: -2px !important;
-            box-shadow: none !important;
-        }
-
-        /* MODAL */
-        .modal-overlay { background: rgba(0,0,0,0.7) !important; backdrop-filter: none !important; }
-        .modal-box {
-            background: linear-gradient(180deg,#1a6bb5 0%,#0a5a9a 60%,#0a7a5a 100%) !important;
-            border: 3px solid #f5c400 !important;
-            border-radius: 4px !important;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.6) !important;
-            color: #ffffff !important;
-        }
-        .modal-title { color: #f5c400 !important; font-family:'Courier New',monospace !important; }
-        .modal-sub { color: #c8e0ff !important; }
-        .modal-vardiya-btn {
-            background: #1a3a6a !important;
-            border: 2px solid #f5c400 !important;
-            border-radius: 3px !important;
-            color: #f5c400 !important;
-            font-family: 'Courier New',monospace !important;
-            box-shadow: none !important;
-            font-size: 26px !important;
-        }
-        .modal-vardiya-btn:hover { background: #f5c400 !important; color: #1a1a1a !important; transform: none !important; }
-        .modal-cancel { color: #c8e0ff !important; font-family:'Courier New',monospace !important; }
-
-        /* CONFIRM */
-        .confirm-overlay { background: rgba(0,0,0,0.7) !important; }
-        .confirm-box {
-            background: linear-gradient(180deg,#1a6bb5 0%,#0a5a9a 100%) !important;
-            border: 3px solid #f5c400 !important;
-            border-radius: 4px !important;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.6) !important;
-        }
-        .confirm-title { color: #f5c400 !important; font-family:'Courier New',monospace !important; }
-        .confirm-text { color: #c8e0ff !important; }
-        .confirm-btn-cancel {
-            background: #1a3a6a !important;
-            border: 1px solid #f5c400 !important;
-            color: #ffffff !important;
-            border-radius: 2px !important;
-        }
-        .confirm-btn-cancel:hover { background: #254d8a !important; }
-        .confirm-btn-ok {
-            background: #cc0000 !important;
-            border: 1px solid #ff4444 !important;
-            color: #fff !important;
-            border-radius: 2px !important;
-        }
-        .confirm-btn-ok:hover { background: #ee0000 !important; }
-
-        /* SEF KART / BÖLÜM */
-        .sef-kart {
-            background: rgba(0,30,80,0.75) !important;
-            border: 2px solid #f5c400 !important;
-            border-radius: 3px !important;
-            box-shadow: none !important;
-        }
-        .sef-kart-num { color: #f5c400 !important; font-family:'Courier New',monospace !important; }
-        .sef-kart-lbl { color: #c8e0ff !important; }
-        .sef-bolum {
-            background: rgba(0,30,80,0.75) !important;
-            border: 1px solid rgba(245,196,0,0.5) !important;
-            border-radius: 3px !important;
-            box-shadow: none !important;
-        }
-        .sef-bolum-baslik { color: #f5c400 !important; border-bottom: 1px solid rgba(245,196,0,0.4) !important; font-family:'Courier New',monospace !important; }
-
-        /* FİLTRE PANELİ */
-        .filtre-panel {
-            background: rgba(0,30,80,0.75) !important;
-            border: 1px solid rgba(245,196,0,0.5) !important;
-            border-radius: 3px !important;
-            box-shadow: none !important;
-        }
-        .filtre-label { color: #c8e0ff !important; font-family:'Courier New',monospace !important; }
-
-        /* EKIP KART */
-        .ekip-card {
-            background: rgba(10,40,100,0.7) !important;
-            border: 1px solid rgba(245,196,0,0.4) !important;
-            border-radius: 2px !important;
-            box-shadow: none !important;
-        }
-        .ekip-card-name { color: #ffffff !important; }
-
-        /* BADGE */
-        .badge-tir       { background: rgba(0,60,136,0.8) !important; color: #7abfff !important; border: 1px solid #4a8ecf !important; }
-        .badge-kamyon    { background: rgba(100,60,0,0.8) !important; color: #f5c400 !important; border: 1px solid #c9a200 !important; }
-        .badge-konteyner { background: rgba(100,80,0,0.8) !important; color: #ffd700 !important; border: 1px solid #d4b800 !important; }
-
-        /* TABLE COUNT */
-        .table-count { background: rgba(0,60,136,0.8) !important; border: 1px solid #f5c400 !important; color: #f5c400 !important; border-radius: 2px !important; }
-
-        /* TOAST */
-        .toast { font-family:'Courier New',monospace !important; }
-        .toast.success { background: rgba(0,80,30,0.95) !important; border: 2px solid #00cc44 !important; color: #00ff66 !important; border-radius: 2px !important; }
-        .toast.warn    { background: rgba(100,60,0,0.95) !important; border: 2px solid #f5c400 !important; color: #f5c400 !important; border-radius: 2px !important; }
-
-        /* DURUS MENU */
-        .durus-menu {
-            background: #1a3a6a !important;
-            border: 2px solid #f5c400 !important;
-            border-radius: 2px !important;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.5) !important;
-        }
-        .durus-menu-item { color: #ffffff !important; border-bottom: 1px solid rgba(245,196,0,0.2) !important; font-family:'Courier New',monospace !important; }
-        .durus-menu-item:hover { background: rgba(245,196,0,0.2) !important; color: #f5c400 !important; }
-        .btn-add-durus { border-color: rgba(245,196,0,0.5) !important; color: #c8e0ff !important; }
-        .btn-add-durus:hover { border-color: #f5c400 !important; color: #f5c400 !important; }
-        .durus-remove { background: rgba(200,0,0,0.3) !important; border: 1px solid #cc0000 !important; color: #ff6666 !important; }
-
-        /* VARDİYA DASHBOARD */
-        .vd-panel {
-            background: rgba(0,30,80,0.75) !important;
-            border: 2px solid rgba(245,196,0,0.6) !important;
-            border-radius: 3px !important;
-            box-shadow: none !important;
-        }
-        .vd-panel::before { display:none !important; }
-        .vd-a { border-top: 4px solid #f5c400 !important; border-left: none !important; }
-        .vd-b { border-top: 4px solid #7abfff !important; border-left: none !important; }
-        .vd-baslik-text { font-family:'Courier New',monospace !important; }
-        .vd-a .vd-baslik-text { color: #f5c400 !important; }
-        .vd-b .vd-baslik-text { color: #7abfff !important; }
-        .vd-kart { background: rgba(10,40,100,0.6) !important; border: 1px solid rgba(245,196,0,0.3) !important; border-radius: 2px !important; }
-        .vd-kart:hover { background: rgba(245,196,0,0.15) !important; }
-        .vd-kart-num { color: #f5c400 !important; }
-        .vd-kart-lbl { color: #c8e0ff !important; }
-        .vd-toplam-item { background: rgba(10,40,100,0.6) !important; border: 1px solid rgba(245,196,0,0.3) !important; }
-
-        /* TAKVİM */
-        .mtkv { background: #1a3a6a !important; border: 2px solid #f5c400 !important; border-radius: 3px !important; box-shadow: 0 4px 12px rgba(0,0,0,0.4) !important; }
-        .mtkv-nav button { background: #0a2850 !important; border: 1px solid #f5c400 !important; color: #f5c400 !important; border-radius: 2px !important; }
-        .mtkv-nav button:hover { background: #f5c400 !important; color: #1a1a1a !important; }
-        .mtkv-title { color: #f5c400 !important; font-family:'Courier New',monospace !important; }
-        .mtkv-cell { color: #c8e0ff !important; font-family:'Courier New',monospace !important; }
-        .mtkv-cell:hover { background: rgba(245,196,0,0.2) !important; color: #f5c400 !important; }
-        .mtkv-cell.today { border: 1px solid #f5c400 !important; color: #f5c400 !important; font-weight: bold !important; }
-        .mtkv-cell.selected { background: #f5c400 !important; color: #1a1a1a !important; border: 1px solid #c9a200 !important; }
-        .mtkv-day-lbl { color: rgba(245,196,0,0.7) !important; }
-
-        /* DONEM BADGE */
-        .donem-badge { background: rgba(100,60,0,0.6) !important; border: 1px solid #f5c400 !important; color: #f5c400 !important; border-radius: 2px !important; }
-
-        /* EDIT BANNER */
-        .edit-banner { background: rgba(100,60,0,0.5) !important; border: 1px solid #f5c400 !important; color: #f5c400 !important; border-radius: 2px !important; }
-
-        /* STATUS PILL */
-        .status-pill { background: rgba(0,80,30,0.6) !important; border: 1px solid #00cc44 !important; color: #00ff66 !important; border-radius: 2px !important; box-shadow: none !important; }
-
-        /* SCROLLBAR */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: rgba(0,20,60,0.5); }
-        ::-webkit-scrollbar-thumb { background: #f5c400; border-radius: 0; }
-
-        /* ANA SAYFA */
-        #anaSayfa.active {
-            background: linear-gradient(180deg,#1a6bb5 0%,#0d4a8f 35%,#0a7a5a 100%) !important;
-            min-height: 100vh !important;
-        }
-        .ana-title { font-family:'Courier New',monospace !important; font-size:32px !important; color:#ffffff !important; }
-        .ana-title .blue { color:#7abfff !important; }
-        .ana-title .yellow { color:#f5c400 !important; }
-        .ana-card {
-            background: rgba(0,30,80,0.85) !important;
-            border: 2px solid #f5c400 !important;
-            border-top: 4px solid #f5c400 !important;
-            border-radius: 4px !important;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.5) !important;
-            color: #ffffff !important;
-        }
-        .ana-card:hover { background: rgba(0,50,120,0.9) !important; transform: translateY(-3px) !important; box-shadow: 0 8px 24px rgba(0,0,0,0.6) !important; }
-        .card-icon-wrap { background: rgba(245,196,0,0.15) !important; border: 1px solid #f5c400 !important; border-radius: 3px !important; }
-        .card-name { color: #ffffff !important; font-family:'Courier New',monospace !important; font-size: 28px !important; }
-        .card-type { color: #f5c400 !important; font-family:'Courier New',monospace !important; }
-        .card-blue .card-type { color: #7abfff !important; }
-        .card-yellow .card-type { color: #f5c400 !important; }
-        .card-enter { color: #f5c400 !important; }
-        .card-blue .card-enter { color: #7abfff !important; }
-        .card-yellow .card-enter { color: #f5c400 !important; }
-        .ana-sep { color: rgba(245,196,0,0.6) !important; }
-        .ver { color: rgba(245,196,0,0.5) !important; font-family:'Courier New',monospace !important; }
-
-        /* LOGIN */
-        .neu-bg { background: linear-gradient(180deg,#1a6bb5 0%,#0d4a8f 35%,#0a7a5a 100%) !important; background-image: none !important; }
-        .neu-card {
-            background: rgba(0,30,80,0.92) !important;
-            border: 3px solid #f5c400 !important;
-            border-radius: 4px !important;
-            box-shadow: 0 6px 24px rgba(0,0,0,0.6) !important;
-        }
-        .neu-icon-wrap { background: rgba(245,196,0,0.15) !important; border: 2px solid #f5c400 !important; border-radius: 3px !important; }
-        .neu-title { color: #f5c400 !important; font-family:'Courier New',monospace !important; }
-        .neu-title .acc-blue { color: #7abfff !important; }
-        .neu-title .acc-yellow { color: #f5c400 !important; }
-        .neu-sub { color: #c8e0ff !important; }
-        .neu-btn-google {
-            background: rgba(245,196,0,0.15) !important;
-            border: 2px solid #f5c400 !important;
-            border-radius: 3px !important;
-            color: #f5c400 !important;
-            font-family: 'Courier New',monospace !important;
-            box-shadow: none !important;
-        }
-        .neu-btn-google:hover { background: #f5c400 !important; color: #1a1a1a !important; transform: none !important; }
-        .neu-hint { color: #c8e0ff !important; }
-        .neu-error { background: rgba(180,0,0,0.3) !important; border: 2px solid #ff4444 !important; border-radius: 3px !important; }
-        .neu-error-title { color: #ff6666 !important; }
-
-        /* LOGOUT BUTONU */
-        button[onclick*="_logout"] {
-            background: #cc0000 !important;
-            border: 1px solid #ff4444 !important;
-            border-radius: 2px !important;
-        }
-
-        /* Genel yazı renkleri */
-        .table-title { color: #f5c400 !important; font-family:'Courier New',monospace !important; }
-        .modal-icon { color: #f5c400 !important; }
-        .empty-state { color: rgba(245,196,0,0.5) !important; }
-        .sef-bos { color: rgba(245,196,0,0.5) !important; }
-
-        /* Autocomplete */
-        #ekipSonuclar, [id*="Dropdown"] {
-            background: #1a3a6a !important;
-            border: 2px solid #f5c400 !important;
-            border-radius: 2px !important;
-        }
-        .ac-item { color: #ffffff !important; font-family:'Courier New',monospace !important; }
-        .ac-item:hover { background: rgba(245,196,0,0.2) !important; color: #f5c400 !important; }
-
-        /* Genel color overrides */
-        * { color: inherit; }
-        .data-table td, .data-table th { font-family:'Courier New',monospace !important; }
-</style>
+        .donem-badge { display:inline-flex;align-items:center;gap:8px;background:rgba(217,119,6,0.08);border:1px solid rgba(217,119,6,0.3);border-radius:100px;padding:5px 14px;font-size:12px;font-weight:800;color:var(--yellow);margin-bottom:14px;box-shadow:0 0 16px rgba(251,191,36,0.08); }
+    </style>
 </head>
 <body>
 
@@ -1378,7 +567,7 @@
 .neu-bg {
   position: absolute;
   inset: 0;
-  background: #f7f7f7;
+  background: #e0e5ec;
   background-image:
     radial-gradient(ellipse at 20% 20%, rgba(255,255,255,0.8) 0%, transparent 50%),
     radial-gradient(ellipse at 80% 80%, rgba(180,190,210,0.5) 0%, transparent 50%);
@@ -1387,7 +576,7 @@
 .neu-card {
   position: relative;
   z-index: 1;
-  background: #f7f7f7;
+  background: #e0e5ec;
   border-radius: 28px;
   padding: 48px 40px 44px;
   text-align: center;
@@ -1407,7 +596,7 @@
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  background: #f7f7f7;
+  background: #e0e5ec;
   box-shadow:
     6px 6px 14px rgba(163,177,198,0.8),
     -4px -4px 10px rgba(255,255,255,0.9);
@@ -1424,7 +613,7 @@
   text-transform: uppercase;
   letter-spacing: -0.5px;
   line-height: 1;
-  color: #1a2027;
+  color: #3d4f6e;
   margin-bottom: 4px;
 }
 .neu-title .acc-blue { color: #2563eb; }
@@ -1435,7 +624,7 @@
   font-weight: 700;
   letter-spacing: 3px;
   text-transform: uppercase;
-  color: #8a9ba8;
+  color: #9aa5b8;
   margin-bottom: 36px;
 }
 
@@ -1448,11 +637,11 @@
   padding: 15px 20px;
   border-radius: 14px;
   border: none;
-  background: #f7f7f7;
+  background: #e0e5ec;
   box-shadow:
     5px 5px 12px rgba(163,177,198,0.75),
     -4px -4px 10px rgba(255,255,255,0.9);
-  color: #1a2027;
+  color: #3d4f6e;
   font-family: 'Barlow', sans-serif;
   font-size: 14px;
   font-weight: 700;
@@ -1462,13 +651,13 @@
 }
 .neu-btn-google:hover {
   box-shadow:
-    3px 3px 8px #6e8898,
+    3px 3px 8px rgba(163,177,198,0.7),
     -2px -2px 6px rgba(255,255,255,0.85);
   transform: translateY(-1px);
 }
 .neu-btn-google:active {
   box-shadow:
-    inset 3px 3px 8px #6e8898,
+    inset 3px 3px 8px rgba(163,177,198,0.7),
     inset -2px -2px 6px rgba(255,255,255,0.85);
   transform: translateY(0);
 }
@@ -1476,7 +665,7 @@
 .neu-hint {
   margin-top: 18px;
   font-size: 11px;
-  color: #8a9ba8;
+  color: #9aa5b8;
   font-weight: 600;
   letter-spacing: 0.5px;
 }
@@ -1486,16 +675,16 @@
   margin-top: 16px;
   align-items: center;
   gap: 10px;
-  background: #f7f7f7;
+  background: #e0e5ec;
   border-radius: 14px;
   padding: 12px 16px;
   box-shadow:
-    inset 3px 3px 8px #a9b4be,
+    inset 3px 3px 8px rgba(163,177,198,0.6),
     inset -2px -2px 6px rgba(255,255,255,0.8);
 }
 .neu-error-icon { font-size: 20px; }
 .neu-error-title { font-size: 12px; font-weight: 900; color: #e53e3e; letter-spacing: 0.5px; }
-.neu-error-sub { font-size: 11px; color: #8a9ba8; margin-top: 2px; }
+.neu-error-sub { font-size: 11px; color: #9aa5b8; margin-top: 2px; }
 </style>
 
 <div id="loginScreen" style="display:none;position:fixed;inset:0;z-index:9999;align-items:center;justify-content:center;">
@@ -1504,17 +693,17 @@
 
     <div class="neu-icon-wrap">
       <svg width="42" height="42" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect x="8" y="28" width="30" height="18" rx="3" fill="#c8d3db" stroke="#0070d2" stroke-width="1.5"/>
-        <rect x="34" y="14" width="6" height="32" rx="2" fill="#c8d3db" stroke="#0070d2" stroke-width="1.5"/>
-        <rect x="38" y="32" width="18" height="3" rx="1.5" fill="#e8a000"/>
-        <rect x="38" y="38" width="18" height="3" rx="1.5" fill="#e8a000"/>
-        <rect x="40" y="18" width="14" height="12" rx="2" fill="#f0f4f7" stroke="#0070d2" stroke-width="1"/>
-        <circle cx="16" cy="48" r="6" fill="#d0dae2" stroke="#0070d2" stroke-width="2"/>
-        <circle cx="16" cy="48" r="2.5" fill="#0070d2"/>
-        <circle cx="32" cy="48" r="5" fill="#d0dae2" stroke="#0070d2" stroke-width="2"/>
-        <circle cx="32" cy="48" r="2" fill="#0070d2"/>
-        <rect x="12" y="30" width="10" height="8" rx="1.5" fill="#ffffff" stroke="#0070d2" stroke-width="1"/>
-        <circle cx="9" cy="36" r="2" fill="#e8a000" opacity="0.9"/>
+        <rect x="8" y="28" width="30" height="18" rx="3" fill="#c5cfe0" stroke="#2563eb" stroke-width="1.5"/>
+        <rect x="34" y="14" width="6" height="32" rx="2" fill="#c5cfe0" stroke="#2563eb" stroke-width="1.5"/>
+        <rect x="38" y="32" width="18" height="3" rx="1.5" fill="#d97706"/>
+        <rect x="38" y="38" width="18" height="3" rx="1.5" fill="#d97706"/>
+        <rect x="40" y="18" width="14" height="12" rx="2" fill="#dde3ef" stroke="#2563eb" stroke-width="1"/>
+        <circle cx="16" cy="48" r="6" fill="#cdd5e0" stroke="#2563eb" stroke-width="2"/>
+        <circle cx="16" cy="48" r="2.5" fill="#2563eb"/>
+        <circle cx="32" cy="48" r="5" fill="#cdd5e0" stroke="#2563eb" stroke-width="2"/>
+        <circle cx="32" cy="48" r="2" fill="#2563eb"/>
+        <rect x="12" y="30" width="10" height="8" rx="1.5" fill="#e8ecf4" stroke="#2563eb" stroke-width="1"/>
+        <circle cx="9" cy="36" r="2" fill="#d97706" opacity="0.9"/>
       </svg>
     </div>
 
@@ -1558,16 +747,16 @@
 <div class="modal-overlay" id="sifreModal">
     <div class="modal-box" style="width:320px;">
         <div style="font-size:32px;margin-bottom:12px;">🔐</div>
-        <div class="modal-title" style="color:#003c88;">Yetkili Girişi</div>
+        <div class="modal-title" style="color:#d97706;">Yetkili Girişi</div>
         <div class="modal-sub">Şifrenizi girin</div>
         <input type="password" id="sifreInput" placeholder="••••••"
-            style="width:100%;padding:6px 10px;border-radius:2px;border:1px solid #a9b4be;background:rgba(217,119,6,0.05);color:#1a2027;font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;letter-spacing:6px;text-align:center;outline:none;margin-bottom:8px;transition:border-color 0.2s;"
+            style="width:100%;padding:12px 16px;border-radius:10px;border:1px solid rgba(251,191,36,0.3);background:rgba(217,119,6,0.05);color:#3d4f6e;font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;letter-spacing:6px;text-align:center;outline:none;margin-bottom:8px;transition:border-color 0.2s;"
             onkeydown="if(event.key==='Enter')sifreKontrol()"
             oninput="document.getElementById('sifreHata').style.display='none'; if(this.value.length===4) sifreKontrol();"
             onfocus="this.style.borderColor='rgba(251,191,36,0.6)'"
             onblur="this.style.borderColor='rgba(251,191,36,0.3)'">
         <div id="sifreHata" style="display:none;color:#ef4444;font-size:11px;font-weight:700;letter-spacing:1px;margin-bottom:10px;">YANLIŞ ŞİFRE</div>
-        <div id="sifreYukleniyor" style="display:none;color:#556b82;font-size:11px;font-weight:700;letter-spacing:1px;margin-bottom:10px;">Kontrol ediliyor...</div>
+        <div id="sifreYukleniyor" style="display:none;color:#6b7a96;font-size:11px;font-weight:700;letter-spacing:1px;margin-bottom:10px;">Kontrol ediliyor...</div>
         <div class="modal-btns">
             <button onclick="sifreKontrol()" style="flex:1;padding:13px;border-radius:10px;border:1px solid rgba(251,191,36,0.5);background:rgba(251,191,36,0.12);color:#d97706;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;letter-spacing:1px;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.background='rgba(251,191,36,0.2)'" onmouseout="this.style.background='rgba(251,191,36,0.12)'">GİRİŞ YAP</button>
         </div>
@@ -1580,17 +769,17 @@
     <div class="modal-box">
         <div class="modal-icon">
           <svg width="36" height="36" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="8" y="28" width="30" height="18" rx="3" fill="#c8d3db" stroke="#38bdf8" stroke-width="1.5"/>
-            <rect x="34" y="14" width="6" height="32" rx="2" fill="#c8d3db" stroke="#38bdf8" stroke-width="1.5"/>
-            <rect x="38" y="32" width="18" height="3" rx="1.5" fill="#e8a000"/>
-            <rect x="38" y="38" width="18" height="3" rx="1.5" fill="#e8a000"/>
-            <rect x="40" y="18" width="14" height="12" rx="2" fill="#f0f4f7" stroke="#38bdf8" stroke-width="1"/>
-            <circle cx="16" cy="48" r="6" fill="#d0dae2" stroke="#38bdf8" stroke-width="2"/>
+            <rect x="8" y="28" width="30" height="18" rx="3" fill="#c5cfe0" stroke="#38bdf8" stroke-width="1.5"/>
+            <rect x="34" y="14" width="6" height="32" rx="2" fill="#c5cfe0" stroke="#38bdf8" stroke-width="1.5"/>
+            <rect x="38" y="32" width="18" height="3" rx="1.5" fill="#d97706"/>
+            <rect x="38" y="38" width="18" height="3" rx="1.5" fill="#d97706"/>
+            <rect x="40" y="18" width="14" height="12" rx="2" fill="#dde3ef" stroke="#38bdf8" stroke-width="1"/>
+            <circle cx="16" cy="48" r="6" fill="#cdd5e0" stroke="#38bdf8" stroke-width="2"/>
             <circle cx="16" cy="48" r="2.5" fill="#38bdf8"/>
-            <circle cx="32" cy="48" r="5" fill="#d0dae2" stroke="#38bdf8" stroke-width="2"/>
+            <circle cx="32" cy="48" r="5" fill="#cdd5e0" stroke="#38bdf8" stroke-width="2"/>
             <circle cx="32" cy="48" r="2" fill="#38bdf8"/>
-            <rect x="12" y="30" width="10" height="8" rx="1.5" fill="#ffffff" stroke="#38bdf8" stroke-width="1"/>
-            <circle cx="9" cy="36" r="2" fill="#e8a000" opacity="0.8"/>
+            <rect x="12" y="30" width="10" height="8" rx="1.5" fill="#e8ecf4" stroke="#38bdf8" stroke-width="1"/>
+            <circle cx="9" cy="36" r="2" fill="#d97706" opacity="0.8"/>
           </svg>
         </div>
         <div class="modal-title">Vardiya Seçin</div>
@@ -1606,8 +795,8 @@
 <div class="modal-overlay" id="mesaiKarsilastirmaModal" onclick="if(event.target===this)this.classList.remove('show')">
     <div class="modal-box" style="width:520px;max-width:95vw;max-height:90vh;overflow-y:auto;text-align:left;padding:32px 36px;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-            <div style="font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:#1a2027;">📊 Vardiya Karşılaştırma</div>
-            <button onclick="document.getElementById('mesaiKarsilastirmaModal').classList.remove('show')" style="background:none;border:none;color:#8a9ba8;font-size:18px;cursor:pointer;line-height:1;">✕</button>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:var(--text);">📊 Vardiya Karşılaştırma</div>
+            <button onclick="document.getElementById('mesaiKarsilastirmaModal').classList.remove('show')" style="background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;line-height:1;">✕</button>
         </div>
         <div id="mesaiKarsilastirmaModalIcerik"></div>
     </div>
@@ -1617,15 +806,15 @@
 <div class="modal-overlay" id="mesaiSilModalEl" onclick="if(event.target===this)this.classList.remove('show')">
     <div class="modal-box" style="width:340px;max-width:95vw;">
         <div style="font-size:40px;margin-bottom:12px;">🗑️</div>
-        <div class="modal-title" style="color:#bb0000;margin-bottom:8px;">Kaydı Sil</div>
-        <div id="mesaiSilBilgi" style="color:#556b82;font-size:13px;font-weight:600;margin-bottom:8px;line-height:1.6;"></div>
-        <div style="color:#8a9ba8;font-size:11px;font-weight:700;letter-spacing:0.5px;margin-bottom:24px;">Bu işlem geri alınamaz.</div>
+        <div class="modal-title" style="color:#ef4444;margin-bottom:8px;">Kaydı Sil</div>
+        <div id="mesaiSilBilgi" style="color:#6b7a96;font-size:13px;font-weight:600;margin-bottom:8px;line-height:1.6;"></div>
+        <div style="color:#9aa5b8;font-size:11px;font-weight:700;letter-spacing:0.5px;margin-bottom:24px;">Bu işlem geri alınamaz.</div>
         <div class="modal-btns" style="gap:10px;">
             <button onclick="document.getElementById('mesaiSilModalEl').classList.remove('show')"
-                style="flex:1;padding:13px;border-radius:10px;border:1px solid #a9b4be;background:#ffffff;color:#556b82;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:900;letter-spacing:1px;cursor:pointer;transition:background 0.15s;"
+                style="flex:1;padding:13px;border-radius:10px;border:1px solid rgba(163,177,198,0.4);background:#e8ecf4;color:#6b7a96;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:900;letter-spacing:1px;cursor:pointer;transition:background 0.15s;"
                 onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='rgba(255,255,255,0.04)'">VAZGEÇ</button>
             <button id="mesaiSilOnayBtn"
-                style="flex:1;padding:13px;border-radius:10px;border:1px solid rgba(239,68,68,0.4);background:rgba(239,68,68,0.12);color:#bb0000;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:900;letter-spacing:1px;cursor:pointer;transition:background 0.15s;"
+                style="flex:1;padding:13px;border-radius:10px;border:1px solid rgba(239,68,68,0.4);background:rgba(239,68,68,0.12);color:#f87171;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:900;letter-spacing:1px;cursor:pointer;transition:background 0.15s;"
                 onmouseover="this.style.background='rgba(239,68,68,0.25)'" onmouseout="this.style.background='rgba(239,68,68,0.12)'">SİL</button>
         </div>
     </div>
@@ -1635,15 +824,15 @@
 <div class="modal-overlay" id="personelSilModal" onclick="if(event.target===this)this.classList.remove('show')">
     <div class="modal-box" style="width:360px;max-width:95vw;">
         <div style="font-size:44px;margin-bottom:10px;">🗑️</div>
-        <div class="modal-title" style="color:#bb0000;margin-bottom:6px;">Personeli Sil</div>
-        <div id="personelSilBilgi" style="color:#556b82;font-size:14px;font-weight:700;margin-bottom:6px;"></div>
-        <div style="color:#8a9ba8;font-size:11px;font-weight:700;letter-spacing:0.5px;margin-bottom:24px;">Bu işlem geri alınamaz.</div>
+        <div class="modal-title" style="color:#ef4444;margin-bottom:6px;">Personeli Sil</div>
+        <div id="personelSilBilgi" style="color:#6b7a96;font-size:14px;font-weight:700;margin-bottom:6px;"></div>
+        <div style="color:#9aa5b8;font-size:11px;font-weight:700;letter-spacing:0.5px;margin-bottom:24px;">Bu işlem geri alınamaz.</div>
         <div class="modal-btns" style="gap:10px;">
             <button onclick="document.getElementById('personelSilModal').classList.remove('show')"
-                style="flex:1;padding:13px;border-radius:10px;border:1px solid #a9b4be;background:#ffffff;color:#556b82;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;letter-spacing:1px;cursor:pointer;transition:background 0.15s;"
+                style="flex:1;padding:13px;border-radius:10px;border:1px solid rgba(163,177,198,0.4);background:#e8ecf4;color:#6b7a96;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;letter-spacing:1px;cursor:pointer;transition:background 0.15s;"
                 onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='rgba(255,255,255,0.04)'">VAZGEÇ</button>
             <button id="personelSilOnayBtn"
-                style="flex:1;padding:13px;border-radius:10px;border:1px solid rgba(239,68,68,0.4);background:rgba(239,68,68,0.12);color:#bb0000;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;letter-spacing:1px;cursor:pointer;transition:background 0.15s;"
+                style="flex:1;padding:13px;border-radius:10px;border:1px solid rgba(239,68,68,0.4);background:rgba(239,68,68,0.12);color:#f87171;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;letter-spacing:1px;cursor:pointer;transition:background 0.15s;"
                 onmouseover="this.style.background='rgba(239,68,68,0.25)'" onmouseout="this.style.background='rgba(239,68,68,0.12)'">SİL</button>
         </div>
     </div>
@@ -1676,10 +865,10 @@
             <div class="ana-card card-blue" onclick="showSayfa('operatorSayfa')">
                 <div class="card-icon-wrap">
                     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="9" cy="7" r="3.5" fill="#0070d2"/>
-                        <path d="M2 19c0-4 3.1-7 7-7s7 3 7 7" stroke="#0070d2" stroke-width="1.8" stroke-linecap="round" fill="none"/>
-                        <circle cx="17" cy="8" r="2.8" fill="#0070d2" opacity="0.6"/>
-                        <path d="M17 13.5c2.5 0 5 1.8 5 5" stroke="#0070d2" stroke-width="1.8" stroke-linecap="round" fill="none" opacity="0.6"/>
+                        <circle cx="9" cy="7" r="3.5" fill="#2563eb"/>
+                        <path d="M2 19c0-4 3.1-7 7-7s7 3 7 7" stroke="#2563eb" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+                        <circle cx="17" cy="8" r="2.8" fill="#2563eb" opacity="0.6"/>
+                        <path d="M17 13.5c2.5 0 5 1.8 5 5" stroke="#2563eb" stroke-width="1.8" stroke-linecap="round" fill="none" opacity="0.6"/>
                     </svg>
                 </div>
                 <div>
@@ -1694,7 +883,7 @@
             <div class="ana-card card-yellow" onclick="sifreModalAc()">
                 <div class="card-icon-wrap">
                     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect x="5" y="11" width="14" height="10" rx="2.5" fill="#e8a000" opacity="0.9"/>
+                        <rect x="5" y="11" width="14" height="10" rx="2.5" fill="#d97706" opacity="0.9"/>
                         <path d="M8 11V7.5a4 4 0 0 1 8 0V11" stroke="#d97706" stroke-width="2" stroke-linecap="round" fill="none"/>
                         <circle cx="12" cy="16" r="1.5" fill="#78350f"/>
                     </svg>
@@ -1724,10 +913,10 @@
             </div>
             <div style="display:flex;align-items:center;gap:10px;">
                 <div class="tarih-display" id="tarihDisplay"></div>
-                <div id="userInfoBar" style="display:flex;align-items:center;gap:8px;background:#ffffff;border:1px solid #a9b4be;border-radius:10px;padding:5px 10px;">
+                <div id="userInfoBar" style="display:flex;align-items:center;gap:8px;background:#e8ecf4;border:1px solid rgba(163,177,198,0.4);border-radius:10px;padding:5px 10px;">
                     <img id="userAvatar" src="" width="32" height="32" referrerpolicy="no-referrer" style="border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,0.2);flex-shrink:0;display:none;">
-                    <span id="userDisplayName" style="font-size:13px;font-weight:800;color:#1a2027;white-space:nowrap;"></span>
-                    <button onclick="window._logout()" title="Oturumu Kapat" style="display:flex;align-items:center;gap:5px;background:#bb0000;border:1px solid #880000;border-radius:3px;color:#fff;cursor:pointer;font-size:11px;font-weight:700;padding:4px 10px;transition:all 0.15s;letter-spacing:0.5px;" onmouseover="this.style.background='#dc2626'" onmouseout="this.style.background='#ef4444'"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2v6"/><path d="M6.3 6.3A8 8 0 1 0 17.7 6.3"/></svg> Oturumu Kapat</button>
+                    <span id="userDisplayName" style="font-size:13px;font-weight:800;color:#3d4f6e;white-space:nowrap;"></span>
+                    <button onclick="window._logout()" title="Oturumu Kapat" style="display:flex;align-items:center;gap:5px;background:#ef4444;border:1px solid #dc2626;border-radius:6px;color:#fff;cursor:pointer;font-size:11px;font-weight:700;padding:4px 10px;transition:all 0.15s;letter-spacing:0.5px;" onmouseover="this.style.background='#dc2626'" onmouseout="this.style.background='#ef4444'"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2v6"/><path d="M6.3 6.3A8 8 0 1 0 17.7 6.3"/></svg> Oturumu Kapat</button>
                 </div>
             </div>
         </div>
@@ -1777,7 +966,7 @@
                     oninput="ekipAutocomplete(this)"
                     onkeydown="ekipKeyDown(event)"
                     autocomplete="off">
-                <div id="ekipDropdown" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:500;background:#f7f7f7;border:1px solid rgba(255,255,255,0.12);border-radius:10px;margin-top:4px;max-height:220px;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,0.3);"></div>
+                <div id="ekipDropdown" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:500;background:#e0e5ec;border:1px solid rgba(255,255,255,0.12);border-radius:10px;margin-top:4px;max-height:220px;overflow-y:auto;box-shadow:0 8px 32px rgba(163,177,198,0.55);"></div>
             </div>
             <div class="input-group">
                 <div class="input-label">Başlama / Bitiş Saati</div>
@@ -1800,10 +989,10 @@
                     oninput="forkliftciAutocomplete(this)"
                     onkeydown="forkliftciKeyDown(event)"
                     autocomplete="off">
-                <div id="forkliftciDropdown" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:500;background:#f7f7f7;border:1px solid rgba(255,255,255,0.12);border-radius:10px;margin-top:4px;max-height:220px;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,0.3);"></div>
+                <div id="forkliftciDropdown" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:500;background:#e0e5ec;border:1px solid rgba(255,255,255,0.12);border-radius:10px;margin-top:4px;max-height:220px;overflow-y:auto;box-shadow:0 8px 32px rgba(163,177,198,0.55);"></div>
             </div>
 
-            <div class="form-section-title">Duruşlar <span style="font-weight:500;color:#8a9ba8;text-transform:none;letter-spacing:0;font-size:9px;">(opsiyonel)</span></div>
+            <div class="form-section-title">Duruşlar <span style="font-weight:500;color:var(--muted);text-transform:none;letter-spacing:0;font-size:9px;">(opsiyonel)</span></div>
             <div class="durus-list" id="durusList"></div>
             <div class="durus-dropdown-wrap" id="durusWrap">
                 <button class="btn-add-durus" onclick="toggleDurusMenu(event)">+ Duruş Ekle ▾</button>
@@ -1825,10 +1014,10 @@
         <div class="table-panel">
             <div class="table-header">
                 <div style="display:flex;align-items:center;gap:8px;">
-                    <button onclick="tarihDegistir(-1)" style="width:28px;height:28px;border-radius:8px;border:1px solid var(--glass-border);background:var(--glass);color:#556b82;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--glass-border-hover)'" onmouseout="this.style.borderColor='var(--glass-border)'">‹</button>
-                    <input type="date" id="secilenTarih" style="background:var(--input-bg);border:1px solid var(--glass-border);border-radius:8px;color:#1a2027;font-family:'Barlow',sans-serif;font-size:12px;font-weight:700;padding:5px 10px;outline:none;cursor:pointer;" onchange="renderTablo()">
-                    <button onclick="tarihDegistir(1)" style="width:28px;height:28px;border-radius:8px;border:1px solid var(--glass-border);background:var(--glass);color:#556b82;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--glass-border-hover)'" onmouseout="this.style.borderColor='var(--glass-border)'">›</button>
-                    <button onclick="buguneGit()" id="bugunBtn" style="display:none;padding:5px 12px;border-radius:8px;border:1px solid rgba(59,130,246,0.3);background:rgba(37,99,235,0.12);color:#0070d2;font-family:'Barlow',sans-serif;font-size:11px;font-weight:800;cursor:pointer;letter-spacing:0.5px;">Bugün</button>
+                    <button onclick="tarihDegistir(-1)" style="width:28px;height:28px;border-radius:8px;border:1px solid var(--glass-border);background:var(--glass);color:var(--text-dim);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--glass-border-hover)'" onmouseout="this.style.borderColor='var(--glass-border)'">‹</button>
+                    <input type="date" id="secilenTarih" style="background:var(--input-bg);border:1px solid var(--glass-border);border-radius:8px;color:var(--text);font-family:'Barlow',sans-serif;font-size:12px;font-weight:700;padding:5px 10px;outline:none;cursor:pointer;" onchange="renderTablo()">
+                    <button onclick="tarihDegistir(1)" style="width:28px;height:28px;border-radius:8px;border:1px solid var(--glass-border);background:var(--glass);color:var(--text-dim);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--glass-border-hover)'" onmouseout="this.style.borderColor='var(--glass-border)'">›</button>
+                    <button onclick="buguneGit()" id="bugunBtn" style="display:none;padding:5px 12px;border-radius:8px;border:1px solid rgba(59,130,246,0.3);background:rgba(37,99,235,0.12);color:var(--blue-light);font-family:'Barlow',sans-serif;font-size:11px;font-weight:800;cursor:pointer;letter-spacing:0.5px;">Bugün</button>
                     <div class="table-count" id="kayitCount">0 kayıt</div>
                 </div>
             </div>
@@ -1858,14 +1047,14 @@
         <div class="sef-topbar">
             <div style="display:flex;align-items:center;gap:16px;">
                 <button class="back-btn" onclick="showSayfa('anaSayfa')">← Geri</button>
-                <div class="page-title"><span style="color:#e8a000;">YETKİLİ</span> PANELİ</div>
+                <div class="page-title"><span style="color:var(--yellow);">YETKİLİ</span> PANELİ</div>
             </div>
             <div style="display:flex;align-items:center;gap:12px;">
                 <div class="tarih-display" id="sefTarihDisplay"></div>
-                <div style="display:flex;align-items:center;gap:8px;background:#ffffff;border:1px solid #a9b4be;border-radius:10px;padding:5px 10px;">
+                <div style="display:flex;align-items:center;gap:8px;background:#e8ecf4;border:1px solid rgba(163,177,198,0.4);border-radius:10px;padding:5px 10px;">
                     <img id="sefUserAvatar" src="" width="32" height="32" referrerpolicy="no-referrer" style="border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,0.2);flex-shrink:0;display:none;">
-                    <span id="sefUserName" style="font-size:13px;font-weight:800;color:#1a2027;white-space:nowrap;"></span>
-                    <button onclick="window._logout()" title="Oturumu Kapat" style="display:flex;align-items:center;gap:5px;background:#bb0000;border:1px solid #880000;border-radius:3px;color:#fff;cursor:pointer;font-size:11px;font-weight:700;padding:4px 10px;transition:all 0.15s;letter-spacing:0.5px;" onmouseover="this.style.background='#dc2626'" onmouseout="this.style.background='#ef4444'"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2v6"/><path d="M6.3 6.3A8 8 0 1 0 17.7 6.3"/></svg> Oturumu Kapat</button>
+                    <span id="sefUserName" style="font-size:13px;font-weight:800;color:#3d4f6e;white-space:nowrap;"></span>
+                    <button onclick="window._logout()" title="Oturumu Kapat" style="display:flex;align-items:center;gap:5px;background:#ef4444;border:1px solid #dc2626;border-radius:6px;color:#fff;cursor:pointer;font-size:11px;font-weight:700;padding:4px 10px;transition:all 0.15s;letter-spacing:0.5px;" onmouseover="this.style.background='#dc2626'" onmouseout="this.style.background='#ef4444'"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2v6"/><path d="M6.3 6.3A8 8 0 1 0 17.7 6.3"/></svg> Oturumu Kapat</button>
                 </div>
             </div>
         </div>
@@ -1885,7 +1074,7 @@
             <div id="sekmeKarsilama" style="text-align:center;padding:80px 20px;">
                 <div style="font-size:48px;margin-bottom:16px;opacity:0.4;">📋</div>
                 <div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;color:rgba(56,189,248,0.6);letter-spacing:1px;text-transform:uppercase;">İncelemek istediğiniz sekmeye tıklayın</div>
-                <div style="font-size:12px;color:#8a9ba8;margin-top:8px;">Yukarıdaki sekmelerden birini seçin</div>
+                <div style="font-size:12px;color:var(--muted);margin-top:8px;">Yukarıdaki sekmelerden birini seçin</div>
             </div>
 
             <!-- SEKME 1: TOPLAM YÜKLEME -->
@@ -1917,7 +1106,7 @@
                         </div>
                         <div class="filtre-group" id="fAralik" style="display:none;flex-direction:row;gap:8px;align-items:flex-end;">
                             <div><div class="filtre-label">Başlangıç</div><input type="date" id="fAralikBas" class="filtre-input" onchange="sefSorgula()"></div>
-                            <div style="color:#8a9ba8;font-size:18px;font-weight:900;padding-bottom:8px;">—</div>
+                            <div style="color:var(--muted);font-size:18px;font-weight:900;padding-bottom:8px;">—</div>
                             <div><div class="filtre-label">Bitiş</div><input type="date" id="fAralikBit" class="filtre-input" onchange="sefSorgula()"></div>
                         </div>
                         <button class="btn-pdf" id="btnPdf" style="display:none;margin-left:auto;" onclick="sefPdfIndir()">📄 PDF</button>
@@ -1961,7 +1150,7 @@
                         </div>
                         <div class="filtre-group" id="e2Aralik" style="display:none;flex-direction:row;gap:8px;align-items:flex-end;">
                             <div><div class="filtre-label">Başlangıç</div><input type="date" id="e2AralikBas" class="filtre-input" onchange="ekipSorgula()"></div>
-                            <div style="color:#8a9ba8;font-size:18px;font-weight:900;padding-bottom:8px;">—</div>
+                            <div style="color:var(--muted);font-size:18px;font-weight:900;padding-bottom:8px;">—</div>
                             <div><div class="filtre-label">Bitiş</div><input type="date" id="e2AralikBit" class="filtre-input" onchange="ekipSorgula()"></div>
                         </div>
                         <div class="filtre-group">
@@ -2020,8 +1209,8 @@
                                 <input type="number" id="mesaiKisi" class="filtre-input" placeholder="Kaç kişi?" style="width:100%;" min="1">
                             </div>
                             <button id="btnMesaiKaydet" class="filtre-seg-btn aktif" onclick="mesaiKaydet()" style="width:100%;padding:12px;font-size:14px;border-radius:10px;">💾 Kaydet</button>
-                            <button id="btnMesaiGuncelle" class="filtre-seg-btn" onclick="mesaiGuncelle()" style="display:none;width:100%;padding:12px;font-size:14px;border-radius:10px;border-color:rgba(251,191,36,0.6);background:#e8eef2;color:#d97706;box-shadow:0 0 20px rgba(251,191,36,0.2);">✎ Güncelle</button>
-                            <button id="btnMesaiIptal" class="filtre-seg-btn" onclick="mesaiFormTemizle()" style="display:none;width:100%;padding:10px;font-size:13px;border-radius:10px;border-color:rgba(239,68,68,0.5);background:#fff0f0;color:#bb0000;box-shadow:0 0 15px rgba(239,68,68,0.15);">✕ Vazgeç</button>
+                            <button id="btnMesaiGuncelle" class="filtre-seg-btn" onclick="mesaiGuncelle()" style="display:none;width:100%;padding:12px;font-size:14px;border-radius:10px;border-color:rgba(251,191,36,0.6);background:radial-gradient(ellipse at 50% 0%,rgba(251,191,36,0.25) 0%,rgba(40,20,0,0.95) 60%);color:#d97706;box-shadow:0 0 20px rgba(251,191,36,0.2);">✎ Güncelle</button>
+                            <button id="btnMesaiIptal" class="filtre-seg-btn" onclick="mesaiFormTemizle()" style="display:none;width:100%;padding:10px;font-size:13px;border-radius:10px;border-color:rgba(239,68,68,0.5);background:radial-gradient(ellipse at 50% 0%,rgba(239,68,68,0.2) 0%,rgba(40,0,0,0.95) 60%);color:#f87171;box-shadow:0 0 15px rgba(239,68,68,0.15);">✕ Vazgeç</button>
                         </div>
                     </div>
 
@@ -2041,7 +1230,7 @@
                                     <tbody id="mesaiTableBody"></tbody>
                                 </table>
                             </div>
-                            <div id="mesaiEmptyState" style="text-align:center;padding:30px;color:#8a9ba8;font-size:13px;">Henüz kayıt yok</div>
+                            <div id="mesaiEmptyState" style="text-align:center;padding:30px;color:var(--muted);font-size:13px;">Henüz kayıt yok</div>
                         </div>
                     </div>
 
@@ -2070,7 +1259,7 @@
                                 <div class="filtre-group">
                                     <div class="filtre-label">Son Ka&#231; Ay</div>
                                     <input type="number" id="sonKacAy" class="filtre-input" style="width:100%;" min="1" max="60" placeholder="&#246;r: 3">
-                                    <div style="font-size:10px;color:#8a9ba8;margin-top:3px;">Dolu ise Y&#305;l/Ay se&#231;imi göz ard&#305; edilir</div>
+                                    <div style="font-size:10px;color:var(--muted);margin-top:3px;">Dolu ise Y&#305;l/Ay se&#231;imi göz ard&#305; edilir</div>
                                 </div>
                                 <button class="filtre-seg-btn aktif" onclick="mesaiKarsilastir()" style="width:100%;padding:10px;">Hesapla</button>
                                 <div id="mesaiKarsilastirmaSonuc"></div>
@@ -2139,7 +1328,7 @@
                                 <input type="text" id="yeniPersonelSicil" class="filtre-input" placeholder="Buraya giriniz" style="width:100%;">
                             </div>
                             <button id="personelKaydetBtn" onclick="personelEkle()" style="width:100%;padding:12px;border-radius:10px;border:1px solid rgba(34,197,94,0.5);background:rgba(34,197,94,0.12);color:#4ade80;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;letter-spacing:1px;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.background='rgba(34,197,94,0.22)'" onmouseout="this.style.background='rgba(34,197,94,0.12)'">💾 KAYDET</button>
-                            <button id="personelGuncelleIptal" onclick="personelGuncelleSifirla()" style="display:none;width:100%;padding:10px;border-radius:10px;border:1px solid rgba(148,163,184,0.3);background:rgba(148,163,184,0.08);color:#556b82;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:900;letter-spacing:1px;cursor:pointer;margin-top:6px;">✕ İPTAL</button>
+                            <button id="personelGuncelleIptal" onclick="personelGuncelleSifirla()" style="display:none;width:100%;padding:10px;border-radius:10px;border:1px solid rgba(148,163,184,0.3);background:rgba(148,163,184,0.08);color:#6b7a96;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:900;letter-spacing:1px;cursor:pointer;margin-top:6px;">✕ İPTAL</button>
                             <div id="personelFormMsg" style="display:none;font-size:12px;font-weight:700;text-align:center;padding:8px;border-radius:8px;"></div>
                         </div>
                     </div>
@@ -2147,7 +1336,7 @@
                     <!-- SAĞ: PERSONEL LİSTESİ -->
                     <div class="sef-bolum">
                         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-                            <div class="sef-bolum-baslik" style="margin:0;">👥 Kayıtlı Personel <span id="personelSayac" style="font-size:13px;color:#8a9ba8;font-weight:600;"></span></div>
+                            <div class="sef-bolum-baslik" style="margin:0;">👥 Kayıtlı Personel <span id="personelSayac" style="font-size:13px;color:var(--muted);font-weight:600;"></span></div>
                             <input type="text" id="personelAra" class="filtre-input" placeholder="Ara..." style="width:180px;font-size:12px;" oninput="personelListeFiltre()">
                         </div>
                         <div style="overflow-x:auto;">
@@ -2156,7 +1345,7 @@
                                 <tbody id="personelTableBody"></tbody>
                             </table>
                         </div>
-                        <div id="personelEmptyState" style="text-align:center;padding:40px;color:#8a9ba8;font-size:13px;display:none;">Henüz personel yok</div>
+                        <div id="personelEmptyState" style="text-align:center;padding:40px;color:var(--muted);font-size:13px;display:none;">Henüz personel yok</div>
                     </div>
 
                 </div>
@@ -2181,14 +1370,14 @@
                         <!-- EKİP GİRİŞİ -->
                         <div class="sef-bolum" id="df6EkipBlok" style="margin-bottom:0;">
                             <div class="sef-bolum-baslik">👥 Ekip İsimleri</div>
-                            <div style="font-size:10px;color:#8a9ba8;margin-bottom:8px;">Virgülle ayırarak birden fazla isim girin</div>
+                            <div style="font-size:10px;color:var(--muted);margin-bottom:8px;">Virgülle ayırarak birden fazla isim girin</div>
                             <div style="position:relative;">
                                 <input type="text" id="df6EkipInput" class="filtre-input" style="width:100%;"
                                     placeholder="İsim yazın, virgülle ayırın..."
                                     oninput="df6EkipAutocomplete(this)"
                                     onkeydown="df6EkipKeyDown(event)"
                                     autocomplete="off">
-                                <div id="df6EkipDropdown" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:500;background:#f7f7f7;border:1px solid rgba(255,255,255,0.12);border-radius:10px;margin-top:4px;max-height:200px;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,0.3);"></div>
+                                <div id="df6EkipDropdown" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:500;background:#e0e5ec;border:1px solid rgba(255,255,255,0.12);border-radius:10px;margin-top:4px;max-height:200px;overflow-y:auto;box-shadow:0 8px 32px rgba(163,177,198,0.55);"></div>
                             </div>
                             <div id="df6EkipTaglar" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;"></div>
                         </div>
@@ -2202,7 +1391,7 @@
                                     oninput="this.value=this.value.toUpperCase();df6PersonelAutocomplete(this)"
                                     onkeydown="df6PersonelKeyDown(event)"
                                     autocomplete="off">
-                                <div id="df6PersonelDropdown" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:500;background:#f7f7f7;border:1px solid rgba(255,255,255,0.12);border-radius:10px;margin-top:4px;max-height:200px;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,0.3);"></div>
+                                <div id="df6PersonelDropdown" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:500;background:#e0e5ec;border:1px solid rgba(255,255,255,0.12);border-radius:10px;margin-top:4px;max-height:200px;overflow-y:auto;box-shadow:0 8px 32px rgba(163,177,198,0.55);"></div>
                             </div>
                         </div>
 
@@ -2464,10 +1653,10 @@
         if (empty) empty.style.display = 'none';
         tbody.innerHTML = liste.map((p, i) => `
             <tr id="personelRow_${p.sicil}" onclick="personelDuzenlemeSec('${p.sicil.replace(/'/g,"\\'")}')" style="cursor:pointer;transition:background 0.15s;" onmouseover="this.style.background='rgba(59,130,246,0.08)'" onmouseout="this.style.background=''">
-                <td style="color:#8a9ba8;font-size:11px;">${i+1}</td>
+                <td style="color:var(--muted);font-size:11px;">${i+1}</td>
                 <td style="font-weight:700;">${p.ad}</td>
-                <td style="color:#0070d2;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:900;">${p.sicil}</td>
-                <td onclick="event.stopPropagation()"><button onclick="personelSil('${p.sicil}')" style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:#bb0000;border-radius:6px;padding:3px 8px;cursor:pointer;font-size:11px;font-weight:700;">SİL</button></td>
+                <td style="color:var(--blue-light);font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:900;">${p.sicil}</td>
+                <td onclick="event.stopPropagation()"><button onclick="personelSil('${p.sicil}')" style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:#f87171;border-radius:6px;padding:3px 8px;cursor:pointer;font-size:11px;font-weight:700;">SİL</button></td>
             </tr>`).join('');
     }
 
@@ -2579,7 +1768,7 @@
         personelListesi.forEach(p => { adSayisi[p.ad] = (adSayisi[p.ad]||0)+1; });
 
         dd.innerHTML = eslesen.map((p, i) => {
-            const goster = adSayisi[p.ad] > 1 ? `${p.ad} <span style="color:#0070d2;font-size:11px;">· ${p.sicil}</span>` : p.ad;
+            const goster = adSayisi[p.ad] > 1 ? `${p.ad} <span style="color:var(--blue-light);font-size:11px;">· ${p.sicil}</span>` : p.ad;
             return `<div class="ac-item" data-idx="${i}" data-ad="${p.ad}"
                 onclick="ekipSec('${p.ad}')"
                 onmouseenter="acHover(${i})"
@@ -2619,7 +1808,7 @@
         personelListesi.forEach(p => { adSayisi[p.ad] = (adSayisi[p.ad]||0)+1; });
 
         dd.innerHTML = eslesen.map((p, i) => {
-            const goster = adSayisi[p.ad] > 1 ? `${p.ad} <span style="color:#0070d2;font-size:11px;">· ${p.sicil}</span>` : p.ad;
+            const goster = adSayisi[p.ad] > 1 ? `${p.ad} <span style="color:var(--blue-light);font-size:11px;">· ${p.sicil}</span>` : p.ad;
             return `<div class="ac-item" data-idx="${i}" data-ad="${p.ad}"
                 onclick="forkliftciSec('${p.ad}')"
                 onmouseenter="fkHover(${i})"
@@ -2839,7 +2028,7 @@
     function renderDuruslar() {
         document.getElementById('durusList').innerHTML = duruslar.map(d => `
             <div class="durus-item">
-                <div class="text-input" style="font-size:12px;display:flex;align-items:center;color:#556b82;font-weight:600;">${d.sebep}</div>
+                <div class="text-input" style="font-size:12px;display:flex;align-items:center;color:var(--text-dim);font-weight:600;">${d.sebep}</div>
                 <input type="number" class="text-input durus-dk" placeholder="dk" value="${d.sure}" min="0"
                     style="font-size:12px;text-align:center;" oninput="duruslar.find(x=>x.id==${d.id}).sure=this.value">
                 <button class="durus-remove" onclick="removeDurus(${d.id})">✕</button>
@@ -2955,7 +2144,7 @@
             if (ayniTamIsim.length > 1) {
                 // Tamamen aynı isimler var → sicil göster
                 const bulunan = personelListesi.find(p => p.ad === tam);
-                return bulunan ? `${ad} <span style="color:#8a9ba8;font-size:10px;">${bulunan.sicil}</span>` : ad;
+                return bulunan ? `${ad} <span style="color:var(--muted);font-size:10px;">${bulunan.sicil}</span>` : ad;
             }
             // Ad aynı ama soyad farklı → soyadı göster
             return soyad ? `${ad} ${soyad}` : ad;
@@ -3095,7 +2284,7 @@
                     ${g.tir>0?`<span class="ekip-mini-badge badge-tir">🚛 ${g.tir} Tır</span>`:''}
                     ${g.kamyon>0?`<span class="ekip-mini-badge badge-kamyon">🚚 ${g.kamyon} Kamyon</span>`:''}
                     ${g.konteyner>0?`<span class="ekip-mini-badge badge-konteyner">📦 ${g.konteyner} Konteyner</span>`:''}
-                    <span class="ekip-mini-badge" style="background:rgba(239,68,68,0.12);color:#bb0000;border:1px solid rgba(239,68,68,0.3);">Toplam ${toplamArac} Araç</span>
+                    <span class="ekip-mini-badge" style="background:rgba(239,68,68,0.12);color:#f87171;border:1px solid rgba(239,68,68,0.3);">Toplam ${toplamArac} Araç</span>
                     <span class="ekip-mini-badge" style="background:rgba(34,197,94,0.12);color:#4ade80;border:1px solid rgba(34,197,94,0.3);">${g.m3.toFixed(1)} M³</span>
                 </div>
             </div>`;
@@ -3107,11 +2296,11 @@
             const tipBadge = k.aracTipi==='Tır'?'badge-tir':k.aracTipi==='Kamyon'?'badge-kamyon':'badge-konteyner';
             const durum    = k.gec?`<span class="status-gec">Gecikti</span>`:`<span class="status-ok">✓</span>`;
             tableHTML += `<tr class="${duzenleId===k.id?'selected':''}" data-id="${k.id}" onclick="formDoldur(${JSON.stringify(k).replace(/"/g,'&quot;')})">
-                <td style="color:#8a9ba8;font-size:11px;">${i+1}</td>
+                <td style="color:var(--muted);font-size:11px;">${i+1}</td>
                 <td><span style="font-size:10px;font-weight:800;color:${k.vardiya==='A Vardiyası'?'var(--blue-light)':'var(--yellow)'};">${k.vardiya==='A Vardiyası'?'A':'B'}</span></td>
                 <td style="font-weight:400;font-size:11px;">${ekipKisaGoster(k.ekip)}</td>
                 <td><span class="badge ${tipBadge}">${k.aracTipi}</span></td>
-                <td style="color:#556b82;font-size:11px;">${k.baslama} - ${k.bitis}</td>
+                <td style="color:var(--text-dim);font-size:11px;">${k.baslama} - ${k.bitis}</td>
                 <td>${durum}</td>
                 <td><button class="del-btn" onclick="silKayit(${k.id},event)" title="Sil">🗑️</button></td>
             </tr>`;
@@ -3259,8 +2448,8 @@
         const sT = vardiyaStats(liste);
 
         function dashCard(s, cls, ad) {
-            const fmt = v => v === 0 ? '<span style="color:#8a9ba8;font-size:18px;">—</span>' : v;
-            const fmtM3 = v => v === 0 ? '<span style="color:#8a9ba8;font-size:18px;">—</span>' : v.toFixed(1);
+            const fmt = v => v === 0 ? '<span style="color:var(--muted);font-size:18px;">—</span>' : v;
+            const fmtM3 = v => v === 0 ? '<span style="color:var(--muted);font-size:18px;">—</span>' : v.toFixed(1);
             return `
             <div class="vd-panel ${cls}">
                 <div class="vd-baslik">
@@ -3268,11 +2457,11 @@
                 </div>
                 <div class="vd-kartlar">
                     <div class="vd-kart">
-                        <div class="vd-kart-num" style="color:#0070d2">${fmt(s.tir)}</div>
+                        <div class="vd-kart-num" style="color:var(--blue-light)">${fmt(s.tir)}</div>
                         <div class="vd-kart-lbl">Tır</div>
                     </div>
                     <div class="vd-kart">
-                        <div class="vd-kart-num" style="color:#e8a000">${fmt(s.kamyon)}</div>
+                        <div class="vd-kart-num" style="color:var(--yellow)">${fmt(s.kamyon)}</div>
                         <div class="vd-kart-lbl">Kamyon</div>
                     </div>
                     <div class="vd-kart">
@@ -3286,7 +2475,7 @@
                         <div class="vd-kart-lbl">Toplam Araç</div>
                     </div>
                     <div class="vd-toplam-item">
-                        <div class="vd-kart-num" style="color:#107e3e;font-size:22px;">${fmtM3(s.m3)}</div>
+                        <div class="vd-kart-num" style="color:var(--success);font-size:22px;">${fmtM3(s.m3)}</div>
                         <div class="vd-kart-lbl">Toplam M³</div>
                     </div>
                 </div>
@@ -3305,14 +2494,14 @@
             <!-- Genel toplam -->
             <div class="vd-panel" style="border-color:rgba(255,255,255,0.12);">
                 <div class="vd-baslik">
-                    <div class="vd-baslik-text" style="color:#1a2027;">Genel Toplam</div>
+                    <div class="vd-baslik-text" style="color:var(--text);">Genel Toplam</div>
                 </div>
                 <div class="vd-kartlar" style="grid-template-columns:repeat(5,1fr);">
-                    <div class="vd-kart"><div class="vd-kart-num" style="color:#0070d2">${sT.tir||'<span style="color:#8a9ba8;font-size:18px;">—</span>'}</div><div class="vd-kart-lbl">Tır</div></div>
-                    <div class="vd-kart"><div class="vd-kart-num" style="color:#e8a000">${sT.kamyon||'<span style="color:#8a9ba8;font-size:18px;">—</span>'}</div><div class="vd-kart-lbl">Kamyon</div></div>
-                    <div class="vd-kart"><div class="vd-kart-num" style="color:#a16207">${sT.konteyner||'<span style="color:#8a9ba8;font-size:18px;">—</span>'}</div><div class="vd-kart-lbl">Konteyner</div></div>
-                    <div class="vd-kart"><div class="vd-kart-num" style="color:#ef4444;animation:pulseRed 2.5s ease-in-out infinite">${sT.toplam||'<span style="color:#8a9ba8;font-size:18px;animation:none">—</span>'}</div><div class="vd-kart-lbl">Toplam Araç</div></div>
-                    <div class="vd-kart"><div class="vd-kart-num" style="color:#107e3e;font-size:22px;">${sT.m3>0?sT.m3.toFixed(1):'<span style="color:#8a9ba8;font-size:18px;">—</span>'}</div><div class="vd-kart-lbl">Toplam M³</div></div>
+                    <div class="vd-kart"><div class="vd-kart-num" style="color:var(--blue-light)">${sT.tir||'<span style="color:var(--muted);font-size:18px;">—</span>'}</div><div class="vd-kart-lbl">Tır</div></div>
+                    <div class="vd-kart"><div class="vd-kart-num" style="color:var(--yellow)">${sT.kamyon||'<span style="color:var(--muted);font-size:18px;">—</span>'}</div><div class="vd-kart-lbl">Kamyon</div></div>
+                    <div class="vd-kart"><div class="vd-kart-num" style="color:#a16207">${sT.konteyner||'<span style="color:var(--muted);font-size:18px;">—</span>'}</div><div class="vd-kart-lbl">Konteyner</div></div>
+                    <div class="vd-kart"><div class="vd-kart-num" style="color:#ef4444;animation:pulseRed 2.5s ease-in-out infinite">${sT.toplam||'<span style="color:var(--muted);font-size:18px;animation:none">—</span>'}</div><div class="vd-kart-lbl">Toplam Araç</div></div>
+                    <div class="vd-kart"><div class="vd-kart-num" style="color:var(--success);font-size:22px;">${sT.m3>0?sT.m3.toFixed(1):'<span style="color:var(--muted);font-size:18px;">—</span>'}</div><div class="vd-kart-lbl">Toplam M³</div></div>
                 </div>
             </div>`;
 
@@ -3529,10 +2718,10 @@
             sonuc.innerHTML = `
                 <div class="donem-badge">📅 ${donem.label}${e2Vardiya !== 'hepsi' ? ' · ' + e2Vardiya : ''} · ${genToplam} araç</div>
                 <div class="sef-bolum"><div style="overflow-x:auto;"><table class="data-table" style="font-size:12px;">
-                    <thead><tr><th>Ay</th><th>Ekip</th><th style="color:#0070d2">Tır</th><th style="color:#e8a000">Kamyon</th><th style="color:#d97706">Konteyner</th><th style="color:#f472b6">Toplam</th><th style="color:#107e3e">M³</th></tr></thead>
+                    <thead><tr><th>Ay</th><th>Ekip</th><th style="color:var(--blue-light)">Tır</th><th style="color:var(--yellow)">Kamyon</th><th style="color:#d97706">Konteyner</th><th style="color:#f472b6">Toplam</th><th style="color:var(--success)">M³</th></tr></thead>
                     <tbody>
-                        ${satirlar.map(r=>`<tr><td style="font-weight:700;color:#556b82;">${r.grupLabel}</td><td style="font-weight:400;font-size:11px;">${ekipKisaGoster(r.ekipAd)}</td><td style="color:#0070d2;font-weight:700;">${r.tir||'—'}</td><td style="color:#e8a000;font-weight:700;">${r.kamyon||'—'}</td><td style="color:#a16207;font-weight:700;">${r.konteyner||'—'}</td><td style="color:#f472b6;font-weight:800;">${r.toplam}</td><td style="color:#107e3e;font-weight:700;">${r.m3.toFixed(1)}</td></tr>`).join('')}
-                        <tr style="background:rgba(37,99,235,0.15);border-top:2px solid rgba(37,99,235,0.4);"><td style="font-weight:900;color:#0070d2;" colspan="2">YILLIK TOPLAM</td><td style="font-weight:900;color:#0070d2;">${genTir}</td><td style="font-weight:900;color:#e8a000;">${genKamyon}</td><td style="font-weight:900;color:#d97706;">${genKonteyner}</td><td style="font-weight:900;color:#f472b6;">${genToplam}</td><td style="font-weight:900;color:#107e3e;">${genM3.toFixed(1)}</td></tr>
+                        ${satirlar.map(r=>`<tr><td style="font-weight:700;color:var(--text-dim);">${r.grupLabel}</td><td style="font-weight:400;font-size:11px;">${ekipKisaGoster(r.ekipAd)}</td><td style="color:var(--blue-light);font-weight:700;">${r.tir||'—'}</td><td style="color:var(--yellow);font-weight:700;">${r.kamyon||'—'}</td><td style="color:#a16207;font-weight:700;">${r.konteyner||'—'}</td><td style="color:#f472b6;font-weight:800;">${r.toplam}</td><td style="color:var(--success);font-weight:700;">${r.m3.toFixed(1)}</td></tr>`).join('')}
+                        <tr style="background:rgba(37,99,235,0.15);border-top:2px solid rgba(37,99,235,0.4);"><td style="font-weight:900;color:var(--blue-light);" colspan="2">YILLIK TOPLAM</td><td style="font-weight:900;color:var(--blue-light);">${genTir}</td><td style="font-weight:900;color:var(--yellow);">${genKamyon}</td><td style="font-weight:900;color:#d97706;">${genKonteyner}</td><td style="font-weight:900;color:#f472b6;">${genToplam}</td><td style="font-weight:900;color:var(--success);">${genM3.toFixed(1)}</td></tr>
                     </tbody></table></div></div>`;
         } else if (e2Donem === 'ay' || e2Donem === 'aralik') {
             // ══ AYLIK/ARALIK: Ekip bazlı toplam (tarih göstermeden) ══
@@ -3542,10 +2731,10 @@
             sonuc.innerHTML = `
                 <div class="donem-badge">📅 ${donem.label}${e2Vardiya !== 'hepsi' ? ' · ' + e2Vardiya : ''} · ${genToplam} araç</div>
                 <div class="sef-bolum"><div style="overflow-x:auto;"><table class="data-table" style="font-size:12px;">
-                    <thead><tr><th>Ekip</th><th style="color:#0070d2">Tır</th><th style="color:#e8a000">Kamyon</th><th style="color:#d97706">Konteyner</th><th style="color:#f472b6">Toplam</th><th style="color:#107e3e">M³</th></tr></thead>
+                    <thead><tr><th>Ekip</th><th style="color:var(--blue-light)">Tır</th><th style="color:var(--yellow)">Kamyon</th><th style="color:#d97706">Konteyner</th><th style="color:#f472b6">Toplam</th><th style="color:var(--success)">M³</th></tr></thead>
                     <tbody>
-                        ${ekipler.map(e=>`<tr><td style="font-weight:400;font-size:11px;">${ekipKisaGoster(e.ad)}</td><td style="color:#0070d2;font-weight:700;">${e.tir||'—'}</td><td style="color:#e8a000;font-weight:700;">${e.kamyon||'—'}</td><td style="color:#a16207;font-weight:700;">${e.konteyner||'—'}</td><td style="color:#f472b6;font-weight:800;">${e.kayitlar.length}</td><td style="color:#107e3e;font-weight:700;">${e.m3.toFixed(1)}</td></tr>`).join('')}
-                        <tr style="background:rgba(37,99,235,0.15);border-top:2px solid rgba(37,99,235,0.4);"><td style="font-weight:900;color:#0070d2;">GENEL TOPLAM</td><td style="font-weight:900;color:#0070d2;">${genTir}</td><td style="font-weight:900;color:#e8a000;">${genKamyon}</td><td style="font-weight:900;color:#d97706;">${genKonteyner}</td><td style="font-weight:900;color:#f472b6;">${genToplam}</td><td style="font-weight:900;color:#107e3e;">${genM3.toFixed(1)}</td></tr>
+                        ${ekipler.map(e=>`<tr><td style="font-weight:400;font-size:11px;">${ekipKisaGoster(e.ad)}</td><td style="color:var(--blue-light);font-weight:700;">${e.tir||'—'}</td><td style="color:var(--yellow);font-weight:700;">${e.kamyon||'—'}</td><td style="color:#a16207;font-weight:700;">${e.konteyner||'—'}</td><td style="color:#f472b6;font-weight:800;">${e.kayitlar.length}</td><td style="color:var(--success);font-weight:700;">${e.m3.toFixed(1)}</td></tr>`).join('')}
+                        <tr style="background:rgba(37,99,235,0.15);border-top:2px solid rgba(37,99,235,0.4);"><td style="font-weight:900;color:var(--blue-light);">GENEL TOPLAM</td><td style="font-weight:900;color:var(--blue-light);">${genTir}</td><td style="font-weight:900;color:var(--yellow);">${genKamyon}</td><td style="font-weight:900;color:#d97706;">${genKonteyner}</td><td style="font-weight:900;color:#f472b6;">${genToplam}</td><td style="font-weight:900;color:var(--success);">${genM3.toFixed(1)}</td></tr>
                     </tbody></table></div></div>`;
         } else {
             // ══ GÜNLÜK / AYLIK / ARALIK: Detay ══
@@ -3554,7 +2743,7 @@
                 ${ekipler.map(ekip => `
                     <div class="sef-bolum" style="margin-bottom:16px;">
                         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
-                            <div style="font-size:13px;font-weight:400;color:#1a2027;">${ekipKisaGoster(ekip.ad)}</div>
+                            <div style="font-size:13px;font-weight:400;color:var(--text);">${ekipKisaGoster(ekip.ad)}</div>
                             <div style="display:flex;gap:6px;flex-wrap:wrap;">
                                 ${ekip.tir>0?`<span class="stat-pill badge-tir">🚛 ${ekip.tir} Tır</span>`:''}
                                 ${ekip.kamyon>0?`<span class="stat-pill badge-kamyon">🚚 ${ekip.kamyon} Kamyon</span>`:''}
@@ -3579,17 +2768,17 @@
                                             ? k.duruslar.filter(d=>d.sure).map(d=>`${d.sebep}(${d.sure}dk)`).join(', ')
                                             : '—';
                                         return `<tr>
-                                            <td style="color:#8a9ba8">${i+1}</td>
+                                            <td style="color:var(--muted)">${i+1}</td>
                                             ${e2Vardiya==='hepsi'?`<td style="font-size:10px;font-weight:800;color:${k.vardiya==='A Vardiyası'?'var(--blue-light)':'var(--yellow)'};">${k.vardiya==='A Vardiyası'?'A':'B'}</td>`:''}
                                             <td><span class="badge ${tipBadge}">${k.aracTipi}</span></td>
                                             <td><span class="badge ${k.aracTuru==='O/E'?'badge-oe':'badge-piyasa'}">${k.aracTuru}</span></td>
-                                            <td style="color:#107e3e;font-weight:800;">${k.m3}</td>
-                                            <td style="color:#556b82">${k.shipment||'—'}</td>
-                                            <td style="color:#556b82;white-space:nowrap;">${k.baslama} - ${k.bitis}</td>
+                                            <td style="color:var(--success);font-weight:800;">${k.m3}</td>
+                                            <td style="color:var(--text-dim)">${k.shipment||'—'}</td>
+                                            <td style="color:var(--text-dim);white-space:nowrap;">${k.baslama} - ${k.bitis}</td>
                                             <td style="font-weight:700;">${k.net}</td>
                                             <td style="color:var(--warning);font-size:10px;">${durusStr}</td>
-                                            <td style="color:#556b82">${k.kaliteci||'—'}</td>
-                                            <td style="color:#556b82">${k.aciklama||'—'}</td>
+                                            <td style="color:var(--text-dim)">${k.kaliteci||'—'}</td>
+                                            <td style="color:var(--text-dim)">${k.aciklama||'—'}</td>
                                         </tr>`;
                                     }).join('')}
                                 </tbody>
@@ -3861,11 +3050,11 @@
             <div class="donem-badge">👤 ${tamIsim}${sicilNo ? ' · <span style="font-size:11px;opacity:0.7;">Sicil: ' + sicilNo + '</span>' : ''} &nbsp;·&nbsp; 📅 ${donem.label}</div>
             <div class="vd-panel" style="margin-bottom:16px;">
                 <div class="vd-kartlar" style="grid-template-columns:repeat(5,1fr);">
-                    <div class="vd-kart"><div class="vd-kart-num" style="color:#0070d2">${tir}</div><div class="vd-kart-lbl">Tır</div></div>
-                    <div class="vd-kart"><div class="vd-kart-num" style="color:#e8a000">${kamyon}</div><div class="vd-kart-lbl">Kamyon</div></div>
+                    <div class="vd-kart"><div class="vd-kart-num" style="color:var(--blue-light)">${tir}</div><div class="vd-kart-lbl">Tır</div></div>
+                    <div class="vd-kart"><div class="vd-kart-num" style="color:var(--yellow)">${kamyon}</div><div class="vd-kart-lbl">Kamyon</div></div>
                     <div class="vd-kart"><div class="vd-kart-num" style="color:#a16207">${konteyner}</div><div class="vd-kart-lbl">Konteyner</div></div>
                     <div class="vd-kart"><div class="vd-kart-num" style="color:#ef4444">${toplam}</div><div class="vd-kart-lbl">Toplam Araç</div></div>
-                    <div class="vd-kart"><div class="vd-kart-num" style="color:#107e3e;font-size:22px;">${m3top.toFixed(1)}</div><div class="vd-kart-lbl">Toplam M³</div></div>
+                    <div class="vd-kart"><div class="vd-kart-num" style="color:var(--success);font-size:22px;">${m3top.toFixed(1)}</div><div class="vd-kart-lbl">Toplam M³</div></div>
                 </div>
             </div>
             <div class="sef-bolum">
@@ -3877,22 +3066,22 @@
                             const tipBadge = k.aracTipi==='Tır'?'badge-tir':k.aracTipi==='Kamyon'?'badge-kamyon':'badge-konteyner';
                             const rowBg = k.gec ? 'background:rgba(239,68,68,0.08);' : 'background:rgba(34,197,94,0.06);';
                             const durumBadge = k.gec
-                                ? '<span style="background:rgba(239,68,68,0.15);color:#bb0000;border:1px solid rgba(239,68,68,0.4);border-radius:5px;padding:1px 6px;font-size:10px;font-weight:800;">Gecikti</span>'
+                                ? '<span style="background:rgba(239,68,68,0.15);color:#f87171;border:1px solid rgba(239,68,68,0.4);border-radius:5px;padding:1px 6px;font-size:10px;font-weight:800;">Gecikti</span>'
                                 : '<span style="background:rgba(34,197,94,0.12);color:#4ade80;border:1px solid rgba(34,197,94,0.3);border-radius:5px;padding:1px 6px;font-size:10px;font-weight:800;">Uygun</span>';
                             return '<tr style="' + rowBg + '">' +
-                                '<td style="color:#8a9ba8">' + (i+1) + '</td>' +
+                                '<td style="color:var(--muted)">' + (i+1) + '</td>' +
                                 '<td style="white-space:nowrap;">' + tarihFmt(k.tarih) + '</td>' +
                                 '<td style="font-weight:800;color:' + (k.vardiya==='A Vardiyası'?'var(--blue-light)':'var(--yellow)') + ';">' + (k.vardiya==='A Vardiyası'?'A':'B') + '</td>' +
                                 '<td style="font-size:10px;font-weight:700;">' + k.ekip + '</td>' +
                                 '<td><span class="badge ' + tipBadge + '">' + k.aracTipi + '</span></td>' +
                                 '<td><span class="badge ' + (k.aracTuru==='O/E'?'badge-oe':'badge-piyasa') + '">' + k.aracTuru + '</span></td>' +
-                                '<td style="color:#107e3e;font-weight:800;">' + k.m3 + '</td>' +
-                                '<td style="color:#556b82">' + (k.shipment||'—') + '</td>' +
+                                '<td style="color:var(--success);font-weight:800;">' + k.m3 + '</td>' +
+                                '<td style="color:var(--text-dim)">' + (k.shipment||'—') + '</td>' +
                                 '<td style="white-space:nowrap;">' + k.baslama + ' - ' + k.bitis + '</td>' +
                                 '<td style="font-weight:700;">' + k.net + '</td>' +
                                 '<td>' + durumBadge + '</td>' +
                                 '<td style="color:var(--warning);font-size:10px;">' + durusStr(k) + '</td>' +
-                                '<td style="color:#556b82">' + (k.kaliteci||'—') + '</td>' +
+                                '<td style="color:var(--text-dim)">' + (k.kaliteci||'—') + '</td>' +
                             '</tr>';
                         }).join('')}</tbody>
                     </table>
@@ -4167,7 +3356,7 @@
                 <td style="font-weight:800;color:${m.vardiya==='A'?'var(--blue-light)':'var(--yellow)'};">${m.vardiya}</td>
                 <td style="color:${turRenk};font-weight:700;">${m.tur}</td>
                 <td style="font-weight:800;color:#f472b6;">${m.kisi}</td>
-                <td style="color:#556b82;">${m.hesaplananGun}</td>
+                <td style="color:var(--text-dim);">${m.hesaplananGun}</td>
                 <td><button class="del-btn" onclick="mesaiSil(${m.id},event)" title="Sil">🗑️</button></td>
             </tr>`;
         }).join('');
@@ -4227,17 +3416,17 @@
             <div style="margin-top:4px;font-size:13px;font-weight:800;color:#6b9fff;text-align:center;margin-bottom:12px;">${label}</div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
                 <div style="background:#152247;border-radius:14px;padding:22px 18px;text-align:center;border-left:3px solid var(--yellow);">
-                    <div style="color:#e8a000;font-weight:900;font-size:16px;margin-bottom:10px;">A VARDİYASI</div>
+                    <div style="color:var(--yellow);font-weight:900;font-size:16px;margin-bottom:10px;">A VARDİYASI</div>
                     <div style="font-size:13px;color:#6b9fff;margin-bottom:5px;display:block;">Normal: <b style="color:white;">${A.normal} gün</b></div>
                     <div style="font-size:13px;color:#6b9fff;margin-bottom:5px;display:block;">Pazar: <b style="color:white;">${A.pazar} gün</b></div>
-                    <div style="font-size:13px;color:#6b9fff;margin-top:6px;">Toplam: <b style="color:#e8a000;font-size:15px;">${aSaat} saat</b></div>
+                    <div style="font-size:13px;color:#6b9fff;margin-top:6px;">Toplam: <b style="color:var(--yellow);font-size:15px;">${aSaat} saat</b></div>
                     <div style="font-size:13px;color:#6b9fff;margin-top:8px;display:block;">Kişi: <b style="color:white;">${A.toplamKisi}</b></div>
                 </div>
                 <div style="background:#152247;border-radius:14px;padding:22px 18px;text-align:center;border-left:3px solid var(--blue-light);">
-                    <div style="color:#0070d2;font-weight:900;font-size:16px;margin-bottom:10px;">B VARDİYASI</div>
+                    <div style="color:var(--blue-light);font-weight:900;font-size:16px;margin-bottom:10px;">B VARDİYASI</div>
                     <div style="font-size:13px;color:#6b9fff;margin-bottom:5px;display:block;">Normal: <b style="color:white;">${B.normal} gün</b></div>
                     <div style="font-size:13px;color:#6b9fff;margin-bottom:5px;display:block;">Pazar: <b style="color:white;">${B.pazar} gün</b></div>
-                    <div style="font-size:13px;color:#6b9fff;margin-top:6px;">Toplam: <b style="color:#0070d2;font-size:15px;">${bSaat} saat</b></div>
+                    <div style="font-size:13px;color:#6b9fff;margin-top:6px;">Toplam: <b style="color:var(--blue-light);font-size:15px;">${bSaat} saat</b></div>
                     <div style="font-size:13px;color:#6b9fff;margin-top:8px;display:block;">Kişi: <b style="color:white;">${B.toplamKisi}</b></div>
                 </div>
             </div>
@@ -4513,7 +3702,7 @@
                     <div class="vd-kart"><div class="vd-kart-num" style="color:#ef4444;animation:pulseRed 2.5s ease-in-out infinite">${topArac}</div><div class="vd-kart-lbl">Toplam Araç</div></div>
                     ${kart(topM3.toFixed(1),'Toplam M³','var(--success)')}
                 </div>
-                <div style="margin-top:10px;font-size:12px;color:#556b82;">En çok yüklenen: <span style="font-weight:800;color:#1a2027;">${enCok}</span></div>
+                <div style="margin-top:10px;font-size:12px;color:var(--text-dim);">En çok yüklenen: <span style="font-weight:800;color:var(--text);">${enCok}</span></div>
             </div>
 
             <div class="sef-bolum">
@@ -4538,7 +3727,7 @@
                         ${kart(mesaiYKamyon,'Kamyon','var(--yellow)')}
                         ${kart(mesaiYKont,'Konteyner','#d97706')}
                     </div>
-                    <div style="margin-top:8px;font-size:11px;color:#556b82;">Toplam M³: <span style="font-weight:800;color:#107e3e;">${mesaiYM3.toFixed(1)}</span></div>
+                    <div style="margin-top:8px;font-size:11px;color:var(--text-dim);">Toplam M³: <span style="font-weight:800;color:var(--success);">${mesaiYM3.toFixed(1)}</span></div>
                 </div>
                 <div class="sef-bolum">
                     <div class="sef-bolum-baslik">Mesai Katılım</div>
@@ -4548,12 +3737,12 @@
                     </div>
                     <div style="margin-top:10px;">
                         <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #1e2a3a;">
-                            <span style="font-size:12px;color:#556b82;">Normal Mesai Kişi</span>
-                            <span style="font-weight:800;color:#107e3e;">${mesaiNormalKisi}</span>
+                            <span style="font-size:12px;color:var(--text-dim);">Normal Mesai Kişi</span>
+                            <span style="font-weight:800;color:var(--success);">${mesaiNormalKisi}</span>
                         </div>
                         <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;">
-                            <span style="font-size:12px;color:#556b82;">Pazar Mesai Kişi</span>
-                            <span style="font-weight:800;color:#bb0000;">${mesaiPazarKisi}</span>
+                            <span style="font-size:12px;color:var(--text-dim);">Pazar Mesai Kişi</span>
+                            <span style="font-weight:800;color:var(--danger);">${mesaiPazarKisi}</span>
                         </div>
                     </div>
                 </div>
@@ -4574,7 +3763,7 @@
                                     <td style="font-weight:800;color:${m.vardiya==='A'?'var(--blue-light)':'var(--yellow)'};">${m.vardiya}</td>
                                     <td style="color:${m.tur==='Pazar'?'var(--danger)':'var(--success)'};">${m.tur}</td>
                                     <td style="font-weight:800;">${m.kisi}</td>
-                                    <td style="color:#556b82;">${m.hesaplananGun}</td>
+                                    <td style="color:var(--text-dim);">${m.hesaplananGun}</td>
                                 </tr>`;
                             }).join('')}
                         </tbody>
@@ -4646,7 +3835,7 @@
     function df6EkipTagRender() {
         const wrap = document.getElementById('df6EkipTaglar');
         wrap.innerHTML = df6EkipListesi.map(isim => `
-            <div style="display:inline-flex;align-items:center;gap:5px;background:rgba(37,99,235,0.15);border:1px solid rgba(59,130,246,0.4);border-radius:20px;padding:4px 10px 4px 12px;font-size:11px;font-weight:800;color:#0070d2;">
+            <div style="display:inline-flex;align-items:center;gap:5px;background:rgba(37,99,235,0.15);border:1px solid rgba(59,130,246,0.4);border-radius:20px;padding:4px 10px 4px 12px;font-size:11px;font-weight:800;color:var(--blue-light);">
                 ${isim}
                 <button onclick="df6EkipSil('${isim.replace(/'/g,"\\'")}\')" style="background:none;border:none;color:rgba(148,163,184,0.7);cursor:pointer;font-size:13px;line-height:1;padding:0;margin-left:2px;" title="Kaldır">×</button>
             </div>`).join('');
@@ -4809,11 +3998,11 @@
                 <div class="donem-badge">👥 ${df6EkipListesi.join(' · ')} &nbsp;·&nbsp; 📅 ${donem.label}</div>
                 <div class="vd-panel" style="margin-bottom:16px;">
                     <div class="vd-kartlar" style="grid-template-columns:repeat(5,1fr);">
-                        <div class="vd-kart"><div class="vd-kart-num" style="color:#0070d2">${tir}</div><div class="vd-kart-lbl">Tır</div></div>
-                        <div class="vd-kart"><div class="vd-kart-num" style="color:#e8a000">${kamyon}</div><div class="vd-kart-lbl">Kamyon</div></div>
+                        <div class="vd-kart"><div class="vd-kart-num" style="color:var(--blue-light)">${tir}</div><div class="vd-kart-lbl">Tır</div></div>
+                        <div class="vd-kart"><div class="vd-kart-num" style="color:var(--yellow)">${kamyon}</div><div class="vd-kart-lbl">Kamyon</div></div>
                         <div class="vd-kart"><div class="vd-kart-num" style="color:#a16207">${konteyner}</div><div class="vd-kart-lbl">Konteyner</div></div>
                         <div class="vd-kart"><div class="vd-kart-num" style="color:#ef4444">${toplam}</div><div class="vd-kart-lbl">Toplam Araç</div></div>
-                        <div class="vd-kart"><div class="vd-kart-num" style="color:#107e3e;font-size:22px;">${m3top.toFixed(1)}</div><div class="vd-kart-lbl">Toplam M³</div></div>
+                        <div class="vd-kart"><div class="vd-kart-num" style="color:var(--success);font-size:22px;">${m3top.toFixed(1)}</div><div class="vd-kart-lbl">Toplam M³</div></div>
                     </div>
                 </div>
                 <div class="sef-bolum">
@@ -4825,23 +4014,23 @@
                                 const tipBadge = k.aracTipi==='Tır'?'badge-tir':k.aracTipi==='Kamyon'?'badge-kamyon':'badge-konteyner';
                                 const rowBg = k.gec ? 'background:rgba(239,68,68,0.08);' : 'background:rgba(34,197,94,0.06);';
                                 const durumBadge = k.gec
-                                    ? '<span style="background:rgba(239,68,68,0.15);color:#bb0000;border:1px solid rgba(239,68,68,0.4);border-radius:5px;padding:1px 6px;font-size:10px;font-weight:800;">Gecikti</span>'
+                                    ? '<span style="background:rgba(239,68,68,0.15);color:#f87171;border:1px solid rgba(239,68,68,0.4);border-radius:5px;padding:1px 6px;font-size:10px;font-weight:800;">Gecikti</span>'
                                     : '<span style="background:rgba(34,197,94,0.12);color:#4ade80;border:1px solid rgba(34,197,94,0.3);border-radius:5px;padding:1px 6px;font-size:10px;font-weight:800;">Uygun</span>';
                                 return `<tr style="${rowBg}">
-                                    <td style="color:#8a9ba8">${i+1}</td>
+                                    <td style="color:var(--muted)">${i+1}</td>
                                     <td style="white-space:nowrap;">${tarihFmt(k.tarih)}</td>
                                     <td style="font-weight:800;color:${k.vardiya==='A Vardiyası'?'var(--blue-light)':'var(--yellow)'};">${k.vardiya==='A Vardiyası'?'A':'B'}</td>
                                     <td style="font-size:10px;font-weight:700;">${k.ekip}</td>
                                     <td><span class="badge ${tipBadge}">${k.aracTipi}</span></td>
                                     <td><span class="badge ${k.aracTuru==='O/E'?'badge-oe':'badge-piyasa'}">${k.aracTuru}</span></td>
-                                    <td style="color:#107e3e;font-weight:800;">${k.m3}</td>
-                                    <td style="color:#556b82">${k.shipment||'—'}</td>
+                                    <td style="color:var(--success);font-weight:800;">${k.m3}</td>
+                                    <td style="color:var(--text-dim)">${k.shipment||'—'}</td>
                                     <td style="white-space:nowrap;">${k.baslama} - ${k.bitis}</td>
                                     <td style="font-weight:700;">${k.net}</td>
                                     <td>${durumBadge}</td>
                                     <td style="color:var(--warning);font-size:10px;">${durusStr(k)}</td>
-                                    <td style="color:#556b82">${k.kaliteci||'—'}</td>
-                                    <td style="color:#556b82">${k.aciklama||'—'}</td>
+                                    <td style="color:var(--text-dim)">${k.kaliteci||'—'}</td>
+                                    <td style="color:var(--text-dim)">${k.aciklama||'—'}</td>
                                 </tr>`;
                             }).join('')}</tbody>
                         </table>
@@ -4880,11 +4069,11 @@
                 <div class="donem-badge">👤 ${tamIsim}${sicilNo?' · <span style="font-size:11px;opacity:0.7;">Sicil: '+sicilNo+'</span>':''} &nbsp;·&nbsp; 📅 ${donem.label}</div>
                 <div class="vd-panel" style="margin-bottom:16px;">
                     <div class="vd-kartlar" style="grid-template-columns:repeat(5,1fr);">
-                        <div class="vd-kart"><div class="vd-kart-num" style="color:#0070d2">${tir}</div><div class="vd-kart-lbl">Tır</div></div>
-                        <div class="vd-kart"><div class="vd-kart-num" style="color:#e8a000">${kamyon}</div><div class="vd-kart-lbl">Kamyon</div></div>
+                        <div class="vd-kart"><div class="vd-kart-num" style="color:var(--blue-light)">${tir}</div><div class="vd-kart-lbl">Tır</div></div>
+                        <div class="vd-kart"><div class="vd-kart-num" style="color:var(--yellow)">${kamyon}</div><div class="vd-kart-lbl">Kamyon</div></div>
                         <div class="vd-kart"><div class="vd-kart-num" style="color:#a16207">${konteyner}</div><div class="vd-kart-lbl">Konteyner</div></div>
                         <div class="vd-kart"><div class="vd-kart-num" style="color:#ef4444">${toplam}</div><div class="vd-kart-lbl">Toplam Araç</div></div>
-                        <div class="vd-kart"><div class="vd-kart-num" style="color:#107e3e;font-size:22px;">${m3top.toFixed(1)}</div><div class="vd-kart-lbl">Toplam M³</div></div>
+                        <div class="vd-kart"><div class="vd-kart-num" style="color:var(--success);font-size:22px;">${m3top.toFixed(1)}</div><div class="vd-kart-lbl">Toplam M³</div></div>
                     </div>
                 </div>
                 <div class="sef-bolum">
@@ -4895,19 +4084,19 @@
                             <tbody>${liste.map((k,i)=>{
                                 const tipBadge = k.aracTipi==='Tır'?'badge-tir':k.aracTipi==='Kamyon'?'badge-kamyon':'badge-konteyner';
                                 return `<tr>
-                                    <td style="color:#8a9ba8">${i+1}</td>
+                                    <td style="color:var(--muted)">${i+1}</td>
                                     <td style="white-space:nowrap;">${tarihFmt(k.tarih)}</td>
                                     <td style="font-weight:800;color:${k.vardiya==='A Vardiyası'?'var(--blue-light)':'var(--yellow)'};">${k.vardiya==='A Vardiyası'?'A':'B'}</td>
                                     <td style="font-size:10px;font-weight:700;">${k.ekip}</td>
                                     <td><span class="badge ${tipBadge}">${k.aracTipi}</span></td>
                                     <td><span class="badge ${k.aracTuru==='O/E'?'badge-oe':'badge-piyasa'}">${k.aracTuru}</span></td>
-                                    <td style="color:#107e3e;font-weight:800;">${k.m3}</td>
-                                    <td style="color:#556b82">${k.shipment||'—'}</td>
+                                    <td style="color:var(--success);font-weight:800;">${k.m3}</td>
+                                    <td style="color:var(--text-dim)">${k.shipment||'—'}</td>
                                     <td style="white-space:nowrap;">${k.baslama} - ${k.bitis}</td>
                                     <td style="font-weight:700;">${k.net}</td>
                                     <td style="color:var(--warning);font-size:10px;">${durusStr(k)}</td>
-                                    <td style="color:#556b82">${k.kaliteci||'—'}</td>
-                                    <td style="color:#556b82">${k.aciklama||'—'}</td>
+                                    <td style="color:var(--text-dim)">${k.kaliteci||'—'}</td>
+                                    <td style="color:var(--text-dim)">${k.aciklama||'—'}</td>
                                 </tr>`;
                             }).join('')}</tbody>
                         </table>
