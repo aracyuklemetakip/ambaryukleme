@@ -2170,6 +2170,19 @@
         document.querySelectorAll('#tableBody tr').forEach(tr => tr.classList.remove('selected'));
     }
 
+    // ── EKİP HIZLI ATAMA (çift tıklama) ──────────────────
+    function ekipHizliAta(k, event) {
+        event.stopPropagation();
+        // Ekip adını sola yaz
+        document.getElementById('ekip').value = k.ekip;
+        // Dropdown'ı kapat
+        document.getElementById('ekipDropdown').style.display = 'none';
+        // Tır butonuna focus (araç tipi seçmeye hazır)
+        const tirBtn = document.querySelector('#segTip .seg-btn');
+        if (tirBtn) tirBtn.focus();
+        showToast('👥 Ekip aktarıldı: ' + ekipKisaGoster(k.ekip), 'success');
+    }
+
     // ── EKİP KISA GÖSTER ─────────────────────────────────
     function ekipKisaGoster(ekipStr) {
         const isimler = ekipStr.split(',').map(s => s.trim()).filter(Boolean);
@@ -2336,7 +2349,7 @@
         sirali.forEach((k, i) => {
             const tipBadge = k.aracTipi==='Tır'?'badge-tir':k.aracTipi==='Kamyon'?'badge-kamyon':'badge-konteyner';
             const durum    = k.gec?`<span class="status-gec">Gecikti</span>`:`<span class="status-ok">✓</span>`;
-            tableHTML += `<tr class="${duzenleId===k.id?'selected':''}" data-id="${k.id}" onclick="formDoldur(${JSON.stringify(k).replace(/"/g,'&quot;')})">
+            tableHTML += `<tr class="${duzenleId===k.id?'selected':''}" data-id="${k.id}" onclick="formDoldur(${JSON.stringify(k).replace(/"/g,'&quot;')})" ondblclick="ekipHizliAta(${JSON.stringify(k).replace(/"/g,'&quot;')},event)" style="cursor:pointer;" title="Çift tıkla → ekip isimlerini forma aktar">
                 <td style="color:var(--muted);font-size:11px;">${i+1}</td>
                 <td><span style="font-size:10px;font-weight:800;color:${k.vardiya==='A Vardiyası'?'var(--blue-light)':'var(--yellow)'};">${k.vardiya==='A Vardiyası'?'A':'B'}</span></td>
                 <td style="font-weight:400;font-size:11px;">${ekipKisaGoster(k.ekip)}</td>
