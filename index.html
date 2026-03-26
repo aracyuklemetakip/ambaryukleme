@@ -1066,6 +1066,7 @@
             <div class="sef-sekme" onclick="sekmeAc(this,'sekme4')">⏱️ Mesai Takip</div>
             <div class="sef-sekme" onclick="sekmeAc(this,'sekme5')">🧑‍💼 Personel Yönetimi</div>
             <div class="sef-sekme" onclick="sekmeAc(this,'sekme6')">🔍 Detaylı Filtrele</div>
+            <div class="sef-sekme" onclick="sekmeAc(this,'sekme7')">🏆 Vardiya Analizi</div>
         </div>
 
         <div class="sef-content">
@@ -1442,6 +1443,46 @@
                         </div>
                     </div>
 
+                </div>
+            </div>
+
+            <!-- SEKME 7: VARDİYA ANALİZİ -->
+            <div id="sekme7" class="sekme-icerik">
+                <div class="filtre-panel">
+                    <div class="filtre-row">
+                        <div class="filtre-group">
+                            <div class="filtre-label">Dönem</div>
+                            <div class="filtre-seg" id="va7DonemSeg">
+                                <div class="filtre-seg-btn aktif" onclick="va7DonemSec(this,'gun')">Günlük</div>
+                                <div class="filtre-seg-btn" onclick="va7DonemSec(this,'ay')">Aylık</div>
+                                <div class="filtre-seg-btn" onclick="va7DonemSec(this,'yil')">Yıllık</div>
+                                <div class="filtre-seg-btn" onclick="va7DonemSec(this,'aralik')">Tarih Aralığı Seç</div>
+                            </div>
+                        </div>
+                        <div class="filtre-group" id="va7GunGrp">
+                            <div class="filtre-label">Tarih</div>
+                            <input type="date" id="va7Tarih" class="filtre-input" onchange="va7Sorgula()">
+                        </div>
+                        <div class="filtre-group" id="va7AyGrp" style="display:none;">
+                            <div class="filtre-label">Ay / Yıl</div>
+                            <input type="month" id="va7AyTarih" class="filtre-input" onchange="va7Sorgula()">
+                        </div>
+                        <div class="filtre-group" id="va7YilGrp" style="display:none;">
+                            <div class="filtre-label">Yıl</div>
+                            <input type="number" id="va7YilSayi" class="filtre-input" style="width:110px;" min="2020" max="2099" onchange="va7Sorgula()">
+                        </div>
+                        <div class="filtre-group" id="va7AralikGrp" style="display:none;flex-direction:row;gap:8px;align-items:flex-end;">
+                            <div><div class="filtre-label">Başlangıç</div><input type="date" id="va7AralikBas" class="filtre-input" onchange="va7Sorgula()"></div>
+                            <div style="color:var(--muted);font-size:18px;font-weight:900;padding-bottom:8px;">—</div>
+                            <div><div class="filtre-label">Bitiş</div><input type="date" id="va7AralikBit" class="filtre-input" onchange="va7Sorgula()"></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="va7Sonuc">
+                    <div class="sef-bos">
+                        <div class="sef-bos-icon">🏆</div>
+                        <div class="sef-bos-text">Dönem seç, vardiya karşılaştırması görüntülensin</div>
+                    </div>
                 </div>
             </div>
 
@@ -4464,6 +4505,162 @@ document.addEventListener('keydown', function(e) {
         applyPulse();
     });
 })();
+
+// ══════════════════════════════════════════
+// SEKME 7: VARDİYA ANALİZİ
+// ══════════════════════════════════════════
+let va7Donem = 'gun';
+
+function va7DonemSec(el, tip) {
+    document.querySelectorAll('#va7DonemSeg .filtre-seg-btn').forEach(b => b.classList.remove('aktif'));
+    el.classList.add('aktif');
+    va7Donem = tip;
+    document.getElementById('va7GunGrp').style.display    = tip === 'gun'    ? '' : 'none';
+    document.getElementById('va7AyGrp').style.display     = tip === 'ay'     ? '' : 'none';
+    document.getElementById('va7YilGrp').style.display    = tip === 'yil'    ? '' : 'none';
+    document.getElementById('va7AralikGrp').style.display = tip === 'aralik' ? '' : 'none';
+    va7Sorgula();
+}
+
+function va7TarihAralik() {
+    const bugun = new Date().toISOString().split('T')[0];
+    if (va7Donem === 'gun') {
+        const t = document.getElementById('va7Tarih').value || bugun;
+        return { bas: t, bit: t, label: t };
+    } else if (va7Donem === 'ay') {
+        const v = document.getElementById('va7AyTarih').value;
+        if (!v) return null;
+        const [y, m] = v.split('-').map(Number);
+        const son = new Date(y, m, 0).getDate();
+        return { bas: `${v}-01`, bit: `${v}-${String(son).padStart(2,'0')}`, label: v };
+    } else if (va7Donem === 'yil') {
+        const y = document.getElementById('va7YilSayi').value;
+        if (!y) return null;
+        return { bas: `${y}-01-01`, bit: `${y}-12-31`, label: `${y} Yılı` };
+    } else {
+        const bas = document.getElementById('va7AralikBas').value;
+        const bit = document.getElementById('va7AralikBit').value;
+        if (!bas || !bit) return null;
+        return { bas, bit, label: `${bas} – ${bit}` };
+    }
+}
+
+function va7Sorgula() {
+    const donem = va7TarihAralik();
+    if (!donem) return;
+
+    const liste = kayitlar.filter(k => k.tarih >= donem.bas && k.tarih <= donem.bit);
+    const sonuc = document.getElementById('va7Sonuc');
+
+    if (liste.length === 0) {
+        sonuc.innerHTML = `<div class="sef-bos"><div class="sef-bos-icon">🔍</div><div class="sef-bos-text">Bu dönemde kayıt bulunamadı</div></div>`;
+        return;
+    }
+
+    function ekipMapOlustur(filtreListe) {
+        const map = {};
+        filtreListe.forEach(k => {
+            const key = ekipKey(k.ekip);
+            if (!map[key]) map[key] = { ad: k.ekip, arac: 0, m3: 0, tir: 0, kamyon: 0, konteyner: 0 };
+            map[key].arac++;
+            map[key].m3 += (k.m3 || 0);
+            if (k.aracTipi === 'Tır') map[key].tir++;
+            else if (k.aracTipi === 'Kamyon') map[key].kamyon++;
+            else map[key].konteyner++;
+        });
+        return Object.values(map).sort((a, b) => b.arac - a.arac);
+    }
+
+    const listeA = liste.filter(k => k.vardiya === 'A Vardiyası');
+    const listeB = liste.filter(k => k.vardiya === 'B Vardiyası');
+
+    const ekipA = ekipMapOlustur(listeA);
+    const ekipB = ekipMapOlustur(listeB);
+    const ekipT = ekipMapOlustur(liste);
+
+    const topA = listeA.length, topB = listeB.length, topT = liste.length;
+    const m3A  = listeA.reduce((s,k)=>s+(k.m3||0),0);
+    const m3B  = listeB.reduce((s,k)=>s+(k.m3||0),0);
+    const m3T  = liste.reduce((s,k)=>s+(k.m3||0),0);
+
+    function liderSatir(ekipler, renk) {
+        if (!ekipler.length) return '<tr><td colspan="6" style="color:var(--muted);text-align:center;">Kayıt yok</td></tr>';
+        return ekipler.map((e, i) => {
+            const madalya = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i+1}.`;
+            return `<tr>
+                <td style="font-weight:900;font-size:16px;text-align:center;">${madalya}</td>
+                <td style="font-weight:700;color:var(--text);font-size:12px;">${ekipKisaGoster(e.ad)}</td>
+                <td style="color:${renk};font-weight:800;text-align:center;">${e.arac}</td>
+                <td style="color:var(--success);font-weight:700;text-align:center;">${e.m3.toFixed(1)}</td>
+                <td style="text-align:center;font-size:11px;">
+                    ${e.tir ? `<span style="color:var(--blue-light);font-weight:700;">${e.tir}T</span>` : ''}
+                    ${e.kamyon ? `<span style="color:var(--yellow);font-weight:700;margin-left:4px;">${e.kamyon}K</span>` : ''}
+                    ${e.konteyner ? `<span style="color:#a16207;font-weight:700;margin-left:4px;">${e.konteyner}Ko</span>` : ''}
+                </td>
+                <td style="text-align:right;">
+                    <div style="background:rgba(163,177,198,0.3);border-radius:100px;height:6px;width:80px;display:inline-block;vertical-align:middle;">
+                        <div style="background:${renk};border-radius:100px;height:6px;width:${Math.round((e.arac/ekipler[0].arac)*80)}px;"></div>
+                    </div>
+                </td>
+            </tr>`;
+        }).join('');
+    }
+
+    function tabloOlustur(baslik, renk, emoji, ekipler, toplamArac, toplamM3, listeLen) {
+        if (!listeLen) return `
+            <div class="sef-bolum" style="margin-bottom:16px;">
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+                    <div style="font-size:26px;">${emoji}</div>
+                    <div>
+                        <div style="font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900;letter-spacing:1px;color:${renk};">${baslik}</div>
+                        <div style="font-size:11px;color:var(--muted);">Bu dönemde kayıt yok</div>
+                    </div>
+                </div>
+            </div>`;
+        return `
+            <div class="sef-bolum" style="margin-bottom:16px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
+                    <div style="display:flex;align-items:center;gap:10px;">
+                        <div style="font-size:26px;">${emoji}</div>
+                        <div>
+                            <div style="font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900;letter-spacing:1px;color:${renk};">${baslik}</div>
+                            <div style="font-size:11px;color:var(--muted);">${ekipler.length} ekip · ${toplamArac} araç</div>
+                        </div>
+                    </div>
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                        <span class="stat-pill" style="background:rgba(244,114,182,0.12);color:#f472b6;border:1px solid rgba(244,114,182,0.3);">🚗 ${toplamArac} Araç</span>
+                        <span class="stat-pill" style="background:rgba(34,197,94,0.12);color:#4ade80;border:1px solid rgba(34,197,94,0.3);">📦 ${toplamM3.toFixed(1)} M³</span>
+                    </div>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table class="data-table" style="font-size:12px;">
+                        <thead><tr>
+                            <th style="width:36px;">#</th>
+                            <th>Ekip</th>
+                            <th style="color:${renk};text-align:center;">Araç</th>
+                            <th style="color:var(--success);text-align:center;">M³</th>
+                            <th style="text-align:center;">Tır / Kamyon / Ko</th>
+                            <th style="text-align:right;">Oran</th>
+                        </tr></thead>
+                        <tbody>${liderSatir(ekipler, renk)}</tbody>
+                    </table>
+                </div>
+            </div>`;
+    }
+
+    sonuc.innerHTML = `
+        <div class="donem-badge">📅 ${donem.label} · Toplam ${topT} araç · ${m3T.toFixed(1)} M³</div>
+        ${tabloOlustur('A VARDİYASI', '#2563eb', '🔵', ekipA, topA, m3A, listeA.length)}
+        ${tabloOlustur('B VARDİYASI', '#d97706', '🟡', ekipB, topB, m3B, listeB.length)}
+        ${tabloOlustur('GENEL TOPLAM', '#7c3aed', '🏆', ekipT, topT, m3T, liste.length)}
+    `;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const bugun = new Date().toISOString().split('T')[0];
+    const inp = document.getElementById('va7Tarih');
+    if (inp && !inp.value) inp.value = bugun;
+});
 </script>
 </body>
 </html>
