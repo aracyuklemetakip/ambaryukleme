@@ -389,9 +389,13 @@
         .badge { display:inline-block;padding:2px 8px;border-radius:100px;font-size:10px;font-weight:800;letter-spacing:0.5px; }
         .badge-tir       { background:rgba(59,130,246,0.15);color:#2563eb;border:1px solid rgba(59,130,246,0.3); }
         .badge-kamyon    { background:rgba(217,119,6,0.1);color:#b45309;border:1px solid rgba(217,119,6,0.25); }
-        .badge-konteyner { background:rgba(234,179,8,0.15);color:#a16207;border:1px solid rgba(234,179,8,0.4); }
+        .badge-konteyner { background:rgba(250,204,21,0.15);color:#facc15;border:1px solid rgba(250,204,21,0.5); font-weight:800; }
         .status-ok  { color:var(--success);font-weight:800;font-size:11px; }
         .status-gec { color:var(--danger);font-weight:800;font-size:11px; }
+        
+        /* Çift tıklama zoom engeli */
+        #tableBody tr { touch-action: manipulation; user-select: none; -webkit-user-select: none; }
+
         .data-table tbody tr.ekip-grup-baslik { background:transparent;border-bottom:none;cursor:default; }
         .data-table tbody tr.ekip-grup-baslik:hover { background:transparent; }
         .data-table tbody tr.ekip-grup-bosluk { background:transparent;border-bottom:none;cursor:default; }
@@ -1211,7 +1215,7 @@
                             </div>
                             <button id="btnMesaiKaydet" class="filtre-seg-btn aktif" onclick="mesaiKaydet()" style="width:100%;padding:12px;font-size:14px;border-radius:10px;">💾 Kaydet</button>
                             <button id="btnMesaiGuncelle" class="filtre-seg-btn" onclick="mesaiGuncelle()" style="display:none;width:100%;padding:12px;font-size:14px;border-radius:10px;border-color:rgba(251,191,36,0.6);background:radial-gradient(ellipse at 50% 0%,rgba(251,191,36,0.25) 0%,rgba(40,20,0,0.95) 60%);color:#d97706;box-shadow:0 0 20px rgba(251,191,36,0.2);">✎ Güncelle</button>
-                            <button id="btnMesaiIptal" class="filtre-seg-btn" onclick="mesaiFormTemizle()" style="display:none;width:100%;padding:10px;font-size:13px;border-radius:10px;border-color:rgba(239,68,68,0.5);background:radial-gradient(ellipse at 50% 0%,rgba(239,68,68,0.2) 0%,rgba(40,0,0,0.95) 60%);color:#f87171;box-shadow:0 0 15px rgba(239,68,68,0.15);">✕ Vazgeç</button>
+                            <button id="btnMesaiIptal" class="filtre-seg-btn" onclick="mesaiFormTemizle()" style="display:none;width:100%;padding:10px;font-size:13px;border-radius:10px;border-color:rgba(253,164,175,0.5);background:radial-gradient(ellipse at 50% 0%,rgba(239,68,68,0.2) 0%,rgba(40,0,0,0.95) 60%);color:#f87171;box-shadow:0 0 15px rgba(239,68,68,0.15);">✕ Vazgeç</button>
                         </div>
                     </div>
 
@@ -2186,23 +2190,28 @@
     // ── EKİP KISA GÖSTER ─────────────────────────────────
     function ekipKisaGoster(ekipStr) {
         const isimler = ekipStr.split(',').map(s => s.trim()).filter(Boolean);
-        return isimler.map(tam => {
+        return isimler.map((tam, idx) => {
             const parcalar = tam.trim().split(' ');
             const ad = parcalar[0];
             const soyad = parcalar.slice(1).join(' ');
             // Aynı ada sahip kaç kişi var?
             const ayniAdlar = personelListesi.filter(p => p.ad.split(' ')[0] === ad);
-            if (ayniAdlar.length <= 1) return ad; // Tekse sadece ad
-            // Aynı ad+soyad kaç kişi var?
-            const ayniTamIsim = personelListesi.filter(p => p.ad === tam);
-            if (ayniTamIsim.length > 1) {
-                // Tamamen aynı isimler var → sicil göster
-                const bulunan = personelListesi.find(p => p.ad === tam);
-                return bulunan ? `${ad} <span style="color:var(--muted);font-size:10px;">${bulunan.sicil}</span>` : ad;
+            let gosterim;
+            if (ayniAdlar.length <= 1) {
+                gosterim = ad;
+            } else {
+                const ayniTamIsim = personelListesi.filter(p => p.ad === tam);
+                if (ayniTamIsim.length > 1) {
+                    const bulunan = personelListesi.find(p => p.ad === tam);
+                    gosterim = bulunan ? `${ad} <span style="color:var(--muted);font-size:10px;">${bulunan.sicil}</span>` : ad;
+                } else {
+                    gosterim = soyad ? `${ad} ${soyad}` : ad;
+                }
             }
-            // Ad aynı ama soyad farklı → soyadı göster
-            return soyad ? `${ad} ${soyad}` : ad;
-        }).join(', ');
+            // İlk kişi mavi
+            if (idx === 0) return `<span style="color:#60a5fa;font-weight:800;">${gosterim}</span>`;
+            return gosterim;
+        }).join('<span style="color:var(--muted);font-size:10px;"> · </span>');
     }
 
     // ── KAYDET / GÜNCELLE ─────────────────────────────────
@@ -2471,6 +2480,7 @@
         if (k) k.style.display = 'none';
         if (id === 'sekme4') mesaiInit();
         if (id === 'sekme6') df6Init();
+        try { sessionStorage.setItem('aktifSekme', id); } catch(e) {}
     }
 
     function sefRaporGoster(liste, donemLabel) {
@@ -2519,7 +2529,7 @@
                         <div class="vd-kart-lbl">Kamyon</div>
                     </div>
                     <div class="vd-kart">
-                        <div class="vd-kart-num" style="color:#a16207">${fmt(s.konteyner)}</div>
+                        <div class="vd-kart-num" style="color:#facc15">${fmt(s.konteyner)}</div>
                         <div class="vd-kart-lbl">Konteyner</div>
                     </div>
                 </div>
@@ -2553,7 +2563,7 @@
                 <div class="vd-kartlar" style="grid-template-columns:repeat(5,1fr);">
                     <div class="vd-kart"><div class="vd-kart-num" style="color:var(--blue-light)">${sT.tir||'<span style="color:var(--muted);font-size:18px;">—</span>'}</div><div class="vd-kart-lbl">Tır</div></div>
                     <div class="vd-kart"><div class="vd-kart-num" style="color:var(--yellow)">${sT.kamyon||'<span style="color:var(--muted);font-size:18px;">—</span>'}</div><div class="vd-kart-lbl">Kamyon</div></div>
-                    <div class="vd-kart"><div class="vd-kart-num" style="color:#a16207">${sT.konteyner||'<span style="color:var(--muted);font-size:18px;">—</span>'}</div><div class="vd-kart-lbl">Konteyner</div></div>
+                    <div class="vd-kart"><div class="vd-kart-num" style="color:#facc15">${sT.konteyner||'<span style="color:var(--muted);font-size:18px;">—</span>'}</div><div class="vd-kart-lbl">Konteyner</div></div>
                     <div class="vd-kart"><div class="vd-kart-num" style="color:#ef4444;animation:pulseRed 2.5s ease-in-out infinite">${sT.toplam||'<span style="color:var(--muted);font-size:18px;animation:none">—</span>'}</div><div class="vd-kart-lbl">Toplam Araç</div></div>
                     <div class="vd-kart"><div class="vd-kart-num" style="color:var(--success);font-size:22px;">${sT.m3>0?sT.m3.toFixed(1):'<span style="color:var(--muted);font-size:18px;">—</span>'}</div><div class="vd-kart-lbl">Toplam M³</div></div>
                 </div>
@@ -2656,6 +2666,28 @@
         _origShowSayfa(id);
         if (id === 'sefSayfa') {
             sefTarihGoster();
+            // Aktif sekme restore et (yenilemede)
+            try {
+                const aktifSekme = sessionStorage.getItem('aktifSekme');
+                if (aktifSekme && document.getElementById(aktifSekme)) {
+                    // Sekme butonunu bul ve aktifleştir
+                    const secimler = { sekme1:0, sekme2:1, sekme4:2, sekme5:3, sekme6:4, sekme7:5 };
+                    const btnIdx = secimler[aktifSekme];
+                    const btnEl = document.querySelectorAll('.sef-sekme')[btnIdx];
+                    if (btnEl) {
+                        document.querySelectorAll('.sef-sekme').forEach(s => s.classList.remove('aktif'));
+                        document.querySelectorAll('.sekme-icerik').forEach(s => s.classList.remove('aktif'));
+                        btnEl.classList.add('aktif');
+                        document.getElementById(aktifSekme).classList.add('aktif');
+                        const k = document.getElementById('sekmeKarsilama');
+                        if (k) k.style.display = 'none';
+                        if (aktifSekme === 'sekme4') setTimeout(mesaiInit, 100);
+                        if (aktifSekme === 'sekme6') setTimeout(df6Init, 100);
+                        return;
+                    }
+                }
+            } catch(e) {}
+            // Aktif sekme yoksa karşılama göster
             document.querySelectorAll('.sef-sekme').forEach(s => s.classList.remove('aktif'));
             document.querySelectorAll('.sekme-icerik').forEach(s => s.classList.remove('aktif'));
             const k = document.getElementById('sekmeKarsilama');
@@ -2772,10 +2804,10 @@
             sonuc.innerHTML = `
                 <div class="donem-badge">📅 ${donem.label}${e2Vardiya !== 'hepsi' ? ' · ' + e2Vardiya : ''} · ${genToplam} araç</div>
                 <div class="sef-bolum"><div style="overflow-x:auto;"><table class="data-table" style="font-size:12px;">
-                    <thead><tr><th>Ay</th><th>Ekip</th><th style="color:var(--blue-light)">Tır</th><th style="color:var(--yellow)">Kamyon</th><th style="color:#d97706">Konteyner</th><th style="color:#f472b6">Toplam</th><th style="color:var(--success)">M³</th></tr></thead>
+                    <thead><tr><th>Ay</th><th>Ekip</th><th style="color:var(--blue-light)">Tır</th><th style="color:var(--yellow)">Kamyon</th><th style="color:#facc15">Konteyner</th><th style="color:#fda4af">Toplam</th><th style="color:var(--success)">M³</th></tr></thead>
                     <tbody>
-                        ${satirlar.map(r=>`<tr><td style="font-weight:700;color:var(--text-dim);">${r.grupLabel}</td><td style="font-weight:400;font-size:11px;">${ekipKisaGoster(r.ekipAd)}</td><td style="color:var(--blue-light);font-weight:700;">${r.tir||'—'}</td><td style="color:var(--yellow);font-weight:700;">${r.kamyon||'—'}</td><td style="color:#a16207;font-weight:700;">${r.konteyner||'—'}</td><td style="color:#f472b6;font-weight:800;">${r.toplam}</td><td style="color:var(--success);font-weight:700;">${r.m3.toFixed(1)}</td></tr>`).join('')}
-                        <tr style="background:rgba(37,99,235,0.15);border-top:2px solid rgba(37,99,235,0.4);"><td style="font-weight:900;color:var(--blue-light);" colspan="2">YILLIK TOPLAM</td><td style="font-weight:900;color:var(--blue-light);">${genTir}</td><td style="font-weight:900;color:var(--yellow);">${genKamyon}</td><td style="font-weight:900;color:#d97706;">${genKonteyner}</td><td style="font-weight:900;color:#f472b6;">${genToplam}</td><td style="font-weight:900;color:var(--success);">${genM3.toFixed(1)}</td></tr>
+                        ${satirlar.map(r=>`<tr><td style="font-weight:700;color:var(--text-dim);">${r.grupLabel}</td><td style="font-weight:400;font-size:11px;">${ekipKisaGoster(r.ekipAd)}</td><td style="color:var(--blue-light);font-weight:700;">${r.tir||'—'}</td><td style="color:var(--yellow);font-weight:700;">${r.kamyon||'—'}</td><td style="color:#facc15;font-weight:700;">${r.konteyner||'—'}</td><td style="color:#fda4af;font-weight:800;">${r.toplam}</td><td style="color:var(--success);font-weight:700;">${r.m3.toFixed(1)}</td></tr>`).join('')}
+                        <tr style="background:rgba(37,99,235,0.15);border-top:2px solid rgba(37,99,235,0.4);"><td style="font-weight:900;color:var(--blue-light);" colspan="2">YILLIK TOPLAM</td><td style="font-weight:900;color:var(--blue-light);">${genTir}</td><td style="font-weight:900;color:var(--yellow);">${genKamyon}</td><td style="font-weight:900;color:#facc15;">${genKonteyner}</td><td style="font-weight:900;color:#fda4af;">${genToplam}</td><td style="font-weight:900;color:var(--success);">${genM3.toFixed(1)}</td></tr>
                     </tbody></table></div></div>`;
         } else if (e2Donem === 'ay' || e2Donem === 'aralik') {
             // ══ AYLIK/ARALIK: Ekip bazlı toplam (tarih göstermeden) ══
@@ -2785,10 +2817,10 @@
             sonuc.innerHTML = `
                 <div class="donem-badge">📅 ${donem.label}${e2Vardiya !== 'hepsi' ? ' · ' + e2Vardiya : ''} · ${genToplam} araç</div>
                 <div class="sef-bolum"><div style="overflow-x:auto;"><table class="data-table" style="font-size:12px;">
-                    <thead><tr><th>Ekip</th><th style="color:var(--blue-light)">Tır</th><th style="color:var(--yellow)">Kamyon</th><th style="color:#d97706">Konteyner</th><th style="color:#f472b6">Toplam</th><th style="color:var(--success)">M³</th></tr></thead>
+                    <thead><tr><th>Ekip</th><th style="color:var(--blue-light)">Tır</th><th style="color:var(--yellow)">Kamyon</th><th style="color:#facc15">Konteyner</th><th style="color:#fda4af">Toplam</th><th style="color:var(--success)">M³</th></tr></thead>
                     <tbody>
-                        ${ekipler.map(e=>`<tr><td style="font-weight:400;font-size:11px;">${ekipKisaGoster(e.ad)}</td><td style="color:var(--blue-light);font-weight:700;">${e.tir||'—'}</td><td style="color:var(--yellow);font-weight:700;">${e.kamyon||'—'}</td><td style="color:#a16207;font-weight:700;">${e.konteyner||'—'}</td><td style="color:#f472b6;font-weight:800;">${e.kayitlar.length}</td><td style="color:var(--success);font-weight:700;">${e.m3.toFixed(1)}</td></tr>`).join('')}
-                        <tr style="background:rgba(37,99,235,0.15);border-top:2px solid rgba(37,99,235,0.4);"><td style="font-weight:900;color:var(--blue-light);">GENEL TOPLAM</td><td style="font-weight:900;color:var(--blue-light);">${genTir}</td><td style="font-weight:900;color:var(--yellow);">${genKamyon}</td><td style="font-weight:900;color:#d97706;">${genKonteyner}</td><td style="font-weight:900;color:#f472b6;">${genToplam}</td><td style="font-weight:900;color:var(--success);">${genM3.toFixed(1)}</td></tr>
+                        ${ekipler.map(e=>`<tr><td style="font-weight:400;font-size:11px;">${ekipKisaGoster(e.ad)}</td><td style="color:var(--blue-light);font-weight:700;">${e.tir||'—'}</td><td style="color:var(--yellow);font-weight:700;">${e.kamyon||'—'}</td><td style="color:#facc15;font-weight:700;">${e.konteyner||'—'}</td><td style="color:#fda4af;font-weight:800;">${e.kayitlar.length}</td><td style="color:var(--success);font-weight:700;">${e.m3.toFixed(1)}</td></tr>`).join('')}
+                        <tr style="background:rgba(37,99,235,0.15);border-top:2px solid rgba(37,99,235,0.4);"><td style="font-weight:900;color:var(--blue-light);">GENEL TOPLAM</td><td style="font-weight:900;color:var(--blue-light);">${genTir}</td><td style="font-weight:900;color:var(--yellow);">${genKamyon}</td><td style="font-weight:900;color:#facc15;">${genKonteyner}</td><td style="font-weight:900;color:#fda4af;">${genToplam}</td><td style="font-weight:900;color:var(--success);">${genM3.toFixed(1)}</td></tr>
                     </tbody></table></div></div>`;
         } else {
             // ══ GÜNLÜK / AYLIK / ARALIK: Detay ══
@@ -2802,7 +2834,7 @@
                                 ${ekip.tir>0?`<span class="stat-pill badge-tir">🚛 ${ekip.tir} Tır</span>`:''}
                                 ${ekip.kamyon>0?`<span class="stat-pill badge-kamyon">🚚 ${ekip.kamyon} Kamyon</span>`:''}
                                 ${ekip.konteyner>0?`<span class="stat-pill badge-konteyner">📦 ${ekip.konteyner} Konteyner</span>`:''}
-                                <span class="stat-pill" style="background:rgba(244,114,182,0.12);color:#f472b6;border:1px solid rgba(244,114,182,0.3);">Toplam: ${ekip.kayitlar.length} araç</span>
+                                <span class="stat-pill" style="background:rgba(253,164,175,0.12);color:#fda4af;border:1px solid rgba(253,164,175,0.3);">Toplam: ${ekip.kayitlar.length} araç</span>
                                 <span class="stat-pill" style="background:rgba(34,197,94,0.12);color:#4ade80;border:1px solid rgba(34,197,94,0.3);">${ekip.m3.toFixed(1)} M³</span>
                             </div>
                         </div>
@@ -3106,7 +3138,7 @@
                 <div class="vd-kartlar" style="grid-template-columns:repeat(5,1fr);">
                     <div class="vd-kart"><div class="vd-kart-num" style="color:var(--blue-light)">${tir}</div><div class="vd-kart-lbl">Tır</div></div>
                     <div class="vd-kart"><div class="vd-kart-num" style="color:var(--yellow)">${kamyon}</div><div class="vd-kart-lbl">Kamyon</div></div>
-                    <div class="vd-kart"><div class="vd-kart-num" style="color:#a16207">${konteyner}</div><div class="vd-kart-lbl">Konteyner</div></div>
+                    <div class="vd-kart"><div class="vd-kart-num" style="color:#facc15">${konteyner}</div><div class="vd-kart-lbl">Konteyner</div></div>
                     <div class="vd-kart"><div class="vd-kart-num" style="color:#ef4444">${toplam}</div><div class="vd-kart-lbl">Toplam Araç</div></div>
                     <div class="vd-kart"><div class="vd-kart-num" style="color:var(--success);font-size:22px;">${m3top.toFixed(1)}</div><div class="vd-kart-lbl">Toplam M³</div></div>
                 </div>
@@ -3409,7 +3441,7 @@
                 <td style="font-size:11px;">${tarihStr}</td>
                 <td style="font-weight:800;color:${m.vardiya==='A'?'var(--blue-light)':'var(--yellow)'};">${m.vardiya}</td>
                 <td style="color:${turRenk};font-weight:700;">${m.tur}</td>
-                <td style="font-weight:800;color:#f472b6;">${m.kisi}</td>
+                <td style="font-weight:800;color:#fda4af;">${m.kisi}</td>
                 <td style="color:var(--text-dim);">${m.hesaplananGun}</td>
                 <td><button class="del-btn" onclick="mesaiSil(${m.id},event)" title="Sil">🗑️</button></td>
             </tr>`;
@@ -3774,7 +3806,7 @@
                     <div class="sef-bolum-baslik">Mesai Günlerinde Yükleme</div>
                     <div class="vd-kartlar" style="grid-template-columns:repeat(2,1fr);margin-bottom:8px;">
                         ${kart(mesaiGunSayisi,'Mesai Günü','#f59e0b')}
-                        ${kart(mesaiYuklemeler.length,'Yükleme','#f472b6')}
+                        ${kart(mesaiYuklemeler.length,'Yükleme','#fda4af')}
                     </div>
                     <div class="vd-kartlar" style="grid-template-columns:repeat(3,1fr);">
                         ${kart(mesaiYTir,'Tır','var(--blue-light)')}
@@ -3786,7 +3818,7 @@
                 <div class="sef-bolum">
                     <div class="sef-bolum-baslik">Mesai Katılım</div>
                     <div class="vd-kartlar" style="grid-template-columns:repeat(2,1fr);">
-                        ${kart(mesaiToplamKisi,'Toplam Kişi','#f472b6')}
+                        ${kart(mesaiToplamKisi,'Toplam Kişi','#fda4af')}
                         ${kart(mesaiGunSayisi,'Gün','#f59e0b')}
                     </div>
                     <div style="margin-top:10px;">
@@ -4054,7 +4086,7 @@
                     <div class="vd-kartlar" style="grid-template-columns:repeat(5,1fr);">
                         <div class="vd-kart"><div class="vd-kart-num" style="color:var(--blue-light)">${tir}</div><div class="vd-kart-lbl">Tır</div></div>
                         <div class="vd-kart"><div class="vd-kart-num" style="color:var(--yellow)">${kamyon}</div><div class="vd-kart-lbl">Kamyon</div></div>
-                        <div class="vd-kart"><div class="vd-kart-num" style="color:#a16207">${konteyner}</div><div class="vd-kart-lbl">Konteyner</div></div>
+                        <div class="vd-kart"><div class="vd-kart-num" style="color:#facc15">${konteyner}</div><div class="vd-kart-lbl">Konteyner</div></div>
                         <div class="vd-kart"><div class="vd-kart-num" style="color:#ef4444">${toplam}</div><div class="vd-kart-lbl">Toplam Araç</div></div>
                         <div class="vd-kart"><div class="vd-kart-num" style="color:var(--success);font-size:22px;">${m3top.toFixed(1)}</div><div class="vd-kart-lbl">Toplam M³</div></div>
                     </div>
@@ -4125,7 +4157,7 @@
                     <div class="vd-kartlar" style="grid-template-columns:repeat(5,1fr);">
                         <div class="vd-kart"><div class="vd-kart-num" style="color:var(--blue-light)">${tir}</div><div class="vd-kart-lbl">Tır</div></div>
                         <div class="vd-kart"><div class="vd-kart-num" style="color:var(--yellow)">${kamyon}</div><div class="vd-kart-lbl">Kamyon</div></div>
-                        <div class="vd-kart"><div class="vd-kart-num" style="color:#a16207">${konteyner}</div><div class="vd-kart-lbl">Konteyner</div></div>
+                        <div class="vd-kart"><div class="vd-kart-num" style="color:#facc15">${konteyner}</div><div class="vd-kart-lbl">Konteyner</div></div>
                         <div class="vd-kart"><div class="vd-kart-num" style="color:#ef4444">${toplam}</div><div class="vd-kart-lbl">Toplam Araç</div></div>
                         <div class="vd-kart"><div class="vd-kart-num" style="color:var(--success);font-size:22px;">${m3top.toFixed(1)}</div><div class="vd-kart-lbl">Toplam M³</div></div>
                     </div>
@@ -4505,7 +4537,7 @@ document.addEventListener('keydown', function(e) {
 // Toplam Arac guclu pulse
 (function() {
     var style = document.createElement('style');
-    style.textContent = '@keyframes sumAracPulse { 0%,100% { opacity:1; text-shadow:0 0 8px rgba(239,68,68,0.5); } 50% { opacity:0.3; text-shadow:0 0 22px rgba(239,68,68,1); } }';
+    style.textContent = '@keyframes sumAracPulse { 0%,100% { opacity:1; text-shadow:0 0 8px rgba(253,164,175,0.5); } 50% { opacity:0.3; text-shadow:0 0 22px rgba(253,164,175,1); } }';
     document.head.appendChild(style);
     var applyPulse = function() {
         var el = document.getElementById('sumArac');
@@ -4614,7 +4646,7 @@ function va7Sorgula() {
                 <td style="font-weight:700;color:var(--text);font-size:12px;">${ekipKisaGoster(e.ad)}</td>
                 <td style="color:var(--blue-light);font-weight:800;text-align:center;">${e.tir || '—'}</td>
                 <td style="color:var(--yellow);font-weight:800;text-align:center;">${e.kamyon || '—'}</td>
-                <td style="color:#a16207;font-weight:800;text-align:center;">${e.konteyner || '—'}</td>
+                <td style="color:#facc15;font-weight:800;text-align:center;">${e.konteyner || '—'}</td>
                 <td style="color:var(--success);font-weight:700;text-align:center;">${e.m3.toFixed(1)}</td>
             </tr>`;
         }).join('');
@@ -4658,8 +4690,8 @@ function va7Sorgula() {
                     <div style="display:flex;gap:6px;flex-wrap:wrap;">
                         <span class="stat-pill" style="background:rgba(37,99,235,0.12);color:var(--blue-light);border:1px solid rgba(37,99,235,0.3);">🚛 ${topTir} Tır</span>
                         <span class="stat-pill" style="background:rgba(217,119,6,0.12);color:var(--yellow);border:1px solid rgba(217,119,6,0.3);">🚚 ${topKamyon} Kamyon</span>
-                        <span class="stat-pill" style="background:rgba(161,98,7,0.12);color:#a16207;border:1px solid rgba(161,98,7,0.3);">📦 ${topKonteyner} Konteyner</span>
-                        <span class="stat-pill" style="background:rgba(244,114,182,0.12);color:#f472b6;border:1px solid rgba(244,114,182,0.3);">Toplam: ${toplamArac} Araç</span>
+                        <span class="stat-pill" style="background:rgba(161,98,7,0.12);color:#facc15;border:1px solid rgba(161,98,7,0.3);">📦 ${topKonteyner} Konteyner</span>
+                        <span class="stat-pill" style="background:rgba(253,164,175,0.12);color:#fda4af;border:1px solid rgba(253,164,175,0.3);">Toplam: ${toplamArac} Araç</span>
                         <span class="stat-pill" style="background:rgba(34,197,94,0.12);color:#4ade80;border:1px solid rgba(34,197,94,0.3);">${toplamM3.toFixed(1)} M³</span>
                     </div>
                 </div>
@@ -4670,7 +4702,7 @@ function va7Sorgula() {
                             <th>Ekip</th>
                             <th style="color:var(--blue-light);text-align:center;">Tır</th>
                             <th style="color:var(--yellow);text-align:center;">Kamyon</th>
-                            <th style="color:#a16207;text-align:center;">Konteyner</th>
+                            <th style="color:#facc15;text-align:center;">Konteyner</th>
                             <th style="color:var(--success);text-align:center;">M³</th>
                         </tr></thead>
                         <tbody>${liderSatir(ekipler, renk)}</tbody>
