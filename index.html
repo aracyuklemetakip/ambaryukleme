@@ -2995,22 +2995,9 @@
         const AYLAR = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
         const isYillik = e3Donem === 'yil';
 
-        // Başlık (tek satır, font küçülür, asla taşmaz)
-        const _pW = 297, _pBaslik = `PERSONEL RAPORU: ${r.isim}`;
-        const _trFix = t => t.replace(/ş/g,'s').replace(/Ş/g,'S').replace(/ç/g,'c').replace(/Ç/g,'C').replace(/ğ/g,'g').replace(/Ğ/g,'G').replace(/ı/g,'i').replace(/İ/g,'I').replace(/ö/g,'o').replace(/Ö/g,'O').replace(/ü/g,'u').replace(/Ü/g,'U');
-        const _pBaslikFix = _trFix(_pBaslik);
-        const _donemFix = _trFix(r.donemLabel);
-        doc.setFont('helvetica','bold');
-        let _pFs = 13; doc.setFontSize(_pFs);
-        while (doc.getTextWidth(_pBaslikFix) > _pW - 20 && _pFs > 5) { _pFs -= 0.25; doc.setFontSize(_pFs); }
-        doc.setFillColor(...mavi); doc.rect(0, 0, _pW, 22, 'F');
-        doc.setTextColor(255,255,255);
-        doc.setFontSize(_pFs); doc.setFont('helvetica','bold');
-        doc.text(_pBaslikFix, 8, 11);
-        doc.setFontSize(8); doc.setFont('helvetica','normal');
-        doc.text(_donemFix, 8, 19);
+        const _pW = 297;
 
-        let y = 26;
+        let y = 6;
         // Özet kartlar
         const ozet = [
             {lbl:'TIR',val:r.tir,renk:mavi},
