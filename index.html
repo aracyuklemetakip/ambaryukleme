@@ -387,9 +387,9 @@
         .data-table tbody tr.selected { background:rgba(217,119,6,0.08);outline:1px solid rgba(217,119,6,0.25); }
         .data-table td { padding:10px 12px;vertical-align:middle; }
         .badge { display:inline-block;padding:2px 8px;border-radius:100px;font-size:10px;font-weight:800;letter-spacing:0.5px; }
-        .badge-tir       { background:rgba(59,130,246,0.15);color:#2563eb;border:1px solid rgba(59,130,246,0.3); }
-        .badge-kamyon    { background:rgba(217,119,6,0.1);color:#b45309;border:1px solid rgba(217,119,6,0.25); }
-        .badge-konteyner { background:rgba(250,204,21,0.15);color:#facc15;border:1px solid rgba(250,204,21,0.5); font-weight:800; }
+        .badge-tir       { background:rgba(253,230,138,0.55);color:#92660a;border:1px solid rgba(253,230,138,0.8); font-weight:800; }
+        .badge-kamyon    { background:rgba(147,197,253,0.45);color:#1e4d8c;border:1px solid rgba(147,197,253,0.8); font-weight:800; }
+        .badge-konteyner { background:rgba(203,213,225,0.6);color:#475569;border:1px solid rgba(203,213,225,0.9); font-weight:800; }
         .status-ok  { color:var(--success);font-weight:800;font-size:11px; }
         .status-gec { color:var(--danger);font-weight:800;font-size:11px; }
         
@@ -402,6 +402,8 @@
         .data-table tbody tr.ekip-grup-bosluk:hover { background:transparent; }
         .del-btn { width:28px;height:28px;border-radius:7px; border:1px solid rgba(239,68,68,0.2);background:rgba(239,68,68,0.06); color:rgba(239,68,68,0.4);font-size:14px;cursor:pointer; display:flex;align-items:center;justify-content:center; transition:all 0.15s; }
         .del-btn:hover { background:rgba(239,68,68,0.2);border-color:rgba(239,68,68,0.6);color:var(--danger); }
+        .ekip-aktar-btn { width:28px;height:28px;border-radius:7px; border:1px solid rgba(37,99,235,0.25);background:rgba(37,99,235,0.08); color:rgba(37,99,235,0.6);font-size:13px;font-weight:900;cursor:pointer; display:flex;align-items:center;justify-content:center; transition:all 0.15s; }
+        .ekip-aktar-btn:hover { background:rgba(37,99,235,0.2);border-color:rgba(37,99,235,0.6);color:#2563eb; }
         .empty-state { text-align:center;padding:60px 20px;color:var(--muted); }
         .empty-state-icon { font-size:40px;margin-bottom:12px;opacity:0.4; }
         .empty-state-text { font-size:13px;font-weight:600; }
@@ -958,9 +960,14 @@
                 <div class="input-label">Metreküp (M³)</div>
                 <input type="number" id="m3" class="text-input" tabindex="8" placeholder="0.0" step="0.1" min="0">
             </div>
-            <div class="input-group">
+            <div class="input-group" style="position:relative;">
                 <div class="input-label">Shipment No</div>
-                <input type="text" id="shipment" class="text-input" tabindex="9" placeholder="Shipment numarası">
+                <input type="text" id="shipment" class="text-input" tabindex="9" placeholder="Shipment numarası"
+                    oninput="shipmentInput(this)"
+                    onfocus="shipmentOneriGoster(this)"
+                    onblur="setTimeout(()=>{const d=document.getElementById('shipmentDropdown');if(d)d.style.display='none';},200)"
+                    autocomplete="off">
+                <div id="shipmentDropdown" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:500;background:#e0e5ec;border:1px solid rgba(255,255,255,0.12);border-radius:10px;margin-top:4px;max-height:220px;overflow-y:auto;box-shadow:0 8px 32px rgba(163,177,198,0.55);"></div>
             </div>
 
             <div class="form-section-title">Ekip & Saat</div>
@@ -2187,6 +2194,74 @@
         showToast('👥 Ekip aktarıldı: ' + ekipKisaGoster(k.ekip), 'success');
     }
 
+    // ── EKİP HIZLI ATAMA (ok butonu) ─────────────────────
+    function ekipHizliAtaBtn(k, event) {
+        event.stopPropagation();
+        // Ekip adını forma yaz
+        document.getElementById('ekip').value = k.ekip;
+        document.getElementById('ekipDropdown').style.display = 'none';
+        // Araç tipini Tır'a sıfırla ve seç
+        document.getElementById('segTip').querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active-blue','active-yellow','active-red'));
+        const tirBtn = document.querySelector('#segTip .seg-btn');
+        if (tirBtn) {
+            tirBtn.classList.add('active-blue');
+            secilenAracTipi = 'Tır';
+            tirBtn.focus();
+        }
+        showToast('👥 Ekip aktarıldı, Tır seçili', 'success');
+    }
+
+    // ── SHİPMENT ÖNERİ ────────────────────────────────────
+    function sonShipmentleriGetir() {
+        // En son girilen farklı shipment numaralarını döndür
+        const tumShipment = kayitlar
+            .filter(k => k.shipment && k.shipment.trim())
+            .map(k => k.shipment.trim());
+        // Son kaydedilenden geriye doğru, tekrar etmeyenleri al
+        const benzersiz = [];
+        for (let i = tumShipment.length - 1; i >= 0; i--) {
+            if (!benzersiz.includes(tumShipment[i])) {
+                benzersiz.push(tumShipment[i]);
+                if (benzersiz.length >= 5) break;
+            }
+        }
+        return benzersiz;
+    }
+
+    function shipmentOneriGoster(input) {
+        const dd = document.getElementById('shipmentDropdown');
+        const sonlar = sonShipmentleriGetir();
+        if (!sonlar.length) { dd.style.display='none'; return; }
+        const mevcut = input.value.trim();
+        const filtre = sonlar.filter(s => !mevcut || s.toLowerCase().includes(mevcut.toLowerCase()));
+        if (!filtre.length) { dd.style.display='none'; return; }
+        dd.innerHTML = `<div style="padding:6px 12px;font-size:10px;font-weight:800;letter-spacing:1px;color:var(--muted);text-transform:uppercase;">Son Shipmentlar — Son 4 haneyi değiştir</div>` +
+            filtre.map(s => {
+                const bas = s.slice(0, -4);
+                const son4 = s.slice(-4);
+                return `<div class="shipment-oneri-item" onclick="shipmentSec('${s}')"
+                    style="padding:10px 14px;cursor:pointer;font-size:13px;font-weight:700;border-bottom:1px solid rgba(163,177,198,0.2);transition:background 0.1s;display:flex;align-items:center;gap:2px;"
+                    onmouseenter="this.style.background='rgba(37,99,235,0.1)'" onmouseleave="this.style.background=''">
+                    <span style="color:var(--text-dim);">${bas}</span><span style="color:#2563eb;font-weight:900;">${son4}</span>
+                </div>`;
+            }).join('');
+        dd.style.display = 'block';
+    }
+
+    function shipmentInput(input) {
+        shipmentOneriGoster(input);
+    }
+
+    function shipmentSec(val) {
+        const inp = document.getElementById('shipment');
+        inp.value = val;
+        // Son 4 haneyi seç - kullanıcı kolayca değiştirebilsin
+        inp.focus();
+        const start = val.length - 4;
+        setTimeout(() => { inp.setSelectionRange(start, val.length); }, 10);
+        document.getElementById('shipmentDropdown').style.display = 'none';
+    }
+
     // ── EKİP KISA GÖSTER ─────────────────────────────────
     function ekipKisaGoster(ekipStr) {
         const isimler = ekipStr.split(',').map(s => s.trim()).filter(Boolean);
@@ -2365,7 +2440,10 @@
                 <td><span class="badge ${tipBadge}">${k.aracTipi}</span></td>
                 <td style="color:var(--text-dim);font-size:11px;">${k.baslama} - ${k.bitis}</td>
                 <td>${durum}</td>
-                <td><button class="del-btn" onclick="silKayit(${k.id},event)" title="Sil">🗑️</button></td>
+                <td style="display:flex;gap:4px;align-items:center;">
+                    <button class="del-btn" onclick="silKayit(${k.id},event)" title="Sil">🗑️</button>
+                    <button class="ekip-aktar-btn" onclick="ekipHizliAtaBtn(${JSON.stringify(k).replace(/"/g,'&quot;')},event)" title="Ekip isimlerini forma aktar ve Tır seç">→</button>
+                </td>
             </tr>`;
         });
         document.getElementById('tableBody').innerHTML = tableHTML;
@@ -2521,21 +2599,21 @@
                 </div>
                 <div class="vd-kartlar">
                     <div class="vd-kart">
-                        <div class="vd-kart-num" style="color:var(--blue-light)">${fmt(s.tir)}</div>
+                        <div class="vd-kart-num" style="color:#92660a;background:rgba(253,230,138,0.4);border-radius:8px;padding:4px 8px;">${fmt(s.tir)}</div>
                         <div class="vd-kart-lbl">Tır</div>
                     </div>
                     <div class="vd-kart">
-                        <div class="vd-kart-num" style="color:var(--yellow)">${fmt(s.kamyon)}</div>
+                        <div class="vd-kart-num" style="color:#1e4d8c;background:rgba(147,197,253,0.4);border-radius:8px;padding:4px 8px;">${fmt(s.kamyon)}</div>
                         <div class="vd-kart-lbl">Kamyon</div>
                     </div>
                     <div class="vd-kart">
-                        <div class="vd-kart-num" style="color:#facc15">${fmt(s.konteyner)}</div>
+                        <div class="vd-kart-num" style="color:#475569;background:rgba(203,213,225,0.5);border-radius:8px;padding:4px 8px;">${fmt(s.konteyner)}</div>
                         <div class="vd-kart-lbl">Konteyner</div>
                     </div>
                 </div>
                 <div class="vd-toplam">
                     <div class="vd-toplam-item">
-                        <div class="vd-kart-num" style="color:#ef4444;font-size:22px;">${fmt(s.toplam)}</div>
+                        <div class="vd-kart-num" style="color:#b91c1c;font-size:22px;background:rgba(254,202,202,0.4);border-radius:8px;padding:4px 10px;">${fmt(s.toplam)}</div>
                         <div class="vd-kart-lbl">Toplam Araç</div>
                     </div>
                     <div class="vd-toplam-item">
@@ -2561,10 +2639,10 @@
                     <div class="vd-baslik-text" style="color:var(--text);">Genel Toplam</div>
                 </div>
                 <div class="vd-kartlar" style="grid-template-columns:repeat(5,1fr);">
-                    <div class="vd-kart"><div class="vd-kart-num" style="color:var(--blue-light)">${sT.tir||'<span style="color:var(--muted);font-size:18px;">—</span>'}</div><div class="vd-kart-lbl">Tır</div></div>
-                    <div class="vd-kart"><div class="vd-kart-num" style="color:var(--yellow)">${sT.kamyon||'<span style="color:var(--muted);font-size:18px;">—</span>'}</div><div class="vd-kart-lbl">Kamyon</div></div>
-                    <div class="vd-kart"><div class="vd-kart-num" style="color:#facc15">${sT.konteyner||'<span style="color:var(--muted);font-size:18px;">—</span>'}</div><div class="vd-kart-lbl">Konteyner</div></div>
-                    <div class="vd-kart"><div class="vd-kart-num" style="color:#ef4444;animation:pulseRed 2.5s ease-in-out infinite">${sT.toplam||'<span style="color:var(--muted);font-size:18px;animation:none">—</span>'}</div><div class="vd-kart-lbl">Toplam Araç</div></div>
+                    <div class="vd-kart"><div class="vd-kart-num" style="color:#92660a;background:rgba(253,230,138,0.4);border-radius:8px;padding:4px 8px;">${sT.tir||'<span style="color:var(--muted);font-size:18px;">—</span>'}</div><div class="vd-kart-lbl">Tır</div></div>
+                    <div class="vd-kart"><div class="vd-kart-num" style="color:#1e4d8c;background:rgba(147,197,253,0.4);border-radius:8px;padding:4px 8px;">${sT.kamyon||'<span style="color:var(--muted);font-size:18px;">—</span>'}</div><div class="vd-kart-lbl">Kamyon</div></div>
+                    <div class="vd-kart"><div class="vd-kart-num" style="color:#475569;background:rgba(203,213,225,0.5);border-radius:8px;padding:4px 8px;">${sT.konteyner||'<span style="color:var(--muted);font-size:18px;">—</span>'}</div><div class="vd-kart-lbl">Konteyner</div></div>
+                    <div class="vd-kart"><div class="vd-kart-num" style="color:#b91c1c;background:rgba(254,202,202,0.4);border-radius:8px;padding:4px 8px;animation:pulseRed 2.5s ease-in-out infinite">${sT.toplam||'<span style="color:var(--muted);font-size:18px;animation:none">—</span>'}</div><div class="vd-kart-lbl">Toplam Araç</div></div>
                     <div class="vd-kart"><div class="vd-kart-num" style="color:var(--success);font-size:22px;">${sT.m3>0?sT.m3.toFixed(1):'<span style="color:var(--muted);font-size:18px;">—</span>'}</div><div class="vd-kart-lbl">Toplam M³</div></div>
                 </div>
             </div>`;
@@ -2804,10 +2882,10 @@
             sonuc.innerHTML = `
                 <div class="donem-badge">📅 ${donem.label}${e2Vardiya !== 'hepsi' ? ' · ' + e2Vardiya : ''} · ${genToplam} araç</div>
                 <div class="sef-bolum"><div style="overflow-x:auto;"><table class="data-table" style="font-size:12px;">
-                    <thead><tr><th>Ay</th><th>Ekip</th><th style="color:var(--blue-light)">Tır</th><th style="color:var(--yellow)">Kamyon</th><th style="color:#facc15">Konteyner</th><th style="color:#fda4af">Toplam</th><th style="color:var(--success)">M³</th></tr></thead>
+                    <thead><tr><th>Ay</th><th>Ekip</th><th style="color:#92660a">Tır</th><th style="color:#1e4d8c">Kamyon</th><th style="color:#475569">Konteyner</th><th style="color:#b91c1c">Toplam</th><th style="color:var(--success)">M³</th></tr></thead>
                     <tbody>
-                        ${satirlar.map(r=>`<tr><td style="font-weight:700;color:var(--text-dim);">${r.grupLabel}</td><td style="font-weight:400;font-size:11px;">${ekipKisaGoster(r.ekipAd)}</td><td style="color:var(--blue-light);font-weight:700;">${r.tir||'—'}</td><td style="color:var(--yellow);font-weight:700;">${r.kamyon||'—'}</td><td style="color:#facc15;font-weight:700;">${r.konteyner||'—'}</td><td style="color:#fda4af;font-weight:800;">${r.toplam}</td><td style="color:var(--success);font-weight:700;">${r.m3.toFixed(1)}</td></tr>`).join('')}
-                        <tr style="background:rgba(37,99,235,0.15);border-top:2px solid rgba(37,99,235,0.4);"><td style="font-weight:900;color:var(--blue-light);" colspan="2">YILLIK TOPLAM</td><td style="font-weight:900;color:var(--blue-light);">${genTir}</td><td style="font-weight:900;color:var(--yellow);">${genKamyon}</td><td style="font-weight:900;color:#facc15;">${genKonteyner}</td><td style="font-weight:900;color:#fda4af;">${genToplam}</td><td style="font-weight:900;color:var(--success);">${genM3.toFixed(1)}</td></tr>
+                        ${satirlar.map(r=>`<tr><td style="font-weight:700;color:var(--text-dim);">${r.grupLabel}</td><td style="font-weight:400;font-size:11px;">${ekipKisaGoster(r.ekipAd)}</td><td style="font-weight:700;"><span style="background:rgba(253,230,138,0.5);color:#92660a;border-radius:5px;padding:1px 7px;">${r.tir||'—'}</span></td><td style="font-weight:700;"><span style="background:rgba(147,197,253,0.4);color:#1e4d8c;border-radius:5px;padding:1px 7px;">${r.kamyon||'—'}</span></td><td style="font-weight:700;"><span style="background:rgba(203,213,225,0.5);color:#475569;border-radius:5px;padding:1px 7px;">${r.konteyner||'—'}</span></td><td style="font-weight:800;"><span style="background:rgba(254,202,202,0.4);color:#b91c1c;border-radius:5px;padding:1px 7px;">${r.toplam}</span></td><td style="color:var(--success);font-weight:700;">${r.m3.toFixed(1)}</td></tr>`).join('')}
+                        <tr style="background:rgba(37,99,235,0.15);border-top:2px solid rgba(37,99,235,0.4);"><td style="font-weight:900;color:var(--blue-light);" colspan="2">YILLIK TOPLAM</td><td style="font-weight:900;color:#92660a;">${genTir}</td><td style="font-weight:900;color:#1e4d8c;">${genKamyon}</td><td style="font-weight:900;color:#475569;">${genKonteyner}</td><td style="font-weight:900;color:#b91c1c;">${genToplam}</td><td style="font-weight:900;color:var(--success);">${genM3.toFixed(1)}</td></tr>
                     </tbody></table></div></div>`;
         } else if (e2Donem === 'ay' || e2Donem === 'aralik') {
             // ══ AYLIK/ARALIK: Ekip bazlı toplam (tarih göstermeden) ══
@@ -2817,10 +2895,10 @@
             sonuc.innerHTML = `
                 <div class="donem-badge">📅 ${donem.label}${e2Vardiya !== 'hepsi' ? ' · ' + e2Vardiya : ''} · ${genToplam} araç</div>
                 <div class="sef-bolum"><div style="overflow-x:auto;"><table class="data-table" style="font-size:12px;">
-                    <thead><tr><th>Ekip</th><th style="color:var(--blue-light)">Tır</th><th style="color:var(--yellow)">Kamyon</th><th style="color:#facc15">Konteyner</th><th style="color:#fda4af">Toplam</th><th style="color:var(--success)">M³</th></tr></thead>
+                    <thead><tr><th>Ekip</th><th style="color:#92660a">Tır</th><th style="color:#1e4d8c">Kamyon</th><th style="color:#475569">Konteyner</th><th style="color:#b91c1c">Toplam</th><th style="color:var(--success)">M³</th></tr></thead>
                     <tbody>
-                        ${ekipler.map(e=>`<tr><td style="font-weight:400;font-size:11px;">${ekipKisaGoster(e.ad)}</td><td style="color:var(--blue-light);font-weight:700;">${e.tir||'—'}</td><td style="color:var(--yellow);font-weight:700;">${e.kamyon||'—'}</td><td style="color:#facc15;font-weight:700;">${e.konteyner||'—'}</td><td style="color:#fda4af;font-weight:800;">${e.kayitlar.length}</td><td style="color:var(--success);font-weight:700;">${e.m3.toFixed(1)}</td></tr>`).join('')}
-                        <tr style="background:rgba(37,99,235,0.15);border-top:2px solid rgba(37,99,235,0.4);"><td style="font-weight:900;color:var(--blue-light);">GENEL TOPLAM</td><td style="font-weight:900;color:var(--blue-light);">${genTir}</td><td style="font-weight:900;color:var(--yellow);">${genKamyon}</td><td style="font-weight:900;color:#facc15;">${genKonteyner}</td><td style="font-weight:900;color:#fda4af;">${genToplam}</td><td style="font-weight:900;color:var(--success);">${genM3.toFixed(1)}</td></tr>
+                        ${ekipler.map(e=>`<tr><td style="font-weight:400;font-size:11px;">${ekipKisaGoster(e.ad)}</td><td style="font-weight:700;"><span style="background:rgba(253,230,138,0.5);color:#92660a;border-radius:5px;padding:1px 7px;">${e.tir||'—'}</span></td><td style="font-weight:700;"><span style="background:rgba(147,197,253,0.4);color:#1e4d8c;border-radius:5px;padding:1px 7px;">${e.kamyon||'—'}</span></td><td style="font-weight:700;"><span style="background:rgba(203,213,225,0.5);color:#475569;border-radius:5px;padding:1px 7px;">${e.konteyner||'—'}</span></td><td style="font-weight:800;"><span style="background:rgba(254,202,202,0.4);color:#b91c1c;border-radius:5px;padding:1px 7px;">${e.kayitlar.length}</span></td><td style="color:var(--success);font-weight:700;">${e.m3.toFixed(1)}</td></tr>`).join('')}
+                        <tr style="background:rgba(37,99,235,0.15);border-top:2px solid rgba(37,99,235,0.4);"><td style="font-weight:900;color:var(--blue-light);">GENEL TOPLAM</td><td style="font-weight:900;color:#92660a;">${genTir}</td><td style="font-weight:900;color:#1e4d8c;">${genKamyon}</td><td style="font-weight:900;color:#475569;">${genKonteyner}</td><td style="font-weight:900;color:#b91c1c;">${genToplam}</td><td style="font-weight:900;color:var(--success);">${genM3.toFixed(1)}</td></tr>
                     </tbody></table></div></div>`;
         } else {
             // ══ GÜNLÜK / AYLIK / ARALIK: Detay ══
@@ -2834,7 +2912,7 @@
                                 ${ekip.tir>0?`<span class="stat-pill badge-tir">🚛 ${ekip.tir} Tır</span>`:''}
                                 ${ekip.kamyon>0?`<span class="stat-pill badge-kamyon">🚚 ${ekip.kamyon} Kamyon</span>`:''}
                                 ${ekip.konteyner>0?`<span class="stat-pill badge-konteyner">📦 ${ekip.konteyner} Konteyner</span>`:''}
-                                <span class="stat-pill" style="background:rgba(253,164,175,0.12);color:#fda4af;border:1px solid rgba(253,164,175,0.3);">Toplam: ${ekip.kayitlar.length} araç</span>
+                                <span class="stat-pill" style="background:rgba(254,202,202,0.4);color:#b91c1c;border:1px solid rgba(254,202,202,0.7);">Toplam: ${ekip.kayitlar.length} araç</span>
                                 <span class="stat-pill" style="background:rgba(34,197,94,0.12);color:#4ade80;border:1px solid rgba(34,197,94,0.3);">${ekip.m3.toFixed(1)} M³</span>
                             </div>
                         </div>
@@ -4644,9 +4722,9 @@ function va7Sorgula() {
             return `<tr>
                 <td style="text-align:center;">${rankBadge}</td>
                 <td style="font-weight:700;color:var(--text);font-size:12px;">${ekipKisaGoster(e.ad)}</td>
-                <td style="color:var(--blue-light);font-weight:800;text-align:center;">${e.tir || '—'}</td>
-                <td style="color:var(--yellow);font-weight:800;text-align:center;">${e.kamyon || '—'}</td>
-                <td style="color:#facc15;font-weight:800;text-align:center;">${e.konteyner || '—'}</td>
+                <td style="font-weight:800;text-align:center;"><span style="background:rgba(253,230,138,0.5);color:#92660a;border-radius:6px;padding:2px 8px;">${e.tir || '—'}</span></td>
+                <td style="font-weight:800;text-align:center;"><span style="background:rgba(147,197,253,0.45);color:#1e4d8c;border-radius:6px;padding:2px 8px;">${e.kamyon || '—'}</span></td>
+                <td style="font-weight:800;text-align:center;"><span style="background:rgba(203,213,225,0.55);color:#475569;border-radius:6px;padding:2px 8px;">${e.konteyner || '—'}</span></td>
                 <td style="color:var(--success);font-weight:700;text-align:center;">${e.m3.toFixed(1)}</td>
             </tr>`;
         }).join('');
@@ -4688,10 +4766,10 @@ function va7Sorgula() {
                         </div>
                     </div>
                     <div style="display:flex;gap:6px;flex-wrap:wrap;">
-                        <span class="stat-pill" style="background:rgba(37,99,235,0.12);color:var(--blue-light);border:1px solid rgba(37,99,235,0.3);">🚛 ${topTir} Tır</span>
-                        <span class="stat-pill" style="background:rgba(217,119,6,0.12);color:var(--yellow);border:1px solid rgba(217,119,6,0.3);">🚚 ${topKamyon} Kamyon</span>
-                        <span class="stat-pill" style="background:rgba(161,98,7,0.12);color:#facc15;border:1px solid rgba(161,98,7,0.3);">📦 ${topKonteyner} Konteyner</span>
-                        <span class="stat-pill" style="background:rgba(253,164,175,0.12);color:#fda4af;border:1px solid rgba(253,164,175,0.3);">Toplam: ${toplamArac} Araç</span>
+                        <span class="stat-pill" style="background:rgba(253,230,138,0.4);color:#92660a;border:1px solid rgba(253,230,138,0.8);">🚛 ${topTir} Tır</span>
+                        <span class="stat-pill" style="background:rgba(147,197,253,0.35);color:#1e4d8c;border:1px solid rgba(147,197,253,0.7);">🚚 ${topKamyon} Kamyon</span>
+                        <span class="stat-pill" style="background:rgba(203,213,225,0.5);color:#475569;border:1px solid rgba(203,213,225,0.8);">📦 ${topKonteyner} Konteyner</span>
+                        <span class="stat-pill" style="background:rgba(254,202,202,0.4);color:#b91c1c;border:1px solid rgba(254,202,202,0.8);">Toplam: ${toplamArac} Araç</span>
                         <span class="stat-pill" style="background:rgba(34,197,94,0.12);color:#4ade80;border:1px solid rgba(34,197,94,0.3);">${toplamM3.toFixed(1)} M³</span>
                     </div>
                 </div>
@@ -4700,9 +4778,9 @@ function va7Sorgula() {
                         <thead><tr>
                             <th style="width:36px;">#</th>
                             <th>Ekip</th>
-                            <th style="color:var(--blue-light);text-align:center;">Tır</th>
-                            <th style="color:var(--yellow);text-align:center;">Kamyon</th>
-                            <th style="color:#facc15;text-align:center;">Konteyner</th>
+                            <th style="color:#92660a;text-align:center;">Tır</th>
+                            <th style="color:#1e4d8c;text-align:center;">Kamyon</th>
+                            <th style="color:#475569;text-align:center;">Konteyner</th>
                             <th style="color:var(--success);text-align:center;">M³</th>
                         </tr></thead>
                         <tbody>${liderSatir(ekipler, renk)}</tbody>
