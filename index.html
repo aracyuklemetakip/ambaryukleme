@@ -119,16 +119,20 @@
             if (typeof personelIlkYukle === 'function') await personelIlkYukle();
           }, 100);
 
-          // Veriler yüklendikten sonra aktif sayfayı yenile (sefSayfa, operatorSayfa vs.)
-          try {
-            var aktifSayfa = sessionStorage.getItem('aktifSayfa');
-            if (aktifSayfa === 'sefSayfa' && typeof sefTarihGoster === 'function') {
-              setTimeout(function() { sefTarihGoster(); }, 150);
-            } else if (aktifSayfa === 'operatorSayfa' && typeof renderTablo === 'function') {
-              setTimeout(function() { renderTablo(); }, 150);
-            }
-          } catch(e) {}
-
+          // Sayfa yenileme: bekleyen sayfaya geç
+          if (window._pendingSayfa) {
+            var ps = window._pendingSayfa;
+            window._pendingSayfa = null;
+            setTimeout(function() {
+              if (typeof showSayfa === 'function') {
+                showSayfa(ps);
+                // Yetkili sayfasına dönüyorsak init et
+                if (ps === 'sefSayfa' && typeof sefTarihGoster === 'function') {
+                  setTimeout(function() { sefTarihGoster(); }, 100);
+                }
+              }
+            }, 200);
+          }
         } catch(e) {
           console.error('Firestore yükleme hatası:', e);
           showToast('⚠️ Firestore erişim hatası', 'warn');
@@ -184,7 +188,7 @@
         }
         * { margin:0; padding:0; box-sizing:border-box; }
         button:focus { outline:none; }
-        body { font-family:'Barlow',sans-serif; background:#e0e5ec; color:var(--text); min-height:100vh; overflow-x:hidden; visibility:hidden; }
+        body { font-family:'Barlow',sans-serif; background:#e0e5ec; color:var(--text); min-height:100vh; overflow-x:hidden; }
 
         /* ARKA PLAN */
         .bg-blobs { position:fixed; inset:0; z-index:0; pointer-events:none; background:#e0e5ec; }
@@ -878,7 +882,7 @@
 <!-- ══════════════════════════════════════
      ANA SAYFA
 ══════════════════════════════════════ -->
-<div id="anaSayfa" class="page">
+<div id="anaSayfa" class="page active">
     <div class="ana-wrapper">
         <div style="text-align:center;display:flex;flex-direction:column;align-items:center;gap:14px;">
             <div class="status-pill"><div class="status-dot"></div>Sistem Aktif</div>
@@ -945,6 +949,11 @@
         </div>
 
         <div class="form-panel">
+            <div style="background:linear-gradient(135deg,#2563eb,#1d4ed8);border-radius:14px;padding:16px 20px;margin-bottom:20px;box-shadow:0 4px 18px rgba(37,99,235,0.35);">
+                <div style="font-size:9px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:rgba(255,255,255,0.6);margin-bottom:4px;">Operatör Paneli</div>
+                <div style="font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:#fff;line-height:1;">VERİ GİRİŞ EKRANI</div>
+            </div>
+
             <div class="edit-banner" id="editBanner">
                 ✏️ Düzenleme Modu — Satır seçili
                 <button class="edit-cancel" onclick="iptalDuzenle()">✕</button>
@@ -1075,7 +1084,10 @@
         <div class="sef-topbar">
             <div style="display:flex;align-items:center;gap:16px;">
                 <button class="back-btn" onclick="sessionStorage.removeItem('aktifSayfa');sessionStorage.removeItem('aktifSekme');showSayfa('anaSayfa')">← Geri</button>
-                <div class="page-title"><span style="color:var(--yellow);">YETKİLİ</span> PANELİ</div>
+                <div style="background:linear-gradient(135deg,#d97706,#b45309);border-radius:12px;padding:10px 18px;box-shadow:0 4px 14px rgba(217,119,6,0.35);">
+                    <div style="font-size:8px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:rgba(255,255,255,0.6);margin-bottom:2px;">Yönetim Paneli</div>
+                    <div style="font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:#fff;line-height:1;">YETKİLİ PANELİ</div>
+                </div>
             </div>
             <div style="display:flex;align-items:center;gap:12px;">
                 <div class="tarih-display" id="sefTarihDisplay"></div>
@@ -1525,7 +1537,6 @@
     function showSayfa(id) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.getElementById(id).classList.add('active');
-        document.body.style.visibility = 'visible';
         if (id === 'operatorSayfa') { tarihGoster(); renderTablo(); }
         // Ana sayfaya manuel gidilirse kaydı sil, diğer sayfalarda kaydet
         if (id !== 'anaSayfa') {
@@ -1535,25 +1546,14 @@
         }
     }
 
-    // Sayfa yenilenince: sessionStorage'dan anında restore et — Firebase bekleme yok
+    // Sayfa yenilenince: auth gelene kadar bekle, sonra aynı sayfayı göster
     (function() {
         try {
             var s = sessionStorage.getItem('aktifSayfa');
             if (s && document.getElementById(s)) {
-                // Kaydedilmiş sayfayı anında göster
-                document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
-                document.getElementById(s).classList.add('active');
-                document.body.style.visibility = 'visible';
-                window._pendingSayfa = null; // Firebase'e gerek yok
-            } else {
-                // sessionStorage boş veya geçersiz → anaSayfa
-                document.getElementById('anaSayfa').classList.add('active');
-                document.body.style.visibility = 'visible';
+                window._pendingSayfa = s;
             }
-        } catch(e) {
-            document.getElementById('anaSayfa').classList.add('active');
-            document.body.style.visibility = 'visible';
-        }
+        } catch(e) {}
     })();
 
     // Tarayıcı geri/ileri tuşunu devre dışı bırak (sayfa içi navigasyon için)
