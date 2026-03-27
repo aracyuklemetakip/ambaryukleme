@@ -123,7 +123,15 @@
           if (window._pendingSayfa) {
             var ps = window._pendingSayfa;
             window._pendingSayfa = null;
-            setTimeout(function() { if (typeof showSayfa === 'function') showSayfa(ps); }, 200);
+            setTimeout(function() {
+              if (typeof showSayfa === 'function') {
+                showSayfa(ps);
+                // Yetkili sayfasına dönüyorsak init et
+                if (ps === 'sefSayfa' && typeof sefTarihGoster === 'function') {
+                  setTimeout(function() { sefTarihGoster(); }, 100);
+                }
+              }
+            }, 200);
           }
         } catch(e) {
           console.error('Firestore yükleme hatası:', e);
@@ -914,8 +922,7 @@
     <div class="layout">
         <div class="topbar">
             <div class="topbar-left">
-                <button class="back-btn" onclick="showSayfa('anaSayfa')">← Geri</button>
-                <div class="page-title"><span>VERİ</span> GİRİŞİ</div>
+                <button class="back-btn" onclick="sessionStorage.removeItem('aktifSayfa');sessionStorage.removeItem('aktifSekme');showSayfa('anaSayfa')">← Geri</button>
             </div>
             <div style="display:flex;align-items:center;gap:10px;">
                 <div class="tarih-display" id="tarihDisplay"></div>
@@ -1057,7 +1064,7 @@
         <!-- TOPBAR -->
         <div class="sef-topbar">
             <div style="display:flex;align-items:center;gap:16px;">
-                <button class="back-btn" onclick="showSayfa('anaSayfa')">← Geri</button>
+                <button class="back-btn" onclick="sessionStorage.removeItem('aktifSayfa');sessionStorage.removeItem('aktifSekme');showSayfa('anaSayfa')">← Geri</button>
                 <div class="page-title"><span style="color:var(--yellow);">YETKİLİ</span> PANELİ</div>
             </div>
             <div style="display:flex;align-items:center;gap:12px;">
@@ -1509,26 +1516,29 @@
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.getElementById(id).classList.add('active');
         if (id === 'operatorSayfa') { tarihGoster(); renderTablo(); }
+        // Ana sayfaya manuel gidilirse kaydı sil, diğer sayfalarda kaydet
         if (id !== 'anaSayfa') {
             try { sessionStorage.setItem('aktifSayfa', id); } catch(e) {}
         } else {
-            try { sessionStorage.removeItem('aktifSayfa'); } catch(e) {}
+            try { sessionStorage.removeItem('aktifSayfa'); sessionStorage.removeItem('aktifSekme'); } catch(e) {}
         }
     }
 
-    // Sayfa yenilenince aynı sayfada kal
+    // Sayfa yenilenince: auth gelene kadar bekle, sonra aynı sayfayı göster
     (function() {
         try {
             var s = sessionStorage.getItem('aktifSayfa');
             if (s && document.getElementById(s)) {
-                // Auth yüklenene kadar bekle, sonra sayfayı göster
                 window._pendingSayfa = s;
             }
         } catch(e) {}
     })();
 
-    // Geri ok - popstate artık anasayfaya döndürmez
-    window.addEventListener('popstate', function() {});
+    // Tarayıcı geri/ileri tuşunu devre dışı bırak (sayfa içi navigasyon için)
+    history.pushState(null, '', location.href);
+    window.addEventListener('popstate', function() {
+        history.pushState(null, '', location.href);
+    });
 
     function showModal(id) { document.getElementById(id).classList.add('show'); }
     function closeModal(id) { document.getElementById(id).classList.remove('show'); }
