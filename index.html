@@ -324,12 +324,12 @@
         .input-label { font-size:10px;font-weight:800;letter-spacing:1.5px; text-transform:uppercase;color:var(--text-dim); }
         .input-label .opt { font-weight:600;color:var(--muted);letter-spacing:0; text-transform:none;font-size:9px;margin-left:4px; }
         .seg-group { display:flex;gap:4px; }
-        .seg-btn { flex:1;padding:9px 6px;border-radius:10px; border:none;background:#e0e5ec; color:var(--text-dim);font-family:'Barlow',sans-serif; font-size:12px;font-weight:700;cursor:pointer; transition:all 0.15s;text-align:center;user-select:none;outline:none; box-shadow:3px 3px 8px rgba(163,177,198,0.6),-2px -2px 6px rgba(255,255,255,0.8); }
-        .seg-btn:hover { border-color:var(--glass-border-hover);color:var(--text); }
-        .seg-btn:active { box-shadow:inset 2px 2px 6px rgba(163,177,198,0.7),inset -2px -2px 5px rgba(255,255,255,0.5); transform:scale(0.97); }
-        .seg-btn.active-blue { background:#2563eb;border:none; color:#fff;box-shadow:inset 2px 2px 7px rgba(0,0,0,0.25),inset -1px -1px 4px rgba(255,255,255,0.15); transform:scale(0.97); }
-        .seg-btn.active-yellow { background:#d97706;border:none; color:#fff;box-shadow:inset 2px 2px 7px rgba(0,0,0,0.25),inset -1px -1px 4px rgba(255,255,255,0.15); transform:scale(0.97); }
-        .seg-btn.active-red { background:#dc2626;border:none; color:#fff;box-shadow:inset 2px 2px 7px rgba(0,0,0,0.25),inset -1px -1px 4px rgba(255,255,255,0.15); transform:scale(0.97); }
+        .seg-btn { flex:1;padding:9px 6px;border-radius:10px; border:none;background:#e0e5ec; color:var(--text-dim);font-family:'Barlow',sans-serif; font-size:12px;font-weight:700;cursor:pointer; transition:all 0.18s cubic-bezier(0.22,1,0.36,1);text-align:center;user-select:none;outline:none; box-shadow:4px 4px 10px rgba(163,177,198,0.7),-3px -3px 8px rgba(255,255,255,0.85); }
+        .seg-btn:hover { color:var(--text); box-shadow:5px 5px 12px rgba(163,177,198,0.75),-4px -4px 10px rgba(255,255,255,0.9); }
+        .seg-btn:active { box-shadow:inset 3px 3px 7px rgba(163,177,198,0.7),inset -2px -2px 5px rgba(255,255,255,0.5); transform:scale(0.96); }
+        .seg-btn.active-blue  { background:#2563eb; color:#fff; box-shadow:inset 3px 3px 8px rgba(0,0,0,0.28),inset -2px -2px 5px rgba(255,255,255,0.18); transform:scale(0.96); border:none; }
+        .seg-btn.active-yellow{ background:#d97706; color:#fff; box-shadow:inset 3px 3px 8px rgba(0,0,0,0.28),inset -2px -2px 5px rgba(255,255,255,0.18); transform:scale(0.96); border:none; }
+        .seg-btn.active-red   { background:#dc2626; color:#fff; box-shadow:inset 3px 3px 8px rgba(0,0,0,0.28),inset -2px -2px 5px rgba(255,255,255,0.18); transform:scale(0.96); border:none; }
         .text-input { width:100%;background:#e8ecf4; border:1px solid rgba(163,177,198,0.3);border-radius:10px; color:var(--text);font-family:'Barlow',sans-serif; font-size:13px;font-weight:600;padding:9px 12px; outline:none;transition:all 0.15s; box-shadow:inset 2px 2px 6px rgba(163,177,198,0.5),inset -2px -2px 4px rgba(255,255,255,0.8); }
         .text-input:focus { border-color:rgba(37,99,235,0.4);box-shadow:inset 2px 2px 6px rgba(163,177,198,0.5),inset -2px -2px 4px rgba(255,255,255,0.8),0 0 0 3px rgba(37,99,235,0.1); }
         .text-input::placeholder { color:var(--muted);font-weight:500; }
@@ -446,32 +446,31 @@
             background:#e0e5ec;
             color:#9aa5b8;font-family:'Barlow',sans-serif;
             font-size:12px;font-weight:600;cursor:pointer;
-            user-select:none;
-            outline:none;
-            transition:all 0.15s;
+            user-select:none;outline:none;
+            transition:all 0.18s cubic-bezier(0.22,1,0.36,1);
+            box-shadow:3px 3px 8px rgba(163,177,198,0.6),-2px -2px 6px rgba(255,255,255,0.8);
         }
         .filtre-seg-btn:hover {
-            border-color:#2d3748;
-            background:#dde3ef;
             color:#6b7a96;
+            box-shadow:4px 4px 10px rgba(163,177,198,0.7),-3px -3px 8px rgba(255,255,255,0.85);
         }
         .filtre-seg-btn:active {
-            box-shadow:inset 2px 2px 5px rgba(163,177,198,0.7),inset -1px -1px 4px rgba(255,255,255,0.5);
-            transform:scale(0.97);
+            box-shadow:inset 2px 2px 6px rgba(163,177,198,0.7),inset -2px -2px 5px rgba(255,255,255,0.5);
+            transform:scale(0.96);
         }
         .filtre-seg-btn.aktif {
-            border-color:rgba(59,130,246,0.5);
-            background:rgba(37,99,235,0.14);
+            border-color:rgba(59,130,246,0.4);
+            background:rgba(37,99,235,0.13);
             color:#2563eb;font-weight:800;
-            box-shadow:inset 2px 2px 6px rgba(37,99,235,0.2),inset -1px -1px 4px rgba(255,255,255,0.4);
-            transform:scale(0.97);
+            box-shadow:inset 3px 3px 7px rgba(37,99,235,0.18),inset -2px -2px 5px rgba(255,255,255,0.5);
+            transform:scale(0.96);
         }
         .filtre-seg-btn.aktif-red {
-            border-color:rgba(239,68,68,0.5);
+            border-color:rgba(239,68,68,0.4);
             background:rgba(239,68,68,0.1);
             color:#fca5a5;font-weight:800;
-            box-shadow:inset 2px 2px 6px rgba(239,68,68,0.2),inset -1px -1px 4px rgba(255,255,255,0.4);
-            transform:scale(0.97);
+            box-shadow:inset 3px 3px 7px rgba(239,68,68,0.18),inset -2px -2px 5px rgba(255,255,255,0.5);
+            transform:scale(0.96);
         }
 
         .btn-pdf {
@@ -517,18 +516,22 @@
             user-select:none;outline:none;
             background:#e0e5ec;
             box-shadow:3px 3px 8px rgba(163,177,198,0.6),-2px -2px 6px rgba(255,255,255,0.8);
-            transition:all 0.2s cubic-bezier(0.22,1,0.36,1);
+            transition:all 0.18s cubic-bezier(0.22,1,0.36,1);
         }
         .sef-sekme:hover {
             color:#2563eb;
             box-shadow:4px 4px 10px rgba(163,177,198,0.7),-3px -3px 8px rgba(255,255,255,0.85);
             transform:translateY(-2px);
         }
+        .sef-sekme:active {
+            box-shadow:inset 2px 2px 6px rgba(163,177,198,0.7),inset -2px -2px 5px rgba(255,255,255,0.5);
+            transform:scale(0.96);
+        }
         .sef-sekme.aktif {
             background:#2563eb;color:#fff;font-weight:800;
-            box-shadow:inset 2px 2px 7px rgba(0,0,0,0.25),inset -1px -1px 4px rgba(255,255,255,0.12);
+            box-shadow:inset 3px 3px 8px rgba(0,0,0,0.28),inset -2px -2px 5px rgba(255,255,255,0.12);
             margin-bottom:-2px;z-index:1;position:relative;
-            transform:scale(0.97);
+            transform:scale(0.97) translateY(1px);
         }
 
         /* Mesai Takvim */
@@ -2054,7 +2057,15 @@
     // ── SEGMENT ───────────────────────────────────────────
     function setSeg(el, field, val) {
         const group = el.closest('.seg-group');
+        const isActive = el.classList.contains('active-blue') || el.classList.contains('active-yellow') || el.classList.contains('active-red');
         group.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active-blue','active-yellow','active-red'));
+        if (isActive) {
+            // Tekrar tıklandı → seçimi kaldır
+            if (field === 'aracTipi') secilenAracTipi = '';
+            else if (field === 'vardiya') { secilenVardiya = ''; _ilkGiris = true; }
+            else secilenAracTuru = '';
+            return;
+        }
         if (field === 'aracTipi') {
             el.classList.add('active-blue'); secilenAracTipi = val;
         } else if (field === 'vardiya') {
@@ -2571,8 +2582,16 @@
     }
 
     function sekmeAc(el, id) {
+        const isActive = el.classList.contains('aktif');
         document.querySelectorAll('.sef-sekme').forEach(s => s.classList.remove('aktif'));
         document.querySelectorAll('.sekme-icerik').forEach(s => s.classList.remove('aktif'));
+        if (isActive) {
+            // Tekrar tıklandı → sekmeyi kapat, karşılamayı göster
+            const k = document.getElementById('sekmeKarsilama');
+            if (k) k.style.display = 'block';
+            try { sessionStorage.removeItem('aktifSekme'); } catch(e) {}
+            return;
+        }
         el.classList.add('aktif');
         document.getElementById(id).classList.add('aktif');
         const k = document.getElementById('sekmeKarsilama');
@@ -2810,9 +2829,17 @@
     }
 
     function e2VardiyaSec(el, val) {
+        const isActive = el.classList.contains('aktif');
         document.querySelectorAll('#e2VardiyaSeg .filtre-seg-btn').forEach(b => b.classList.remove('aktif'));
-        el.classList.add('aktif');
-        e2Vardiya = val;
+        if (isActive && val !== 'hepsi') {
+            // toggle: hepsine dön
+            const hepsiBtn = document.querySelector('#e2VardiyaSeg .filtre-seg-btn');
+            if (hepsiBtn) hepsiBtn.classList.add('aktif');
+            e2Vardiya = 'hepsi';
+        } else {
+            el.classList.add('aktif');
+            e2Vardiya = val;
+        }
         ekipSorgula();
     }
 
@@ -3400,21 +3427,37 @@
     let mesaiDuzenleId = null;
 
     function mesaiVardiyaSec(el, val) {
+        const isActive = el.classList.contains('aktif');
         document.querySelectorAll('#mesaiVardiyaSeg .filtre-seg-btn').forEach(b => b.classList.remove('aktif'));
-        el.classList.add('aktif');
-        mesaiSeciliVardiya = val;
+        if (isActive) {
+            // toggle: ilk butona (A) geri dön
+            const ilk = document.querySelector('#mesaiVardiyaSeg .filtre-seg-btn');
+            if (ilk) ilk.classList.add('aktif');
+            mesaiSeciliVardiya = 'A';
+        } else {
+            el.classList.add('aktif');
+            mesaiSeciliVardiya = val;
+        }
     }
 
     function mesaiTurSec(el, val) {
+        const isActive = el.classList.contains('aktif') || el.classList.contains('aktif-red');
         document.querySelectorAll('#mesaiTurSeg .filtre-seg-btn').forEach(b => {
             b.classList.remove('aktif','aktif-red');
         });
-        if (val === 'Pazar' || val === 'Pazar15') {
-            el.classList.add('aktif-red');
+        if (isActive) {
+            // toggle: Normal'e geri dön
+            const normalBtn = document.querySelector('#mesaiTurSeg .filtre-seg-btn');
+            if (normalBtn) normalBtn.classList.add('aktif');
+            mesaiSeciliTur = 'Normal';
         } else {
-            el.classList.add('aktif');
+            if (val === 'Pazar' || val === 'Pazar15') {
+                el.classList.add('aktif-red');
+            } else {
+                el.classList.add('aktif');
+            }
+            mesaiSeciliTur = val;
         }
-        mesaiSeciliTur = val;
     }
 
     function mesaiKaydet() {
@@ -3969,11 +4012,21 @@
     let _df6Rapor = null;       // son sorgu sonucu (PDF için)
 
     function df6TurSec(el, tur) {
+        const isActive = el.classList.contains('aktif');
         document.querySelectorAll('#df6TurSeg .filtre-seg-btn').forEach(b => b.classList.remove('aktif'));
-        el.classList.add('aktif');
-        df6Tur = tur;
-        document.getElementById('df6EkipBlok').style.display    = tur === 'ekip'     ? 'block' : 'none';
-        document.getElementById('df6PersonelBlok').style.display = tur === 'personel' ? 'block' : 'none';
+        if (isActive) {
+            // toggle: ilk seçeneğe (ekip) geri dön
+            const ilk = document.querySelector('#df6TurSeg .filtre-seg-btn');
+            if (ilk) ilk.classList.add('aktif');
+            df6Tur = 'ekip';
+            document.getElementById('df6EkipBlok').style.display    = 'block';
+            document.getElementById('df6PersonelBlok').style.display = 'none';
+        } else {
+            el.classList.add('aktif');
+            df6Tur = tur;
+            document.getElementById('df6EkipBlok').style.display    = tur === 'ekip'     ? 'block' : 'none';
+            document.getElementById('df6PersonelBlok').style.display = tur === 'personel' ? 'block' : 'none';
+        }
         document.getElementById('df6Sonuc').innerHTML = '<div class="sef-bos"><div class="sef-bos-icon">🔍</div><div class="sef-bos-text">Filtre seçip PDF İndir\'e bas</div></div>';
     }
 
