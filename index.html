@@ -119,20 +119,16 @@
             if (typeof personelIlkYukle === 'function') await personelIlkYukle();
           }, 100);
 
-          // Sayfa yenileme: bekleyen sayfaya geç
-          if (window._pendingSayfa) {
-            var ps = window._pendingSayfa;
-            window._pendingSayfa = null;
-            setTimeout(function() {
-              if (typeof showSayfa === 'function') {
-                showSayfa(ps);
-                // Yetkili sayfasına dönüyorsak init et
-                if (ps === 'sefSayfa' && typeof sefTarihGoster === 'function') {
-                  setTimeout(function() { sefTarihGoster(); }, 100);
-                }
-              }
-            }, 200);
-          }
+          // Veriler yüklendikten sonra aktif sayfayı yenile (sefSayfa, operatorSayfa vs.)
+          try {
+            var aktifSayfa = sessionStorage.getItem('aktifSayfa');
+            if (aktifSayfa === 'sefSayfa' && typeof sefTarihGoster === 'function') {
+              setTimeout(function() { sefTarihGoster(); }, 150);
+            } else if (aktifSayfa === 'operatorSayfa' && typeof renderTablo === 'function') {
+              setTimeout(function() { renderTablo(); }, 150);
+            }
+          } catch(e) {}
+
         } catch(e) {
           console.error('Firestore yükleme hatası:', e);
           showToast('⚠️ Firestore erişim hatası', 'warn');
@@ -188,7 +184,7 @@
         }
         * { margin:0; padding:0; box-sizing:border-box; }
         button:focus { outline:none; }
-        body { font-family:'Barlow',sans-serif; background:#e0e5ec; color:var(--text); min-height:100vh; overflow-x:hidden; }
+        body { font-family:'Barlow',sans-serif; background:#e0e5ec; color:var(--text); min-height:100vh; overflow-x:hidden; visibility:hidden; }
 
         /* ARKA PLAN */
         .bg-blobs { position:fixed; inset:0; z-index:0; pointer-events:none; background:#e0e5ec; }
@@ -882,7 +878,7 @@
 <!-- ══════════════════════════════════════
      ANA SAYFA
 ══════════════════════════════════════ -->
-<div id="anaSayfa" class="page active">
+<div id="anaSayfa" class="page">
     <div class="ana-wrapper">
         <div style="text-align:center;display:flex;flex-direction:column;align-items:center;gap:14px;">
             <div class="status-pill"><div class="status-dot"></div>Sistem Aktif</div>
@@ -1529,6 +1525,7 @@
     function showSayfa(id) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.getElementById(id).classList.add('active');
+        document.body.style.visibility = 'visible';
         if (id === 'operatorSayfa') { tarihGoster(); renderTablo(); }
         // Ana sayfaya manuel gidilirse kaydı sil, diğer sayfalarda kaydet
         if (id !== 'anaSayfa') {
@@ -1538,14 +1535,25 @@
         }
     }
 
-    // Sayfa yenilenince: auth gelene kadar bekle, sonra aynı sayfayı göster
+    // Sayfa yenilenince: sessionStorage'dan anında restore et — Firebase bekleme yok
     (function() {
         try {
             var s = sessionStorage.getItem('aktifSayfa');
             if (s && document.getElementById(s)) {
-                window._pendingSayfa = s;
+                // Kaydedilmiş sayfayı anında göster
+                document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+                document.getElementById(s).classList.add('active');
+                document.body.style.visibility = 'visible';
+                window._pendingSayfa = null; // Firebase'e gerek yok
+            } else {
+                // sessionStorage boş veya geçersiz → anaSayfa
+                document.getElementById('anaSayfa').classList.add('active');
+                document.body.style.visibility = 'visible';
             }
-        } catch(e) {}
+        } catch(e) {
+            document.getElementById('anaSayfa').classList.add('active');
+            document.body.style.visibility = 'visible';
+        }
     })();
 
     // Tarayıcı geri/ileri tuşunu devre dışı bırak (sayfa içi navigasyon için)
