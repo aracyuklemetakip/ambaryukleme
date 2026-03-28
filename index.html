@@ -318,7 +318,7 @@
         /* Üst navbar — tüm genişlik */
         .topbar {
             grid-column:1/-1;
-            display:flex; align-items:center; justify-content:space-between;
+            display:grid; grid-template-columns: 1fr auto 1fr; align-items:center;
             padding:0 16px;
             height:54px;
             background: #2563eb;
@@ -331,6 +331,16 @@
             transform: perspective(1000px) rotateX(1deg);
             transform-origin: top;
             border-radius: 0 0 12px 12px;
+        }
+        .topbar-center {
+            text-align: center;
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 14px;
+            font-weight: 900;
+            color: #fff;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
         .topbar-left { display:flex; align-items:center; gap:10px; }
         .back-btn {
@@ -364,11 +374,21 @@
 
         /* Sol form sidebar */
         .form-panel {
-            background:#d8dde8;
+            background:#e0e5ec;
             border-right:1px solid rgba(163,177,198,0.5);
-            padding:12px 14px;
+            padding:20px;
             overflow-y:auto;
-            height:calc(100vh - 44px);
+            height:calc(100vh - 54px);
+        }
+        .form-card {
+            background: #e0e5ec;
+            padding: 24px;
+            border-radius: 24px;
+            box-shadow: 12px 12px 24px rgba(163,177,198,0.8), -10px -10px 20px rgba(255,255,255,0.9);
+            border: 1px solid rgba(255,255,255,0.2);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
         .edit-banner { display:none; align-items:center; gap:8px; background:rgba(217,119,6,0.08); border:1px solid rgba(217,119,6,0.25); border-radius:6px; padding:6px 10px; margin-bottom:10px; font-size:11px;font-weight:700; color:#d97706; }
         .edit-banner.show { display:flex; }
@@ -376,16 +396,17 @@
         .edit-cancel:hover { color:var(--danger); }
         .form-section-title { 
             font-size:11px; font-weight:900; letter-spacing:1.5px; text-transform:uppercase; 
-            color:#fff; background:linear-gradient(135deg, #2563eb, #1d4ed8); 
-            padding:8px 14px; border-radius:10px;
+            color:#fff; background: linear-gradient(135deg, #2563eb, #1d4ed8); 
+            padding:10px 16px; border-radius:12px;
             margin-bottom:12px; margin-top:20px; 
             box-shadow: 
-                0 4px 15px rgba(37,99,235,0.4),
-                0 2px 4px rgba(0,0,0,0.1),
+                0 6px 15px rgba(37,99,235,0.4),
+                0 2px 4px rgba(0,0,0,0.2),
                 inset 0 1px 1px rgba(255,255,255,0.4);
             transform: perspective(1000px) rotateX(2deg);
             display: inline-block; width: 100%;
             border: 1px solid rgba(255,255,255,0.1);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
         .form-section-title:first-of-type { margin-top:0; }
         .input-group { display:flex;flex-direction:column;gap:3px;margin-bottom:7px; }
@@ -444,7 +465,7 @@
         .ekip-mini-badge { display:inline-flex;align-items:center;gap:3px; padding:2px 8px;border-radius:100px; font-size:10px;font-weight:800; }
         .data-table { width:100%;border-collapse:collapse;font-size:12px; }
         .data-table thead tr { background:var(--glass);border-bottom:1px solid rgba(163,177,198,0.4); }
-        .data-table th { padding:6px 10px;text-align:left;font-size:9px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--text-dim);white-space:nowrap; }
+        .data-table th { padding:10px 10px;text-align:left;font-size:9px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--text-dim);white-space:nowrap; }
         .data-table tbody tr { border-bottom:1px solid rgba(163,177,198,0.2);transition:background 0.15s;cursor:pointer; background:#e8ecf4; }
         .data-table tbody tr:hover { background:#dde3ef; }
         .data-table tbody tr.selected { background:rgba(217,119,6,0.08);outline:1px solid rgba(217,119,6,0.25); }
@@ -569,7 +590,16 @@
         .sef-kart-num { font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:900;line-height:1; }
         .sef-kart-lbl { font-size:8px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);margin-top:3px; }
 
-        .sef-bolum-baslik { font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid rgba(163,177,198,0.2); }
+        .sef-bolum-baslik { 
+            font-size:10px; font-weight:900; letter-spacing:1.5px; text-transform:uppercase; 
+            color:#fff; background:linear-gradient(135deg, #2563eb, #1d4ed8);
+            padding:10px 14px; margin-bottom:12px; border-radius:10px;
+            box-shadow: 0 4px 10px rgba(37,99,235,0.3), inset 0 1px 1px rgba(255,255,255,0.3);
+            transform: perspective(500px) rotateX(2deg);
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.1);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
         .sef-bolum { background:#dde3ef;border:1px solid rgba(163,177,198,0.4);border-radius:8px;padding:12px 14px;margin-bottom:10px; }
 
         .ekip-stat-row { display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid rgba(163,177,198,0.2); }
@@ -992,7 +1022,10 @@
                 <button class="back-btn" onclick="sessionStorage.removeItem('aktifSayfa');sessionStorage.removeItem('aktifSekme');showSayfa('anaSayfa')">← Geri</button>
                 <span style="font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:900;text-transform:uppercase;letter-spacing:2px;color:#fff;">OPERATÖR PANELİ</span>
             </div>
-            <div style="display:flex;align-items:center;gap:8px;">
+            <div class="topbar-center" id="dinamikBaslik">
+                <!-- Dinamik tarihli başlık buraya gelecek -->
+            </div>
+            <div style="display:flex;align-items:center;justify-content:flex-end;gap:8px;">
                 <button onclick="tarihDegistir(-1)" style="width:24px;height:24px;border-radius:6px;border:1px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.1);color:#fff;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;">‹</button>
                 <input type="date" id="secilenTarih" style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);border-radius:6px;color:#fff;font-family:'Barlow',sans-serif;font-size:11px;font-weight:700;padding:2px 6px;outline:none;cursor:pointer;" onchange="renderTablo()">
                 <button onclick="tarihDegistir(1)" style="width:24px;height:24px;border-radius:6px;border:1px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.1);color:#fff;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;">›</button>
@@ -1005,99 +1038,112 @@
         </div>
 
         <div class="form-panel">
+            <div class="form-card">
+                <div class="edit-banner" id="editBanner">
+                    ✏️ Düzenleme Modu — Satır seçili
+                    <button class="edit-cancel" onclick="iptalDuzenle()">✕</button>
+                </div>
 
-            <div class="edit-banner" id="editBanner">
-                ✏️ Düzenleme Modu — Satır seçili
-                <button class="edit-cancel" onclick="iptalDuzenle()">✕</button>
-            </div>
+                <div class="form-section-title">Araç Bilgileri</div>
+                <div class="input-group">
+                    <div class="input-label">Vardiya</div>
+                    <div class="seg-group" id="segVardiya">
+                        <div class="seg-btn" tabindex="1" onclick="setSeg(this,'vardiya','A Vardiyası')"><span>A</span><span>VARDİYASI</span></div>
+                        <div class="seg-btn" tabindex="2" onclick="setSeg(this,'vardiya','B Vardiyası')"><span>B</span><span>VARDİYASI</span></div>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <div class="input-label">Araç Tipi</div>
+                    <div class="seg-group" id="segTip">
+                        <div class="seg-btn" tabindex="3" onclick="setSeg(this,'aracTipi','Tır')"><span>🚛</span><span>Tır</span></div>
+                        <div class="seg-btn" tabindex="4" onclick="setSeg(this,'aracTipi','Kamyon')"><span>🚚</span><span>Kamyon</span></div>
+                        <div class="seg-btn" tabindex="5" onclick="setSeg(this,'aracTipi','Konteyner')"><span>📦</span><span>Konteyner</span></div>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <div class="input-label">Araç Türü</div>
+                    <div class="seg-group" id="segTur">
+                        <div class="seg-btn" tabindex="6" onclick="setSeg(this,'aracTuru','O/E')"><span>O/E</span></div>
+                        <div class="seg-btn" tabindex="7" onclick="setSeg(this,'aracTuru','Piyasa')"><span>PİYASA</span></div>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <div class="input-label">Metreküp (M³)</div>
+                    <input type="number" id="m3" class="text-input" tabindex="8" placeholder="0.0" step="0.1" min="0">
+                </div>
+                <div class="input-group" style="position:relative;">
+                    <div class="input-label">Shipment No</div>
+                    <input type="text" id="shipment_v2" name="shipment_no_unique" class="text-input" tabindex="9" placeholder="Shipment numarası"
+                        oninput="this.value=this.value.replace(/[^0-9]/g,'');shipmentInput(this)"
+                        onkeydown="shipmentKeyDown(event)"
+                        onfocus="shipmentOneriGoster(this)"
+                        onblur="setTimeout(()=>{const d=document.getElementById('shipmentDropdown');if(d)d.style.display='none';},200)"
+                        autocomplete="off" spellcheck="false" data-lpignore="true">
+                    <div id="shipmentDropdown" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:500;background:#e0e5ec;border:1px solid rgba(255,255,255,0.12);border-radius:10px;margin-top:4px;max-height:220px;overflow-y:auto;box-shadow:0 8px 32px rgba(163,177,198,0.55);"></div>
+                </div>
 
-            <div class="form-section-title">Araç Bilgileri</div>
-            <div class="input-group">
-                <div class="input-label">Vardiya</div>
-                <div class="seg-group" id="segVardiya">
-                    <div class="seg-btn" tabindex="1" onclick="setSeg(this,'vardiya','A Vardiyası')"><span>A</span><span>VARDİYASI</span></div>
-                    <div class="seg-btn" tabindex="2" onclick="setSeg(this,'vardiya','B Vardiyası')"><span>B</span><span>VARDİYASI</span></div>
+                <div class="form-section-title">Ekip & Saat</div>
+                <div class="input-group" style="position:relative;">
+                    <div class="input-label">Ekip İsimleri</div>
+                    <input type="text" id="ekip" class="text-input" tabindex="10" placeholder="İsim yazın..."
+                        oninput="ekipAutocomplete(this)"
+                        onkeydown="ekipKeyDown(event)"
+                        autocomplete="off">
+                    <div id="ekipDropdown" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:500;background:#e0e5ec;border:1px solid rgba(255,255,255,0.12);border-radius:10px;margin-top:4px;max-height:220px;overflow-y:auto;box-shadow:0 8px 32px rgba(163,177,198,0.55);"></div>
                 </div>
-            </div>
-            <div class="input-group">
-                <div class="input-label">Araç Tipi</div>
-                <div class="seg-group" id="segTip">
-                    <div class="seg-btn" tabindex="3" onclick="setSeg(this,'aracTipi','Tır')"><span>🚛</span><span>Tır</span></div>
-                    <div class="seg-btn" tabindex="4" onclick="setSeg(this,'aracTipi','Kamyon')"><span>🚚</span><span>Kamyon</span></div>
-                    <div class="seg-btn" tabindex="5" onclick="setSeg(this,'aracTipi','Konteyner')"><span>📦</span><span>Konteyner</span></div>
+                <div class="input-group">
+                    <div class="input-label">Başlama / Bitiş Saati</div>
+                    <div class="time-row">
+                        <input type="text" id="baslama" class="text-input" tabindex="11" placeholder="08:00" maxlength="5"
+                            oninput="saatInput(this,'bitis')" onkeydown="sadeceSayi(event)">
+                        <div class="time-sep">→</div>
+                        <input type="text" id="bitis" class="text-input" tabindex="12" placeholder="10:30" maxlength="5"
+                            oninput="saatInput(this,null)" onkeydown="sadeceSayi(event)">
+                    </div>
                 </div>
-            </div>
-            <div class="input-group">
-                <div class="input-label">Araç Türü</div>
-                <div class="seg-group" id="segTur">
-                    <div class="seg-btn" tabindex="6" onclick="setSeg(this,'aracTuru','O/E')"><span>O/E</span><span>SEÇİMİ</span></div>
-                    <div class="seg-btn" tabindex="7" onclick="setSeg(this,'aracTuru','Piyasa')"><span>PİYASA</span><span>SEÇİMİ</span></div>
+                <div class="input-group">
+                    <div class="input-label">Kaliteci</div>
+                    <input type="text" id="kaliteci" class="text-input" tabindex="13" placeholder="KALİTECİ ADI"
+                        oninput="this.value=this.value.toUpperCase()" autocomplete="off" spellcheck="false">
                 </div>
-            </div>
-            <div class="input-group">
-                <div class="input-label">Metreküp (M³)</div>
-                <input type="number" id="m3" class="text-input" tabindex="8" placeholder="0.0" step="0.1" min="0">
-            </div>
-            <div class="input-group" style="position:relative;">
-                <div class="input-label">Shipment No</div>
-                <input type="text" id="shipment_v2" name="shipment_no_unique" class="text-input" tabindex="9" placeholder="Shipment numarası"
-                    oninput="shipmentInput(this)"
-                    onfocus="shipmentOneriGoster(this)"
-                    onblur="setTimeout(()=>{const d=document.getElementById('shipmentDropdown');if(d)d.style.display='none';},200)"
-                    autocomplete="off" spellcheck="false" data-lpignore="true">
-                <div id="shipmentDropdown" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:500;background:#e0e5ec;border:1px solid rgba(255,255,255,0.12);border-radius:10px;margin-top:4px;max-height:220px;overflow-y:auto;box-shadow:0 8px 32px rgba(163,177,198,0.55);"></div>
-            </div>
+                <div class="input-group" style="position:relative;">
+                    <div class="input-label">Forkliftçi</div>
+                    <input type="text" id="forkliftci" class="text-input" tabindex="14" placeholder="Forkliftçi ismi girin..."
+                        oninput="forkliftciAutocomplete(this)"
+                        onkeydown="forkliftciKeyDown(event)"
+                        autocomplete="off">
+                    <div id="forkliftciDropdown" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:500;background:#e0e5ec;border:1px solid rgba(255,255,255,0.12);border-radius:10px;margin-top:4px;max-height:220px;overflow-y:auto;box-shadow:0 8px 32px rgba(163,177,198,0.55);"></div>
+                </div>
 
-            <div class="form-section-title">Ekip & Saat</div>
-            <div class="input-group" style="position:relative;">
-                <div class="input-label">Ekip İsimleri</div>
-                <input type="text" id="ekip" class="text-input" tabindex="10" placeholder="İsim yazın..."
-                    oninput="ekipAutocomplete(this)"
-                    onkeydown="ekipKeyDown(event)"
-                    autocomplete="off">
-                <div id="ekipDropdown" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:500;background:#e0e5ec;border:1px solid rgba(255,255,255,0.12);border-radius:10px;margin-top:4px;max-height:220px;overflow-y:auto;box-shadow:0 8px 32px rgba(163,177,198,0.55);"></div>
-            </div>
-            <div class="input-group">
-                <div class="input-label">Başlama / Bitiş Saati</div>
-                <div class="time-row">
-                    <input type="text" id="baslama" class="text-input" tabindex="11" placeholder="08:00" maxlength="5"
-                        oninput="saatInput(this,'bitis')" onkeydown="sadeceSayi(event)">
-                    <div class="time-sep">→</div>
-                    <input type="text" id="bitis" class="text-input" tabindex="12" placeholder="10:30" maxlength="5"
-                        oninput="saatInput(this,null)" onkeydown="sadeceSayi(event)">
+                <div class="form-section-title">Duruşlar</div>
+                <div id="duruslarSabit" style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:10px;">
+                    <div class="input-group" style="margin:0;">
+                        <div class="input-label" style="font-size:10px;">🧹 Temizlik</div>
+                        <input type="number" id="durus_Temizlik" class="text-input" placeholder="0 dk" min="0" oninput="sabitDurusGuncelle('Temizlik', this.value)">
+                    </div>
+                    <div class="input-group" style="margin:0;">
+                        <div class="input-label" style="font-size:10px;">🏷️ Etiket</div>
+                        <input type="number" id="durus_Etiket" class="text-input" placeholder="0 dk" min="0" oninput="sabitDurusGuncelle('Etiket', this.value)">
+                    </div>
+                    <div class="input-group" style="margin:0;">
+                        <div class="input-label" style="font-size:10px;">🍵 Çay Molası</div>
+                        <input type="number" id="durus_Cay" class="text-input" placeholder="0 dk" min="0" oninput="sabitDurusGuncelle('Çay Molası', this.value)">
+                    </div>
+                    <div class="input-group" style="margin:0;">
+                        <div class="input-label" style="font-size:10px;">🍽️ Yemek Molası</div>
+                        <input type="number" id="durus_Yemek" class="text-input" placeholder="0 dk" min="0" oninput="sabitDurusGuncelle('Yemek Molası', this.value)">
+                    </div>
+                    <div class="input-group" style="margin:0;grid-column:span 2;">
+                        <div class="input-label" style="font-size:10px;">📝 Diğer</div>
+                        <input type="number" id="durus_Diger" class="text-input" placeholder="0 dk" min="0" oninput="sabitDurusGuncelle('Diğer', this.value)">
+                    </div>
                 </div>
-            </div>
-            <div class="input-group">
-                <div class="input-label">Kaliteci</div>
-                <input type="text" id="kaliteci" class="text-input" tabindex="13" placeholder="KALİTECİ ADI"
-                    oninput="this.value=this.value.toUpperCase()" autocomplete="off" spellcheck="false">
-            </div>
-            <div class="input-group" style="position:relative;">
-                <div class="input-label">Forkliftçi</div>
-                <input type="text" id="forkliftci" class="text-input" tabindex="14" placeholder="Forkliftçi ismi girin..."
-                    oninput="forkliftciAutocomplete(this)"
-                    onkeydown="forkliftciKeyDown(event)"
-                    autocomplete="off">
-                <div id="forkliftciDropdown" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:500;background:#e0e5ec;border:1px solid rgba(255,255,255,0.12);border-radius:10px;margin-top:4px;max-height:220px;overflow-y:auto;box-shadow:0 8px 32px rgba(163,177,198,0.55);"></div>
-            </div>
-
-            <div class="form-section-title">Duruşlar</div>
-            <div class="durus-list" id="durusList"></div>
-            <div class="durus-dropdown-wrap" id="durusWrap">
-                <button class="btn-add-durus" onclick="toggleDurusMenu(event)">+ Duruş Ekle ▾</button>
-                <div class="durus-menu" id="durusMenu">
-                    <div class="durus-menu-item" onclick="addDurus('Temizlik')">🧹 Temizlik</div>
-                    <div class="durus-menu-item" onclick="addDurus('Etiket')">🏷️ Etiket</div>
-                    <div class="durus-menu-item" onclick="addDurus('Çay Molası')">🍵 Çay Molası</div>
-                    <div class="durus-menu-item" onclick="addDurus('Yemek Molası')">🍽️ Yemek Molası</div>
-                    <div class="durus-menu-item" onclick="addDurus('Diğer')">📝 Diğer</div>
+                <div class="input-group" style="margin-top:10px;">
+                    <div class="input-label">Açıklama</div>
+                    <input type="text" id="aciklama" class="text-input" tabindex="15" placeholder="Varsa açıklama...">
                 </div>
+                <button class="btn-submit" id="btnSubmit" tabindex="16" onclick="kaydetVeyaGuncelle()">✓ &nbsp;SİSTEME İŞLE</button>
             </div>
-            <div class="input-group" style="margin-top:10px;">
-                <div class="input-label">Açıklama</div>
-                <input type="text" id="aciklama" class="text-input" tabindex="15" placeholder="Varsa açıklama...">
-            </div>
-            <button class="btn-submit" id="btnSubmit" tabindex="16" onclick="kaydetVeyaGuncelle()">✓ &nbsp;SİSTEME İŞLE</button>
         </div>
 
         <div class="table-panel">
@@ -1111,7 +1157,7 @@
             <div id="yuklemeListesiBaslik" style="display:none;"><div id="yuklemeListesiTarihText"></div></div>
 
             <table class="data-table">
-                <thead><tr><th>#</th><th>Vardiya</th><th>Ekip</th><th>Forkliftçi</th><th>Araç</th><th>Tür</th><th>Saat</th><th>Durum</th><th></th></tr></thead>
+                <thead><tr><th>S.No</th><th>Vardiya</th><th>Ekip</th><th>Forkliftçi</th><th>Araç</th><th>Tür</th><th>Saat</th><th>Durum</th><th></th></tr></thead>
                 <tbody id="tableBody"></tbody>
             </table>
             <div class="empty-state" id="emptyState">
@@ -1418,6 +1464,12 @@
                         <div class="sef-bolum-baslik" id="personelFormBaslik">➕ Personel Ekle / Güncelle</div>
                         <div style="display:flex;flex-direction:column;gap:12px;">
                             <div class="filtre-group">
+                                <div class="filtre-label">Personel Seç (Düzenlemek İçin)</div>
+                                <select id="personelSecDropdown" class="filtre-input" style="width:100%;cursor:pointer;" onchange="personelDuzenlemeSec(this.value)">
+                                    <option value="">— Personel Seç —</option>
+                                </select>
+                            </div>
+                            <div class="filtre-group">
                                 <div class="filtre-label">Ad Soyad</div>
                                 <input type="text" id="yeniPersonelAd" class="filtre-input" placeholder="Buraya giriniz"
                                     style="width:100%;text-transform:uppercase;"
@@ -1433,8 +1485,8 @@
                         </div>
                     </div>
 
-                    <!-- SAĞ: PERSONEL LİSTESİ -->
-                    <div class="sef-bolum">
+                    <!-- SAĞ: PERSONEL LİSTESİ (Gizlendi - Sadece Dropdown kullanılacak) -->
+                    <div class="sef-bolum" style="display:none;">
                         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
                             <div class="sef-bolum-baslik" style="margin:0;">👥 Kayıtlı Personel <span id="personelSayac" style="font-size:13px;color:var(--muted);font-weight:600;"></span></div>
                             <input type="text" id="personelAra" class="filtre-input" placeholder="Ara..." style="width:180px;font-size:12px;" oninput="personelListeFiltre()">
@@ -1603,6 +1655,7 @@
                                         <input type="text" id="hrShipmentInput" class="filtre-input" style="flex:1;text-transform:uppercase;" placeholder="Shipment No girin..."
                                             oninput="this.value=this.value.toUpperCase();hrShipmentAutocomplete(this)"
                                             onfocus="hrShipmentAutocomplete(this)"
+                                            onkeydown="hrShipmentKeyDown(event)"
                                             onblur="setTimeout(()=>{const d=document.getElementById('hrShipmentAcDropdown');if(d)d.style.display='none';},200)">
                                         <div id="hrShipmentAcDropdown" style="display:none;position:absolute;top:100%;left:0;right:50px;z-index:500;background:#e0e5ec;border:1px solid rgba(255,255,255,0.12);border-radius:10px;margin-top:4px;max-height:200px;overflow-y:auto;box-shadow:0 8px 32px rgba(163,177,198,0.55);"></div>
                                         <button onclick="hrShipmentAra()" style="padding:6px 14px;border-radius:6px;border:1px solid rgba(26,86,219,0.4);background:rgba(26,86,219,0.1);color:#1a56db;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:900;cursor:pointer;white-space:nowrap;transition:all 0.15s;" onmouseover="this.style.background='rgba(26,86,219,0.2)'" onmouseout="this.style.background='rgba(26,86,219,0.1)'">Ara</button>
@@ -1964,6 +2017,14 @@
         const tbody = document.getElementById('personelTableBody');
         const empty = document.getElementById('personelEmptyState');
         const sayac = document.getElementById('personelSayac');
+        const ddn   = document.getElementById('personelSecDropdown');
+
+        if (ddn) {
+            const currentVal = ddn.value;
+            ddn.innerHTML = '<option value="">— Personel Seç —</option>' + 
+                personelListesi.map(p => `<option value="${p.sicil}" ${p.sicil === currentVal ? 'selected' : ''}>${p.ad} (${p.sicil})</option>`).join('');
+        }
+
         if (!tbody) return;
         if (sayac) sayac.textContent = '(' + personelListesi.length + ' kişi)';
         if (liste.length === 0) {
@@ -2577,6 +2638,7 @@
         return benzersiz;
     }
 
+    let shipmentOneriIndex = -1;
     function shipmentOneriGoster(input) {
         const dd = document.getElementById('shipmentDropdown');
         const sonlar = sonShipmentleriGetir();
@@ -2588,20 +2650,61 @@
         const filtre = sonlar.filter(s => !silinenler.includes(s) && (!mevcut || s.toLowerCase().includes(mevcut.toLowerCase())));
         
         if (!filtre.length) { dd.style.display='none'; return; }
+        shipmentOneriIndex = -1;
         
-        dd.innerHTML = filtre.map(s => {
-            return `<div class="shipment-oneri-item" 
+        dd.innerHTML = filtre.map((s, idx) => {
+            return `<div class="shipment-oneri-item" id="shipmentItem_${idx}"
                 style="padding:10px 14px;cursor:pointer;font-size:13px;font-weight:700;border-bottom:1px solid rgba(163,177,198,0.2);transition:background 0.1s;display:flex;align-items:center;justify-content:space-between;gap:10px;"
-                onmouseenter="this.style.background='rgba(37,99,235,0.1)'" onmouseleave="this.style.background=''">
+                onmouseenter="shipmentOneriFocus(${idx})" onmouseleave="this.style.background=''">
                 <div onclick="shipmentSec('${s}')" style="flex:1;">${s}</div>
-                <div onclick="shipmentOneriSil('${s}', event)" style="color:#ef4444;padding:4px 8px;border-radius:4px;font-size:14px;font-weight:900;" title="Öneriden kaldır">✕</div>
             </div>`;
         }).join('');
         dd.style.display = 'block';
     }
 
-    function shipmentOneriSil(s, e) {
-        if (e) e.stopPropagation();
+    function shipmentOneriFocus(idx) {
+        const items = document.querySelectorAll('.shipment-oneri-item');
+        items.forEach(el => el.style.background = '');
+        shipmentOneriIndex = idx;
+        const target = document.getElementById('shipmentItem_' + idx);
+        if(target) target.style.background = 'rgba(37,99,235,0.1)';
+    }
+
+    function shipmentKeyDown(e) {
+        const dd = document.getElementById('shipmentDropdown');
+        const items = document.querySelectorAll('.shipment-oneri-item');
+        
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            shipmentOneriIndex = (shipmentOneriIndex + 1) % items.length;
+            shipmentOneriFocus(shipmentOneriIndex);
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            shipmentOneriIndex = (shipmentOneriIndex - 1 + items.length) % items.length;
+            shipmentOneriFocus(shipmentOneriIndex);
+        } else if (e.key === 'Enter' && shipmentOneriIndex > -1) {
+            e.preventDefault();
+            const val = items[shipmentOneriIndex].querySelector('div').textContent;
+            shipmentSec(val);
+        } else if (e.key === 'Delete') {
+            // Mouse ile üzerine gelinen veya klavye ile seçilen numarayı sil
+            const input = document.getElementById('shipment_v2');
+            const hoveredItem = document.querySelector('.shipment-oneri-item:hover');
+            let valToDel = null;
+            if (hoveredItem) {
+                valToDel = hoveredItem.querySelector('div').textContent;
+            } else if (shipmentOneriIndex > -1) {
+                valToDel = items[shipmentOneriIndex].querySelector('div').textContent;
+            }
+            
+            if (valToDel) {
+                e.preventDefault();
+                shipmentOneriSil(valToDel);
+            }
+        }
+    }
+
+    function shipmentOneriSil(s) {
         if (!confirm(s + ' numaralı shipment öneriden kaldırılsın mı?')) return;
         const silinenler = JSON.parse(localStorage.getItem('silinenShipmentlar') || '[]');
         if (!silinenler.includes(s)) {
@@ -2666,8 +2769,11 @@
         if (!secilenAracTipi) { showToast('⚠️  Araç Tipi seçiniz!','warn'); return; }
         if (!secilenAracTuru) { showToast('⚠️  Araç Türü seçiniz (O/E veya Piyasa)!','warn'); return; }
 
-        const cakisma = cakismaKontrol(ekip, baslama);
-        if (cakisma) { showToast('⚠️  '+cakisma,'warn'); return; }
+        // GÜNCELLEME MODUNDA ÇAKIŞMA KONTROLÜNÜ KALDIR (KULLANICI İSTEDİ)
+        if (duzenleId === null) {
+            const cakisma = cakismaKontrol(ekip, baslama);
+            if (cakisma) { showToast('⚠️  '+cakisma,'warn'); return; }
+        }
 
         const sure  = hesaplaSure(baslama, bitis, secilenAracTipi, duruslar);
         const today = new Date().toISOString().split('T')[0];
@@ -2728,6 +2834,14 @@
         const tarih     = secilenEl ? secilenEl.value : today;
         const bugun     = kayitlar.filter(k => k.tarih===tarih);
         const sirali    = [...bugun].sort((a,b)=>b.id-a.id);
+
+        // Dinamik Orta Başlık
+        const dBaslik = document.getElementById('dinamikBaslik');
+        if (dBaslik) {
+            const parcalar = tarih.split('-');
+            const formatliTarih = `${parcalar[2]}.${parcalar[1]}.${parcalar[0]}`;
+            dBaslik.textContent = `${formatliTarih} TARİHLİ ÖN AMBAR YÜKLEME LİSTESİ`;
+        }
 
         // Başlık ve bugün butonu
         const bugunBtn = document.getElementById('bugunBtn');
@@ -2813,7 +2927,7 @@
                 <td style="padding:10px 12px;font-weight:600;font-size:11px;">${ekipKisaGoster(k.ekip)}</td>
                 <td style="padding:10px 12px;font-size:11px;color:var(--text-dim);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${forkliftciGoster}">${forkliftciGoster}</td>
                 <td style="padding:10px 12px;"><span class="badge ${tipBadge}">${k.aracTipi}</span></td>
-                <td style="padding:10px 12px;font-size:10px;font-weight:700;color:var(--text-dim);">${k.aracTuru || '—'}</td>
+                <td style="padding:10px 12px;font-size:10px;font-weight:700;color:var(--text-dim);">${(k.aracTuru||'').toUpperCase().replace(' SEÇİMİ','')}</td>
                 <td style="padding:10px 12px;color:var(--text-dim);font-size:11px;white-space:nowrap;">${k.baslama} - ${k.bitis}</td>
                 <td style="padding:10px 12px;">${durum}</td>
                 <td style="padding:6px 12px;">
@@ -3299,11 +3413,27 @@
             const genM3 = ekipler.reduce((s,e)=>s+e.m3,0);
             sonuc.innerHTML = `
                 <div class="donem-badge">📅 ${donem.label}${e2Vardiya !== 'hepsi' ? ' · ' + e2Vardiya : ''} · ${genToplam} araç</div>
-                <div class="sef-bolum"><div style="overflow-x:auto;"><table class="data-table" style="font-size:12px;">
-                    <thead><tr><th>Ay</th><th>Ekip</th><th style="color:#92660a">Tır</th><th style="color:#1e4d8c">Kamyon</th><th style="color:#475569">Konteyner</th><th style="color:#b91c1c">Toplam</th><th style="color:var(--success)">M³</th></tr></thead>
+                <div class="sef-bolum"><div style="overflow-x:auto;"><table class="data-table" style="font-size:14px; width:100%; border-collapse:separate; border-spacing:0 8px;">
+                    <thead><tr><th style="padding:12px;">S.No</th><th style="padding:12px;">Ay</th><th style="padding:12px;">Ekip</th><th style="color:#92660a; padding:12px; text-align:center;">Tır</th><th style="color:#1e4d8c; padding:12px; text-align:center;">Kamyon</th><th style="color:#475569; padding:12px; text-align:center;">Konteyner</th><th style="color:#b91c1c; padding:12px; text-align:center;">Toplam</th><th style="color:var(--success); padding:12px; text-align:center;">M³</th></tr></thead>
                     <tbody>
-                        ${satirlar.map(r=>`<tr><td style="font-weight:700;color:var(--text-dim);">${r.grupLabel}</td><td style="font-weight:400;font-size:11px;">${ekipKisaGoster(r.ekipAd)}</td><td style="font-weight:700;"><span style="background:rgba(253,230,138,0.5);color:#92660a;border-radius:5px;padding:1px 7px;">${r.tir||'—'}</span></td><td style="font-weight:700;"><span style="background:rgba(147,197,253,0.4);color:#1e4d8c;border-radius:5px;padding:1px 7px;">${r.kamyon||'—'}</span></td><td style="font-weight:700;"><span style="background:rgba(203,213,225,0.5);color:#475569;border-radius:5px;padding:1px 7px;">${r.konteyner||'—'}</span></td><td style="font-weight:800;"><span style="background:rgba(254,202,202,0.4);color:#b91c1c;border-radius:5px;padding:1px 7px;">${r.toplam}</span></td><td style="color:var(--success);font-weight:700;">${r.m3.toFixed(1)}</td></tr>`).join('')}
-                        <tr style="background:rgba(37,99,235,0.15);border-top:2px solid rgba(37,99,235,0.4);"><td style="font-weight:900;color:var(--blue-light);" colspan="2">YILLIK TOPLAM</td><td style="font-weight:900;color:#92660a;">${genTir}</td><td style="font-weight:900;color:#1e4d8c;">${genKamyon}</td><td style="font-weight:900;color:#475569;">${genKonteyner}</td><td style="font-weight:900;color:#b91c1c;">${genToplam}</td><td style="font-weight:900;color:var(--success);">${genM3.toFixed(1)}</td></tr>
+                        ${satirlar.map((r,idx)=>`<tr>
+                            <td style="padding:12px; color:var(--muted); font-size:12px;">${idx+1}</td>
+                            <td style="font-weight:700; color:var(--text-dim); padding:12px;">${r.grupLabel}</td>
+                            <td style="font-weight:400; font-size:13px; padding:12px;">${ekipKisaGoster(r.ekipAd)}</td>
+                            <td style="font-weight:700; text-align:center; padding:12px;"><span style="background:rgba(253,230,138,0.5); color:#92660a; border-radius:5px; padding:4px 10px;">${r.tir||'—'}</span></td>
+                            <td style="font-weight:700; text-align:center; padding:12px;"><span style="background:rgba(147,197,253,0.4); color:#1e4d8c; border-radius:5px; padding:4px 10px;">${r.kamyon||'—'}</span></td>
+                            <td style="font-weight:700; text-align:center; padding:12px;"><span style="background:rgba(203,213,225,0.5); color:#475569; border-radius:5px; padding:4px 10px;">${r.konteyner||'—'}</span></td>
+                            <td style="font-weight:800; text-align:center; padding:12px;"><span style="background:rgba(254,202,202,0.4); color:#b91c1c; border-radius:5px; padding:4px 10px;">${r.toplam}</span></td>
+                            <td style="color:var(--success); font-weight:700; text-align:center; padding:12px;">${r.m3.toFixed(1)}</td>
+                        </tr>`).join('')}
+                        <tr style="background:rgba(37,99,235,0.15); border-top:2px solid rgba(37,99,235,0.4);">
+                            <td colspan="3" style="font-weight:900; color:var(--blue-light); padding:15px;">YILLIK TOPLAM</td>
+                            <td style="font-weight:900; color:#92660a; text-align:center; padding:15px;">${genTir}</td>
+                            <td style="font-weight:900; color:#1e4d8c; text-align:center; padding:15px;">${genKamyon}</td>
+                            <td style="font-weight:900; color:#475569; text-align:center; padding:15px;">${genKonteyner}</td>
+                            <td style="font-weight:900; color:#b91c1c; text-align:center; padding:15px;">${genToplam}</td>
+                            <td style="font-weight:900; color:var(--success); text-align:center; padding:15px;">${genM3.toFixed(1)}</td>
+                        </tr>
                     </tbody></table></div></div>`;
         } else if (e2Donem === 'ay' || e2Donem === 'aralik') {
             // ══ AYLIK/ARALIK: Ekip bazlı toplam (tarih göstermeden) ══
@@ -3312,20 +3442,35 @@
             const genM3 = ekipler.reduce((s,e)=>s+e.m3,0);
             sonuc.innerHTML = `
                 <div class="donem-badge">📅 ${donem.label}${e2Vardiya !== 'hepsi' ? ' · ' + e2Vardiya : ''} · ${genToplam} araç</div>
-                <div class="sef-bolum"><div style="overflow-x:auto;"><table class="data-table" style="font-size:12px;">
-                    <thead><tr><th>Ekip</th><th style="color:#92660a">Tır</th><th style="color:#1e4d8c">Kamyon</th><th style="color:#475569">Konteyner</th><th style="color:#b91c1c">Toplam</th><th style="color:var(--success)">M³</th></tr></thead>
+                <div class="sef-bolum"><div style="overflow-x:auto;"><table class="data-table" style="font-size:14px; width:100%; border-collapse:separate; border-spacing:0 8px;">
+                    <thead><tr><th style="padding:12px;">S.No</th><th style="padding:12px;">Ekip</th><th style="color:#92660a; padding:12px; text-align:center;">Tır</th><th style="color:#1e4d8c; padding:12px; text-align:center;">Kamyon</th><th style="color:#475569; padding:12px; text-align:center;">Konteyner</th><th style="color:#b91c1c; padding:12px; text-align:center;">Toplam</th><th style="color:var(--success); padding:12px; text-align:center;">M³</th></tr></thead>
                     <tbody>
-                        ${ekipler.map(e=>`<tr><td style="font-weight:400;font-size:11px;">${ekipKisaGoster(e.ad)}</td><td style="font-weight:700;"><span style="background:rgba(253,230,138,0.5);color:#92660a;border-radius:5px;padding:1px 7px;">${e.tir||'—'}</span></td><td style="font-weight:700;"><span style="background:rgba(147,197,253,0.4);color:#1e4d8c;border-radius:5px;padding:1px 7px;">${e.kamyon||'—'}</span></td><td style="font-weight:700;"><span style="background:rgba(203,213,225,0.5);color:#475569;border-radius:5px;padding:1px 7px;">${e.konteyner||'—'}</span></td><td style="font-weight:800;"><span style="background:rgba(254,202,202,0.4);color:#b91c1c;border-radius:5px;padding:1px 7px;">${e.kayitlar.length}</span></td><td style="color:var(--success);font-weight:700;">${e.m3.toFixed(1)}</td></tr>`).join('')}
-                        <tr style="background:rgba(37,99,235,0.15);border-top:2px solid rgba(37,99,235,0.4);"><td style="font-weight:900;color:var(--blue-light);">GENEL TOPLAM</td><td style="font-weight:900;color:#92660a;">${genTir}</td><td style="font-weight:900;color:#1e4d8c;">${genKamyon}</td><td style="font-weight:900;color:#475569;">${genKonteyner}</td><td style="font-weight:900;color:#b91c1c;">${genToplam}</td><td style="font-weight:900;color:var(--success);">${genM3.toFixed(1)}</td></tr>
+                        ${ekipler.map((e,idx)=>`<tr>
+                            <td style="padding:12px; color:var(--muted); font-size:12px;">${idx+1}</td>
+                            <td style="font-weight:400; font-size:13px; padding:12px;">${ekipKisaGoster(e.ad)}</td>
+                            <td style="font-weight:700; text-align:center; padding:12px;"><span style="background:rgba(253,230,138,0.5); color:#92660a; border-radius:5px; padding:4px 10px;">${e.tir||'—'}</span></td>
+                            <td style="font-weight:700; text-align:center; padding:12px;"><span style="background:rgba(147,197,253,0.4); color:#1e4d8c; border-radius:5px; padding:4px 10px;">${e.kamyon||'—'}</span></td>
+                            <td style="font-weight:700; text-align:center; padding:12px;"><span style="background:rgba(203,213,225,0.5); color:#475569; border-radius:5px; padding:4px 10px;">${e.konteyner||'—'}</span></td>
+                            <td style="font-weight:800; text-align:center; padding:12px;"><span style="background:rgba(254,202,202,0.4); color:#b91c1c; border-radius:5px; padding:4px 10px;">${e.kayitlar.length}</span></td>
+                            <td style="color:var(--success); font-weight:700; text-align:center; padding:12px;">${e.m3.toFixed(1)}</td>
+                        </tr>`).join('')}
+                        <tr style="background:rgba(37,99,235,0.15); border-top:2px solid rgba(37,99,235,0.4);">
+                            <td colspan="2" style="font-weight:900; color:var(--blue-light); padding:15px;">GENEL TOPLAM</td>
+                            <td style="font-weight:900; color:#92660a; text-align:center; padding:15px;">${genTir}</td>
+                            <td style="font-weight:900; color:#1e4d8c; text-align:center; padding:15px;">${genKamyon}</td>
+                            <td style="font-weight:900; color:#475569; text-align:center; padding:15px;">${genKonteyner}</td>
+                            <td style="font-weight:900; color:#b91c1c; text-align:center; padding:15px;">${genToplam}</td>
+                            <td style="font-weight:900; color:var(--success); text-align:center; padding:15px;">${genM3.toFixed(1)}</td>
+                        </tr>
                     </tbody></table></div></div>`;
         } else {
-            // ══ GÜNLÜK / AYLIK / ARALIK: Detay ══
+            // ══ GÜNLÜK: Detay ══
             sonuc.innerHTML = `
                 <div class="donem-badge">📅 ${donem.label}${e2Vardiya !== 'hepsi' ? ' · ' + e2Vardiya : ''}</div>
                 ${ekipler.map(ekip => `
                     <div class="sef-bolum" style="margin-bottom:16px;">
                         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
-                            <div style="font-size:13px;font-weight:400;color:var(--text);">${ekipKisaGoster(ekip.ad)}</div>
+                            <div style="font-size:14px;font-weight:700;color:var(--text);">${ekipKisaGoster(ekip.ad)}</div>
                             <div style="display:flex;gap:6px;flex-wrap:wrap;">
                                 ${ekip.tir>0?`<span class="stat-pill badge-tir">🚛 ${ekip.tir} Tır</span>`:''}
                                 ${ekip.kamyon>0?`<span class="stat-pill badge-kamyon">🚚 ${ekip.kamyon} Kamyon</span>`:''}
@@ -3335,39 +3480,36 @@
                             </div>
                         </div>
                         <div style="overflow-x:auto;">
-                            <table class="data-table" style="font-size:11px;">
+                            <table class="data-table" style="font-size:12px; width:100%; border-collapse:separate; border-spacing:0 4px;">
                                 <thead><tr>
-                                    <th>#</th>
+                                    <th>S.No</th>
                                     ${e2Vardiya==='hepsi'?'<th>Vardiya</th>':''}
                                     <th>Tip</th><th>Tür</th>
                                     <th>M³</th><th>Shipment</th><th>Saat</th><th>Net</th>
-                                    <th>Duruşlar</th><th>Kaliteci</th><th>Açıklama</th>
+                                    <th>Forkliftçi</th><th>Durum</th><th>Duruşlar</th><th>Kaliteci</th><th>Açıklama</th>
                                 </tr></thead>
                                 <tbody>
-                                    ${ekip.kayitlar.map((k,i) => {
-                                        const tipBadge = k.aracTipi==='Tır'?'badge-tir':k.aracTipi==='Kamyon'?'badge-kamyon':'badge-konteyner';
-                                        const durusStr = (k.duruslar||[]).filter(d=>d.sure).length > 0
-                                            ? k.duruslar.filter(d=>d.sure).map(d=>`${d.sebep}(${d.sure}dk)`).join(', ')
-                                            : '—';
-                                        return `<tr>
-                                            <td style="color:var(--muted)">${i+1}</td>
-                                            ${e2Vardiya==='hepsi'?`<td style="font-size:10px;font-weight:800;color:${k.vardiya==='A Vardiyası'?'var(--blue-light)':'var(--yellow)'};">${k.vardiya==='A Vardiyası'?'A':'B'}</td>`:''}
-                                            <td><span class="badge ${tipBadge}">${k.aracTipi}</span></td>
-                                            <td><span class="badge ${k.aracTuru==='O/E'?'badge-oe':'badge-piyasa'}">${k.aracTuru}</span></td>
-                                            <td style="color:var(--success);font-weight:800;">${k.m3}</td>
-                                            <td style="color:var(--text-dim)">${k.shipment||'—'}</td>
-                                            <td style="color:var(--text-dim);white-space:nowrap;">${k.baslama} - ${k.bitis}</td>
-                                            <td style="font-weight:700;">${k.net}</td>
-                                            <td style="color:var(--warning);font-size:10px;">${durusStr}</td>
-                                            <td style="color:var(--text-dim)">${k.kaliteci||'—'}</td>
-                                            <td style="color:var(--text-dim)">${k.aciklama||'—'}</td>
-                                        </tr>`;
-                                    }).join('')}
+                                    ${ekip.kayitlar.map((k,idx) => `
+                                        <tr>
+                                            <td style="padding:8px; color:var(--muted);">${idx+1}</td>
+                                            ${e2Vardiya==='hepsi'?'<td style="padding:8px;">'+k.vardiya.replace(' Vardiyası','')+'</td>':''}
+                                            <td style="padding:8px;"><span class="badge ${k.aracTipi==='Tır'?'badge-tir':k.aracTipi==='Kamyon'?'badge-kamyon':'badge-konteyner'}">${k.aracTipi}</span></td>
+                                            <td style="padding:8px; font-weight:700; font-size:10px;">${k.aracTuru||'—'}</td>
+                                            <td style="padding:8px; font-weight:700; color:var(--success);">${k.m3||'—'}</td>
+                                            <td style="padding:8px; font-family:'Barlow Condensed',sans-serif; font-weight:700;">${k.shipment||'—'}</td>
+                                            <td style="padding:8px;">${k.baslama}-${k.bitis}</td>
+                                            <td style="padding:8px; font-weight:700;">${k.net}</td>
+                                            <td style="padding:8px; font-weight:400; font-size:11px;">${k.forkliftci||'—'}</td>
+                                            <td style="padding:8px;">${k.gec?`<span class="status-gec">${k.gecSure}</span>`:`<span class="status-ok">✓</span>`}</td>
+                                            <td style="padding:8px; font-size:10px;">${(k.duruslar||[]).map(d=>`${d.sebep}(${d.sure}dk)`).join(', ') || '—'}</td>
+                                            <td style="padding:8px;">${k.kaliteci||'—'}</td>
+                                            <td style="padding:8px; font-size:10px; color:var(--muted);">${k.aciklama||'—'}</td>
+                                        </tr>`).join('')}
                                 </tbody>
                             </table>
                         </div>
-                    </div>
-                `).join('')}`;
+                    </div>`).join('')}
+            `;
         }
     }
 
@@ -3948,12 +4090,23 @@
         tbody.innerHTML = liste.map(m => {
             const dt = new Date(m.tarih+'T00:00:00');
             const tarihStr = `${dt.getDate().toString().padStart(2,'0')}.${(dt.getMonth()+1).toString().padStart(2,'0')}.${dt.getFullYear()}`;
-            const turRenk = m.tur === 'Pazar' ? 'var(--danger)' : 'var(--success)';
-            return `<tr onclick="mesaiDuzenle(${m.id})" style="cursor:pointer;">
+            
+            // RENK MANTIĞI (Kullanıcı İsteği)
+            let rowStyle = 'cursor:pointer; transition:background 0.2s;';
+            let vColor = m.vardiya === 'A' ? '#2563eb' : '#f59e0b'; // B Vardiyası Turuncu
+            let tColor = (m.tur === 'Pazar' || m.tur === 'Pazar15') ? '#dc2626' : '#16a34a'; // Pazar Kırmızı
+            
+            if (m.tur === 'Pazar' || m.tur === 'Pazar15') {
+                rowStyle += 'background: rgba(220,38,38,0.1);'; // Hafif kırmızı arka plan
+            } else if (m.vardiya === 'B') {
+                rowStyle += 'background: rgba(245,158,11,0.08);'; // Hafif turuncu arka plan
+            }
+
+            return `<tr onclick="mesaiDuzenle(${m.id})" style="${rowStyle}" onmouseover="this.style.background='rgba(0,0,0,0.05)'" onmouseout="this.style.background='${(m.tur==='Pazar'||m.tur==='Pazar15')?'rgba(220,38,38,0.1)':(m.vardiya==='B'?'rgba(245,158,11,0.08)':'')} '">
                 <td style="font-size:11px;">${tarihStr}</td>
-                <td style="font-weight:800;color:${m.vardiya==='A'?'var(--blue-light)':'var(--yellow)'};">${m.vardiya}</td>
-                <td style="color:${turRenk};font-weight:700;">${m.tur}</td>
-                <td style="font-weight:800;color:#fda4af;">${m.kisi}</td>
+                <td style="font-weight:800;color:${vColor};">${m.vardiya}</td>
+                <td style="color:${tColor};font-weight:700;">${m.tur}</td>
+                <td style="font-weight:800;color:#3d4f6e;">${m.kisi}</td>
                 <td style="color:var(--text-dim);">${m.hesaplananGun}</td>
                 <td><button class="del-btn" onclick="mesaiSil(${m.id},event)" title="Sil">🗑️</button></td>
             </tr>`;
@@ -4358,8 +4511,8 @@
                                 const ts = `${dt.getDate().toString().padStart(2,'0')}.${(dt.getMonth()+1).toString().padStart(2,'0')}.${dt.getFullYear()}`;
                                 return `<tr>
                                     <td>${ts}</td>
-                                    <td style="font-weight:800;color:${m.vardiya==='A'?'var(--blue-light)':'var(--yellow)'};">${m.vardiya}</td>
-                                    <td style="color:${m.tur==='Pazar'?'var(--danger)':'var(--success)'};">${m.tur}</td>
+                                    <td style="font-weight:800;color:${m.vardiya==='A'?'var(--blue-light)':'#d97706'};background:${m.vardiya==='B'?'rgba(217,119,6,0.1)':''};">${m.vardiya}</td>
+                                    <td style="font-weight:800;color:${(m.tur==='Pazar'||m.tur==='Pazar 1,5')?'#dc2626':'var(--success)'};background:${(m.tur==='Pazar'||m.tur==='Pazar 1,5')?'rgba(220,38,38,0.1)':''};">${m.tur}</td>
                                     <td style="font-weight:800;">${m.kisi}</td>
                                     <td style="color:var(--text-dim);">${m.hesaplananGun}</td>
                                 </tr>`;
@@ -5143,101 +5296,79 @@ function va7Sorgula() {
 
     const ekipA = ekipMapOlustur(listeA);
     const ekipB = ekipMapOlustur(listeB);
-    const ekipT = ekipMapOlustur(liste);
 
-    const topA = listeA.length, topB = listeB.length, topT = liste.length;
+    const topA = listeA.length, topB = listeB.length;
     const m3A  = listeA.reduce((s,k)=>s+(k.m3||0),0);
     const m3B  = listeB.reduce((s,k)=>s+(k.m3||0),0);
-    const m3T  = liste.reduce((s,k)=>s+(k.m3||0),0);
 
-    function liderSatir(ekipler, renk) {
-        if (!ekipler.length) return '<tr><td colspan="6" style="color:var(--muted);text-align:center;">Kayıt yok</td></tr>';
+    const topTirA = ekipA.reduce((s,e)=>s+e.tir,0), topKamyonA = ekipA.reduce((s,e)=>s+e.kamyon,0), topKonteynerA = ekipA.reduce((s,e)=>s+e.konteyner,0);
+    const topTirB = ekipB.reduce((s,e)=>s+e.tir,0), topKamyonB = ekipB.reduce((s,e)=>s+e.kamyon,0), topKonteynerB = ekipB.reduce((s,e)=>s+e.konteyner,0);
+
+    function liderSatir(ekipler) {
+        if (!ekipler.length) return '<tr><td colspan="6" style="color:var(--muted);text-align:center;padding:20px;">Kayıt yok</td></tr>';
         return ekipler.map((e, i) => {
-            let rankBadge;
-            if (i === 0) {
-                rankBadge = `<div style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;font-size:11px;font-weight:900;box-shadow:0 2px 8px rgba(217,119,6,0.5);">1</div>`;
-            } else if (i === 1) {
-                rankBadge = `<div style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#94a3b8,#64748b);color:#fff;font-size:11px;font-weight:900;box-shadow:0 2px 8px rgba(100,116,139,0.5);">2</div>`;
-            } else if (i === 2) {
-                rankBadge = `<div style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#c97c3a,#a16207);color:#fff;font-size:11px;font-weight:900;box-shadow:0 2px 8px rgba(161,98,7,0.5);">3</div>`;
-            } else {
-                rankBadge = `<div style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:rgba(163,177,198,0.3);color:var(--text-dim);font-size:11px;font-weight:700;">${i+1}</div>`;
-            }
+            const rankBadge = i < 3 
+                ? `<div style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:${i===0?'#f59e0b':i===1?'#94a3b8':'#c97c3a'};color:#fff;font-size:10px;font-weight:900;">${i+1}</div>`
+                : `<div style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:rgba(163,177,198,0.2);color:var(--text-dim);font-size:10px;">${i+1}</div>`;
+            
             return `<tr>
-                <td style="text-align:center;">${rankBadge}</td>
-                <td style="font-weight:700;color:var(--text);font-size:12px;">${ekipKisaGoster(e.ad)}</td>
-                <td style="font-weight:800;text-align:center;"><span style="background:rgba(253,230,138,0.5);color:#92660a;border-radius:6px;padding:2px 8px;">${e.tir || '—'}</span></td>
-                <td style="font-weight:800;text-align:center;"><span style="background:rgba(147,197,253,0.45);color:#1e4d8c;border-radius:6px;padding:2px 8px;">${e.kamyon || '—'}</span></td>
-                <td style="font-weight:800;text-align:center;"><span style="background:rgba(203,213,225,0.55);color:#475569;border-radius:6px;padding:2px 8px;">${e.konteyner || '—'}</span></td>
-                <td style="color:var(--success);font-weight:700;text-align:center;">${e.m3.toFixed(1)}</td>
+                <td style="text-align:center;padding:8px 4px;">${rankBadge}</td>
+                <td style="font-weight:700;color:var(--text);font-size:12px;padding:8px 4px;">${ekipKisaGoster(e.ad)}</td>
+                <td style="font-weight:800;text-align:center;padding:8px 4px;"><span style="background:rgba(253,230,138,0.4);color:#92660a;border-radius:4px;padding:1px 6px;">${e.tir || '—'}</span></td>
+                <td style="font-weight:800;text-align:center;padding:8px 4px;"><span style="background:rgba(147,197,253,0.35);color:#1e4d8c;border-radius:4px;padding:1px 6px;">${e.kamyon || '—'}</span></td>
+                <td style="font-weight:800;text-align:center;padding:8px 4px;"><span style="background:rgba(203,213,225,0.45);color:#475569;border-radius:4px;padding:1px 6px;">${e.konteyner || '—'}</span></td>
+                <td style="color:var(--success);font-weight:700;text-align:center;padding:8px 4px;">${e.m3.toFixed(1)}</td>
             </tr>`;
         }).join('');
     }
 
-    function tabloOlustur(baslik, renk, rankNo, ekipler, toplamArac, toplamM3, listeLen) {
-        // Totals
-        const topTir = ekipler.reduce((s,e)=>s+e.tir,0);
-        const topKamyon = ekipler.reduce((s,e)=>s+e.kamyon,0);
-        const topKonteyner = ekipler.reduce((s,e)=>s+e.konteyner,0);
-
-        // Rank badge for section header
-        const rankColors = { 1: 'linear-gradient(135deg,#2563eb,#1d4ed8)', 2: 'linear-gradient(135deg,#d97706,#b45309)', 3: 'linear-gradient(135deg,#7c3aed,#6d28d9)' };
-        const rankIcons  = { 1: '▲', 2: '▲', 3: '★' };
-
-        if (!listeLen) return `
-            <div class="sef-bolum" style="margin-bottom:16px;">
-                <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
-                    <div style="width:36px;height:36px;border-radius:10px;background:${rankColors[rankNo]||renk};display:flex;align-items:center;justify-content:center;">
-                        <span style="color:#fff;font-size:14px;font-weight:900;">${rankIcons[rankNo]||'·'}</span>
-                    </div>
-                    <div>
-                        <div style="font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900;letter-spacing:1px;color:${renk};">${baslik}</div>
-                        <div style="font-size:11px;color:var(--muted);">Bu dönemde kayıt yok</div>
-                    </div>
-                </div>
-            </div>`;
-
-        return `
-            <div class="sef-bolum" style="margin-bottom:16px;">
-                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
-                    <div style="display:flex;align-items:center;gap:10px;">
-                        <div style="width:36px;height:36px;border-radius:10px;background:${rankColors[rankNo]||renk};display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,0.2);">
-                            <span style="color:#fff;font-size:14px;font-weight:900;">${rankIcons[rankNo]||'·'}</span>
-                        </div>
-                        <div>
-                            <div style="font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900;letter-spacing:1px;color:${renk};">${baslik}</div>
-                            <div style="font-size:11px;color:var(--muted);">${ekipler.length} ekip</div>
+    sonuc.innerHTML = `
+        <div class="donem-badge">📅 ${donem.label} · Toplam ${liste.length} Araç</div>
+        <div class="sef-bolum" style="padding:20px;">
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:24px;">
+                
+                <!-- A VARDİYASI -->
+                <div>
+                    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; border-bottom:2px solid rgba(37,99,235,0.2); padding-bottom:8px;">
+                        <div style="font-family:'Barlow Condensed',sans-serif; font-size:15px; font-weight:900; color:#2563eb; letter-spacing:1px;">A VARDİYASI</div>
+                        <div style="display:flex; gap:6px;">
+                            <span class="stat-pill" style="background:rgba(37,99,235,0.1); color:#2563eb; font-size:11px;">${topA} Araç</span>
+                            <span class="stat-pill" style="background:rgba(34,197,94,0.1); color:#16a34a; font-size:11px;">${m3A.toFixed(1)} M³</span>
                         </div>
                     </div>
-                    <div style="display:flex;gap:6px;flex-wrap:wrap;">
-                        <span class="stat-pill" style="background:rgba(253,230,138,0.4);color:#92660a;border:1px solid rgba(253,230,138,0.8);">🚛 ${topTir} Tır</span>
-                        <span class="stat-pill" style="background:rgba(147,197,253,0.35);color:#1e4d8c;border:1px solid rgba(147,197,253,0.7);">🚚 ${topKamyon} Kamyon</span>
-                        <span class="stat-pill" style="background:rgba(203,213,225,0.5);color:#475569;border:1px solid rgba(203,213,225,0.8);">📦 ${topKonteyner} Konteyner</span>
-                        <span class="stat-pill" style="background:rgba(254,202,202,0.4);color:#b91c1c;border:1px solid rgba(254,202,202,0.8);">Toplam: ${toplamArac} Araç</span>
-                        <span class="stat-pill" style="background:rgba(34,197,94,0.12);color:#4ade80;border:1px solid rgba(34,197,94,0.3);">${toplamM3.toFixed(1)} M³</span>
+                    <div style="display:flex; gap:4px; margin-bottom:12px; justify-content:center;">
+                        <span style="font-size:10px; font-weight:800; color:#92660a; background:rgba(253,230,138,0.3); padding:2px 8px; border-radius:4px;">🚛 ${topTirA}</span>
+                        <span style="font-size:10px; font-weight:800; color:#1e4d8c; background:rgba(147,197,253,0.3); padding:2px 8px; border-radius:4px;">🚚 ${topKamyonA}</span>
+                        <span style="font-size:10px; font-weight:800; color:#475569; background:rgba(203,213,225,0.4); padding:2px 8px; border-radius:4px;">📦 ${topKonteynerA}</span>
                     </div>
-                </div>
-                <div style="overflow-x:auto;">
-                    <table class="data-table" style="font-size:12px;">
-                        <thead><tr>
-                            <th style="width:36px;">#</th>
-                            <th>Ekip</th>
-                            <th style="color:#92660a;text-align:center;">Tır</th>
-                            <th style="color:#1e4d8c;text-align:center;">Kamyon</th>
-                            <th style="color:#475569;text-align:center;">Konteyner</th>
-                            <th style="color:var(--success);text-align:center;">M³</th>
-                        </tr></thead>
-                        <tbody>${liderSatir(ekipler, renk)}</tbody>
+                    <table class="data-table" style="font-size:11px;">
+                        <thead><tr><th style="width:30px;">#</th><th>Ekip</th><th style="text-align:center;">T</th><th style="text-align:center;">K</th><th style="text-align:center;">C</th><th style="text-align:center;">M³</th></tr></thead>
+                        <tbody>${liderSatir(ekipA)}</tbody>
                     </table>
                 </div>
-            </div>`;
-    }
 
-    sonuc.innerHTML = `
-        <div class="donem-badge">📅 ${donem.label} · Toplam ${topT} araç · ${m3T.toFixed(1)} M³</div>
-        ${tabloOlustur('A VARDİYASI', '#2563eb', 1, ekipA, topA, m3A, listeA.length)}
-        ${tabloOlustur('B VARDİYASI', '#d97706', 2, ekipB, topB, m3B, listeB.length)}
-        ${tabloOlustur('GENEL TOPLAM', '#7c3aed', 3, ekipT, topT, m3T, liste.length)}
+                <!-- B VARDİYASI -->
+                <div>
+                    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; border-bottom:2px solid rgba(217,119,6,0.2); padding-bottom:8px;">
+                        <div style="font-family:'Barlow Condensed',sans-serif; font-size:15px; font-weight:900; color:#d97706; letter-spacing:1px;">B VARDİYASI</div>
+                        <div style="display:flex; gap:6px;">
+                            <span class="stat-pill" style="background:rgba(217,119,6,0.1); color:#d97706; font-size:11px;">${topB} Araç</span>
+                            <span class="stat-pill" style="background:rgba(34,197,94,0.1); color:#16a34a; font-size:11px;">${m3B.toFixed(1)} M³</span>
+                        </div>
+                    </div>
+                    <div style="display:flex; gap:4px; margin-bottom:12px; justify-content:center;">
+                        <span style="font-size:10px; font-weight:800; color:#92660a; background:rgba(253,230,138,0.3); padding:2px 8px; border-radius:4px;">🚛 ${topTirB}</span>
+                        <span style="font-size:10px; font-weight:800; color:#1e4d8c; background:rgba(147,197,253,0.3); padding:2px 8px; border-radius:4px;">🚚 ${topKamyonB}</span>
+                        <span style="font-size:10px; font-weight:800; color:#475569; background:rgba(203,213,225,0.4); padding:2px 8px; border-radius:4px;">📦 ${topKonteynerB}</span>
+                    </div>
+                    <table class="data-table" style="font-size:11px;">
+                        <thead><tr><th style="width:30px;">#</th><th>Ekip</th><th style="text-align:center;">T</th><th style="text-align:center;">K</th><th style="text-align:center;">C</th><th style="text-align:center;">M³</th></tr></thead>
+                        <tbody>${liderSatir(ekipB)}</tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
     `;
 }
 
@@ -5313,7 +5444,7 @@ document.addEventListener('DOMContentLoaded', function() {
             wrap.innerHTML = '<div style="font-size:11px;color:var(--muted);padding:6px 0;">Henüz satır yok — Satır Ekle\'ye bas</div>';
             return;
         }
-        wrap.innerHTML = hrKodSatirlari.map(s => {
+        wrap.innerHTML = hrKodSatirlari.map((s, idx) => {
             const isEksik = s.tur === 'eksik';
             const isFazla = s.tur === 'fazla';
             const turBg   = isEksik ? 'rgba(220,38,38,0.12)' : isFazla ? 'rgba(22,163,74,0.12)' : 'rgba(163,177,198,0.15)';
@@ -5334,8 +5465,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <option value="eksik" ${isEksik?'selected':''} style="color:#dc2626;background:#fff;">− EKSİK</option>
                     <option value="fazla" ${isFazla?'selected':''} style="color:#16a34a;background:#fff;">+ FAZLA</option>
                 </select>
-                <button onclick="hrKodSatirKaldir(${s.sid})"
-                    style="padding:5px 8px;border-radius:6px;border:1px solid rgba(163,177,198,0.35);background:transparent;color:var(--muted);font-size:13px;font-weight:900;cursor:pointer;line-height:1;">✕</button>
+                ${idx > 0 ? `<button onclick="hrKodSatirKaldir(${s.sid})" style="padding:5px 8px;border-radius:6px;border:1px solid rgba(163,177,198,0.35);background:transparent;color:var(--muted);font-size:13px;font-weight:900;cursor:pointer;line-height:1;">✕</button>` : ''}
             </div>`;
         }).join('');
     }
@@ -5380,6 +5510,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // ── Shipment autocomplete ─────────────────────────────────
+    let hrShipmentAcIdx = -1;
     function hrShipmentAutocomplete(input) {
         const dd = document.getElementById('hrShipmentAcDropdown');
         if (!dd) return;
@@ -5390,13 +5521,59 @@ document.addEventListener('DOMContentLoaded', function() {
         ].filter(s => s && s.trim()).map(s => s.trim().toUpperCase());
         const unique = [...new Set(all)].sort();
         const oneri = val ? unique.filter(s => s.includes(val) && s !== val) : unique.slice(0, 10);
-        if (!oneri.length) { dd.style.display='none'; return; }
+        if (!oneri.length) { dd.style.display='none'; hrShipmentAcIdx=-1; return; }
         dd.style.display = 'block';
-        dd.innerHTML = oneri.map(s =>
-            `<div class="shipment-oneri-item" onclick="hrShipmentSec('${s}')"
+        hrShipmentAcIdx = -1;
+        dd.innerHTML = oneri.map((s, idx) =>
+            `<div class="shipment-oneri-item" data-val="${s}" id="hrShipItem_${idx}" onclick="hrShipmentSec('${s}')"
                 style="padding:8px 12px;font-size:12px;font-weight:600;cursor:pointer;border-bottom:1px solid rgba(163,177,198,0.25);transition:background 0.1s;"
-                onmouseover="this.style.background='rgba(37,99,235,0.08)'" onmouseout="this.style.background=''">${s}</div>`
+                onmouseover="hrShipmentAcFocus(${idx})" onmouseout="this.style.background=''">${s}</div>`
         ).join('');
+    }
+
+    function hrShipmentAcFocus(idx) {
+        hrShipmentAcIdx = idx;
+        document.querySelectorAll('#hrShipmentAcDropdown .shipment-oneri-item').forEach((el, i) => {
+            el.style.background = i === idx ? 'rgba(37,99,235,0.1)' : '';
+        });
+    }
+
+    function hrShipmentKeyDown(e) {
+        const dd = document.getElementById('hrShipmentAcDropdown');
+        const items = dd.querySelectorAll('.shipment-oneri-item');
+        if (dd.style.display === 'none') return;
+
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            hrShipmentAcIdx = (hrShipmentAcIdx + 1) % items.length;
+            hrShipmentAcFocus(hrShipmentAcIdx);
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            hrShipmentAcIdx = (hrShipmentAcIdx - 1 + items.length) % items.length;
+            hrShipmentAcFocus(hrShipmentAcIdx);
+        } else if (e.key === 'Enter' && hrShipmentAcIdx > -1) {
+            e.preventDefault();
+            const val = items[hrShipmentAcIdx].getAttribute('data-val');
+            hrShipmentSec(val);
+        } else if (e.key === 'Delete') {
+            // Mouse ile üzerine gelinen veya klavye ile seçilen numarayı sil
+            const hoveredItem = dd.querySelector('.shipment-oneri-item:hover');
+            let valToDel = null;
+            if (hoveredItem) valToDel = hoveredItem.getAttribute('data-val');
+            else if (hrShipmentAcIdx > -1) valToDel = items[hrShipmentAcIdx].getAttribute('data-val');
+            
+            if (valToDel) {
+                e.preventDefault();
+                if (confirm(valToDel + ' numaralı shipment öneriden kaldırılsın mı?')) {
+                    const silinenler = JSON.parse(localStorage.getItem('silinenShipmentlar') || '[]');
+                    if (!silinenler.includes(valToDel)) {
+                        silinenler.push(valToDel);
+                        localStorage.setItem('silinenShipmentlar', JSON.stringify(silinenler));
+                    }
+                    hrShipmentAutocomplete(document.getElementById('hrShipmentInput'));
+                }
+            }
+        }
     }
 
     function hrShipmentSec(val) {
