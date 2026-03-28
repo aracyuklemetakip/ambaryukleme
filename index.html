@@ -394,29 +394,13 @@
         .durus-menu-item { padding:8px 12px; font-size:12px;font-weight:600; cursor:pointer;transition:background 0.1s; border-bottom:1px solid rgba(163,177,198,0.3); }
         .durus-menu-item:last-child { border-bottom:none; }
         .durus-menu-item:hover { background:rgba(37,99,235,0.08);color:#2563eb; }
-        .btn-submit { width:100%;margin-top:12px;padding:10px;border-radius:8px; border:none;background:linear-gradient(135deg,var(--blue),#1d4ed8); color:white;font-family:'Barlow Condensed',sans-serif; font-size:15px;font-weight:900;letter-spacing:2px; text-transform:uppercase;cursor:pointer;transition:all 0.2s; box-shadow:0 3px 14px rgba(37,99,235,0.3); animation:submitPulse 2s ease-in-out infinite; }
-        .btn-submit:hover { transform:translateY(-2px);box-shadow:0 8px 28px rgba(37,99,235,0.45);animation:none; }
-        .btn-submit:focus { animation:submitPulseFocus 0.8s ease-in-out infinite; outline:none; }
-        .btn-submit.update-mode:focus { animation:submitPulseOrangeFocus 0.8s ease-in-out infinite; outline:none; }
-        @keyframes submitPulseFocus {
-            0%,100% { box-shadow:0 4px 20px rgba(37,99,235,0.4),0 0 0 3px rgba(37,99,235,0.5); opacity:1; }
-            50%      { box-shadow:0 4px 36px rgba(37,99,235,0.9),0 0 0 6px rgba(37,99,235,0.2); opacity:0.75; }
-        }
-        @keyframes submitPulseOrangeFocus {
-            0%,100% { box-shadow:0 4px 20px rgba(217,119,6,0.4),0 0 0 3px rgba(217,119,6,0.5); opacity:1; }
-            50%      { box-shadow:0 4px 36px rgba(217,119,6,0.9),0 0 0 6px rgba(217,119,6,0.2); opacity:0.75; }
-        }
-        .btn-submit:active { transform:translateY(0); }
-        .btn-submit.update-mode { background:linear-gradient(135deg,#d97706,#b45309); box-shadow:0 4px 20px rgba(217,119,6,0.3); animation:submitPulseOrange 2s ease-in-out infinite; }
-        .btn-submit.update-mode:hover { box-shadow:0 8px 28px rgba(217,119,6,0.45);animation:none; }
-        @keyframes submitPulse {
-            0%,100% { box-shadow:0 4px 20px rgba(37,99,235,0.3); opacity:1; }
-            50% { box-shadow:0 4px 32px rgba(37,99,235,0.75),0 0 0 6px rgba(37,99,235,0.15); opacity:0.88; }
-        }
-        @keyframes submitPulseOrange {
-            0%,100% { box-shadow:0 4px 20px rgba(217,119,6,0.3); opacity:1; }
-            50% { box-shadow:0 4px 32px rgba(217,119,6,0.75),0 0 0 6px rgba(217,119,6,0.15); opacity:0.88; }
-        }
+        .btn-submit { width:100%;margin-top:12px;padding:10px;border-radius:8px; border:none;background:linear-gradient(135deg,var(--blue),#1d4ed8); color:white;font-family:'Barlow Condensed',sans-serif; font-size:15px;font-weight:900;letter-spacing:2px; text-transform:uppercase;cursor:pointer;transition:transform 0.15s,box-shadow 0.15s; box-shadow:0 3px 14px rgba(37,99,235,0.3); }
+        .btn-submit:hover { transform:translateY(-3px) scale(1.015); box-shadow:0 10px 30px rgba(37,99,235,0.55); }
+        .btn-submit:active { transform:translateY(0) scale(1); box-shadow:0 3px 14px rgba(37,99,235,0.3); }
+        .btn-submit:focus-visible { outline:3px solid #60a5fa; outline-offset:3px; box-shadow:0 3px 14px rgba(37,99,235,0.3); }
+        .btn-submit.update-mode { background:linear-gradient(135deg,#d97706,#b45309); box-shadow:0 3px 14px rgba(217,119,6,0.3); }
+        .btn-submit.update-mode:hover { box-shadow:0 10px 30px rgba(217,119,6,0.55); }
+        .btn-submit.update-mode:focus-visible { outline:3px solid #fbbf24; outline-offset:3px; }
         .seg-btn:focus { outline:2px solid rgba(255,255,255,0.35); outline-offset:2px; }
         .seg-btn:focus:not(:focus-visible) { outline:none; }
 
@@ -1085,7 +1069,7 @@
             <div id="yuklemeListesiBaslik" style="display:none;"><div id="yuklemeListesiTarihText"></div></div>
 
             <table class="data-table">
-                <thead><tr><th>#</th><th style="width:30px;">Var.</th><th>Ekip</th><th>Araç</th><th>Saat</th><th>Lastik</th><th>E/F</th><th>Durum</th><th></th></tr></thead>
+                <thead><tr><th>#</th><th>Vardiya</th><th>Ekip</th><th>Forkliftçi</th><th>Araç</th><th>Saat</th><th>Durum</th><th></th></tr></thead>
                 <tbody id="tableBody"></tbody>
             </table>
             <div class="empty-state" id="emptyState">
@@ -1649,10 +1633,6 @@
                                         <div class="filtre-label">Bitiş</div>
                                         <input type="date" id="hrAralikBit" class="filtre-input" style="width:100%;" onchange="hrListele()">
                                     </div>
-                                </div>
-                                <div class="filtre-group">
-                                    <div class="filtre-label">Shipment Filtre (opsiyonel)</div>
-                                    <input type="text" id="hrListeShipment" class="filtre-input" style="width:100%;text-transform:uppercase;" placeholder="Tümü için boş bırak" oninput="this.value=this.value.toUpperCase();hrListele()">
                                 </div>
                                 <button onclick="hrPdfIndir()" style="width:100%;padding:10px;border-radius:8px;border:1px solid rgba(34,197,94,0.4);background:rgba(34,197,94,0.1);color:#16a34a;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:900;letter-spacing:1px;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.background='rgba(34,197,94,0.2)'" onmouseout="this.style.background='rgba(34,197,94,0.1)'">📥 PDF İNDİR</button>
                             </div>
@@ -2761,6 +2741,8 @@
             const lastikGoster = (k.lastikler&&k.lastikler.length) ? k.lastikler.map(l=>`${l.kod} (${l.adet})`).join(', ') : '—';
             const efGoster = k.eksikFazla || '—';
 
+            const forkliftciGoster = k.forkliftci ? k.forkliftci.trim() : '—';
+
             const tr = document.createElement('tr');
             tr.dataset.id = k.id;
             tr.style.cssText = 'cursor:pointer;border-bottom:1px solid rgba(163,177,198,0.2);transition:background 0.15s;background:#e8ecf4;';
@@ -2768,12 +2750,11 @@
 
             tr.innerHTML = `
                 <td style="padding:10px 12px;color:var(--muted);font-size:11px;">${i+1}</td>
-                <td style="padding:10px 12px;"><span style="font-size:10px;font-weight:800;color:${k.vardiya==='A Vardiyası'?'var(--blue-light)':'var(--yellow)'};">${k.vardiya==='A Vardiyası'?'A':'B'}</span></td>
-                <td style="padding:10px 12px;font-weight:400;font-size:11px;">${ekipKisaGoster(k.ekip)}</td>
+                <td style="padding:10px 12px;"><span style="font-size:11px;font-weight:800;padding:2px 7px;border-radius:4px;color:${k.vardiya==='A Vardiyası'?'#2563eb':'#d97706'};background:${k.vardiya==='A Vardiyası'?'rgba(37,99,235,0.1)':'rgba(217,119,6,0.1)'};border:1px solid ${k.vardiya==='A Vardiyası'?'rgba(37,99,235,0.3)':'rgba(217,119,6,0.3)'};">${k.vardiya==='A Vardiyası'?'A VRD':'B VRD'}</span></td>
+                <td style="padding:10px 12px;font-weight:600;font-size:11px;">${ekipKisaGoster(k.ekip)}</td>
+                <td style="padding:10px 12px;font-size:11px;color:var(--text-dim);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${forkliftciGoster}">${forkliftciGoster}</td>
                 <td style="padding:10px 12px;"><span class="badge ${tipBadge}">${k.aracTipi}</span></td>
-                <td style="padding:10px 12px;color:var(--text-dim);font-size:11px;">${k.baslama} - ${k.bitis}</td>
-                <td style="padding:10px 12px;font-size:10px;color:var(--text-dim);max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${lastikGoster}">${lastikGoster}</td>
-                <td style="padding:10px 12px;font-size:11px;color:var(--warning);font-weight:700;">${efGoster}</td>
+                <td style="padding:10px 12px;color:var(--text-dim);font-size:11px;white-space:nowrap;">${k.baslama} - ${k.bitis}</td>
                 <td style="padding:10px 12px;">${durum}</td>
                 <td style="padding:6px 12px;">
                     <button class="del-btn" data-delid="${k.id}" title="Sil">🗑️</button>
@@ -2816,13 +2797,14 @@
         // Dropdown kapat
         const wrap = document.getElementById('durusWrap');
         if (wrap && !wrap.contains(e.target)) document.getElementById('durusMenu').classList.remove('open');
-        // Seçim kaldır — form input/buton veya satır tıklamalarında iptal etme
+        // Seçim kaldır — tablo paneli veya form paneli tıklamalarında İPTAL ETME
         if (duzenleId !== null) {
-            const clickedRow    = e.target.closest('#tableBody tr');
-            const clickedBanner = e.target.closest('#editBanner');
-            const clickedSubmit = e.target.closest('#btnSubmit');
-            const clickedInput  = e.target.closest('input, textarea, select, button, .seg-btn, .seg-group, .durus-menu, .durus-menu-item, .btn-add-durus, #ekipDropdown, #forkliftciDropdown, #shipmentDropdown');
-            if (!clickedRow && !clickedBanner && !clickedSubmit && !clickedInput) {
+            const clickedRow       = e.target.closest('#tableBody tr');
+            const clickedBanner    = e.target.closest('#editBanner');
+            const clickedSubmit    = e.target.closest('#btnSubmit');
+            const clickedFormPanel = e.target.closest('.form-panel');
+            const clickedTablePanel = e.target.closest('.table-panel');
+            if (!clickedRow && !clickedBanner && !clickedSubmit && !clickedFormPanel && !clickedTablePanel) {
                 iptalDuzenle();
             }
         }
@@ -5238,7 +5220,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function hrKodSatirEkle(kod, adet, tur) {
         const sid = ++_hrSatirCounter;
-        hrKodSatirlari.push({ sid, kod: kod||'', adet: adet||'', tur: tur||'eksik' });
+        hrKodSatirlari.push({ sid, kod: kod||'', adet: adet||'', tur: tur||'' });
         hrKodSatirRender();
         // Son eklenen satırın kod inputuna odaklan
         setTimeout(() => {
@@ -5260,7 +5242,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function hrKodSatirTurToggle(sid) {
         const s = hrKodSatirlari.find(x => x.sid === sid);
         if (!s) return;
-        s.tur = s.tur === 'eksik' ? 'fazla' : 'eksik';
+        s.tur = s.tur === 'eksik' ? 'fazla' : s.tur === 'fazla' ? 'eksik' : 'eksik';
         hrKodSatirRender();
     }
 
@@ -5273,9 +5255,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         wrap.innerHTML = hrKodSatirlari.map(s => {
             const isEksik = s.tur === 'eksik';
-            const turBg   = isEksik ? 'rgba(220,38,38,0.12)' : 'rgba(22,163,74,0.12)';
-            const turClr  = isEksik ? '#dc2626' : '#16a34a';
-            const turLbl  = isEksik ? '−  EKSİK' : '+  FAZLA';
+            const isFazla = s.tur === 'fazla';
+            const turBg   = isEksik ? 'rgba(220,38,38,0.12)' : isFazla ? 'rgba(22,163,74,0.12)' : 'rgba(163,177,198,0.15)';
+            const turClr  = isEksik ? '#dc2626' : isFazla ? '#16a34a' : '#6b7a96';
+            const turLbl  = isEksik ? '−  EKSİK' : isFazla ? '+  FAZLA' : '±  SEÇ';
             return `<div style="display:flex;gap:5px;align-items:center;">
                 <input id="hrKodInp_${s.sid}" type="text" value="${s.kod}"
                     placeholder="Lastik kodu"
@@ -5495,7 +5478,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // ── Listele ──────────────────────────────────────────────
     function hrListele() {
-        const shipmentFiltre = (document.getElementById('hrListeShipment')?.value||'').trim().toUpperCase();
         let filtre = hrRaporlar.slice();
 
         if (hrDonem === 'gun') {
@@ -5512,7 +5494,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const bit = document.getElementById('hrAralikBit')?.value||'';
             if (bas && bit) filtre = filtre.filter(r => { const d = hrTarihIso(r.tarih); return d >= bas && d <= bit; });
         }
-        if (shipmentFiltre) filtre = filtre.filter(r => r.shipment && r.shipment.includes(shipmentFiltre));
         filtre.sort((a,b) => b.id - a.id);
 
         const tbody   = document.getElementById('hrTableBody');
@@ -5629,7 +5610,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // ── PDF ──────────────────────────────────────────────────
     function hrPdfIndir() {
-        const shipmentFiltre = (document.getElementById('hrListeShipment')?.value||'').trim().toUpperCase();
         let filtre = hrRaporlar.slice();
 
         if (hrDonem === 'gun') {
