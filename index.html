@@ -320,10 +320,18 @@
             grid-column:1/-1;
             display:flex; align-items:center; justify-content:space-between;
             padding:0 16px;
-            height:44px;
-            background:#1a56db;
-            border-bottom:1px solid #1447c0;
+            height:50px;
+            background: rgba(26, 86, 219, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
             position:sticky; top:0; z-index:100;
+            box-shadow: 
+                0 4px 15px rgba(0, 0, 0, 0.1),
+                0 1px 2px rgba(0, 0, 0, 0.05),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transform: perspective(1000px) rotateX(0.5deg);
+            transform-origin: top;
         }
         .topbar-left { display:flex; align-items:center; gap:10px; }
         .back-btn {
@@ -373,9 +381,8 @@
         .input-label { font-size:9px;font-weight:800;letter-spacing:1.5px; text-transform:uppercase;color:#3d5280; }
         .input-label .opt { font-weight:600;color:var(--muted);letter-spacing:0; text-transform:none;font-size:9px;margin-left:4px; }
         .seg-group { display:flex;gap:3px; }
-        .seg-btn { flex:1;padding:8px 4px;border-radius:10px; border:1px solid rgba(163,177,198,0.35);background:#e0e5ec; color:var(--text-dim);font-family:'Barlow',sans-serif; font-size:11px;font-weight:700;cursor:pointer; transition:all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275); text-align:center;user-select:none;outline:none; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; }
-        .seg-btn:hover { color:var(--text) !important; border-color:rgba(163,177,198,0.8); transform: scale(1.08) translateY(-2px); box-shadow: 12px 12px 20px rgba(163,177,198,0.8), -8px -8px 15px rgba(255,255,255,0.9); z-index: 10; }
-        .seg-btn:focus-visible { outline: 4px solid #2563eb !important; outline-offset: 3px !important; box-shadow: 0 0 0 10px rgba(37,99,235,0.2) !important; z-index: 11; }
+        .seg-btn:hover { color:var(--text) !important; border-color:rgba(163,177,198,0.8); transform: scale(1.02) translateY(-1px); box-shadow: 8px 8px 15px rgba(163,177,198,0.6), -5px -5px 10px rgba(255,255,255,0.8); z-index: 10; }
+        .seg-btn:focus-visible { outline: 2px solid #2563eb !important; outline-offset: 1px !important; box-shadow: 0 0 0 5px rgba(37,99,235,0.15) !important; z-index: 11; }
         .seg-btn:active { box-shadow:inset 4px 4px 8px rgba(163,177,198,0.6),inset -2px -2px 6px rgba(255,255,255,0.5) !important; transform:scale(0.95); }
         .seg-btn.active-blue  { background:#2563eb !important; color:#fff !important; border-color:#2563eb !important; box-shadow: inset 2px 2px 5px rgba(0,0,0,0.2); }
         .seg-btn.active-yellow{ background:#d97706 !important; color:#fff !important; border-color:#d97706 !important; box-shadow: inset 2px 2px 5px rgba(0,0,0,0.2); }
@@ -402,12 +409,12 @@
         .durus-menu-item:last-child { border-bottom:none; }
         .durus-menu-item:hover { background:rgba(37,99,235,0.08);color:#2563eb; }
         .btn-submit { width:100%;margin-top:12px;padding:12px;border-radius:10px; border:none;background:linear-gradient(135deg,var(--blue),#1d4ed8); color:white;font-family:'Barlow Condensed',sans-serif; font-size:16px;font-weight:900;letter-spacing:2px; text-transform:uppercase;cursor:pointer;transition:all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow:0 6px 20px rgba(37,99,235,0.3); }
-        .btn-submit:hover { transform:translateY(-5px) scale(1.08) !important; box-shadow:0 15px 40px rgba(37,99,235,0.6) !important; filter: brightness(1.1); }
+        .btn-submit:hover { transform:translateY(-2px) scale(1.02) !important; box-shadow:0 10px 30px rgba(37,99,235,0.5) !important; filter: brightness(1.1); }
         .btn-submit:active { transform:translateY(0) scale(1) !important; box-shadow:0 3px 14px rgba(37,99,235,0.3) !important; }
-        .btn-submit:focus-visible { outline: 4px solid #2563eb !important; outline-offset: 4px !important; box-shadow:0 0 0 10px rgba(37,99,235,0.2) !important; }
+        .btn-submit:focus-visible { outline: 2px solid #2563eb !important; outline-offset: 2px !important; box-shadow:0 0 0 6px rgba(37,99,235,0.15) !important; }
         .btn-submit.update-mode { background:linear-gradient(135deg,#d97706,#b45309); box-shadow:0 6px 20px rgba(217,119,6,0.3); }
-        .btn-submit.update-mode:hover { transform:translateY(-5px) scale(1.08) !important; box-shadow:0 15px 40px rgba(217,119,6,0.6) !important; filter: brightness(1.1); }
-        .btn-submit.update-mode:focus-visible { outline: 4px solid #d97706 !important; outline-offset: 4px !important; box-shadow:0 0 0 10px rgba(217,119,6,0.2) !important; }
+        .btn-submit.update-mode:hover { transform:translateY(-2px) scale(1.02) !important; box-shadow:0 10px 30px rgba(217,119,6,0.5) !important; filter: brightness(1.1); }
+        .btn-submit.update-mode:focus-visible { outline: 2px solid #d97706 !important; outline-offset: 2px !important; box-shadow:0 0 0 6px rgba(217,119,6,0.15) !important; }
         .seg-btn:focus { outline:none; }
          .seg-btn:focus:not(:focus-visible) { outline:none; }
 
@@ -429,7 +436,7 @@
         .data-table tbody tr { border-bottom:1px solid rgba(163,177,198,0.2);transition:background 0.15s;cursor:pointer; background:#e8ecf4; }
         .data-table tbody tr:hover { background:#dde3ef; }
         .data-table tbody tr.selected { background:rgba(217,119,6,0.08);outline:1px solid rgba(217,119,6,0.25); }
-        .data-table td { padding:4px 10px;vertical-align:middle; }
+        .data-table td { padding:2px 10px;vertical-align:middle; }
         #hrTable th { padding:6px 6px; }
         #hrTable.data-table td { padding:2px 6px;vertical-align:middle; }
         #hrTable tbody tr { height:28px; }
@@ -1068,7 +1075,7 @@
         <div class="table-panel">
             <div class="table-header">
                 <div style="display:flex;align-items:center;gap:8px;">
-                    <div class="table-count" id="kayitCount">0 kayıt</div>
+                    <div class="table-count" id="kayitCount" style="display:none;">0 kayıt</div>
                 </div>
             </div>
             <div style="display:none;"><span id="tableTitle"></span><span id="sumTir"></span><span id="sumKamyon"></span><span id="sumKonteyner"></span><span id="sumArac"></span><span id="sumM3"></span></div>
