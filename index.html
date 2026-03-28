@@ -2470,37 +2470,40 @@
     }
 
     function formDoldur(k) {
-        console.log('Seçilen kayıt:', k);
-        duzenleId = k.id;
-        selectedRecord = k;
-        setSegByVal('segVardiya', k.vardiya, 'active-yellow'); secilenVardiya = k.vardiya;
-        setSegByVal('segTip', k.aracTipi, 'active-blue');   secilenAracTipi = k.aracTipi;
-        setSegByVal('segTur', k.aracTuru, 'active-yellow'); secilenAracTuru = k.aracTuru;
-        document.getElementById('m3').value       = k.m3;
-        document.getElementById('shipment').value = k.shipment||'';
-        document.getElementById('ekip').value     = k.ekip;
-        document.getElementById('baslama').value  = k.baslama;
-        document.getElementById('bitis').value    = k.bitis;
-        document.getElementById('kaliteci').value = k.kaliteci||'';
-        document.getElementById('forkliftci').value = k.forkliftci||'';
-        document.getElementById('aciklama').value = k.aciklama||'';
-        document.getElementById('eksikFazla').value = k.eksikFazla||'';
-        duruslar = (k.duruslar||[]).map(d=>({...d, id:durusId++}));
-        renderDuruslar();
-        // Lastikleri yükle
-        lastikler = (k.lastikler||[]).map(l => ({...l}));
-        renderLastikler();
-        document.getElementById('editBanner').classList.add('show');
-        const btn = document.getElementById('btnSubmit');
-        btn.textContent = '\u270e  G\u00dcNCELLE';
-        btn.classList.add('update-mode');
-        // Tüm satırların selected durumunu güncelle
-        document.querySelectorAll('#tableBody tr').forEach(tr => {
-            const isSelected = parseInt(tr.dataset.id) === k.id;
-            tr.classList.toggle('selected', isSelected);
-            tr.style.background = isSelected ? 'rgba(217,119,6,0.12)' : '#e8ecf4';
-        });
-        document.querySelector('.form-panel').scrollTo({top:0,behavior:'smooth'});
+        try {
+            console.log('Seçilen kayıt:', k);
+            duzenleId = k.id;
+            selectedRecord = k;
+            setSegByVal('segVardiya', k.vardiya, 'active-yellow'); secilenVardiya = k.vardiya;
+            setSegByVal('segTip', k.aracTipi, 'active-blue');   secilenAracTipi = k.aracTipi;
+            setSegByVal('segTur', k.aracTuru, 'active-yellow'); secilenAracTuru = k.aracTuru;
+            document.getElementById('m3').value          = k.m3 || '';
+            document.getElementById('shipment').value    = k.shipment || '';
+            document.getElementById('ekip').value        = k.ekip || '';
+            document.getElementById('baslama').value     = k.baslama || '';
+            document.getElementById('bitis').value       = k.bitis || '';
+            document.getElementById('kaliteci').value    = k.kaliteci || '';
+            document.getElementById('forkliftci').value  = k.forkliftci || '';
+            document.getElementById('aciklama').value    = k.aciklama || '';
+            const efEl = document.getElementById('eksikFazla');
+            if (efEl) efEl.value = k.eksikFazla || '';
+            duruslar = (k.duruslar||[]).map(d=>({...d, id:durusId++}));
+            renderDuruslar();
+            lastikler = (k.lastikler||[]).map(l => ({...l}));
+            renderLastikler();
+            document.getElementById('editBanner').classList.add('show');
+            const btn = document.getElementById('btnSubmit');
+            btn.textContent = '✎  GÜNCELLE';
+            btn.classList.add('update-mode');
+            document.querySelectorAll('#tableBody tr').forEach(tr => {
+                const isSelected = parseInt(tr.dataset.id) === k.id;
+                tr.classList.toggle('selected', isSelected);
+                tr.style.background = isSelected ? 'rgba(217,119,6,0.12)' : '#e8ecf4';
+            });
+            document.querySelector('.form-panel').scrollTo({top:0,behavior:'smooth'});
+        } catch(err) {
+            console.error('formDoldur hatası:', err);
+        }
     }
 
     function iptalDuzenle() {
@@ -2833,13 +2836,16 @@
         // Dropdown kapat
         const wrap = document.getElementById('durusWrap');
         if (wrap && !wrap.contains(e.target)) document.getElementById('durusMenu').classList.remove('open');
-        // Seçim kaldır
+        // Seçim kaldır — tablo paneli veya form paneli tıklamalarında İPTAL ETME
         if (duzenleId !== null) {
-            const clickedRow    = e.target.closest('#tableBody tr');
-            const clickedBanner = e.target.closest('#editBanner');
-            const clickedSubmit = e.target.closest('#btnSubmit');
+            const clickedRow       = e.target.closest('#tableBody tr');
+            const clickedBanner    = e.target.closest('#editBanner');
+            const clickedSubmit    = e.target.closest('#btnSubmit');
             const clickedFormPanel = e.target.closest('.form-panel');
-            if (!clickedRow && !clickedBanner && !clickedSubmit && !clickedFormPanel) iptalDuzenle();
+            const clickedTablePanel = e.target.closest('.table-panel');
+            if (!clickedRow && !clickedBanner && !clickedSubmit && !clickedFormPanel && !clickedTablePanel) {
+                iptalDuzenle();
+            }
         }
     });
 
