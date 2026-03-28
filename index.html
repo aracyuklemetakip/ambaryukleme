@@ -392,8 +392,9 @@
         .durus-remove { width:24px;height:24px;border-radius:5px; border:1px solid rgba(239,68,68,0.3);background:rgba(239,68,68,0.08); color:var(--danger);font-size:12px;cursor:pointer; display:flex;align-items:center;justify-content:center; transition:all 0.15s; }
         .durus-remove:hover { background:rgba(239,68,68,0.18);border-color:rgba(239,68,68,0.6); }
         .durus-dropdown-wrap { position:relative; }
-        .btn-add-durus { width:100%;padding:5px;border-radius:6px; border:1px dashed var(--muted);background:transparent; color:var(--text-dim);font-family:'Barlow',sans-serif; font-size:10px;font-weight:700;letter-spacing:1px; text-transform:uppercase;cursor:pointer;transition:all 0.15s; }
-        .btn-add-durus:hover { border-color:var(--blue-light);color:var(--blue-light); }
+        .btn-add-durus { width:100%;padding:8px;border-radius:8px; border:none; background:linear-gradient(135deg,#64748b,#475569); color:white; font-family:'Barlow',sans-serif; font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; cursor:pointer; transition:all 0.2s ease; box-shadow:0 3px 10px rgba(71,85,105,0.2); }
+        .btn-add-durus:hover { transform:translateY(-2px) scale(1.02); box-shadow:0 6px 15px rgba(71,85,105,0.35); filter:brightness(1.1); }
+        .btn-add-durus:active { transform:translateY(0) scale(1); }
         .durus-menu { display:none; position:absolute; bottom:calc(100% + 4px); left:0;right:0; background:#dde3ef; border:1px solid var(--glass-border); border-radius:8px;overflow:hidden; z-index:200; box-shadow:0 6px 20px rgba(163,177,198,0.45); }
         .durus-menu.open { display:block; }
         @keyframes menuPop { from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:translateY(0)} }
@@ -424,11 +425,11 @@
         .ekip-mini-badge { display:inline-flex;align-items:center;gap:3px; padding:2px 8px;border-radius:100px; font-size:10px;font-weight:800; }
         .data-table { width:100%;border-collapse:collapse;font-size:12px; }
         .data-table thead tr { background:var(--glass);border-bottom:1px solid rgba(163,177,198,0.4); }
-        .data-table th { padding:10px 12px;text-align:left;font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);white-space:nowrap; }
+        .data-table th { padding:6px 10px;text-align:left;font-size:9px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--text-dim);white-space:nowrap; }
         .data-table tbody tr { border-bottom:1px solid rgba(163,177,198,0.2);transition:background 0.15s;cursor:pointer; background:#e8ecf4; }
         .data-table tbody tr:hover { background:#dde3ef; }
         .data-table tbody tr.selected { background:rgba(217,119,6,0.08);outline:1px solid rgba(217,119,6,0.25); }
-        .data-table td { padding:10px 12px;vertical-align:middle; }
+        .data-table td { padding:4px 10px;vertical-align:middle; }
         #hrTable th { padding:6px 6px; }
         #hrTable.data-table td { padding:2px 6px;vertical-align:middle; }
         #hrTable tbody tr { height:28px; }
@@ -960,7 +961,9 @@
                 <span style="font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:900;text-transform:uppercase;letter-spacing:2px;color:#fff;">OPERATÖR PANELİ</span>
             </div>
             <div style="display:flex;align-items:center;gap:8px;">
-                <div class="tarih-display" id="tarihDisplay"></div>
+                <button onclick="tarihDegistir(-1)" style="width:24px;height:24px;border-radius:6px;border:1px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.1);color:#fff;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;">‹</button>
+                <input type="date" id="secilenTarih" style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);border-radius:6px;color:#fff;font-family:'Barlow',sans-serif;font-size:11px;font-weight:700;padding:2px 6px;outline:none;cursor:pointer;" onchange="renderTablo()">
+                <button onclick="tarihDegistir(1)" style="width:24px;height:24px;border-radius:6px;border:1px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.1);color:#fff;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;">›</button>
                 <div id="userInfoBar" style="display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25);border-radius:6px;padding:3px 8px;">
                     <img id="userAvatar" src="" width="24" height="24" referrerpolicy="no-referrer" style="border-radius:50%;object-fit:cover;border:1px solid rgba(163,177,198,0.5);flex-shrink:0;display:none;">
                     <span id="userDisplayName" style="font-size:12px;font-weight:700;color:#fff;white-space:nowrap;"></span>
@@ -1043,7 +1046,7 @@
                 <div id="forkliftciDropdown" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:500;background:#e0e5ec;border:1px solid rgba(255,255,255,0.12);border-radius:10px;margin-top:4px;max-height:220px;overflow-y:auto;box-shadow:0 8px 32px rgba(163,177,198,0.55);"></div>
             </div>
 
-            <div class="form-section-title">Duruşlar <span style="font-weight:500;color:var(--muted);text-transform:none;letter-spacing:0;font-size:9px;">(opsiyonel)</span></div>
+            <div class="form-section-title">Duruşlar</div>
             <div class="durus-list" id="durusList"></div>
             <div class="durus-dropdown-wrap" id="durusWrap">
                 <button class="btn-add-durus" onclick="toggleDurusMenu(event)">+ Duruş Ekle ▾</button>
@@ -1056,7 +1059,7 @@
                 </div>
             </div>
             <div class="input-group" style="margin-top:10px;">
-                <div class="input-label">Açıklama <span class="opt">(opsiyonel)</span></div>
+                <div class="input-label">Açıklama</div>
                 <input type="text" id="aciklama" class="text-input" tabindex="15" placeholder="Varsa açıklama...">
             </div>
             <button class="btn-submit" id="btnSubmit" tabindex="16" onclick="kaydetVeyaGuncelle()">✓ &nbsp;SİSTEME İŞLE</button>
@@ -1065,10 +1068,6 @@
         <div class="table-panel">
             <div class="table-header">
                 <div style="display:flex;align-items:center;gap:8px;">
-                    <button onclick="tarihDegistir(-1)" style="width:28px;height:28px;border-radius:8px;border:1px solid var(--glass-border);background:var(--glass);color:var(--text-dim);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--glass-border-hover)'" onmouseout="this.style.borderColor='var(--glass-border)'">‹</button>
-                    <input type="date" id="secilenTarih" style="background:var(--input-bg);border:1px solid var(--glass-border);border-radius:8px;color:var(--text);font-family:'Barlow',sans-serif;font-size:12px;font-weight:700;padding:5px 10px;outline:none;cursor:pointer;" onchange="renderTablo()">
-                    <button onclick="tarihDegistir(1)" style="width:28px;height:28px;border-radius:8px;border:1px solid var(--glass-border);background:var(--glass);color:var(--text-dim);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--glass-border-hover)'" onmouseout="this.style.borderColor='var(--glass-border)'">›</button>
-                    <button onclick="buguneGit()" id="bugunBtn" style="display:none;padding:5px 12px;border-radius:8px;border:1px solid rgba(59,130,246,0.3);background:rgba(37,99,235,0.12);color:var(--blue-light);font-family:'Barlow',sans-serif;font-size:11px;font-weight:800;cursor:pointer;letter-spacing:0.5px;">Bugün</button>
                     <div class="table-count" id="kayitCount">0 kayıt</div>
                 </div>
             </div>
@@ -2238,12 +2237,9 @@
     // ── INIT ──────────────────────────────────────────────
     function tarihGoster() {
         const now = new Date();
-        const gunler = ['Pazar','Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'];
-        const aylar  = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
-        document.getElementById('tarihDisplay').textContent = `${gunler[now.getDay()]}, ${now.getDate()} ${aylar[now.getMonth()]} ${now.getFullYear()}`;
-        // Tarih seçiciyi bugüne ayarla
         const bugun = now.toISOString().split('T')[0];
-        document.getElementById('secilenTarih').value = bugun;
+        const el = document.getElementById('secilenTarih');
+        if (el) el.value = bugun;
     }
 
     function tarihDegistir(gun) {
