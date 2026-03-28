@@ -505,13 +505,13 @@
             user-select:none;
         }
         .sef-sidebar-item:hover { 
-            background:rgba(37,99,235,0.1); 
+            background:rgba(37,99,235,0.25) !important; 
             color:#2563eb; 
             transform: scale(1.02) translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             z-index: 5;
         }
-        .sef-sidebar-item.aktif { background:rgba(37,99,235,0.08); color:#2563eb; border-left-color:#2563eb; font-weight:800; }
+        .sef-sidebar-item.aktif { background:rgba(37,99,235,0.15) !important; color:#2563eb; border-left-color:#2563eb; font-weight:800; }
         .sef-sidebar-label { 
             font-size:10px; font-weight:900; letter-spacing:1.5px; text-transform:uppercase; 
             color:#fff; background:linear-gradient(135deg, #2563eb, #1d4ed8);
@@ -1111,7 +1111,7 @@
             <div id="yuklemeListesiBaslik" style="display:none;"><div id="yuklemeListesiTarihText"></div></div>
 
             <table class="data-table">
-                <thead><tr><th>#</th><th>Vardiya</th><th>Ekip</th><th>Forkliftçi</th><th>Araç</th><th>Saat</th><th>Durum</th><th></th></tr></thead>
+                <thead><tr><th>#</th><th>Vardiya</th><th>Ekip</th><th>Forkliftçi</th><th>Araç</th><th>Tür</th><th>Saat</th><th>Durum</th><th></th></tr></thead>
                 <tbody id="tableBody"></tbody>
             </table>
             <div class="empty-state" id="emptyState">
@@ -1651,7 +1651,7 @@
                                         <div class="filtre-seg-btn aktif" onclick="hrDonemSec(this,'gun')" style="font-size:10px;padding:4px 8px;">Günlük</div>
                                         <div class="filtre-seg-btn" onclick="hrDonemSec(this,'ay')" style="font-size:10px;padding:4px 8px;">Aylık</div>
                                         <div class="filtre-seg-btn" onclick="hrDonemSec(this,'yil')" style="font-size:10px;padding:4px 8px;">Yıllık</div>
-                                        <div class="filtre-seg-btn" onclick="hrDonemSec(this,'aralik')" style="font-size:10px;padding:4px 8px;">Aralık</div>
+                                        <div class="filtre-seg-btn" onclick="hrDonemSec(this,'aralik')" style="font-size:10px;padding:4px 8px;">Tarih Aralığı Seç</div>
                                     </div>
                                 </div>
                                 <div id="hrGunGrup" class="filtre-group">
@@ -2451,9 +2451,19 @@
         if (brutDk < 0) brutDk += 24*60;
         const topDurus = (durList||[]).reduce((s,d)=>s+(parseInt(d.sure)||0),0);
         const netDk = brutDk - topDurus;
-        const fmt = dk => { if(dk<=0) return '0dk'; const h=Math.floor(dk/60),m=dk%60; return h>0?`${h}s ${m}dk`:`${m}dk`; };
+        const fmt = dk => { 
+            if(dk<=0) return '0dk'; 
+            const h=Math.floor(dk/60), m=dk%60; 
+            return h>0 ? `${h}s ${m}dk` : `${m}dk`; 
+        };
+        const fmtGec = dk => {
+            if(dk<=0) return '';
+            const h=Math.floor(dk/60), m=dk%60;
+            return h>0 ? `${h}s ${m}dk gecikti` : `${m}dk gecikti`;
+        };
         const standart = STANDART[tip]||90;
-        return { brut:fmt(brutDk), net:fmt(netDk), gec:(netDk-standart)>0, fark:netDk-standart };
+        const farkDk = netDk - standart;
+        return { brut:fmt(brutDk), net:fmt(netDk), gec:farkDk>0, fark:farkDk, gecSure:fmtGec(farkDk) };
     }
 
     // ── FORM DOLDUR ───────────────────────────────────────
@@ -2665,13 +2675,13 @@
 
         if (duzenleId !== null) {
             const idx = kayitlar.findIndex(k=>k.id===duzenleId);
-            if (idx !== -1) kayitlar[idx] = {...kayitlar[idx], vardiya:secilenVardiya, aracTipi:secilenAracTipi, aracTuru:secilenAracTuru, m3:parseFloat(m3), shipment, ekip, baslama, bitis, kaliteci, forkliftci, aciklama, eksikFazla, lastikler:[...lastikler], duruslar:[...duruslar], brut:sure.brut, net:sure.net, gec:sure.gec, fark:sure.fark};
+            if (idx !== -1) kayitlar[idx] = {...kayitlar[idx], vardiya:secilenVardiya, aracTipi:secilenAracTipi, aracTuru:secilenAracTuru, m3:parseFloat(m3), shipment, ekip, baslama, bitis, kaliteci, forkliftci, aciklama, eksikFazla, lastikler:[...lastikler], duruslar:[...duruslar], brut:sure.brut, net:sure.net, gec:sure.gec, fark:sure.fark, gecSure:sure.gecSure};
             const updated = kayitlar.find(k=>k.id===duzenleId);
             if(window._fbSaveKayit) window._fbSaveKayit(updated);
             selectedRecord = null;
             iptalDuzenle(); renderTablo(); showToast('✓  Kayıt güncellendi','success');
         } else {
-            kayitlar.push({ id:Date.now(), tarih:kayitTarih, vardiya:secilenVardiya, aracTipi:secilenAracTipi, aracTuru:secilenAracTuru, m3:parseFloat(m3), shipment, ekip, baslama, bitis, kaliteci, forkliftci, aciklama, eksikFazla, lastikler:[...lastikler], duruslar:[...duruslar], brut:sure.brut, net:sure.net, gec:sure.gec, fark:sure.fark });
+            kayitlar.push({ id:Date.now(), tarih:kayitTarih, vardiya:secilenVardiya, aracTipi:secilenAracTipi, aracTuru:secilenAracTuru, m3:parseFloat(m3), shipment, ekip, baslama, bitis, kaliteci, forkliftci, aciklama, eksikFazla, lastikler:[...lastikler], duruslar:[...duruslar], brut:sure.brut, net:sure.net, gec:sure.gec, fark:sure.fark, gecSure:sure.gecSure });
             if(window._fbSaveKayit) window._fbSaveKayit(kayitlar[kayitlar.length-1]);
             formTemizle(); renderTablo(); showToast('✓  Kayıt başarıyla eklendi','success');
             // Tır'ı seçili getir
@@ -2786,7 +2796,7 @@
         tbody.innerHTML = '';
         sirali.forEach((k, i) => {
             const tipBadge = k.aracTipi==='Tır'?'badge-tir':k.aracTipi==='Kamyon'?'badge-kamyon':'badge-konteyner';
-            const durum    = k.gec?`<span class="status-gec">Gecikti</span>`:`<span class="status-ok">✓</span>`;
+            const durum    = k.gec?`<span class="status-gec">${k.gecSure || 'Gecikti'}</span>`:`<span class="status-ok">✓</span>`;
             const lastikGoster = (k.lastikler&&k.lastikler.length) ? k.lastikler.map(l=>`${l.kod} (${l.adet})`).join(', ') : '—';
             const efGoster = k.eksikFazla || '—';
 
@@ -2803,6 +2813,7 @@
                 <td style="padding:10px 12px;font-weight:600;font-size:11px;">${ekipKisaGoster(k.ekip)}</td>
                 <td style="padding:10px 12px;font-size:11px;color:var(--text-dim);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${forkliftciGoster}">${forkliftciGoster}</td>
                 <td style="padding:10px 12px;"><span class="badge ${tipBadge}">${k.aracTipi}</span></td>
+                <td style="padding:10px 12px;font-size:10px;font-weight:700;color:var(--text-dim);">${k.aracTuru || '—'}</td>
                 <td style="padding:10px 12px;color:var(--text-dim);font-size:11px;white-space:nowrap;">${k.baslama} - ${k.bitis}</td>
                 <td style="padding:10px 12px;">${durum}</td>
                 <td style="padding:6px 12px;">
@@ -5307,7 +5318,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const isFazla = s.tur === 'fazla';
             const turBg   = isEksik ? 'rgba(220,38,38,0.12)' : isFazla ? 'rgba(22,163,74,0.12)' : 'rgba(163,177,198,0.15)';
             const turClr  = isEksik ? '#dc2626' : isFazla ? '#16a34a' : '#6b7a96';
-            const turLbl  = isEksik ? '−  EKSİK' : isFazla ? '+  FAZLA' : '±  SEÇ';
+            
             return `<div style="display:flex;gap:5px;align-items:center;">
                 <input id="hrKodInp_${s.sid}" type="text" value="${s.kod}"
                     placeholder="Lastik kodu"
@@ -5317,10 +5328,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     placeholder="Adet" min="0"
                     oninput="hrKodSatirGuncelle(${s.sid},'adet',this.value)"
                     class="filtre-input" style="flex:1;min-width:0;padding:5px 8px;font-size:12px;">
-                <button onclick="hrKodSatirTurToggle(${s.sid})"
-                    style="padding:5px 10px;border-radius:6px;border:1px solid ${turClr}33;background:${turBg};color:${turClr};font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:900;cursor:pointer;white-space:nowrap;min-width:70px;transition:all 0.15s;">
-                    ${turLbl}
-                </button>
+                <select onchange="hrKodSatirGuncelle(${s.sid},'tur',this.value);hrKodSatirRender()"
+                    style="padding:5px 10px;border-radius:6px;border:1px solid ${turClr}33;background:${turBg};color:${turClr};font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:900;cursor:pointer;white-space:nowrap;min-width:85px;outline:none;transition:all 0.15s;">
+                    <option value="" ${!s.tur?'selected':''}>± SEÇ</option>
+                    <option value="eksik" ${isEksik?'selected':''} style="color:#dc2626;background:#fff;">− EKSİK</option>
+                    <option value="fazla" ${isFazla?'selected':''} style="color:#16a34a;background:#fff;">+ FAZLA</option>
+                </select>
                 <button onclick="hrKodSatirKaldir(${s.sid})"
                     style="padding:5px 8px;border-radius:6px;border:1px solid rgba(163,177,198,0.35);background:transparent;color:var(--muted);font-size:13px;font-weight:900;cursor:pointer;line-height:1;">✕</button>
             </div>`;
@@ -5774,18 +5787,23 @@ document.addEventListener('DOMContentLoaded', function() {
                 const ekipArr = Array.isArray(r.ekip)
                     ? r.ekip.map(e => e.trim()).filter(Boolean)
                     : (r.ekip||'').split(',').map(e => e.trim()).filter(Boolean);
-                const ekipRows = ekipArr.map(isim => [isim, '']);
+                
+                const ekipRows = ekipArr.map(isim => {
+                    const p = personelListesi.find(x => x.ad === isim);
+                    const gosterim = p ? `${isim} (${p.sicil})` : isim;
+                    return [gosterim, ''];
+                });
 
                 if (ekipRows.length) {
                     pdf.autoTable({
                         startY: y,
                         head: [['İsim', 'İmza']],
                         body: ekipRows,
-                        styles: { font:'helvetica', fontSize:10, cellPadding:5, lineColor:[200,210,220], lineWidth:0.3, textColor:[40,50,70] },
-                        headStyles: { fillColor:[26,86,219], textColor:255, fontStyle:'bold', fontSize:9, halign:'center' },
+                        styles: { font:'helvetica', fontSize:8, cellPadding:4, lineColor:[200,210,220], lineWidth:0.3, textColor:[40,50,70] },
+                        headStyles: { fillColor:[26,86,219], textColor:255, fontStyle:'bold', fontSize:8, halign:'center' },
                         columnStyles: {
-                            0: { cellWidth:60 },
-                            1: { cellWidth:pageW - margin*2 - 60 }
+                            0: { cellWidth:80 },
+                            1: { cellWidth:pageW - margin*2 - 80 }
                         },
                         didDrawCell: function(data) {
                             if (data.section === 'body' && data.column.index === 1) {
