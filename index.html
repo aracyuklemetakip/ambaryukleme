@@ -420,10 +420,10 @@
         .durus-menu-item { padding:8px 12px; font-size:12px;font-weight:600; cursor:pointer;transition:background 0.1s; border-bottom:1px solid rgba(163,177,198,0.3); }
         .durus-menu-item:last-child { border-bottom:none; }
         .durus-menu-item:hover { background:rgba(37,99,235,0.08);color:#2563eb; }
-        .btn-submit { width:100%;margin-top:12px;padding:12px;border-radius:12px; border:none;background:linear-gradient(135deg,var(--blue),#1d4ed8); color:white;font-family:'Barlow Condensed',sans-serif; font-size:16px;font-weight:900;letter-spacing:2px; text-transform:uppercase;cursor:pointer;transition:all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow:0 6px 20px rgba(37,99,235,0.3); }
-        .btn-submit:hover { transform:translateY(-2px) scale(1.02) !important; box-shadow:0 8px 25px rgba(37,99,235,0.4) !important; filter: brightness(1.1); }
-        .btn-submit:active { transform:translateY(0) scale(1) !important; box-shadow:0 3px 14px rgba(37,99,235,0.3) !important; }
-        .btn-submit:focus-visible { outline: 1px solid #2563eb !important; outline-offset: 1px !important; box-shadow:0 0 0 3px rgba(37,99,235,0.1) !important; }
+        .btn-submit { width:100%;margin-top:12px;padding:12px;border-radius:12px; border:none;background:linear-gradient(135deg,#22c55e,#16a34a); color:white;font-family:'Barlow Condensed',sans-serif; font-size:16px;font-weight:900;letter-spacing:2px; text-transform:uppercase;cursor:pointer;transition:all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow:0 6px 20px rgba(34,197,94,0.3); }
+        .btn-submit:hover { transform:translateY(-2px) scale(1.02) !important; box-shadow:0 8px 25px rgba(34,197,94,0.4) !important; filter: brightness(1.1); }
+        .btn-submit:active { transform:translateY(0) scale(1) !important; box-shadow:0 3px 14px rgba(34,197,94,0.3) !important; }
+        .btn-submit:focus-visible { outline: 1px solid #22c55e !important; outline-offset: 1px !important; box-shadow:0 0 0 3px rgba(34,197,94,0.1) !important; }
         .btn-submit.update-mode { background:linear-gradient(135deg,#d97706,#b45309); box-shadow:0 6px 20px rgba(217,119,6,0.3); }
         .btn-submit.update-mode:hover { transform:translateY(-2px) scale(1.02) !important; box-shadow:0 8px 25px rgba(217,119,6,0.4) !important; filter: brightness(1.1); }
         .btn-submit.update-mode:focus-visible { outline: 1px solid #d97706 !important; outline-offset: 1px !important; box-shadow:0 0 0 3px rgba(217,119,6,0.1) !important; }
@@ -504,9 +504,22 @@
             border-left:2px solid transparent;
             user-select:none;
         }
-        .sef-sidebar-item:hover { background:rgba(163,177,198,0.2); color:var(--text); }
+        .sef-sidebar-item:hover { 
+            background:rgba(37,99,235,0.1); 
+            color:#2563eb; 
+            transform: scale(1.02) translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            z-index: 5;
+        }
         .sef-sidebar-item.aktif { background:rgba(37,99,235,0.08); color:#2563eb; border-left-color:#2563eb; font-weight:800; }
-        .sef-sidebar-label { font-size:9px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:var(--muted); padding:14px 14px 4px; }
+        .sef-sidebar-label { 
+            font-size:10px; font-weight:900; letter-spacing:1.5px; text-transform:uppercase; 
+            color:#fff; background:linear-gradient(135deg, #2563eb, #1d4ed8);
+            padding:8px 14px; margin:14px 10px 6px; border-radius:8px;
+            box-shadow: 0 4px 10px rgba(37,99,235,0.3), inset 0 1px 1px rgba(255,255,255,0.3);
+            transform: perspective(500px) rotateX(1deg);
+            text-align: center;
+        }
         .sef-content { padding:14px 18px; overflow-y:auto; height:calc(100vh - 44px); }
 
         .filtre-panel { background:#dde3ef;border:1px solid rgba(163,177,198,0.4);border-radius:8px;padding:12px 14px;margin-bottom:14px; }
@@ -1612,7 +1625,7 @@
                                 <div class="filtre-group">
                                     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
                                         <div class="filtre-label" style="margin:0;">Lastik Kodları</div>
-                                        <button onclick="hrKodSatirEkle()" style="padding:2px 10px;border-radius:5px;border:1px solid rgba(26,86,219,0.35);background:rgba(26,86,219,0.08);color:#1a56db;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:900;cursor:pointer;">+ Satır Ekle</button>
+                                        <button onclick="hrKodSatirEkle()" style="padding:2px 10px;border-radius:5px;border:1px solid rgba(26,86,219,0.35);background:rgba(26,86,219,0.08);color:#1a56db;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:900;cursor:pointer;">+ Ebat Ekle</button>
                                     </div>
                                     <div id="hrKodSatirlar" style="display:flex;flex-direction:column;gap:5px;"></div>
                                 </div>
@@ -1685,7 +1698,6 @@
                                         <th>Ekip</th>
                                         <th>Forkliftçi</th>
                                         <th>Araç</th>
-                                        <th>Lastik Kodları / Adet</th>
                                         <th>Açıklama</th>
                                     </tr></thead>
                                     <tbody id="hrTableBody"></tbody>
@@ -2560,19 +2572,33 @@
         const sonlar = sonShipmentleriGetir();
         if (!sonlar.length) { dd.style.display='none'; return; }
         const mevcut = input.value.trim();
-        const filtre = sonlar.filter(s => !mevcut || s.toLowerCase().includes(mevcut.toLowerCase()));
+        
+        // Silinenleri filtrele
+        const silinenler = JSON.parse(localStorage.getItem('silinenShipmentlar') || '[]');
+        const filtre = sonlar.filter(s => !silinenler.includes(s) && (!mevcut || s.toLowerCase().includes(mevcut.toLowerCase())));
+        
         if (!filtre.length) { dd.style.display='none'; return; }
-        dd.innerHTML = `<div style="padding:6px 12px;font-size:10px;font-weight:800;letter-spacing:1px;color:var(--muted);text-transform:uppercase;">Son Shipmentlar — Son 4 haneyi değiştir</div>` +
-            filtre.map(s => {
-                const bas = s.slice(0, -4);
-                const son4 = s.slice(-4);
-                return `<div class="shipment-oneri-item" onclick="shipmentSec('${s}')"
-                    style="padding:10px 14px;cursor:pointer;font-size:13px;font-weight:700;border-bottom:1px solid rgba(163,177,198,0.2);transition:background 0.1s;display:flex;align-items:center;gap:2px;"
-                    onmouseenter="this.style.background='rgba(37,99,235,0.1)'" onmouseleave="this.style.background=''">
-                    <span style="color:var(--text-dim);">${bas}</span><span style="color:#2563eb;font-weight:900;">${son4}</span>
-                </div>`;
-            }).join('');
+        
+        dd.innerHTML = filtre.map(s => {
+            return `<div class="shipment-oneri-item" 
+                style="padding:10px 14px;cursor:pointer;font-size:13px;font-weight:700;border-bottom:1px solid rgba(163,177,198,0.2);transition:background 0.1s;display:flex;align-items:center;justify-content:space-between;gap:10px;"
+                onmouseenter="this.style.background='rgba(37,99,235,0.1)'" onmouseleave="this.style.background=''">
+                <div onclick="shipmentSec('${s}')" style="flex:1;">${s}</div>
+                <div onclick="shipmentOneriSil('${s}', event)" style="color:#ef4444;padding:4px 8px;border-radius:4px;font-size:14px;font-weight:900;" title="Öneriden kaldır">✕</div>
+            </div>`;
+        }).join('');
         dd.style.display = 'block';
+    }
+
+    function shipmentOneriSil(s, e) {
+        if (e) e.stopPropagation();
+        if (!confirm(s + ' numaralı shipment öneriden kaldırılsın mı?')) return;
+        const silinenler = JSON.parse(localStorage.getItem('silinenShipmentlar') || '[]');
+        if (!silinenler.includes(s)) {
+            silinenler.push(s);
+            localStorage.setItem('silinenShipmentlar', JSON.stringify(silinenler));
+        }
+        shipmentOneriGoster(document.getElementById('shipment_v2'));
     }
 
     function shipmentInput(input) {
@@ -2582,10 +2608,7 @@
     function shipmentSec(val) {
         const inp = document.getElementById('shipment_v2');
         inp.value = val;
-        // Son 4 haneyi seç - kullanıcı kolayca değiştirebilsin
         inp.focus();
-        const start = val.length - 4;
-        setTimeout(() => { inp.setSelectionRange(start, val.length); }, 10);
         document.getElementById('shipmentDropdown').style.display = 'none';
     }
 
@@ -5560,7 +5583,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 <td style="font-size:11px;white-space:nowrap;padding:2px 6px;">${ekipStr||'—'}</td>
                 <td style="font-size:11px;white-space:nowrap;padding:2px 6px;">${r.forkliftci ? r.forkliftci.trim() : '—'}</td>
                 <td style="white-space:nowrap;font-size:11px;padding:2px 6px;">${aracStr||'—'}</td>
-                <td style="padding:2px 6px;max-width:200px;">${kodHtml}</td>
                 <td style="max-width:140px;font-size:11px;color:var(--text-dim);padding:2px 6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${r.aciklama||'—'}</td>
             </tr>`;
         }).join('');
@@ -5636,200 +5658,208 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // ── PDF ──────────────────────────────────────────────────
     function hrPdfIndir() {
-        let filtre = hrRaporlar.slice();
+        try {
+            let filtre = hrRaporlar.slice();
+            const shipmentFiltre = document.getElementById('hrShipmentInput')?.value || '';
 
-        if (hrDonem === 'gun') {
-            const t = document.getElementById('hrGun')?.value||'';
-            if (t) filtre = filtre.filter(r => hrTarihIso(r.tarih) === t);
-        } else if (hrDonem === 'ay') {
-            const m = document.getElementById('hrAy')?.value||'';
-            if (m) filtre = filtre.filter(r => hrTarihIso(r.tarih).startsWith(m));
-        } else if (hrDonem === 'yil') {
-            const y = document.getElementById('hrYil')?.value||'';
-            if (y) filtre = filtre.filter(r => hrTarihIso(r.tarih).startsWith(y));
-        } else if (hrDonem === 'aralik') {
-            const bas = document.getElementById('hrAralikBas')?.value||'';
-            const bit = document.getElementById('hrAralikBit')?.value||'';
-            if (bas && bit) filtre = filtre.filter(r => { const d = hrTarihIso(r.tarih); return d >= bas && d <= bit; });
-        }
-        if (shipmentFiltre) filtre = filtre.filter(r => r.shipment && r.shipment.includes(shipmentFiltre));
-        filtre.sort((a,b) => b.id - a.id);
-
-        if (!filtre.length) { showToast('⚠️ Listelenecek kayıt yok', 'warn'); return; }
-
-        const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
-        const pageW = 210;
-        const margin = 14;
-
-        filtre.forEach((r, idx) => {
-            if (idx > 0) { pdf.addPage(); }
-            let y = 14;
-
-            // Başlık
-            pdf.setFont('helvetica','bold');
-            pdf.setFontSize(14);
-            pdf.setTextColor(26, 86, 219);
-            pdf.text('HATA RAPORU', pageW/2, y, {align:'center'});
-            y += 8;
-
-            // Üst bilgi
-            const infoRows = [
-                ['Tarih',     r.tarih || '—'],
-                ['Shipment',  r.shipment || '—'],
-                ['Araç Türü', r.aracTipi || '—'],
-                ['Araç Cinsi',r.aracTuru || '—'],
-                ['Vardiya',   r.vardiya || '—'],
-            ];
-
-            pdf.autoTable({
-                startY: y,
-                body: infoRows,
-                styles: { font:'helvetica', fontSize:10, cellPadding:4, lineColor:[200,210,220], lineWidth:0.3, textColor:[40,50,70] },
-                columnStyles: {
-                    0: { cellWidth:45, fontStyle:'bold', fillColor:[241,244,251] },
-                    1: { cellWidth:pageW - margin*2 - 45 }
-                },
-                margin: { left:margin, right:margin }
-            });
-            y = pdf.lastAutoTable.finalY + 6;
-
-            // Lastik Kodları tablosu
-            pdf.setFont('helvetica','bold');
-            pdf.setFontSize(9);
-            pdf.setTextColor(26, 86, 219);
-            pdf.text('LASTİK KODLARI', margin, y);
-            y += 4;
-
-            let kodRows = [];
-            if (Array.isArray(r.kodSatirlari) && r.kodSatirlari.length) {
-                kodRows = r.kodSatirlari.map(s => [
-                    s.kod || '—',
-                    String(s.adet || 0),
-                    s.tur === 'eksik' ? 'EKSİK' : 'FAZLA'
-                ]);
-            } else {
-                const kodlar = Array.isArray(r.lastikKodlar) ? r.lastikKodlar : (r.lastikKod||'').split(',').map(s=>s.trim()).filter(Boolean);
-                kodlar.forEach(k => {
-                    kodRows.push([k, String(r.adet||0), r.tur === 'eksik' ? 'EKSİK' : 'FAZLA']);
-                });
-                if (!kodRows.length) kodRows.push(['—', String(r.adet||0), r.tur === 'eksik' ? 'EKSİK' : 'FAZLA']);
+            if (hrDonem === 'gun') {
+                const t = document.getElementById('hrGun')?.value||'';
+                if (t) filtre = filtre.filter(r => hrTarihIso(r.tarih) === t);
+            } else if (hrDonem === 'ay') {
+                const m = document.getElementById('hrAy')?.value||'';
+                if (m) filtre = filtre.filter(r => hrTarihIso(r.tarih).startsWith(m));
+            } else if (hrDonem === 'yil') {
+                const y = document.getElementById('hrYil')?.value||'';
+                if (y) filtre = filtre.filter(r => hrTarihIso(r.tarih).startsWith(y));
+            } else if (hrDonem === 'aralik') {
+                const bas = document.getElementById('hrAralikBas')?.value||'';
+                const bit = document.getElementById('hrAralikBit')?.value||'';
+                if (bas && bit) filtre = filtre.filter(r => { const d = hrTarihIso(r.tarih); return d >= bas && d <= bit; });
             }
+            if (shipmentFiltre) filtre = filtre.filter(r => r.shipment && r.shipment.includes(shipmentFiltre));
+            filtre.sort((a,b) => b.id - a.id);
 
-            pdf.autoTable({
-                startY: y,
-                head: [['Lastik Kodu', 'Adet', 'Durum']],
-                body: kodRows,
-                styles: { font:'helvetica', fontSize:10, cellPadding:4, lineColor:[200,210,220], lineWidth:0.3, textColor:[40,50,70] },
-                headStyles: { fillColor:[26,86,219], textColor:255, fontStyle:'bold', fontSize:9, halign:'center' },
-                columnStyles: {
-                    0: { cellWidth:80 },
-                    1: { cellWidth:30, halign:'center' },
-                    2: { cellWidth:pageW - margin*2 - 110, halign:'center' }
-                },
-                didDrawCell: function(data) {
-                    if (data.section === 'body' && data.column.index === 2) {
-                        const val = data.cell.raw;
-                        data.cell.styles.textColor = val === 'EKSİK' ? [185,28,28] : [21,128,61];
-                        data.cell.styles.fontStyle = 'bold';
-                    }
-                },
-                margin: { left:margin, right:margin }
-            });
-            y = pdf.lastAutoTable.finalY + 6;
+            if (!filtre.length) { showToast('⚠️ Listelenecek kayıt yok', 'warn'); return; }
 
-            // Ekip
-            pdf.setFont('helvetica','bold');
-            pdf.setFontSize(9);
-            pdf.setTextColor(26, 86, 219);
-            pdf.text('EKİP', margin, y);
-            y += 4;
+            const jspdfObj = window.jspdf;
+            if (!jspdfObj) { alert('PDF kütüphanesi yüklenemedi!'); return; }
+            const { jsPDF } = jspdfObj;
+            const pdf = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
+            const pageW = 210;
+            const margin = 14;
 
-            const ekipArr = Array.isArray(r.ekip)
-                ? r.ekip.map(e => e.trim()).filter(Boolean)
-                : (r.ekip||'').split(',').map(e => e.trim()).filter(Boolean);
-            const ekipRows = ekipArr.map(isim => [isim, '']);
+            filtre.forEach((r, idx) => {
+                if (idx > 0) { pdf.addPage(); }
+                let y = 14;
 
-            if (ekipRows.length) {
+                // Başlık
+                pdf.setFont('helvetica','bold');
+                pdf.setFontSize(14);
+                pdf.setTextColor(26, 86, 219);
+                pdf.text('HATA RAPORU', pageW/2, y, {align:'center'});
+                y += 8;
+
+                // Üst bilgi
+                const infoRows = [
+                    ['Tarih',     r.tarih || '—'],
+                    ['Shipment',  r.shipment || '—'],
+                    ['Araç Türü', r.aracTipi || '—'],
+                    ['Araç Cinsi',r.aracTuru || '—'],
+                    ['Vardiya',   r.vardiya || '—'],
+                ];
+
                 pdf.autoTable({
                     startY: y,
-                    head: [['İsim', 'İmza']],
-                    body: ekipRows,
-                    styles: { font:'helvetica', fontSize:10, cellPadding:5, lineColor:[200,210,220], lineWidth:0.3, textColor:[40,50,70] },
-                    headStyles: { fillColor:[26,86,219], textColor:255, fontStyle:'bold', fontSize:9, halign:'center' },
+                    body: infoRows,
+                    styles: { font:'helvetica', fontSize:10, cellPadding:4, lineColor:[200,210,220], lineWidth:0.3, textColor:[40,50,70] },
                     columnStyles: {
-                        0: { cellWidth:60 },
-                        1: { cellWidth:pageW - margin*2 - 60 }
-                    },
-                    didDrawCell: function(data) {
-                        if (data.section === 'body' && data.column.index === 1) {
-                            const d = data.cell;
-                            pdf.setDrawColor(120,140,180);
-                            pdf.setLineWidth(0.4);
-                            pdf.line(d.x+6, d.y+d.height-4, d.x+d.width-6, d.y+d.height-4);
-                        }
+                        0: { cellWidth:45, fontStyle:'bold', fillColor:[241,244,251] },
+                        1: { cellWidth:pageW - margin*2 - 45 }
                     },
                     margin: { left:margin, right:margin }
                 });
                 y = pdf.lastAutoTable.finalY + 6;
-            }
 
-            // Forkliftçi
-            if (r.forkliftci && r.forkliftci.trim()) {
+                // Lastik Kodları tablosu
                 pdf.setFont('helvetica','bold');
                 pdf.setFontSize(9);
                 pdf.setTextColor(26, 86, 219);
-                pdf.text('FORKLİFTÇİ', margin, y);
+                pdf.text('LASTİK KODLARI', margin, y);
                 y += 4;
+
+                let kodRows = [];
+                if (Array.isArray(r.kodSatirlari) && r.kodSatirlari.length) {
+                    kodRows = r.kodSatirlari.map(s => [
+                        s.kod || '—',
+                        String(s.adet || 0),
+                        s.tur === 'eksik' ? 'EKSİK' : 'FAZLA'
+                    ]);
+                } else {
+                    const kodlar = Array.isArray(r.lastikKodlar) ? r.lastikKodlar : (r.lastikKod||'').split(',').map(s=>s.trim()).filter(Boolean);
+                    kodlar.forEach(k => {
+                        kodRows.push([k, String(r.adet||0), r.tur === 'eksik' ? 'EKSİK' : 'FAZLA']);
+                    });
+                    if (!kodRows.length) kodRows.push(['—', String(r.adet||0), r.tur === 'eksik' ? 'EKSİK' : 'FAZLA']);
+                }
+
                 pdf.autoTable({
                     startY: y,
-                    body: [['Forklift: ' + r.forkliftci.trim(), '']],
-                    styles: { font:'helvetica', fontSize:10, cellPadding:5, lineColor:[200,210,220], lineWidth:0.3, textColor:[40,50,70] },
+                    head: [['Lastik Kodu', 'Adet', 'Durum']],
+                    body: kodRows,
+                    styles: { font:'helvetica', fontSize:10, cellPadding:4, lineColor:[200,210,220], lineWidth:0.3, textColor:[40,50,70] },
+                    headStyles: { fillColor:[26,86,219], textColor:255, fontStyle:'bold', fontSize:9, halign:'center' },
                     columnStyles: {
-                        0: { cellWidth:60, fontStyle:'bold' },
-                        1: { cellWidth:pageW - margin*2 - 60 }
+                        0: { cellWidth:80 },
+                        1: { cellWidth:30, halign:'center' },
+                        2: { cellWidth:pageW - margin*2 - 110, halign:'center' }
                     },
                     didDrawCell: function(data) {
-                        if (data.section === 'body' && data.column.index === 1) {
-                            const d = data.cell;
-                            pdf.setDrawColor(120,140,180);
-                            pdf.setLineWidth(0.4);
-                            pdf.line(d.x+6, d.y+d.height-4, d.x+d.width-6, d.y+d.height-4);
+                        if (data.section === 'body' && data.column.index === 2) {
+                            const val = data.cell.raw;
+                            data.cell.styles.textColor = val === 'EKSİK' ? [185,28,28] : [21,128,61];
+                            data.cell.styles.fontStyle = 'bold';
                         }
                     },
                     margin: { left:margin, right:margin }
                 });
                 y = pdf.lastAutoTable.finalY + 6;
-            }
 
-            // Açıklama
-            if (r.aciklama && r.aciklama.trim()) {
+                // Ekip
                 pdf.setFont('helvetica','bold');
                 pdf.setFontSize(9);
-                pdf.setTextColor(100,100,100);
-                pdf.text('AÇIKLAMA: ', margin, y);
-                pdf.setFont('helvetica','normal');
-                const satirlar = pdf.splitTextToSize(r.aciklama.trim(), pageW - margin*2 - 28);
-                pdf.text(satirlar, margin + 28, y);
-                y += satirlar.length * 5 + 2;
-            }
+                pdf.setTextColor(26, 86, 219);
+                pdf.text('EKİP', margin, y);
+                y += 4;
 
-            // Footer
-            const now = new Date();
-            pdf.setFontSize(8);
-            pdf.setTextColor(160,160,160);
-            pdf.text(
-                'Oluşturulma: ' + now.toLocaleDateString('tr-TR') + ' ' + now.toLocaleTimeString('tr-TR', {hour:'2-digit',minute:'2-digit'}),
-                pageW - margin, 290, {align:'right'}
-            );
-        });
+                const ekipArr = Array.isArray(r.ekip)
+                    ? r.ekip.map(e => e.trim()).filter(Boolean)
+                    : (r.ekip||'').split(',').map(e => e.trim()).filter(Boolean);
+                const ekipRows = ekipArr.map(isim => [isim, '']);
 
-        const donemLabel = hrDonem==='gun' ? document.getElementById('hrGun')?.value :
-                           hrDonem==='ay'  ? document.getElementById('hrAy')?.value :
-                           hrDonem==='yil' ? document.getElementById('hrYil')?.value :
-                           (document.getElementById('hrAralikBas')?.value + '_' + document.getElementById('hrAralikBit')?.value);
+                if (ekipRows.length) {
+                    pdf.autoTable({
+                        startY: y,
+                        head: [['İsim', 'İmza']],
+                        body: ekipRows,
+                        styles: { font:'helvetica', fontSize:10, cellPadding:5, lineColor:[200,210,220], lineWidth:0.3, textColor:[40,50,70] },
+                        headStyles: { fillColor:[26,86,219], textColor:255, fontStyle:'bold', fontSize:9, halign:'center' },
+                        columnStyles: {
+                            0: { cellWidth:60 },
+                            1: { cellWidth:pageW - margin*2 - 60 }
+                        },
+                        didDrawCell: function(data) {
+                            if (data.section === 'body' && data.column.index === 1) {
+                                const d = data.cell;
+                                pdf.setDrawColor(120,140,180);
+                                pdf.setLineWidth(0.4);
+                                pdf.line(d.x+6, d.y+d.height-4, d.x+d.width-6, d.y+d.height-4);
+                            }
+                        },
+                        margin: { left:margin, right:margin }
+                    });
+                    y = pdf.lastAutoTable.finalY + 6;
+                }
 
-        pdf.save('HataRaporu_' + (donemLabel||'rapor').replace(/[^a-zA-Z0-9_-]/g,'_') + '.pdf');
+                // Forkliftçi
+                if (r.forkliftci && r.forkliftci.trim()) {
+                    pdf.setFont('helvetica','bold');
+                    pdf.setFontSize(9);
+                    pdf.setTextColor(26, 86, 219);
+                    pdf.text('FORKLİFTÇİ', margin, y);
+                    y += 4;
+                    pdf.autoTable({
+                        startY: y,
+                        body: [['Forklift: ' + r.forkliftci.trim(), '']],
+                        styles: { font:'helvetica', fontSize:10, cellPadding:5, lineColor:[200,210,220], lineWidth:0.3, textColor:[40,50,70] },
+                        columnStyles: {
+                            0: { cellWidth:60, fontStyle:'bold' },
+                            1: { cellWidth:pageW - margin*2 - 60 }
+                        },
+                        didDrawCell: function(data) {
+                            if (data.section === 'body' && data.column.index === 1) {
+                                const d = data.cell;
+                                pdf.setDrawColor(120,140,180);
+                                pdf.setLineWidth(0.4);
+                                pdf.line(d.x+6, d.y+d.height-4, d.x+d.width-6, d.y+d.height-4);
+                            }
+                        },
+                        margin: { left:margin, right:margin }
+                    });
+                    y = pdf.lastAutoTable.finalY + 6;
+                }
+
+                // Açıklama
+                if (r.aciklama && r.aciklama.trim()) {
+                    pdf.setFont('helvetica','bold');
+                    pdf.setFontSize(9);
+                    pdf.setTextColor(100,100,100);
+                    pdf.text('AÇIKLAMA: ', margin, y);
+                    pdf.setFont('helvetica','normal');
+                    const satirlar = pdf.splitTextToSize(r.aciklama.trim(), pageW - margin*2 - 28);
+                    pdf.text(satirlar, margin + 28, y);
+                    y += satirlar.length * 5 + 2;
+                }
+
+                // Footer
+                const now = new Date();
+                pdf.setFontSize(8);
+                pdf.setTextColor(160,160,160);
+                pdf.text(
+                    'Oluşturulma: ' + now.toLocaleDateString('tr-TR') + ' ' + now.toLocaleTimeString('tr-TR', {hour:'2-digit',minute:'2-digit'}),
+                    pageW - margin, 290, {align:'right'}
+                );
+            });
+
+            const donemLabel = hrDonem==='gun' ? document.getElementById('hrGun')?.value :
+                               hrDonem==='ay'  ? document.getElementById('hrAy')?.value :
+                               hrDonem==='yil' ? document.getElementById('hrYil')?.value :
+                               (document.getElementById('hrAralikBas')?.value + '_' + document.getElementById('hrAralikBit')?.value);
+
+            pdf.save('HataRaporu_' + (donemLabel||'rapor').replace(/[^a-zA-Z0-9_-]/g,'_') + '.pdf');
+        } catch(err) {
+            console.error('PDF Error:', err);
+            alert('PDF oluşturulurken bir hata oluştu: ' + err.message);
+        }
     }
     // ── END HATA RAPORLARI ────────────────────────────────────
 
