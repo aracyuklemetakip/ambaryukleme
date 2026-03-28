@@ -2459,6 +2459,15 @@
     }
 
     // ── FORM DOLDUR ───────────────────────────────────────
+    function formDoldurById(id) {
+        const k = kayitlar.find(x => x.id === id);
+        if (k) formDoldur(k);
+    }
+    function ekipHizliAtaById(id, event) {
+        const k = kayitlar.find(x => x.id === id);
+        if (k) ekipHizliAta(k, event);
+    }
+
     function formDoldur(k) {
         duzenleId = k.id;
         selectedRecord = k;
@@ -2757,7 +2766,7 @@
             const durum    = k.gec?`<span class="status-gec">Gecikti</span>`:`<span class="status-ok">✓</span>`;
             const lastikGoster = (k.lastikler&&k.lastikler.length) ? k.lastikler.map(l=>`${l.kod} (${l.adet})`).join(', ') : '—';
             const efGoster = k.eksikFazla || '—';
-            tableHTML += `<tr class="${duzenleId===k.id?'selected':''}" data-id="${k.id}" onclick="formDoldur(${JSON.stringify(k).replace(/"/g,'&quot;')})" ondblclick="ekipHizliAta(${JSON.stringify(k).replace(/"/g,'&quot;')},event)" style="cursor:pointer;" title="Tıkla → düzenle | Çift tıkla → ekip aktar">
+            tableHTML += `<tr class="${duzenleId===k.id?'selected':''}" data-id="${k.id}" onclick="formDoldurById(${k.id})" ondblclick="ekipHizliAtaById(${k.id},event)" style="cursor:pointer;" title="Tıkla → düzenle | Çift tıkla → ekip aktar">
                 <td style="color:var(--muted);font-size:11px;">${i+1}</td>
                 <td><span style="font-size:10px;font-weight:800;color:${k.vardiya==='A Vardiyası'?'var(--blue-light)':'var(--yellow)'};">${k.vardiya==='A Vardiyası'?'A':'B'}</span></td>
                 <td style="font-weight:400;font-size:11px;">${ekipKisaGoster(k.ekip)}</td>
@@ -2768,7 +2777,7 @@
                 <td>${durum}</td>
                 <td style="display:flex;gap:4px;align-items:center;">
                     <button class="del-btn" onclick="silKayit(${k.id},event)" title="Sil">🗑️</button>
-                    <button class="ekip-aktar-btn" onclick="ekipHizliAtaBtn(${JSON.stringify(k).replace(/"/g,'&quot;')},event)" title="Ekip isimlerini forma aktar ve Tır seç">→</button>
+                    <button class="ekip-aktar-btn" onclick="ekipHizliAtaById(${k.id},event)" title="Ekip isimlerini forma aktar ve Tır seç">→</button>
                 </td>
             </tr>`;
         });
