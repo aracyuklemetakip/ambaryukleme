@@ -2461,6 +2461,7 @@
     // ── FORM DOLDUR ───────────────────────────────────────
     function formDoldurById(id) {
         const k = kayitlar.find(x => x.id === id);
+        console.log('formDoldurById çağrıldı, id:', id, 'kayıt:', k);
         if (k) formDoldur(k);
     }
     function ekipHizliAtaById(id, event) {
@@ -2469,6 +2470,7 @@
     }
 
     function formDoldur(k) {
+        console.log('Seçilen kayıt:', k);
         duzenleId = k.id;
         selectedRecord = k;
         setSegByVal('segVardiya', k.vardiya, 'active-yellow'); secilenVardiya = k.vardiya;
@@ -2492,7 +2494,12 @@
         const btn = document.getElementById('btnSubmit');
         btn.textContent = '\u270e  G\u00dcNCELLE';
         btn.classList.add('update-mode');
-        document.querySelectorAll('#tableBody tr').forEach(tr => tr.classList.toggle('selected', parseInt(tr.dataset.id)===k.id));
+        // Tüm satırların selected durumunu güncelle
+        document.querySelectorAll('#tableBody tr').forEach(tr => {
+            const isSelected = parseInt(tr.dataset.id) === k.id;
+            tr.classList.toggle('selected', isSelected);
+            tr.style.background = isSelected ? 'rgba(217,119,6,0.12)' : '#e8ecf4';
+        });
         document.querySelector('.form-panel').scrollTo({top:0,behavior:'smooth'});
     }
 
@@ -2506,7 +2513,10 @@
         const btn = document.getElementById('btnSubmit');
         btn.innerHTML = '✓ &nbsp;SİSTEME İŞLE';
         btn.classList.remove('update-mode');
-        document.querySelectorAll('#tableBody tr').forEach(tr => tr.classList.remove('selected'));
+        document.querySelectorAll('#tableBody tr').forEach(tr => {
+            tr.classList.remove('selected');
+            tr.style.background = '#e8ecf4';
+        });
     }
 
     // ── EKİP HIZLI ATAMA (çift tıklama) ──────────────────
@@ -2759,29 +2769,56 @@
             </div>`;
         }).join('');
 
-        // Düz liste - her kayıt alt alta
-        let tableHTML = '';
+        // Düz liste - her kayıt alt alta (addEventListener ile güvenli bağlama)
+        const tbody = document.getElementById('tableBody');
+        tbody.innerHTML = '';
         sirali.forEach((k, i) => {
             const tipBadge = k.aracTipi==='Tır'?'badge-tir':k.aracTipi==='Kamyon'?'badge-kamyon':'badge-konteyner';
             const durum    = k.gec?`<span class="status-gec">Gecikti</span>`:`<span class="status-ok">✓</span>`;
             const lastikGoster = (k.lastikler&&k.lastikler.length) ? k.lastikler.map(l=>`${l.kod} (${l.adet})`).join(', ') : '—';
             const efGoster = k.eksikFazla || '—';
-            tableHTML += `<tr class="${duzenleId===k.id?'selected':''}" data-id="${k.id}" onclick="formDoldurById(${k.id})" ondblclick="ekipHizliAtaById(${k.id},event)" style="cursor:pointer;" title="Tıkla → düzenle | Çift tıkla → ekip aktar">
-                <td style="color:var(--muted);font-size:11px;">${i+1}</td>
-                <td><span style="font-size:10px;font-weight:800;color:${k.vardiya==='A Vardiyası'?'var(--blue-light)':'var(--yellow)'};">${k.vardiya==='A Vardiyası'?'A':'B'}</span></td>
-                <td style="font-weight:400;font-size:11px;">${ekipKisaGoster(k.ekip)}</td>
-                <td><span class="badge ${tipBadge}">${k.aracTipi}</span></td>
-                <td style="color:var(--text-dim);font-size:11px;">${k.baslama} - ${k.bitis}</td>
-                <td style="font-size:10px;color:var(--text-dim);max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${lastikGoster}">${lastikGoster}</td>
-                <td style="font-size:11px;color:var(--warning);font-weight:700;">${efGoster}</td>
-                <td>${durum}</td>
-                <td style="display:flex;gap:4px;align-items:center;">
-                    <button class="del-btn" onclick="silKayit(${k.id},event)" title="Sil">🗑️</button>
-                    <button class="ekip-aktar-btn" onclick="ekipHizliAtaById(${k.id},event)" title="Ekip isimlerini forma aktar ve Tır seç">→</button>
-                </td>
-            </tr>`;
+
+            const tr = document.createElement('tr');
+            tr.dataset.id = k.id;
+            tr.style.cssText = 'cursor:pointer;border-bottom:1px solid rgba(163,177,198,0.2);transition:background 0.15s;background:#e8ecf4;';
+            if (duzenleId === k.id) tr.classList.add('selected');
+
+            tr.innerHTML = `
+                <td style="padding:10px 12px;color:var(--muted);font-size:11px;">${i+1}</td>
+                <td style="padding:10px 12px;"><span style="font-size:10px;font-weight:800;color:${k.vardiya==='A Vardiyası'?'var(--blue-light)':'var(--yellow)'};">${k.vardiya==='A Vardiyası'?'A':'B'}</span></td>
+                <td style="padding:10px 12px;font-weight:400;font-size:11px;">${ekipKisaGoster(k.ekip)}</td>
+                <td style="padding:10px 12px;"><span class="badge ${tipBadge}">${k.aracTipi}</span></td>
+                <td style="padding:10px 12px;color:var(--text-dim);font-size:11px;">${k.baslama} - ${k.bitis}</td>
+                <td style="padding:10px 12px;font-size:10px;color:var(--text-dim);max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${lastikGoster}">${lastikGoster}</td>
+                <td style="padding:10px 12px;font-size:11px;color:var(--warning);font-weight:700;">${efGoster}</td>
+                <td style="padding:10px 12px;">${durum}</td>
+                <td style="padding:6px 12px;">
+                    <button class="del-btn" data-delid="${k.id}" title="Sil">🗑️</button>
+                </td>`;
+
+            // Satır click → form doldur (butonlar hariç)
+            tr.addEventListener('click', function(e) {
+                if (e.target.closest('.del-btn')) return;
+                console.log('Seçilen kayıt:', k);
+                formDoldur(k);
+            });
+
+            // Sil butonu
+            tr.querySelector('.del-btn').addEventListener('click', function(e) {
+                e.stopPropagation();
+                silKayit(k.id, e);
+            });
+
+            // Hover efekti
+            tr.addEventListener('mouseenter', function() {
+                if (!tr.classList.contains('selected')) tr.style.background = '#dde3ef';
+            });
+            tr.addEventListener('mouseleave', function() {
+                if (!tr.classList.contains('selected')) tr.style.background = '#e8ecf4';
+            });
+
+            tbody.appendChild(tr);
         });
-        document.getElementById('tableBody').innerHTML = tableHTML;
     }
 
     // ── TOAST ─────────────────────────────────────────────
