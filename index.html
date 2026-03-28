@@ -2471,24 +2471,63 @@
     }
 
     // ── DURUŞ ─────────────────────────────────────────────
+    const SABIT_DURUS_MAP = {
+        'Temizlik':    'durus_Temizlik',
+        'Etiket':      'durus_Etiket',
+        'Çay Molası':  'durus_Cay',
+        'Yemek Molası':'durus_Yemek',
+        'Diğer':       'durus_Diger'
+    };
+
+    function sabitDurusGuncelle(sebep, deger) {
+        const val = parseInt(deger) || 0;
+        // duruslar array'ini güncelle
+        const mevcut = duruslar.find(d => d.sebep === sebep);
+        if (val > 0) {
+            if (mevcut) { mevcut.sure = val; }
+            else { duruslar.push({ id: durusId++, sebep, sure: val }); }
+        } else {
+            duruslar = duruslar.filter(d => d.sebep !== sebep);
+        }
+    }
+
     function toggleDurusMenu(e) {
         e.stopPropagation();
-        document.getElementById('durusMenu').classList.toggle('open');
+        const menu = document.getElementById('durusMenu');
+        if (menu) menu.classList.toggle('open');
     }
 
     function addDurus(sebep) {
-        duruslar.push({ id: durusId++, sebep, sure: '' });
-        document.getElementById('durusMenu').classList.remove('open');
-        renderDuruslar();
+        const menu = document.getElementById('durusMenu');
+        if (menu) menu.classList.remove('open');
+        // Sabit duruşlara yönlendir
+        const inputId = SABIT_DURUS_MAP[sebep];
+        if (inputId) {
+            const el = document.getElementById(inputId);
+            if (el) { el.focus(); el.select(); }
+        } else {
+            duruslar.push({ id: durusId++, sebep, sure: '' });
+            renderDuruslar();
+        }
     }
 
     function removeDurus(id) {
-        duruslar = duruslar.filter(d => d.id !== id);
+        const d = duruslar.find(x => x.id === id);
+        if (d) {
+            const inputId = SABIT_DURUS_MAP[d.sebep];
+            if (inputId) {
+                const el = document.getElementById(inputId);
+                if (el) el.value = '';
+            }
+        }
+        duruslar = duruslar.filter(x => x.id !== id);
         renderDuruslar();
     }
 
     function renderDuruslar() {
-        document.getElementById('durusList').innerHTML = duruslar.map(d => `
+        const el = document.getElementById('durusList');
+        if (!el) return; // sabit duruşlar varsa bu element olmayabilir
+        el.innerHTML = duruslar.map(d => `
             <div class="durus-item">
                 <div class="text-input" style="font-size:12px;display:flex;align-items:center;color:var(--text-dim);font-weight:600;">${d.sebep}</div>
                 <input type="number" class="text-input durus-dk" placeholder="dk" value="${d.sure || ''}" min="0"
@@ -2632,6 +2671,12 @@
             const efEl = document.getElementById('eksikFazla');
             if (efEl) efEl.value = k.eksikFazla || '';
             duruslar = (k.duruslar||[]).map(d=>({...d, id:durusId++}));
+            // Sabit duruş inputlarını doldur
+            ['durus_Temizlik','durus_Etiket','durus_Cay','durus_Yemek','durus_Diger'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+            duruslar.forEach(d => {
+                const inputId = SABIT_DURUS_MAP[d.sebep];
+                if (inputId) { const el = document.getElementById(inputId); if (el) el.value = d.sure || ''; }
+            });
             renderDuruslar();
             lastikler = (k.lastikler||[]).map(l => ({...l}));
             renderLastikler();
@@ -2829,6 +2874,14 @@
 
     // ── KAYDET / GÜNCELLE ─────────────────────────────────
     function kaydetVeyaGuncelle() {
+        // Sabit duruş inputlarından duruslar array'ini güncelle
+        duruslar = duruslar.filter(d => !SABIT_DURUS_MAP[d.sebep]); // sabit olmayanları koru
+        Object.entries(SABIT_DURUS_MAP).forEach(([sebep, inputId]) => {
+            const el = document.getElementById(inputId);
+            const val = parseInt(el?.value) || 0;
+            if (val > 0) duruslar.push({ id: durusId++, sebep, sure: val });
+        });
+
         const m3       = document.getElementById('m3').value;
         const shipment = document.getElementById('shipment_v2').value.trim();
         const ekip     = document.getElementById('ekip').value.trim();
@@ -2873,6 +2926,8 @@
 
     function formTemizle() {
         ['m3','shipment_v2','ekip','kaliteci','forkliftci','aciklama','baslama','bitis','eksikFazla'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+        // Sabit duruş inputlarını temizle
+        ['durus_Temizlik','durus_Etiket','durus_Cay','durus_Yemek','durus_Diger'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
         duruslar=[]; renderDuruslar();
         lastikler=[]; renderLastikler();
         const ki=document.getElementById('lastikKodInput'); if(ki) ki.value='';
@@ -3045,7 +3100,7 @@
     document.addEventListener('mousedown', e => {
         // Dropdown kapat
         const wrap = document.getElementById('durusWrap');
-        if (wrap && !wrap.contains(e.target)) document.getElementById('durusMenu').classList.remove('open');
+        if (wrap && !wrap.contains(e.target)) { const m = document.getElementById('durusMenu'); if (m) m.classList.remove('open'); }
         // Seçim kaldır — tablo paneli veya form paneli tıklamalarında İPTAL ETME
         if (duzenleId !== null) {
             const clickedRow       = e.target.closest('#tableBody tr');
