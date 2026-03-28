@@ -1051,6 +1051,14 @@
                 <div id="forkliftciDropdown" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:500;background:#e0e5ec;border:1px solid rgba(255,255,255,0.12);border-radius:10px;margin-top:4px;max-height:220px;overflow-y:auto;box-shadow:0 8px 32px rgba(163,177,198,0.55);"></div>
             </div>
 
+            <div class="form-section-title">Lastikler <span style="font-weight:500;color:var(--muted);text-transform:none;letter-spacing:0;font-size:9px;">(opsiyonel)</span></div>
+            <div id="lastikListesi" style="display:flex;flex-direction:column;gap:4px;margin-bottom:6px;"></div>
+            <div style="display:grid;grid-template-columns:1fr 60px 32px;gap:4px;margin-bottom:6px;">
+                <input type="text" id="lastikKodInput" class="text-input" placeholder="205/55R16" style="font-size:12px;text-transform:uppercase;" oninput="this.value=this.value.toUpperCase()">
+                <input type="number" id="lastikAdetInput" class="text-input" placeholder="Adet" min="1" style="font-size:12px;text-align:center;">
+                <button onclick="lastikEkle()" style="border-radius:6px;border:1px solid rgba(37,99,235,0.4);background:rgba(37,99,235,0.1);color:#2563eb;font-size:14px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;" onmouseover="this.style.background='rgba(37,99,235,0.2)'" onmouseout="this.style.background='rgba(37,99,235,0.1)'">+</button>
+            </div>
+
             <div class="form-section-title">Duruşlar <span style="font-weight:500;color:var(--muted);text-transform:none;letter-spacing:0;font-size:9px;">(opsiyonel)</span></div>
             <div class="durus-list" id="durusList"></div>
             <div class="durus-dropdown-wrap" id="durusWrap">
@@ -1066,6 +1074,10 @@
             <div class="input-group" style="margin-top:10px;">
                 <div class="input-label">Açıklama <span class="opt">(opsiyonel)</span></div>
                 <input type="text" id="aciklama" class="text-input" tabindex="15" placeholder="Varsa açıklama...">
+            </div>
+            <div class="input-group" style="margin-top:6px;">
+                <div class="input-label">Eksik / Fazla <span class="opt">(opsiyonel)</span></div>
+                <input type="text" id="eksikFazla" class="text-input" tabindex="16" placeholder="Örn: Eksik 2 lastik">
             </div>
             <button class="btn-submit" id="btnSubmit" tabindex="16" onclick="kaydetVeyaGuncelle()">✓ &nbsp;SİSTEME İŞLE</button>
         </div>
@@ -1085,7 +1097,7 @@
             <div id="yuklemeListesiBaslik" style="display:none;"><div id="yuklemeListesiTarihText"></div></div>
 
             <table class="data-table">
-                <thead><tr><th>#</th><th style="width:30px;">Var.</th><th>Ekip</th><th>Araç</th><th>Saat</th><th>Durum</th><th></th></tr></thead>
+                <thead><tr><th>#</th><th style="width:30px;">Var.</th><th>Ekip</th><th>Araç</th><th>Saat</th><th>Lastik</th><th>E/F</th><th>Durum</th><th></th></tr></thead>
                 <tbody id="tableBody"></tbody>
             </table>
             <div class="empty-state" id="emptyState">
@@ -1807,6 +1819,8 @@
     let kayitlar   = [];
     let duzenleId  = null;
     let silPendingId = null;
+    let lastikler  = [];   // [{ kod: "205/55", adet: 10 }, ...]
+    let selectedRecord = null;
     const STANDART = { 'Tır':150, 'Kamyon':90, 'Konteyner':120 };
 
     // ── PERSONEL LİSTESİ ──────────────────────────────────
@@ -2350,6 +2364,43 @@
         `).join('');
     }
 
+    // ── LASTİK SİSTEMİ ────────────────────────────────────
+    function lastikEkle() {
+        const kodEl  = document.getElementById('lastikKodInput');
+        const adetEl = document.getElementById('lastikAdetInput');
+        const kod  = (kodEl.value||'').trim().toUpperCase();
+        const adet = parseInt(adetEl.value)||0;
+        if (!kod || adet < 1) { showToast('⚠️ Lastik kodu ve adet zorunlu!','warn'); return; }
+        lastikler.push({ kod, adet });
+        kodEl.value  = '';
+        adetEl.value = '';
+        renderLastikler();
+        kodEl.focus();
+    }
+
+    function lastikKaldir(idx) {
+        lastikler.splice(idx, 1);
+        renderLastikler();
+    }
+
+    function renderLastikler() {
+        const el = document.getElementById('lastikListesi');
+        if (!el) return;
+        el.innerHTML = lastikler.map((l, i) => `
+            <div style="display:grid;grid-template-columns:1fr 50px 24px;gap:4px;align-items:center;animation:fadeIn 0.2s ease;">
+                <div class="text-input" style="font-size:12px;color:var(--text);font-weight:700;">${l.kod}</div>
+                <div class="text-input" style="font-size:12px;text-align:center;color:var(--yellow);font-weight:800;">${l.adet}</div>
+                <button class="durus-remove" onclick="lastikKaldir(${i})">✕</button>
+            </div>
+        `).join('');
+    }
+
+    function lastiklerStr(liste) {
+        if (!liste || !liste.length) return '—';
+        return liste.map(l => `${l.kod} (${l.adet})`).join(', ');
+    }
+
+
     // ── SAAT GİRİŞİ ───────────────────────────────────────
     function sadeceSayi(e) {
         const izinli = ['Backspace','Delete','Tab','ArrowLeft','ArrowRight'];
@@ -2410,6 +2461,7 @@
     // ── FORM DOLDUR ───────────────────────────────────────
     function formDoldur(k) {
         duzenleId = k.id;
+        selectedRecord = k;
         setSegByVal('segVardiya', k.vardiya, 'active-yellow'); secilenVardiya = k.vardiya;
         setSegByVal('segTip', k.aracTipi, 'active-blue');   secilenAracTipi = k.aracTipi;
         setSegByVal('segTur', k.aracTuru, 'active-yellow'); secilenAracTuru = k.aracTuru;
@@ -2421,11 +2473,15 @@
         document.getElementById('kaliteci').value = k.kaliteci||'';
         document.getElementById('forkliftci').value = k.forkliftci||'';
         document.getElementById('aciklama').value = k.aciklama||'';
+        document.getElementById('eksikFazla').value = k.eksikFazla||'';
         duruslar = (k.duruslar||[]).map(d=>({...d, id:durusId++}));
         renderDuruslar();
+        // Lastikleri yükle
+        lastikler = (k.lastikler||[]).map(l => ({...l}));
+        renderLastikler();
         document.getElementById('editBanner').classList.add('show');
         const btn = document.getElementById('btnSubmit');
-        btn.textContent = '✎  GÜNCELLE';
+        btn.textContent = '\u270e  G\u00dcNCELLE';
         btn.classList.add('update-mode');
         document.querySelectorAll('#tableBody tr').forEach(tr => tr.classList.toggle('selected', parseInt(tr.dataset.id)===k.id));
         document.querySelector('.form-panel').scrollTo({top:0,behavior:'smooth'});
@@ -2433,6 +2489,7 @@
 
     function iptalDuzenle() {
         duzenleId = null;
+        selectedRecord = null;
         secilenAracTuru = '';
         secilenAracTipi = '';
         formTemizle();
@@ -2561,6 +2618,7 @@
         const kaliteci = document.getElementById('kaliteci').value.trim();
         const forkliftci = document.getElementById('forkliftci').value.trim();
         const aciklama = document.getElementById('aciklama').value.trim();
+        const eksikFazla = (document.getElementById('eksikFazla')?.value||'').trim();
 
         if (!m3 || !ekip || !baslama || !bitis) { showToast('⚠️  M³, Ekip ve Saat zorunlu!','warn'); return; }
         if (!secilenVardiya) { showToast('⚠️  Vardiya seçiniz!','warn'); return; }
@@ -2576,13 +2634,13 @@
 
         if (duzenleId !== null) {
             const idx = kayitlar.findIndex(k=>k.id===duzenleId);
-            if (idx !== -1) kayitlar[idx] = {...kayitlar[idx], vardiya:secilenVardiya, aracTipi:secilenAracTipi, aracTuru:secilenAracTuru, m3:parseFloat(m3), shipment, ekip, baslama, bitis, kaliteci, forkliftci, aciklama, duruslar:[...duruslar], brut:sure.brut, net:sure.net, gec:sure.gec, fark:sure.fark};
-            
-            if(window._fbSaveKayit) window._fbSaveKayit(kayitlar[kayitlar.findIndex(k=>k.id===duzenleId)]);
+            if (idx !== -1) kayitlar[idx] = {...kayitlar[idx], vardiya:secilenVardiya, aracTipi:secilenAracTipi, aracTuru:secilenAracTuru, m3:parseFloat(m3), shipment, ekip, baslama, bitis, kaliteci, forkliftci, aciklama, eksikFazla, lastikler:[...lastikler], duruslar:[...duruslar], brut:sure.brut, net:sure.net, gec:sure.gec, fark:sure.fark};
+            const updated = kayitlar.find(k=>k.id===duzenleId);
+            if(window._fbSaveKayit) window._fbSaveKayit(updated);
+            selectedRecord = null;
             iptalDuzenle(); renderTablo(); showToast('✓  Kayıt güncellendi','success');
         } else {
-            kayitlar.push({ id:Date.now(), tarih:kayitTarih, vardiya:secilenVardiya, aracTipi:secilenAracTipi, aracTuru:secilenAracTuru, m3:parseFloat(m3), shipment, ekip, baslama, bitis, kaliteci, forkliftci, aciklama, duruslar:[...duruslar], brut:sure.brut, net:sure.net, gec:sure.gec, fark:sure.fark });
-            
+            kayitlar.push({ id:Date.now(), tarih:kayitTarih, vardiya:secilenVardiya, aracTipi:secilenAracTipi, aracTuru:secilenAracTuru, m3:parseFloat(m3), shipment, ekip, baslama, bitis, kaliteci, forkliftci, aciklama, eksikFazla, lastikler:[...lastikler], duruslar:[...duruslar], brut:sure.brut, net:sure.net, gec:sure.gec, fark:sure.fark });
             if(window._fbSaveKayit) window._fbSaveKayit(kayitlar[kayitlar.length-1]);
             formTemizle(); renderTablo(); showToast('✓  Kayıt başarıyla eklendi','success');
             // Tır'ı seçili getir
@@ -2592,8 +2650,11 @@
     }
 
     function formTemizle() {
-        ['m3','shipment','ekip','kaliteci','forkliftci','aciklama','baslama','bitis'].forEach(id => document.getElementById(id).value='');
+        ['m3','shipment','ekip','kaliteci','forkliftci','aciklama','baslama','bitis','eksikFazla'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
         duruslar=[]; renderDuruslar();
+        lastikler=[]; renderLastikler();
+        const ki=document.getElementById('lastikKodInput'); if(ki) ki.value='';
+        const ai=document.getElementById('lastikAdetInput'); if(ai) ai.value='';
         // Araç tipi ve türü sıfırla
         document.getElementById('segTip').querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active-blue','active-yellow','active-red'));
         document.getElementById('segTur').querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active-blue','active-yellow','active-red'));
@@ -2611,9 +2672,8 @@
     function silKayit(id, e) { e.stopPropagation(); silPendingId=id; document.getElementById('confirmOverlay').classList.add('show'); }
     function confirmOk() {
         kayitlar = kayitlar.filter(k=>k.id!==silPendingId);
-        
         if(window._fbDeleteKayit) window._fbDeleteKayit(silPendingId);
-        if (duzenleId===silPendingId) iptalDuzenle();
+        if (duzenleId===silPendingId) { selectedRecord=null; iptalDuzenle(); }
         silPendingId=null;
         document.getElementById('confirmOverlay').classList.remove('show');
         renderTablo(); showToast('🗑️  Kayıt silindi','warn');
@@ -2695,12 +2755,16 @@
         sirali.forEach((k, i) => {
             const tipBadge = k.aracTipi==='Tır'?'badge-tir':k.aracTipi==='Kamyon'?'badge-kamyon':'badge-konteyner';
             const durum    = k.gec?`<span class="status-gec">Gecikti</span>`:`<span class="status-ok">✓</span>`;
-            tableHTML += `<tr class="${duzenleId===k.id?'selected':''}" data-id="${k.id}" onclick="formDoldur(${JSON.stringify(k).replace(/"/g,'&quot;')})" ondblclick="ekipHizliAta(${JSON.stringify(k).replace(/"/g,'&quot;')},event)" style="cursor:pointer;" title="Çift tıkla → ekip isimlerini forma aktar">
+            const lastikGoster = (k.lastikler&&k.lastikler.length) ? k.lastikler.map(l=>`${l.kod} (${l.adet})`).join(', ') : '—';
+            const efGoster = k.eksikFazla || '—';
+            tableHTML += `<tr class="${duzenleId===k.id?'selected':''}" data-id="${k.id}" onclick="formDoldur(${JSON.stringify(k).replace(/"/g,'&quot;')})" ondblclick="ekipHizliAta(${JSON.stringify(k).replace(/"/g,'&quot;')},event)" style="cursor:pointer;" title="Tıkla → düzenle | Çift tıkla → ekip aktar">
                 <td style="color:var(--muted);font-size:11px;">${i+1}</td>
                 <td><span style="font-size:10px;font-weight:800;color:${k.vardiya==='A Vardiyası'?'var(--blue-light)':'var(--yellow)'};">${k.vardiya==='A Vardiyası'?'A':'B'}</span></td>
                 <td style="font-weight:400;font-size:11px;">${ekipKisaGoster(k.ekip)}</td>
                 <td><span class="badge ${tipBadge}">${k.aracTipi}</span></td>
                 <td style="color:var(--text-dim);font-size:11px;">${k.baslama} - ${k.bitis}</td>
+                <td style="font-size:10px;color:var(--text-dim);max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${lastikGoster}">${lastikGoster}</td>
+                <td style="font-size:11px;color:var(--warning);font-weight:700;">${efGoster}</td>
                 <td>${durum}</td>
                 <td style="display:flex;gap:4px;align-items:center;">
                     <button class="del-btn" onclick="silKayit(${k.id},event)" title="Sil">🗑️</button>
