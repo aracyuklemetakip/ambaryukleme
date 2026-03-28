@@ -1606,27 +1606,19 @@
                         <div class="sef-bolum" style="margin-bottom:0;">
                             <div class="sef-bolum-baslik">📋 Hata Kaydı</div>
                             <div style="display:flex;flex-direction:column;gap:8px;">
+
+                                <!-- KOD SATIRLARI -->
                                 <div class="filtre-group">
-                                    <div class="filtre-label">Lastik Kodu <span style="font-weight:500;text-transform:none;letter-spacing:0;color:var(--muted);font-size:9px;">(her satır: kod adet durum)</span></div>
-                                    <div id="hrLastikTagWrap" style="display:flex;flex-wrap:wrap;gap:4px;padding:5px 8px;background:#e8ecf4;border:1px solid rgba(163,177,198,0.3);border-radius:6px;min-height:34px;box-shadow:inset 1px 1px 4px rgba(163,177,198,0.4),inset -1px -1px 3px rgba(255,255,255,0.7);"></div>
-                                    <textarea id="hrLastikKodu" class="filtre-input" rows="4" style="width:100%;font-family:'Barlow',sans-serif;font-size:12px;resize:vertical;margin-top:4px;" placeholder="545098 3 adet eksik&#10;555666 1 adet fazla"></textarea>
-                                    <button onclick="hrLastikParse()" style="width:100%;margin-top:4px;padding:5px;border-radius:6px;border:1px solid rgba(26,86,219,0.3);background:rgba(26,86,219,0.08);color:#1a56db;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:900;cursor:pointer;">KODLARI İŞLE</button>
-                                    <div id="hrLastikParseMsg" style="display:none;font-size:11px;margin-top:4px;padding:5px 8px;border-radius:5px;"></div>
-                                </div>
-                                <div class="filtre-group">
-                                    <div class="filtre-label">Adet</div>
-                                    <input type="number" id="hrAdet" class="filtre-input" style="width:100%;" placeholder="" min="0">
-                                </div>
-                                <div class="filtre-group">
-                                    <div class="filtre-label">Hata Türü</div>
-                                    <div style="display:flex;gap:4px;" id="hrTurSeg">
-                                        <div class="filtre-seg-btn aktif" onclick="hrTurSec(this,'eksik')" style="flex:1;text-align:center;">Eksik</div>
-                                        <div class="filtre-seg-btn" onclick="hrTurSec(this,'fazla')" style="flex:1;text-align:center;">Fazla</div>
+                                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+                                        <div class="filtre-label" style="margin:0;">Lastik Kodları</div>
+                                        <button onclick="hrKodSatirEkle()" style="padding:2px 10px;border-radius:5px;border:1px solid rgba(26,86,219,0.35);background:rgba(26,86,219,0.08);color:#1a56db;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:900;cursor:pointer;">+ Satır Ekle</button>
                                     </div>
+                                    <div id="hrKodSatirlar" style="display:flex;flex-direction:column;gap:5px;"></div>
                                 </div>
+
                                 <div class="filtre-group">
                                     <div class="filtre-label">Açıklama</div>
-                                    <textarea id="hrAciklama" class="filtre-input" style="width:100%;min-height:64px;resize:vertical;font-family:'Barlow',sans-serif;" placeholder="Detay not..."></textarea>
+                                    <textarea id="hrAciklama" class="filtre-input" style="width:100%;min-height:56px;resize:vertical;font-family:'Barlow',sans-serif;" placeholder="Detay not..."></textarea>
                                 </div>
                                 <div id="hrFormMsg" style="display:none;font-size:11px;font-weight:700;padding:6px 10px;border-radius:6px;"></div>
                                 <button id="hrKaydetBtn" onclick="hrKaydet()" style="width:100%;padding:10px;border-radius:8px;border:1px solid rgba(26,86,219,0.4);background:rgba(26,86,219,0.12);color:#1a56db;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:900;letter-spacing:1px;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.background='rgba(26,86,219,0.22)'" onmouseout="this.style.background='rgba(26,86,219,0.12)'">💾 KAYDET</button>
@@ -1696,8 +1688,7 @@
                                         <th>Ekip</th>
                                         <th>Forkliftçi</th>
                                         <th>Araç</th>
-                                        <th>Lastik Kodu</th>
-                                        <th>Eksik/Fazla</th>
+                                        <th>Lastik Kodları / Adet</th>
                                         <th>Açıklama</th>
                                     </tr></thead>
                                     <tbody id="hrTableBody"></tbody>
@@ -5246,12 +5237,76 @@ document.addEventListener('DOMContentLoaded', function() {
     // ══════════════════════════════════════════════════════════
     // HATA RAPORLARI MODÜLü (sekme8)
     // Koleksiyon: hataRaporlari
+    // Yeni veri modeli: her kayıtta kodSatirlari = [{kod, adet, tur}]
     // ══════════════════════════════════════════════════════════
-    let hrRaporlar = [];          // tüm hata kayıtları (cache)
-    let hrSeciliTur = 'eksik';   // form hata türü
-    let hrDonem = 'gun';          // filtre dönemi
-    let hrSeciliLastikler = [];   // çoklu lastik kodları
-    let hrDuzenleId = null;       // güncelleme modu
+    let hrRaporlar = [];
+    let hrDonem = 'gun';
+    let hrDuzenleId = null;
+    let hrSeciliRowId = null;
+
+    // ── Kod satırı state (form) ───────────────────────────────
+    // Her eleman: { id(uuid), kod, adet, tur }
+    let hrKodSatirlari = [];
+    let _hrSatirCounter = 0;
+
+    function hrKodSatirEkle(kod, adet, tur) {
+        const sid = ++_hrSatirCounter;
+        hrKodSatirlari.push({ sid, kod: kod||'', adet: adet||'', tur: tur||'eksik' });
+        hrKodSatirRender();
+        // Son eklenen satırın kod inputuna odaklan
+        setTimeout(() => {
+            const inp = document.getElementById('hrKodInp_' + sid);
+            if (inp) inp.focus();
+        }, 50);
+    }
+
+    function hrKodSatirKaldir(sid) {
+        hrKodSatirlari = hrKodSatirlari.filter(s => s.sid !== sid);
+        hrKodSatirRender();
+    }
+
+    function hrKodSatirGuncelle(sid, alan, deger) {
+        const s = hrKodSatirlari.find(x => x.sid === sid);
+        if (s) s[alan] = deger;
+    }
+
+    function hrKodSatirTurToggle(sid) {
+        const s = hrKodSatirlari.find(x => x.sid === sid);
+        if (!s) return;
+        s.tur = s.tur === 'eksik' ? 'fazla' : 'eksik';
+        hrKodSatirRender();
+    }
+
+    function hrKodSatirRender() {
+        const wrap = document.getElementById('hrKodSatirlar');
+        if (!wrap) return;
+        if (!hrKodSatirlari.length) {
+            wrap.innerHTML = '<div style="font-size:11px;color:var(--muted);padding:6px 0;">Henüz satır yok — Satır Ekle\'ye bas</div>';
+            return;
+        }
+        wrap.innerHTML = hrKodSatirlari.map(s => {
+            const isEksik = s.tur === 'eksik';
+            const turBg   = isEksik ? 'rgba(220,38,38,0.12)' : 'rgba(22,163,74,0.12)';
+            const turClr  = isEksik ? '#dc2626' : '#16a34a';
+            const turLbl  = isEksik ? '−  EKSİK' : '+  FAZLA';
+            return `<div style="display:flex;gap:5px;align-items:center;">
+                <input id="hrKodInp_${s.sid}" type="text" value="${s.kod}"
+                    placeholder="Lastik kodu"
+                    oninput="hrKodSatirGuncelle(${s.sid},'kod',this.value.toUpperCase());this.value=this.value.toUpperCase();"
+                    class="filtre-input" style="flex:2;min-width:0;padding:5px 8px;font-size:12px;text-transform:uppercase;">
+                <input id="hrAdetInp_${s.sid}" type="number" value="${s.adet}"
+                    placeholder="Adet" min="0"
+                    oninput="hrKodSatirGuncelle(${s.sid},'adet',this.value)"
+                    class="filtre-input" style="flex:1;min-width:0;padding:5px 8px;font-size:12px;">
+                <button onclick="hrKodSatirTurToggle(${s.sid})"
+                    style="padding:5px 10px;border-radius:6px;border:1px solid ${turClr}33;background:${turBg};color:${turClr};font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:900;cursor:pointer;white-space:nowrap;min-width:70px;transition:all 0.15s;">
+                    ${turLbl}
+                </button>
+                <button onclick="hrKodSatirKaldir(${s.sid})"
+                    style="padding:5px 8px;border-radius:6px;border:1px solid rgba(163,177,198,0.35);background:transparent;color:var(--muted);font-size:13px;font-weight:900;cursor:pointer;line-height:1;">✕</button>
+            </div>`;
+        }).join('');
+    }
 
     // ── Init ──────────────────────────────────────────────────
     async function hrInit() {
@@ -5263,27 +5318,18 @@ document.addEventListener('DOMContentLoaded', function() {
             hrRaporlar = [];
             console.warn('Hata raporları yüklenemedi:', e);
         }
-        // Bugünü default set et
         const bugun = new Date().toISOString().split('T')[0];
-        const gunEl = document.getElementById('hrGun');
-        if (gunEl && !gunEl.value) gunEl.value = bugun;
-        const ay = bugun.slice(0,7);
-        const ayEl = document.getElementById('hrAy');
-        if (ayEl && !ayEl.value) ayEl.value = ay;
-        const yilEl = document.getElementById('hrYil');
-        if (yilEl && !yilEl.value) yilEl.value = new Date().getFullYear();
-        const basEl = document.getElementById('hrAralikBas');
-        if (basEl && !basEl.value) basEl.value = bugun;
-        const bitEl = document.getElementById('hrAralikBit');
-        if (bitEl && !bitEl.value) bitEl.value = bugun;
+        const now = new Date();
+        const ayStr = String(now.getMonth()+1).padStart(2,'0');
+        const setVal = (id, v) => { const el = document.getElementById(id); if (el && !el.value) el.value = v; };
+        setVal('hrGun', bugun);
+        setVal('hrAy', now.getFullYear() + '-' + ayStr);
+        setVal('hrYil', now.getFullYear());
+        setVal('hrAralikBas', bugun);
+        setVal('hrAralikBit', bugun);
+        // Başlangıçta 1 boş satır ekle
+        hrKodSatirEkle();
         hrListele();
-    }
-
-    // ── Hata türü seç ────────────────────────────────────────
-    function hrTurSec(el, tur) {
-        document.querySelectorAll('#hrTurSeg .filtre-seg-btn').forEach(b => b.classList.remove('aktif'));
-        el.classList.add('aktif');
-        hrSeciliTur = tur;
     }
 
     // ── Dönem seç ─────────────────────────────────────────────
@@ -5306,15 +5352,12 @@ document.addEventListener('DOMContentLoaded', function() {
         const dd = document.getElementById('hrShipmentAcDropdown');
         if (!dd) return;
         const val = input.value.trim().toUpperCase();
-        // Öneri listesi: kayitlar + hrRaporlar'dan geçmiş shipmentler
         const all = [
             ...kayitlar.map(k => k.shipment),
             ...hrRaporlar.map(r => r.shipment)
         ].filter(s => s && s.trim()).map(s => s.trim().toUpperCase());
         const unique = [...new Set(all)].sort();
-        const oneri = val
-            ? unique.filter(s => s.includes(val) && s !== val)
-            : unique.slice(0, 10);
+        const oneri = val ? unique.filter(s => s.includes(val) && s !== val) : unique.slice(0, 10);
         if (!oneri.length) { dd.style.display='none'; return; }
         dd.style.display = 'block';
         dd.innerHTML = oneri.map(s =>
@@ -5332,7 +5375,6 @@ document.addEventListener('DOMContentLoaded', function() {
         hrShipmentAra();
     }
 
-    // ── Shipment ara (ambar_kayitlar'dan) ────────────────────
     function hrShipmentAra() {
         const no = document.getElementById('hrShipmentInput').value.trim().toUpperCase();
         const bilgiEl  = document.getElementById('hrShipmentBilgi');
@@ -5355,24 +5397,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // ── Kaydet / Güncelle ────────────────────────────────────
     async function hrKaydet() {
-        const shipment  = document.getElementById('hrShipmentInput').value.trim().toUpperCase();
-        const adet      = document.getElementById('hrAdet').value.trim();
-        const aciklama  = document.getElementById('hrAciklama').value.trim();
-        const msgEl     = document.getElementById('hrFormMsg');
-
-        // Textarea'daki yarım yazılmış kodu da parse et
-        const textareaEl = document.getElementById('hrLastikKodu');
-        const yarimIcerik = textareaEl ? textareaEl.value.trim() : '';
-        if (yarimIcerik) {
-            // Basit tek satır kontrolü: sadece kod varsa direkt ekle
-            const parts = yarimIcerik.split(/\s+/);
-            const kod = parts[0].toUpperCase();
-            if (kod && !hrSeciliLastikler.includes(kod)) {
-                hrSeciliLastikler.push(kod);
-                hrLastikRender();
-            }
-            if (textareaEl) textareaEl.value = '';
-        }
+        const shipment = document.getElementById('hrShipmentInput').value.trim().toUpperCase();
+        const aciklama = document.getElementById('hrAciklama').value.trim();
+        const msgEl    = document.getElementById('hrFormMsg');
 
         function hrMsg(txt, ok) {
             msgEl.textContent = txt;
@@ -5383,34 +5410,51 @@ document.addEventListener('DOMContentLoaded', function() {
             if (ok) setTimeout(() => { msgEl.style.display='none'; }, 2500);
         }
 
-        if (!shipment)                   { hrMsg('Shipment No zorunlu!', false); return; }
-        if (!hrSeciliLastikler.length)   { hrMsg('En az bir lastik kodu girin!', false); return; }
-        if (!adet)                       { hrMsg('Adet zorunlu!', false); return; }
+        if (!shipment) { hrMsg('Shipment No zorunlu!', false); return; }
+
+        // State'teki değerleri DOM'dan güncelle (input oninput ile zaten güncel ama garanti edelim)
+        hrKodSatirlari.forEach(s => {
+            const ki = document.getElementById('hrKodInp_' + s.sid);
+            const ai = document.getElementById('hrAdetInp_' + s.sid);
+            if (ki) s.kod = ki.value.trim().toUpperCase();
+            if (ai) s.adet = ai.value.trim();
+        });
+
+        // Geçerli satırları filtrele
+        const gecerliSatirlar = hrKodSatirlari.filter(s => s.kod && s.adet);
+        if (!gecerliSatirlar.length) { hrMsg('En az bir kod + adet girişi zorunlu!', false); return; }
 
         const now = new Date();
-        const gun = String(now.getDate()).padStart(2,'0');
-        const ay  = String(now.getMonth()+1).padStart(2,'0');
-        const yil = now.getFullYear();
-        const tarihStr = gun + '.' + ay + '.' + yil;
+        const tarihStr = String(now.getDate()).padStart(2,'0') + '.' + String(now.getMonth()+1).padStart(2,'0') + '.' + now.getFullYear();
 
         const eslesme = kayitlar.filter(k => k.shipment && k.shipment.trim().toUpperCase() === shipment);
         const ref = eslesme.length ? eslesme[0] : null;
 
+        // kodSatirlari: [{kod, adet, tur}] — ana veri
+        const kodSatirlari = gecerliSatirlar.map(s => ({
+            kod:  s.kod,
+            adet: parseInt(s.adet)||0,
+            tur:  s.tur
+        }));
+
+        // Geriye dönük uyumluluk için eski alanları da tut
         const rapor = {
-            id:         hrDuzenleId || Date.now(),
-            tarih:      tarihStr,
-            shipment:   shipment,
-            lastikKodlar: [...hrSeciliLastikler],
-            lastikKod:  hrSeciliLastikler.join(', '),
-            adet:       parseInt(adet)||0,
-            tur:        hrSeciliTur,
-            aciklama:   aciklama,
-            ekip:       ref ? (ref.ekip||'')       : '',
-            aracTipi:   ref ? (ref.aracTipi||'')   : '',
-            aracTuru:   ref ? (ref.aracTuru||'')   : '',
-            vardiya:    ref ? (ref.vardiya||'')     : '',
-            forkliftci: ref ? (ref.forkliftci||'') : '',
-            kayitTarih: ref ? (ref.tarih||'')       : '',
+            id:           hrDuzenleId || Date.now(),
+            tarih:        tarihStr,
+            shipment:     shipment,
+            kodSatirlari: kodSatirlari,
+            // eski alanlar (PDF/tablo geriye dönük uyum)
+            lastikKodlar: kodSatirlari.map(s => s.kod),
+            lastikKod:    kodSatirlari.map(s => s.kod).join(', '),
+            adet:         kodSatirlari.reduce((t,s)=>t+s.adet, 0),
+            tur:          kodSatirlari[0]?.tur || 'eksik',
+            aciklama:     aciklama,
+            ekip:         ref ? (ref.ekip||'')       : '',
+            aracTipi:     ref ? (ref.aracTipi||'')   : '',
+            aracTuru:     ref ? (ref.aracTuru||'')   : '',
+            vardiya:      ref ? (ref.vardiya||'')     : '',
+            forkliftci:   ref ? (ref.forkliftci||'') : '',
+            kayitTarih:   ref ? (ref.tarih||'')       : '',
         };
 
         try {
@@ -5419,34 +5463,30 @@ document.addEventListener('DOMContentLoaded', function() {
             if (hrDuzenleId) {
                 const idx = hrRaporlar.findIndex(r => r.id === hrDuzenleId);
                 if (idx !== -1) hrRaporlar[idx] = rapor; else hrRaporlar.push(rapor);
+                showToast('✅ Kayıt güncellendi', 'success');
             } else {
                 hrRaporlar.push(rapor);
+                showToast('✅ Kayıt eklendi', 'success');
             }
-            hrFormSifirla();
             hrMsg('✓ Kayıt başarıyla ' + (hrDuzenleId ? 'güncellendi' : 'eklendi'), true);
-            hrDuzenleId = null;
+            const oncekiDuzenleId = hrDuzenleId;
+            hrFormSifirla();
             hrListele();
         } catch(e) {
             hrMsg('Kayıt hatası: ' + e.message, false);
         }
     }
 
+    // ── Form sıfırla ─────────────────────────────────────────
     function hrFormSifirla() {
         document.getElementById('hrShipmentInput').value = '';
         document.getElementById('hrShipmentBilgi').style.display = 'none';
         document.getElementById('hrShipmentYok').style.display = 'none';
-        const textareaEl = document.getElementById('hrLastikKodu');
-        if (textareaEl) textareaEl.value = '';
-        document.getElementById('hrAdet').value = '';
         document.getElementById('hrAciklama').value = '';
-        hrSeciliLastikler = [];
-        hrLastikRender();
-        document.querySelectorAll('#hrTurSeg .filtre-seg-btn').forEach(b => b.classList.remove('aktif'));
-        const eksikBtn = document.querySelector('#hrTurSeg .filtre-seg-btn');
-        if (eksikBtn) eksikBtn.classList.add('aktif');
-        hrSeciliTur = 'eksik';
+        hrKodSatirlari = [];
+        _hrSatirCounter = 0;
+        hrKodSatirEkle(); // 1 boş satırla başla
         hrDuzenleId = null;
-        // Highlight kaldır
         if (hrSeciliRowId) {
             const row = document.getElementById('hrRow_' + hrSeciliRowId);
             if (row) row.style.background = '';
@@ -5455,118 +5495,12 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('hrKaydetBtn').textContent = '💾 KAYDET';
         document.getElementById('hrSilBtn').style.display = 'none';
         document.getElementById('hrIptalBtn').style.display = 'none';
-        const parseMsgEl = document.getElementById('hrLastikParseMsg');
-        if (parseMsgEl) parseMsgEl.style.display = 'none';
     }
 
-    // ── Textarea çoklu lastik kodu parse ─────────────────────
-    function hrLastikParse() {
-        const textarea = document.getElementById('hrLastikKodu');
-        const parseMsgEl = document.getElementById('hrLastikParseMsg');
-        const raw = textarea.value;
-        const satirlar = raw.split('\n');
-
-        const hatalar = [];
-        const yeniKodlar = [];
-
-        satirlar.forEach((satir, idx) => {
-            const trimmed = satir.trim();
-            if (!trimmed) return; // boş satır atla
-
-            // format: KOD ADET (adet) DURUM
-            // örn: 545098 3 adet eksik  veya  545098 3 eksik
-            const parts = trimmed.split(/\s+/);
-            if (parts.length < 2) {
-                hatalar.push(`Satır ${idx+1}: "${trimmed}" — geçersiz format`);
-                return;
-            }
-
-            const kod = parts[0].toUpperCase();
-
-            // "adet" kelimesini filtrele, sayı ve durum bul
-            const filtred = parts.slice(1).filter(p => p.toLowerCase() !== 'adet');
-            const sayiStr = filtred.find(p => !isNaN(p) && p !== '');
-            const durumStr = filtred.find(p => p.toLowerCase() === 'eksik' || p.toLowerCase() === 'fazla');
-
-            if (!sayiStr) {
-                hatalar.push(`Satır ${idx+1}: "${trimmed}" — adet bulunamadı`);
-                return;
-            }
-            if (!durumStr) {
-                hatalar.push(`Satır ${idx+1}: "${trimmed}" — durum (eksik/fazla) bulunamadı`);
-                return;
-            }
-
-            yeniKodlar.push(kod);
-
-            // Eğer adet henüz girilmemişse ilk geçerli satırdaki adedi kullan
-            const adetEl = document.getElementById('hrAdet');
-            if (adetEl && !adetEl.value) adetEl.value = sayiStr;
-
-            // Eğer tur henüz seçilmemişse ilk satırdaki durumu kullan
-            if (yeniKodlar.length === 1) {
-                const tur = durumStr.toLowerCase();
-                hrSeciliTur = tur;
-                document.querySelectorAll('#hrTurSeg .filtre-seg-btn').forEach(b => {
-                    b.classList.remove('aktif');
-                    if (b.getAttribute('onclick') && b.getAttribute('onclick').includes("'" + tur + "'")) b.classList.add('aktif');
-                });
-            }
-        });
-
-        // Yeni kodları mevcut listeye ekle (tekrar etmeyenleri)
-        yeniKodlar.forEach(k => {
-            if (!hrSeciliLastikler.includes(k)) hrSeciliLastikler.push(k);
-        });
-        hrLastikRender();
-
-        // Mesaj göster
-        parseMsgEl.style.display = 'block';
-        if (hatalar.length && yeniKodlar.length === 0) {
-            parseMsgEl.textContent = '⚠️ ' + hatalar.join(' | ');
-            parseMsgEl.style.color = '#dc2626';
-            parseMsgEl.style.background = 'rgba(220,38,38,0.07)';
-            parseMsgEl.style.border = '1px solid rgba(220,38,38,0.2)';
-        } else if (hatalar.length) {
-            parseMsgEl.textContent = `✓ ${yeniKodlar.length} kod eklendi. Uyarı: ${hatalar.join(' | ')}`;
-            parseMsgEl.style.color = '#d97706';
-            parseMsgEl.style.background = 'rgba(217,119,6,0.07)';
-            parseMsgEl.style.border = '1px solid rgba(217,119,6,0.2)';
-        } else if (yeniKodlar.length) {
-            parseMsgEl.textContent = `✓ ${yeniKodlar.length} lastik kodu eklendi`;
-            parseMsgEl.style.color = '#16a34a';
-            parseMsgEl.style.background = 'rgba(34,197,94,0.07)';
-            parseMsgEl.style.border = '1px solid rgba(34,197,94,0.2)';
-            textarea.value = '';
-            setTimeout(() => { parseMsgEl.style.display = 'none'; }, 2500);
-        }
-    }
-
-    function hrLastikEkle(e) {
-        // Artık kullanılmıyor ama uyumluluk için bırakıldı
-    }
-
-    function hrLastikKaldir(kod) {
-        hrSeciliLastikler = hrSeciliLastikler.filter(k => k !== kod);
-        hrLastikRender();
-    }
-
-    function hrLastikRender() {
-        const wrap = document.getElementById('hrLastikTagWrap');
-        if (!wrap) return;
-        wrap.innerHTML = hrSeciliLastikler.map(k =>
-            `<span style="display:inline-flex;align-items:center;gap:3px;background:#1a56db;color:#fff;border-radius:4px;padding:2px 7px;font-size:11px;font-weight:700;">
-                ${k}
-                <button onclick="hrLastikKaldir('${k}')" style="background:none;border:none;color:rgba(255,255,255,0.8);cursor:pointer;font-size:12px;line-height:1;padding:0 0 0 2px;" title="Kaldır">×</button>
-            </span>`
-        ).join('');
-    }
-
-    // ── Tarih yardımcısı: GG.AA.YYYY → YYYY-MM-DD ────────────
+    // ── Tarih yardımcısı ─────────────────────────────────────
     function hrTarihIso(t) {
-        // t = "01.03.2026" → "2026-03-01"
         if (!t) return '';
-        if (t.includes('-')) return t; // zaten ISO
+        if (t.includes('-')) return t;
         const p = t.split('.');
         if (p.length === 3) return p[2] + '-' + p[1] + '-' + p[0];
         return t;
@@ -5575,10 +5509,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // ── Listele ──────────────────────────────────────────────
     function hrListele() {
         const shipmentFiltre = (document.getElementById('hrListeShipment')?.value||'').trim().toUpperCase();
-
         let filtre = hrRaporlar.slice();
 
-        // Dönem filtresi (input'lar YYYY-MM-DD; kayıtlar GG.AA.YYYY → dönüştür)
         if (hrDonem === 'gun') {
             const t = document.getElementById('hrGun')?.value||'';
             if (t) filtre = filtre.filter(r => hrTarihIso(r.tarih) === t);
@@ -5593,13 +5525,10 @@ document.addEventListener('DOMContentLoaded', function() {
             const bit = document.getElementById('hrAralikBit')?.value||'';
             if (bas && bit) filtre = filtre.filter(r => { const d = hrTarihIso(r.tarih); return d >= bas && d <= bit; });
         }
-
-        if (shipmentFiltre) filtre = filtre.filter(r => r.shipment.includes(shipmentFiltre));
-
-        // Tarihe göre azalan sırala
+        if (shipmentFiltre) filtre = filtre.filter(r => r.shipment && r.shipment.includes(shipmentFiltre));
         filtre.sort((a,b) => b.id - a.id);
 
-        const tbody  = document.getElementById('hrTableBody');
+        const tbody   = document.getElementById('hrTableBody');
         const emptyEl = document.getElementById('hrEmptyState');
         const sayacEl = document.getElementById('hrKayitSayac');
         if (sayacEl) sayacEl.textContent = filtre.length + ' kayıt';
@@ -5611,13 +5540,24 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         if (emptyEl) emptyEl.style.display = 'none';
 
-        const turRenk = { eksik:'#dc2626', fazla:'#16a34a' };
-
-        tbody.innerHTML = filtre.map((r,i) => {
+        tbody.innerHTML = filtre.map((r, i) => {
             const ekipStr = Array.isArray(r.ekip) ? r.ekip.map(e=>e.trim()).filter(Boolean).join(' ') : (r.ekip||'').trim();
             const aracStr = [r.aracTipi, r.aracTuru].filter(Boolean).map(s=>s.trim()).join(' ');
-            const eksikFazla = r.tur === 'eksik' ? `<span style="color:#dc2626;font-weight:900;">-${r.adet||0}</span>` : `<span style="color:#16a34a;font-weight:900;">+${r.adet||0}</span>`;
-            const lastikStr = Array.isArray(r.lastikKodlar) ? r.lastikKodlar.join(', ') : (r.lastikKod||'—');
+
+            // Kod satırlarını hücre içinde göster
+            let kodHtml = '';
+            if (Array.isArray(r.kodSatirlari) && r.kodSatirlari.length) {
+                kodHtml = r.kodSatirlari.map(s => {
+                    const isEk = s.tur === 'eksik';
+                    return `<span style="display:inline-flex;align-items:center;gap:3px;margin:1px 2px;padding:1px 6px;border-radius:4px;font-size:10px;font-weight:800;background:${isEk?'rgba(220,38,38,0.1)':'rgba(22,163,74,0.1)'};color:${isEk?'#dc2626':'#16a34a'};border:1px solid ${isEk?'rgba(220,38,38,0.25)':'rgba(22,163,74,0.25)'};">${isEk?'−':'+'}${s.adet}&nbsp;${s.kod}</span>`;
+                }).join('');
+            } else {
+                // Eski format geriye dönük uyum
+                const lastikStr = Array.isArray(r.lastikKodlar) ? r.lastikKodlar.join(', ') : (r.lastikKod||'—');
+                const isEk = r.tur === 'eksik';
+                kodHtml = `<span style="color:${isEk?'#dc2626':'#16a34a'};font-weight:800;">${isEk?'−':'+'}${r.adet||0}</span> ${lastikStr}`;
+            }
+
             return `<tr id="hrRow_${r.id}" style="height:28px;cursor:pointer;" onclick="hrSatirSec(${r.id})">
                 <td style="color:var(--muted);font-size:10px;padding:2px 6px;">${i+1}</td>
                 <td style="white-space:nowrap;padding:2px 6px;">${r.tarih||'—'}</td>
@@ -5626,69 +5566,51 @@ document.addEventListener('DOMContentLoaded', function() {
                 <td style="font-size:11px;white-space:nowrap;padding:2px 6px;">${ekipStr||'—'}</td>
                 <td style="font-size:11px;white-space:nowrap;padding:2px 6px;">${r.forkliftci ? r.forkliftci.trim() : '—'}</td>
                 <td style="white-space:nowrap;font-size:11px;padding:2px 6px;">${aracStr||'—'}</td>
-                <td style="font-weight:700;padding:2px 6px;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${lastikStr}">${lastikStr}</td>
-                <td style="text-align:center;padding:2px 6px;">${eksikFazla}</td>
+                <td style="padding:2px 6px;max-width:200px;">${kodHtml}</td>
                 <td style="max-width:140px;font-size:11px;color:var(--text-dim);padding:2px 6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${r.aciklama||'—'}</td>
             </tr>`;
         }).join('');
     }
 
     // ── Satır seç → formu doldur ─────────────────────────────
-    let hrSeciliRowId = null;
-
     function hrSatirSec(id) {
-        // Önceki seçili satırın highlight'ını kaldır
         if (hrSeciliRowId) {
             const prevRow = document.getElementById('hrRow_' + hrSeciliRowId);
             if (prevRow) prevRow.style.background = '';
         }
-
-        // Aynı satıra tekrar tıklanırsa seçimi kaldır
         if (hrSeciliRowId === id) {
             hrSeciliRowId = null;
             hrFormSifirla();
             return;
         }
-
         hrSeciliRowId = id;
         const row = document.getElementById('hrRow_' + id);
         if (row) row.style.background = 'rgba(217,119,6,0.10)';
 
-        // Kaydı bul ve formu doldur
         const r = hrRaporlar.find(x => x.id === id);
         if (!r) return;
 
         document.getElementById('hrShipmentInput').value = r.shipment || '';
-        document.getElementById('hrAdet').value = r.adet || '';
         document.getElementById('hrAciklama').value = r.aciklama || '';
 
-        // Lastik kodlarını yükle (textarea'ya da yaz)
-        hrSeciliLastikler = Array.isArray(r.lastikKodlar)
-            ? [...r.lastikKodlar]
-            : (r.lastikKod||'').split(',').map(s=>s.trim()).filter(Boolean);
-        hrLastikRender();
+        // Kod satırlarını yükle
+        hrKodSatirlari = [];
+        _hrSatirCounter = 0;
+        if (Array.isArray(r.kodSatirlari) && r.kodSatirlari.length) {
+            r.kodSatirlari.forEach(s => hrKodSatirEkle(s.kod, s.adet, s.tur));
+        } else {
+            // Eski format: lastikKodlar array
+            const kodlar = Array.isArray(r.lastikKodlar) ? r.lastikKodlar : (r.lastikKod||'').split(',').map(s=>s.trim()).filter(Boolean);
+            kodlar.forEach(k => hrKodSatirEkle(k, r.adet||'', r.tur||'eksik'));
+            if (!kodlar.length) hrKodSatirEkle();
+        }
 
-        // Textarea'ya mevcut kodları yaz (her biri bir satır, adet ve tur olmadan)
-        const textareaEl = document.getElementById('hrLastikKodu');
-        if (textareaEl) textareaEl.value = '';
-
-        // Hata türü seç
-        hrSeciliTur = r.tur || 'eksik';
-        document.querySelectorAll('#hrTurSeg .filtre-seg-btn').forEach(b => {
-            b.classList.remove('aktif');
-            if (b.getAttribute('onclick') && b.getAttribute('onclick').includes("'" + hrSeciliTur + "'")) b.classList.add('aktif');
-        });
-
-        // Update mode aç
         hrDuzenleId = id;
         document.getElementById('hrKaydetBtn').textContent = '✏️ GÜNCELLE';
         document.getElementById('hrSilBtn').style.display = 'block';
         document.getElementById('hrIptalBtn').style.display = 'block';
 
-        // Shipment bilgi yükle
         hrShipmentAra();
-
-        // Forma scroll
         document.querySelector('#sekme8 .sef-bolum')?.scrollIntoView({behavior:'smooth', block:'start'});
     }
 
@@ -5701,7 +5623,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const { doc, deleteDoc, db } = window._fb;
             await deleteDoc(doc(db, 'hataRaporlari', String(id)));
             hrRaporlar = hrRaporlar.filter(r => r.id !== id);
-            // Satır highlight kaldır
             const row = document.getElementById('hrRow_' + id);
             if (row) row.style.background = '';
             hrSeciliRowId = null;
@@ -5713,7 +5634,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Eski hrSil (geriye dönük uyumluluk için boş bırak)
     async function hrSil(id, e) {
         if (e) e.stopPropagation();
         hrDuzenleId = id;
@@ -5727,35 +5647,31 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (hrDonem === 'gun') {
             const t = document.getElementById('hrGun')?.value||'';
-            if (t) filtre = filtre.filter(r => r.tarih === t);
+            if (t) filtre = filtre.filter(r => hrTarihIso(r.tarih) === t);
         } else if (hrDonem === 'ay') {
             const m = document.getElementById('hrAy')?.value||'';
-            if (m) filtre = filtre.filter(r => r.tarih && r.tarih.startsWith(m));
+            if (m) filtre = filtre.filter(r => hrTarihIso(r.tarih).startsWith(m));
         } else if (hrDonem === 'yil') {
             const y = document.getElementById('hrYil')?.value||'';
-            if (y) filtre = filtre.filter(r => r.tarih && r.tarih.startsWith(y));
+            if (y) filtre = filtre.filter(r => hrTarihIso(r.tarih).startsWith(y));
         } else if (hrDonem === 'aralik') {
             const bas = document.getElementById('hrAralikBas')?.value||'';
             const bit = document.getElementById('hrAralikBit')?.value||'';
-            if (bas && bit) filtre = filtre.filter(r => r.tarih >= bas && r.tarih <= bit);
+            if (bas && bit) filtre = filtre.filter(r => { const d = hrTarihIso(r.tarih); return d >= bas && d <= bit; });
         }
-        if (shipmentFiltre) filtre = filtre.filter(r => r.shipment.includes(shipmentFiltre));
+        if (shipmentFiltre) filtre = filtre.filter(r => r.shipment && r.shipment.includes(shipmentFiltre));
         filtre.sort((a,b) => b.id - a.id);
 
         if (!filtre.length) { showToast('⚠️ Listelenecek kayıt yok', 'warn'); return; }
 
         const { jsPDF } = window.jspdf;
         const pdf = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
-
-        let y = 14;
         const pageW = 210;
         const margin = 14;
 
         filtre.forEach((r, idx) => {
-            if (idx > 0) {
-                pdf.addPage();
-                y = 14;
-            }
+            if (idx > 0) { pdf.addPage(); }
+            let y = 14;
 
             // Başlık
             pdf.setFont('helvetica','bold');
@@ -5764,49 +5680,81 @@ document.addEventListener('DOMContentLoaded', function() {
             pdf.text('HATA RAPORU', pageW/2, y, {align:'center'});
             y += 8;
 
-            // Üst bilgi tablosu
-            const now = new Date();
-            const turLabel = r.tur === 'eksik' ? 'EKSİK' : 'FAZLA';
-            const lastikStr = Array.isArray(r.lastikKodlar) ? r.lastikKodlar.join(', ') : (r.lastikKod||'—');
-
+            // Üst bilgi
             const infoRows = [
-                ['Tarih', r.tarih || '—'],
-                ['Shipment', r.shipment || '—'],
+                ['Tarih',     r.tarih || '—'],
+                ['Shipment',  r.shipment || '—'],
                 ['Araç Türü', r.aracTipi || '—'],
-                ['Araç Cinsi', r.aracTuru || '—'],
-                ['Lastik Kodu', lastikStr],
-                ['Eksik / Fazla', turLabel + '  ' + (r.adet||0) + ' adet'],
+                ['Araç Cinsi',r.aracTuru || '—'],
+                ['Vardiya',   r.vardiya || '—'],
             ];
 
             pdf.autoTable({
                 startY: y,
                 body: infoRows,
-                styles: {
-                    font:'helvetica', fontSize:10, cellPadding:4,
-                    lineColor:[200,210,220], lineWidth:0.3,
-                    textColor:[40,50,70]
-                },
+                styles: { font:'helvetica', fontSize:10, cellPadding:4, lineColor:[200,210,220], lineWidth:0.3, textColor:[40,50,70] },
                 columnStyles: {
                     0: { cellWidth:45, fontStyle:'bold', fillColor:[241,244,251] },
                     1: { cellWidth:pageW - margin*2 - 45 }
                 },
                 margin: { left:margin, right:margin }
             });
+            y = pdf.lastAutoTable.finalY + 6;
 
-            y = pdf.lastAutoTable.finalY + 10;
+            // Lastik Kodları tablosu
+            pdf.setFont('helvetica','bold');
+            pdf.setFontSize(9);
+            pdf.setTextColor(26, 86, 219);
+            pdf.text('LASTİK KODLARI', margin, y);
+            y += 4;
 
-            // Ekip başlığı
+            let kodRows = [];
+            if (Array.isArray(r.kodSatirlari) && r.kodSatirlari.length) {
+                kodRows = r.kodSatirlari.map(s => [
+                    s.kod || '—',
+                    String(s.adet || 0),
+                    s.tur === 'eksik' ? 'EKSİK' : 'FAZLA'
+                ]);
+            } else {
+                const kodlar = Array.isArray(r.lastikKodlar) ? r.lastikKodlar : (r.lastikKod||'').split(',').map(s=>s.trim()).filter(Boolean);
+                kodlar.forEach(k => {
+                    kodRows.push([k, String(r.adet||0), r.tur === 'eksik' ? 'EKSİK' : 'FAZLA']);
+                });
+                if (!kodRows.length) kodRows.push(['—', String(r.adet||0), r.tur === 'eksik' ? 'EKSİK' : 'FAZLA']);
+            }
+
+            pdf.autoTable({
+                startY: y,
+                head: [['Lastik Kodu', 'Adet', 'Durum']],
+                body: kodRows,
+                styles: { font:'helvetica', fontSize:10, cellPadding:4, lineColor:[200,210,220], lineWidth:0.3, textColor:[40,50,70] },
+                headStyles: { fillColor:[26,86,219], textColor:255, fontStyle:'bold', fontSize:9, halign:'center' },
+                columnStyles: {
+                    0: { cellWidth:80 },
+                    1: { cellWidth:30, halign:'center' },
+                    2: { cellWidth:pageW - margin*2 - 110, halign:'center' }
+                },
+                didDrawCell: function(data) {
+                    if (data.section === 'body' && data.column.index === 2) {
+                        const val = data.cell.raw;
+                        data.cell.styles.textColor = val === 'EKSİK' ? [185,28,28] : [21,128,61];
+                        data.cell.styles.fontStyle = 'bold';
+                    }
+                },
+                margin: { left:margin, right:margin }
+            });
+            y = pdf.lastAutoTable.finalY + 6;
+
+            // Ekip
             pdf.setFont('helvetica','bold');
             pdf.setFontSize(9);
             pdf.setTextColor(26, 86, 219);
             pdf.text('EKİP', margin, y);
             y += 4;
 
-            // Ekip listesi — virgülle ayrılmış tam isimler (Ad Soyad)
             const ekipArr = Array.isArray(r.ekip)
                 ? r.ekip.map(e => e.trim()).filter(Boolean)
                 : (r.ekip||'').split(',').map(e => e.trim()).filter(Boolean);
-
             const ekipRows = ekipArr.map(isim => [isim, '']);
 
             if (ekipRows.length) {
@@ -5814,15 +5762,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     startY: y,
                     head: [['İsim', 'İmza']],
                     body: ekipRows,
-                    styles: {
-                        font:'helvetica', fontSize:10, cellPadding:5,
-                        lineColor:[200,210,220], lineWidth:0.3,
-                        textColor:[40,50,70]
-                    },
-                    headStyles: {
-                        fillColor:[26,86,219], textColor:255,
-                        fontStyle:'bold', fontSize:9, halign:'center'
-                    },
+                    styles: { font:'helvetica', fontSize:10, cellPadding:5, lineColor:[200,210,220], lineWidth:0.3, textColor:[40,50,70] },
+                    headStyles: { fillColor:[26,86,219], textColor:255, fontStyle:'bold', fontSize:9, halign:'center' },
                     columnStyles: {
                         0: { cellWidth:60 },
                         1: { cellWidth:pageW - margin*2 - 60 }
@@ -5847,15 +5788,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 pdf.setTextColor(26, 86, 219);
                 pdf.text('FORKLİFTÇİ', margin, y);
                 y += 4;
-
                 pdf.autoTable({
                     startY: y,
                     body: [['Forklift: ' + r.forkliftci.trim(), '']],
-                    styles: {
-                        font:'helvetica', fontSize:10, cellPadding:5,
-                        lineColor:[200,210,220], lineWidth:0.3,
-                        textColor:[40,50,70]
-                    },
+                    styles: { font:'helvetica', fontSize:10, cellPadding:5, lineColor:[200,210,220], lineWidth:0.3, textColor:[40,50,70] },
                     columnStyles: {
                         0: { cellWidth:60, fontStyle:'bold' },
                         1: { cellWidth:pageW - margin*2 - 60 }
@@ -5880,14 +5816,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 pdf.setTextColor(100,100,100);
                 pdf.text('AÇIKLAMA: ', margin, y);
                 pdf.setFont('helvetica','normal');
-                pdf.text(r.aciklama.trim(), margin + 26, y);
-                y += 6;
+                const satirlar = pdf.splitTextToSize(r.aciklama.trim(), pageW - margin*2 - 28);
+                pdf.text(satirlar, margin + 28, y);
+                y += satirlar.length * 5 + 2;
             }
 
             // Footer
+            const now = new Date();
             pdf.setFontSize(8);
             pdf.setTextColor(160,160,160);
-            pdf.text('Oluşturulma: ' + now.toLocaleDateString('tr-TR') + ' ' + now.toLocaleTimeString('tr-TR', {hour:'2-digit',minute:'2-digit'}), pageW - margin, 290, {align:'right'});
+            pdf.text(
+                'Oluşturulma: ' + now.toLocaleDateString('tr-TR') + ' ' + now.toLocaleTimeString('tr-TR', {hour:'2-digit',minute:'2-digit'}),
+                pageW - margin, 290, {align:'right'}
+            );
         });
 
         const donemLabel = hrDonem==='gun' ? document.getElementById('hrGun')?.value :
