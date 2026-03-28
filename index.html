@@ -1051,14 +1051,6 @@
                 <div id="forkliftciDropdown" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:500;background:#e0e5ec;border:1px solid rgba(255,255,255,0.12);border-radius:10px;margin-top:4px;max-height:220px;overflow-y:auto;box-shadow:0 8px 32px rgba(163,177,198,0.55);"></div>
             </div>
 
-            <div class="form-section-title">Lastikler <span style="font-weight:500;color:var(--muted);text-transform:none;letter-spacing:0;font-size:9px;">(opsiyonel)</span></div>
-            <div id="lastikListesi" style="display:flex;flex-direction:column;gap:4px;margin-bottom:6px;"></div>
-            <div style="display:grid;grid-template-columns:1fr 60px 32px;gap:4px;margin-bottom:6px;">
-                <input type="text" id="lastikKodInput" class="text-input" placeholder="205/55R16" style="font-size:12px;text-transform:uppercase;" oninput="this.value=this.value.toUpperCase()">
-                <input type="number" id="lastikAdetInput" class="text-input" placeholder="Adet" min="1" style="font-size:12px;text-align:center;">
-                <button onclick="lastikEkle()" style="border-radius:6px;border:1px solid rgba(37,99,235,0.4);background:rgba(37,99,235,0.1);color:#2563eb;font-size:14px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;" onmouseover="this.style.background='rgba(37,99,235,0.2)'" onmouseout="this.style.background='rgba(37,99,235,0.1)'">+</button>
-            </div>
-
             <div class="form-section-title">Duruşlar <span style="font-weight:500;color:var(--muted);text-transform:none;letter-spacing:0;font-size:9px;">(opsiyonel)</span></div>
             <div class="durus-list" id="durusList"></div>
             <div class="durus-dropdown-wrap" id="durusWrap">
@@ -1074,10 +1066,6 @@
             <div class="input-group" style="margin-top:10px;">
                 <div class="input-label">Açıklama <span class="opt">(opsiyonel)</span></div>
                 <input type="text" id="aciklama" class="text-input" tabindex="15" placeholder="Varsa açıklama...">
-            </div>
-            <div class="input-group" style="margin-top:6px;">
-                <div class="input-label">Eksik / Fazla <span class="opt">(opsiyonel)</span></div>
-                <input type="text" id="eksikFazla" class="text-input" tabindex="16" placeholder="Örn: Eksik 2 lastik">
             </div>
             <button class="btn-submit" id="btnSubmit" tabindex="16" onclick="kaydetVeyaGuncelle()">✓ &nbsp;SİSTEME İŞLE</button>
         </div>
@@ -1097,7 +1085,7 @@
             <div id="yuklemeListesiBaslik" style="display:none;"><div id="yuklemeListesiTarihText"></div></div>
 
             <table class="data-table">
-                <thead><tr><th>#</th><th>Vardiya</th><th>Ekip</th><th>Forkliftçi</th><th>Araç</th><th>Saat</th><th>Durum</th><th></th></tr></thead>
+                <thead><tr><th>#</th><th style="width:30px;">Var.</th><th>Ekip</th><th>Araç</th><th>Saat</th><th>Lastik</th><th>E/F</th><th>Durum</th><th></th></tr></thead>
                 <tbody id="tableBody"></tbody>
             </table>
             <div class="empty-state" id="emptyState">
@@ -2778,14 +2766,14 @@
             tr.style.cssText = 'cursor:pointer;border-bottom:1px solid rgba(163,177,198,0.2);transition:background 0.15s;background:#e8ecf4;';
             if (duzenleId === k.id) tr.classList.add('selected');
 
-            const forkliftciGoster = k.forkliftci ? k.forkliftci.trim() : '—';
             tr.innerHTML = `
                 <td style="padding:10px 12px;color:var(--muted);font-size:11px;">${i+1}</td>
-                <td style="padding:10px 12px;"><span style="font-size:11px;font-weight:800;color:${k.vardiya==='A Vardiyası'?'var(--blue-light)':'var(--yellow)'};background:${k.vardiya==='A Vardiyası'?'rgba(37,99,235,0.1)':'rgba(217,119,6,0.1)'};border:1px solid ${k.vardiya==='A Vardiyası'?'rgba(37,99,235,0.3)':'rgba(217,119,6,0.3)'};border-radius:4px;padding:2px 7px;">${k.vardiya==='A Vardiyası'?'A VRD':'B VRD'}</span></td>
-                <td style="padding:10px 12px;font-weight:600;font-size:11px;">${ekipKisaGoster(k.ekip)}</td>
-                <td style="padding:10px 12px;font-size:11px;color:var(--text-dim);max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${forkliftciGoster}">${forkliftciGoster}</td>
+                <td style="padding:10px 12px;"><span style="font-size:10px;font-weight:800;color:${k.vardiya==='A Vardiyası'?'var(--blue-light)':'var(--yellow)'};">${k.vardiya==='A Vardiyası'?'A':'B'}</span></td>
+                <td style="padding:10px 12px;font-weight:400;font-size:11px;">${ekipKisaGoster(k.ekip)}</td>
                 <td style="padding:10px 12px;"><span class="badge ${tipBadge}">${k.aracTipi}</span></td>
-                <td style="padding:10px 12px;color:var(--text-dim);font-size:11px;white-space:nowrap;">${k.baslama} - ${k.bitis}</td>
+                <td style="padding:10px 12px;color:var(--text-dim);font-size:11px;">${k.baslama} - ${k.bitis}</td>
+                <td style="padding:10px 12px;font-size:10px;color:var(--text-dim);max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${lastikGoster}">${lastikGoster}</td>
+                <td style="padding:10px 12px;font-size:11px;color:var(--warning);font-weight:700;">${efGoster}</td>
                 <td style="padding:10px 12px;">${durum}</td>
                 <td style="padding:6px 12px;">
                     <button class="del-btn" data-delid="${k.id}" title="Sil">🗑️</button>
@@ -2828,14 +2816,13 @@
         // Dropdown kapat
         const wrap = document.getElementById('durusWrap');
         if (wrap && !wrap.contains(e.target)) document.getElementById('durusMenu').classList.remove('open');
-        // Seçim kaldır — tablo paneli veya form paneli tıklamalarında İPTAL ETME
+        // Seçim kaldır — form input/buton veya satır tıklamalarında iptal etme
         if (duzenleId !== null) {
-            const clickedRow       = e.target.closest('#tableBody tr');
-            const clickedBanner    = e.target.closest('#editBanner');
-            const clickedSubmit    = e.target.closest('#btnSubmit');
-            const clickedFormPanel = e.target.closest('.form-panel');
-            const clickedTablePanel = e.target.closest('.table-panel');
-            if (!clickedRow && !clickedBanner && !clickedSubmit && !clickedFormPanel && !clickedTablePanel) {
+            const clickedRow    = e.target.closest('#tableBody tr');
+            const clickedBanner = e.target.closest('#editBanner');
+            const clickedSubmit = e.target.closest('#btnSubmit');
+            const clickedInput  = e.target.closest('input, textarea, select, button, .seg-btn, .seg-group, .durus-menu, .durus-menu-item, .btn-add-durus, #ekipDropdown, #forkliftciDropdown, #shipmentDropdown');
+            if (!clickedRow && !clickedBanner && !clickedSubmit && !clickedInput) {
                 iptalDuzenle();
             }
         }
