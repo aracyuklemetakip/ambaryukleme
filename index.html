@@ -659,6 +659,22 @@
 
         @keyframes pulseRed { 0%,100%{opacity:1} 50%{opacity:0.45} }
         .donem-badge { display:inline-flex;align-items:center;gap:8px;background:#FFFBEB;border:1px solid #FDE68A;border-radius:100px;padding:5px 14px;font-size:12px;font-weight:700;color:#92400e;margin-bottom:14px; }
+
+        /* ── EK: Temizlenmiş buton sınıfları ── */
+        .btn-primary-full {
+            width:100%;padding:10px;border-radius:8px;border:none;
+            background:#FACC15;color:#1E3A8A;
+            font-family:'Inter',sans-serif;font-size:13px;font-weight:700;
+            cursor:pointer;transition:all 0.15s;
+        }
+        .btn-primary-full:hover { background:#EAB308; }
+        .vardiya-badge { font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px; }
+        .vardiya-a { color:#1E3A8A;background:#EFF6FF;border:1px solid #BFDBFE; }
+        .vardiya-b { color:#92400e;background:#FFFBEB;border:1px solid #FDE68A; }
+        .badge-toplam { background:#FEF2F2;color:#dc2626;border:1px solid #FECACA; }
+        .badge-m3 { background:#F0FDF4;color:#16a34a;border:1px solid #BBF7D0; }
+        .ac-item { padding:10px 14px;cursor:pointer;font-size:13px;font-weight:600;border-bottom:1px solid #F3F4F6;transition:background 0.1s;color:#0F172A; }
+        .ac-item:hover { background:#EFF6FF !important;color:#1E3A8A !important; }
     </style>
 </head>
 <body>
@@ -844,7 +860,7 @@
         <div class="modal-title" style="color:#d97706;">Yetkili Girişi</div>
         <div class="modal-sub">Şifrenizi girin</div>
         <input type="password" id="sifreInput" placeholder="••••••"
-            style="width:100%;padding:12px 16px;border-radius:10px;border:1px solid rgba(251,191,36,0.3);background:rgba(217,119,6,0.05);color:#3d4f6e;font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;letter-spacing:6px;text-align:center;outline:none;margin-bottom:8px;transition:border-color 0.2s;"
+            style="width:100%;padding:10px 14px;border-radius:8px;border:1px solid #E5E7EB;background:#fff;color:#0F172A;font-family:'Inter',sans-serif;font-size:18px;font-weight:700;letter-spacing:6px;text-align:center;outline:none;margin-bottom:8px;transition:border-color 0.15s;"
             onkeydown="if(event.key==='Enter')sifreKontrol()"
             oninput="document.getElementById('sifreHata').style.display='none'; if(this.value.length===4) sifreKontrol();"
             onfocus="this.style.borderColor='rgba(251,191,36,0.6)'"
@@ -852,7 +868,7 @@
         <div id="sifreHata" style="display:none;color:#ef4444;font-size:11px;font-weight:700;letter-spacing:1px;margin-bottom:10px;">YANLIŞ ŞİFRE</div>
         <div id="sifreYukleniyor" style="display:none;color:#6b7a96;font-size:11px;font-weight:700;letter-spacing:1px;margin-bottom:10px;">Kontrol ediliyor...</div>
         <div class="modal-btns">
-            <button onclick="sifreKontrol()" style="flex:1;padding:13px;border-radius:10px;border:1px solid rgba(251,191,36,0.5);background:rgba(251,191,36,0.12);color:#d97706;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;letter-spacing:1px;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.background='rgba(251,191,36,0.2)'" onmouseout="this.style.background='rgba(251,191,36,0.12)'">GİRİŞ YAP</button>
+            <button onclick="sifreKontrol()" style="flex:1;padding:11px;border-radius:8px;border:none;background:#FACC15;color:#1E3A8A;font-family:'Inter',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.15s;">GİRİŞ YAP</button>
         </div>
         <button class="modal-cancel" onclick="sifreModalKapat()" style="margin-top:14px;">İptal</button>
     </div>
@@ -889,7 +905,7 @@
 <div class="modal-overlay" id="mesaiKarsilastirmaModal" onclick="if(event.target===this)this.classList.remove('show')">
     <div class="modal-box" style="width:520px;max-width:95vw;max-height:90vh;overflow-y:auto;text-align:left;padding:32px 36px;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-            <div style="font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:var(--text);">📊 Vardiya Karşılaştırma</div>
+            <div style="font-size:16px;font-weight:700;color:#0F172A;">📊 Vardiya Karşılaştırma</div>
             <button onclick="document.getElementById('mesaiKarsilastirmaModal').classList.remove('show')" style="background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;line-height:1;">✕</button>
         </div>
         <div id="mesaiKarsilastirmaModalIcerik"></div>
@@ -905,11 +921,11 @@
         <div style="color:#9aa5b8;font-size:11px;font-weight:700;letter-spacing:0.5px;margin-bottom:24px;">Bu işlem geri alınamaz.</div>
         <div class="modal-btns" style="gap:10px;">
             <button onclick="document.getElementById('mesaiSilModalEl').classList.remove('show')"
-                style="flex:1;padding:13px;border-radius:10px;border:1px solid rgba(163,177,198,0.4);background:#e8ecf4;color:#6b7a96;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:900;letter-spacing:1px;cursor:pointer;transition:background 0.15s;"
-                onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='rgba(255,255,255,0.04)'">VAZGEÇ</button>
+                style="flex:1;padding:10px;border-radius:8px;border:1px solid #E5E7EB;background:#F9FAFB;color:#374151;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s;"
+               >VAZGEÇ</button>
             <button id="mesaiSilOnayBtn"
-                style="flex:1;padding:13px;border-radius:10px;border:1px solid rgba(239,68,68,0.4);background:rgba(239,68,68,0.12);color:#f87171;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:900;letter-spacing:1px;cursor:pointer;transition:background 0.15s;"
-                onmouseover="this.style.background='rgba(239,68,68,0.25)'" onmouseout="this.style.background='rgba(239,68,68,0.12)'">SİL</button>
+                style="flex:1;padding:10px;border-radius:8px;border:1px solid #FECACA;background:#FEF2F2;color:#dc2626;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s;"
+               >SİL</button>
         </div>
     </div>
 </div>
@@ -923,11 +939,11 @@
         <div style="color:#9aa5b8;font-size:11px;font-weight:700;letter-spacing:0.5px;margin-bottom:24px;">Bu işlem geri alınamaz.</div>
         <div class="modal-btns" style="gap:10px;">
             <button onclick="document.getElementById('personelSilModal').classList.remove('show')"
-                style="flex:1;padding:13px;border-radius:10px;border:1px solid rgba(163,177,198,0.4);background:#e8ecf4;color:#6b7a96;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;letter-spacing:1px;cursor:pointer;transition:background 0.15s;"
-                onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='rgba(255,255,255,0.04)'">VAZGEÇ</button>
+                style="flex:1;padding:10px;border-radius:8px;border:1px solid #E5E7EB;background:#F9FAFB;color:#374151;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s;"
+               >VAZGEÇ</button>
             <button id="personelSilOnayBtn"
-                style="flex:1;padding:13px;border-radius:10px;border:1px solid rgba(239,68,68,0.4);background:rgba(239,68,68,0.12);color:#f87171;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;letter-spacing:1px;cursor:pointer;transition:background 0.15s;"
-                onmouseover="this.style.background='rgba(239,68,68,0.25)'" onmouseout="this.style.background='rgba(239,68,68,0.12)'">SİL</button>
+                style="flex:1;padding:10px;border-radius:8px;border:1px solid #FECACA;background:#FEF2F2;color:#dc2626;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s;"
+               >SİL</button>
         </div>
     </div>
 </div>
@@ -936,11 +952,11 @@
 <div class="modal-overlay" id="m3UyariModal" onclick="if(event.target===this)m3UyariKapat()">
     <div class="modal-box" style="width:360px;text-align:center;">
         <div style="font-size:36px;margin-bottom:12px;">⚠️</div>
-        <div id="m3UyariTip" style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;text-transform:uppercase;margin-bottom:6px;color:#d97706;"></div>
+        <div id="m3UyariTip" style="font-size:16px;font-weight:700;text-transform:uppercase;margin-bottom:6px;color:#d97706;"></div>
         <div id="m3UyariMesaj" style="font-size:13px;color:#6b7a96;margin-bottom:8px;line-height:1.6;"></div>
         <div id="m3UyariAralik" style="display:inline-flex;align-items:center;gap:8px;background:rgba(217,119,6,0.08);border:1px solid rgba(217,119,6,0.25);border-radius:8px;padding:7px 16px;font-size:12px;font-weight:800;color:#d97706;margin-bottom:20px;"></div>
         <div class="modal-btns" style="justify-content:center;">
-            <button onclick="m3UyariKapat()" style="flex:1;padding:13px;border-radius:10px;border:none;background:#e0e5ec;box-shadow:4px 4px 10px rgba(163,177,198,0.7),-3px -3px 8px rgba(255,255,255,0.85);color:#6b7a96;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:900;letter-spacing:1px;cursor:pointer;transition:all 0.15s;">TAMAM</button>
+            <button onclick="m3UyariKapat()" style="flex:1;padding:13px;border-radius:10px;border:none;background:#fff;color:#6b7a96;font-family:'Inter',sans-serif;font-size:15px;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all 0.15s;">TAMAM</button>
         </div>
     </div>
 </div>
@@ -1016,19 +1032,19 @@
         <div class="topbar">
             <div class="topbar-left">
                 <button class="back-btn" onclick="sessionStorage.removeItem('aktifSayfa');sessionStorage.removeItem('aktifSekme');showSayfa('anaSayfa')">← Geri</button>
-                <span style="font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:900;text-transform:uppercase;letter-spacing:2px;color:#fff;">OPERATÖR PANELİ</span>
+                <span style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#fff;">OPERATÖR PANELİ</span>
             </div>
             <div class="topbar-center" id="dinamikBaslik" style="display:none;">
                 <!-- Başlık artık tablonun üzerinde -->
             </div>
             <div style="display:flex;align-items:center;justify-content:flex-end;gap:8px;">
                 <button onclick="tarihDegistir(-1)" style="width:24px;height:24px;border-radius:6px;border:1px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.1);color:#fff;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;">‹</button>
-                <input type="date" id="secilenTarih" style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);border-radius:6px;color:#fff;font-family:'Barlow',sans-serif;font-size:11px;font-weight:700;padding:2px 6px;outline:none;cursor:pointer;" onchange="renderTablo()">
+                <input type="date" id="secilenTarih" style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);border-radius:6px;color:#fff;font-family:'Inter',sans-serif;font-size:11px;font-weight:700;padding:2px 6px;outline:none;cursor:pointer;" onchange="renderTablo()">
                 <button onclick="tarihDegistir(1)" style="width:24px;height:24px;border-radius:6px;border:1px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.1);color:#fff;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;">›</button>
                 <div id="userInfoBar" style="display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25);border-radius:6px;padding:3px 8px;">
                     <img id="userAvatar" src="" width="24" height="24" referrerpolicy="no-referrer" style="border-radius:50%;object-fit:cover;border:1px solid rgba(163,177,198,0.5);flex-shrink:0;display:none;">
                     <span id="userDisplayName" style="font-size:12px;font-weight:700;color:#fff;white-space:nowrap;"></span>
-                    <button onclick="window._logout()" title="Oturumu Kapat" style="display:flex;align-items:center;gap:4px;background:#ef4444;border:none;border-radius:4px;color:#fff;cursor:pointer;font-size:10px;font-weight:700;padding:3px 8px;transition:all 0.15s;letter-spacing:0.5px;" onmouseover="this.style.background='#dc2626'" onmouseout="this.style.background='#ef4444'"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2v6"/><path d="M6.3 6.3A8 8 0 1 0 17.7 6.3"/></svg> Çıkış</button>
+                    <button onclick="window._logout()" title="Oturumu Kapat" style="display:flex;align-items:center;gap:4px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:4px;color:#fff;cursor:pointer;font-size:10px;font-weight:500;padding:3px 8px;transition:all 0.15s;"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2v6"/><path d="M6.3 6.3A8 8 0 1 0 17.7 6.3"/></svg> Çıkış</button>
                 </div>
             </div>
         </div>
@@ -1044,8 +1060,8 @@
                 <div class="input-group">
                     <div class="input-label">Vardiya</div>
                     <div class="seg-group" id="segVardiya">
-                        <div class="seg-btn" tabindex="1" onclick="setSeg(this,'vardiya','A Vardiyası')"><span style="font-size:16px;font-weight:900;">A</span></div>
-                        <div class="seg-btn" tabindex="2" onclick="setSeg(this,'vardiya','B Vardiyası')"><span style="font-size:16px;font-weight:900;">B</span></div>
+                        <div class="seg-btn" tabindex="1" onclick="setSeg(this,'vardiya','A Vardiyası')"><span style="font-size:16px;font-weight:700;">A</span></div>
+                        <div class="seg-btn" tabindex="2" onclick="setSeg(this,'vardiya','B Vardiyası')"><span style="font-size:16px;font-weight:700;">B</span></div>
                     </div>
                 </div>
                 <div class="input-group">
@@ -1075,7 +1091,7 @@
                         onfocus="shipmentOneriGoster(this)"
                         onblur="setTimeout(()=>{const d=document.getElementById('shipmentDropdown');if(d)d.style.display='none';},200)"
                         autocomplete="off" spellcheck="false" data-lpignore="true">
-                    <div id="shipmentDropdown" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:500;background:#e0e5ec;border:1px solid rgba(255,255,255,0.12);border-radius:10px;margin-top:4px;max-height:220px;overflow-y:auto;box-shadow:0 8px 32px rgba(163,177,198,0.55);"></div>
+                    <div id="shipmentDropdown" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:500;background:#fff;border:1px solid #E5E7EB;border-radius:8px;margin-top:4px;max-height:220px;overflow-y:auto;box-shadow:0 8px 32px rgba(163,177,198,0.55);"></div>
                 </div>
 
                 <div class="form-section-title">Ekip & Saat</div>
@@ -1085,7 +1101,7 @@
                         oninput="ekipAutocomplete(this)"
                         onkeydown="ekipKeyDown(event)"
                         autocomplete="off">
-                    <div id="ekipDropdown" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:500;background:#e0e5ec;border:1px solid rgba(255,255,255,0.12);border-radius:10px;margin-top:4px;max-height:220px;overflow-y:auto;box-shadow:0 8px 32px rgba(163,177,198,0.55);"></div>
+                    <div id="ekipDropdown" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:500;background:#fff;border:1px solid #E5E7EB;border-radius:8px;margin-top:4px;max-height:220px;overflow-y:auto;box-shadow:0 8px 32px rgba(163,177,198,0.55);"></div>
                 </div>
                 <div class="input-group">
                     <div class="input-label">Başlama / Bitiş Saati</div>
@@ -1108,7 +1124,7 @@
                         oninput="forkliftciAutocomplete(this)"
                         onkeydown="forkliftciKeyDown(event)"
                         autocomplete="off">
-                    <div id="forkliftciDropdown" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:500;background:#e0e5ec;border:1px solid rgba(255,255,255,0.12);border-radius:10px;margin-top:4px;max-height:220px;overflow-y:auto;box-shadow:0 8px 32px rgba(163,177,198,0.55);"></div>
+                    <div id="forkliftciDropdown" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:500;background:#fff;border:1px solid #E5E7EB;border-radius:8px;margin-top:4px;max-height:220px;overflow-y:auto;box-shadow:0 8px 32px rgba(163,177,198,0.55);"></div>
                 </div>
 
                 <div class="form-section-title">Duruşlar</div>
@@ -1145,7 +1161,7 @@
         <div class="table-panel">
             <div class="table-header">
                 <div style="display:flex;align-items:center;gap:8px;">
-                    <div id="tabloDinamikBaslik" style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:var(--text);"></div>
+                    <div id="tabloDinamikBaslik" style="font-size:14px;font-weight:700;color:#0F172A;"></div>
                     <div class="table-count" id="kayitCount" style="display:none;">0 kayıt</div>
                 </div>
             </div>
@@ -1175,14 +1191,14 @@
         <div class="sef-topbar">
             <div style="display:flex;align-items:center;gap:12px;">
                 <button class="back-btn" onclick="sessionStorage.removeItem('aktifSayfa');sessionStorage.removeItem('aktifSekme');showSayfa('anaSayfa')">← Geri</button>
-                <span style="font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:900;text-transform:uppercase;letter-spacing:2px;color:#fff;">YETKİLİ PANELİ</span>
+                <span style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#fff;">YETKİLİ PANELİ</span>
             </div>
             <div style="display:flex;align-items:center;gap:8px;">
                 <div class="tarih-display" id="sefTarihDisplay"></div>
                 <div style="display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25);border-radius:6px;padding:3px 8px;">
                     <img id="sefUserAvatar" src="" width="24" height="24" referrerpolicy="no-referrer" style="border-radius:50%;object-fit:cover;border:1px solid rgba(163,177,198,0.5);flex-shrink:0;display:none;">
                     <span id="sefUserName" style="font-size:12px;font-weight:700;color:#fff;white-space:nowrap;"></span>
-                    <button onclick="window._logout()" title="Oturumu Kapat" style="display:flex;align-items:center;gap:4px;background:#ef4444;border:none;border-radius:4px;color:#fff;cursor:pointer;font-size:10px;font-weight:700;padding:3px 8px;transition:all 0.15s;letter-spacing:0.5px;" onmouseover="this.style.background='#dc2626'" onmouseout="this.style.background='#ef4444'"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2v6"/><path d="M6.3 6.3A8 8 0 1 0 17.7 6.3"/></svg> Çıkış</button>
+                    <button onclick="window._logout()" title="Oturumu Kapat" style="display:flex;align-items:center;gap:4px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:4px;color:#fff;cursor:pointer;font-size:10px;font-weight:500;padding:3px 8px;transition:all 0.15s;"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2v6"/><path d="M6.3 6.3A8 8 0 1 0 17.7 6.3"/></svg> Çıkış</button>
                 </div>
             </div>
         </div>
@@ -1216,7 +1232,7 @@
             <!-- KARŞILAMA -->
             <div id="sekmeKarsilama" style="text-align:center;padding:80px 20px;">
                 <div style="font-size:48px;margin-bottom:16px;opacity:0.4;">📋</div>
-                <div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;color:rgba(56,189,248,0.6);letter-spacing:1px;text-transform:uppercase;">İncelemek istediğiniz sekmeye tıklayın</div>
+                <div style="font-size:18px;font-weight:600;color:#9CA3AF;">İncelemek istediğiniz sekmeye tıklayın</div>
                 <div style="font-size:12px;color:var(--muted);margin-top:8px;">Yukarıdaki sekmelerden birini seçin</div>
             </div>
 
@@ -1249,7 +1265,7 @@
                         </div>
                         <div class="filtre-group" id="fAralik" style="display:none;flex-direction:row;gap:8px;align-items:flex-end;">
                             <div><div class="filtre-label">Başlangıç</div><input type="date" id="fAralikBas" class="filtre-input" onchange="sefSorgula()"></div>
-                            <div style="color:var(--muted);font-size:18px;font-weight:900;padding-bottom:8px;">—</div>
+                            <div style="color:var(--muted);font-size:18px;font-weight:700;padding-bottom:8px;">—</div>
                             <div><div class="filtre-label">Bitiş</div><input type="date" id="fAralikBit" class="filtre-input" onchange="sefSorgula()"></div>
                         </div>
                         <button class="btn-pdf" id="btnPdf" style="display:none;margin-left:auto;" onclick="sefPdfIndir()">📄 PDF</button>
@@ -1293,7 +1309,7 @@
                         </div>
                         <div class="filtre-group" id="e2Aralik" style="display:none;flex-direction:row;gap:8px;align-items:flex-end;">
                             <div><div class="filtre-label">Başlangıç</div><input type="date" id="e2AralikBas" class="filtre-input" onchange="ekipSorgula()"></div>
-                            <div style="color:var(--muted);font-size:18px;font-weight:900;padding-bottom:8px;">—</div>
+                            <div style="color:var(--muted);font-size:18px;font-weight:700;padding-bottom:8px;">—</div>
                             <div><div class="filtre-label">Bitiş</div><input type="date" id="e2AralikBit" class="filtre-input" onchange="ekipSorgula()"></div>
                         </div>
                         <div class="filtre-group">
@@ -1352,8 +1368,8 @@
                                 <input type="number" id="mesaiKisi" class="filtre-input" placeholder="Kaç kişi?" style="width:100%;" min="1">
                             </div>
                             <button id="btnMesaiKaydet" class="filtre-seg-btn aktif" onclick="mesaiKaydet()" style="width:100%;padding:12px;font-size:14px;border-radius:10px;">💾 Kaydet</button>
-                            <button id="btnMesaiGuncelle" class="filtre-seg-btn" onclick="mesaiGuncelle()" style="display:none;width:100%;padding:12px;font-size:14px;border-radius:10px;border-color:rgba(251,191,36,0.6);background:radial-gradient(ellipse at 50% 0%,rgba(251,191,36,0.25) 0%,rgba(40,20,0,0.95) 60%);color:#d97706;box-shadow:0 0 20px rgba(251,191,36,0.2);">✎ Güncelle</button>
-                            <button id="btnMesaiIptal" class="filtre-seg-btn" onclick="mesaiFormTemizle()" style="display:none;width:100%;padding:10px;font-size:13px;border-radius:10px;border-color:rgba(253,164,175,0.5);background:radial-gradient(ellipse at 50% 0%,rgba(239,68,68,0.2) 0%,rgba(40,0,0,0.95) 60%);color:#f87171;box-shadow:0 0 15px rgba(239,68,68,0.15);">✕ Vazgeç</button>
+                            <button id="btnMesaiGuncelle" class="filtre-seg-btn" onclick="mesaiGuncelle()" style="display:none;width:100%;padding:12px;font-size:14px;border-radius:10px;border-color:rgba(251,191,36,0.6);background:#1E3A8A;color:#d97706;box-shadow:0 0 20px rgba(251,191,36,0.2);">✎ Güncelle</button>
+                            <button id="btnMesaiIptal" class="filtre-seg-btn" onclick="mesaiFormTemizle()" style="display:none;width:100%;padding:10px;font-size:13px;border-radius:10px;border-color:rgba(253,164,175,0.5);background:#1E3A8A;color:#f87171;box-shadow:0 0 15px rgba(239,68,68,0.15);">✕ Vazgeç</button>
                         </div>
                     </div>
 
@@ -1471,7 +1487,7 @@
                                 <input type="text" id="yeniPersonelSicil" class="filtre-input" placeholder="Buraya giriniz" style="width:100%;">
                             </div>
                             <div id="personelEkleMsg" style="display:none;font-size:12px;font-weight:700;text-align:center;padding:8px;border-radius:8px;"></div>
-                            <button onclick="personelEkle()" style="width:100%;padding:12px;border-radius:10px;border:1px solid rgba(34,197,94,0.5);background:rgba(34,197,94,0.12);color:#4ade80;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;letter-spacing:1px;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.background='rgba(34,197,94,0.22)'" onmouseout="this.style.background='rgba(34,197,94,0.12)'">💾 KAYDET</button>
+                            <button onclick="personelEkle()" style="width:100%;padding:10px;border-radius:8px;border:none;background:#FACC15;color:#1E3A8A;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.15s;">💾 KAYDET</button>
                         </div>
                     </div>
 
@@ -1482,8 +1498,8 @@
                             <div class="filtre-group">
                                 <div class="filtre-label">Güncellenecek Personel</div>
                                 <button onclick="personelSecModalAc()" id="personelSecBtn"
-                                    style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid rgba(37,99,235,0.35);background:rgba(37,99,235,0.08);color:#2563eb;font-family:'Barlow',sans-serif;font-size:13px;font-weight:700;cursor:pointer;text-align:left;display:flex;align-items:center;justify-content:space-between;transition:all 0.15s;"
-                                    onmouseover="this.style.background='rgba(37,99,235,0.15)'" onmouseout="this.style.background='rgba(37,99,235,0.08)'">
+                                    style="width:100%;padding:9px 12px;border-radius:8px;border:1px solid #E5E7EB;background:#fff;color:#0F172A;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;cursor:pointer;text-align:left;display:flex;align-items:center;justify-content:space-between;transition:all 0.15s;"
+                                   >
                                     <span id="personelSecBtnText">— Personel Seç —</span>
                                     <span style="font-size:16px;opacity:0.6;">▾</span>
                                 </button>
@@ -1491,17 +1507,17 @@
                             <div class="filtre-group">
                                 <div class="filtre-label">Ad Soyad</div>
                                 <input type="text" id="guncelPersonelAd" class="filtre-input" placeholder=""
-                                    style="width:100%;text-transform:uppercase;background:rgba(163,177,198,0.15);"
+                                    style="width:100%;text-transform:uppercase;background:#F9FAFB;"
                                     oninput="this.value=this.value.toUpperCase()">
                             </div>
                             <div class="filtre-group">
                                 <div class="filtre-label">Sicil No</div>
-                                <input type="text" id="guncelPersonelSicil" class="filtre-input" placeholder="" style="width:100%;background:rgba(163,177,198,0.15);">
+                                <input type="text" id="guncelPersonelSicil" class="filtre-input" placeholder="" style="width:100%;background:#F9FAFB;">
                             </div>
                             <div id="personelGuncelMsg" style="display:none;font-size:12px;font-weight:700;text-align:center;padding:8px;border-radius:8px;"></div>
                             <div style="display:flex;gap:8px;">
-                                <button id="personelGuncelBtn" onclick="personelGuncelle()" style="flex:1;padding:12px;border-radius:10px;border:1px solid rgba(217,119,6,0.5);background:rgba(217,119,6,0.1);color:#d97706;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;letter-spacing:1px;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.background='rgba(217,119,6,0.2)'" onmouseout="this.style.background='rgba(217,119,6,0.1)'">✏️ GÜNCELLE</button>
-                                <button id="personelGuncelleIptal" onclick="personelGuncelleSifirla()" style="display:none;padding:12px 16px;border-radius:10px;border:1px solid rgba(148,163,184,0.3);background:rgba(148,163,184,0.08);color:#6b7a96;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:900;letter-spacing:1px;cursor:pointer;">✕</button>
+                                <button id="personelGuncelBtn" onclick="personelGuncelle()" style="flex:1;padding:10px;border-radius:8px;border:none;background:#FACC15;color:#1E3A8A;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.15s;">✏️ GÜNCELLE</button>
+                                <button id="personelGuncelleIptal" onclick="personelGuncelleSifirla()" style="display:none;padding:10px 14px;border-radius:8px;border:1px solid #E5E7EB;background:#F9FAFB;color:#6B7280;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;cursor:pointer;">✕</button>
                             </div>
                         </div>
                     </div>
@@ -1522,10 +1538,10 @@
             </div>
 
             <!-- PERSONEL SEÇ MODAL -->
-            <div id="personelSecModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(163,177,198,0.55);backdrop-filter:blur(6px);align-items:center;justify-content:center;">
-                <div style="background:#e0e5ec;border-radius:20px;padding:24px;width:420px;max-width:92vw;max-height:80vh;display:flex;flex-direction:column;box-shadow:14px 14px 32px rgba(163,177,198,0.8),-8px -8px 22px rgba(255,255,255,0.9);animation:popIn 0.2s cubic-bezier(0.22,1,0.36,1);">
+            <div id="personelSecModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(15,23,42,0.4);align-items:center;justify-content:center;">
+                <div style="background:#fff;border-radius:12px;padding:24px;width:420px;max-width:92vw;max-height:80vh;display:flex;flex-direction:column;border:1px solid #E5E7EB;animation:popIn 0.2s cubic-bezier(0.22,1,0.36,1);">
                     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-                        <div style="font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900;text-transform:uppercase;color:#3d4f6e;letter-spacing:1px;">👥 Personel Seç</div>
+                        <div style="font-family:'Inter',sans-serif;font-size:18px;font-weight:700;text-transform:uppercase;color:#3d4f6e;letter-spacing:1px;">👥 Personel Seç</div>
                         <button onclick="personelSecModalKapat()" style="background:none;border:none;font-size:20px;color:var(--muted);cursor:pointer;line-height:1;padding:4px;">✕</button>
                     </div>
                     <!-- Arama -->
@@ -1567,7 +1583,7 @@
                                     oninput="df6EkipAutocomplete(this)"
                                     onkeydown="df6EkipKeyDown(event)"
                                     autocomplete="off">
-                                <div id="df6EkipDropdown" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:500;background:#e0e5ec;border:1px solid rgba(255,255,255,0.12);border-radius:10px;margin-top:4px;max-height:200px;overflow-y:auto;box-shadow:0 8px 32px rgba(163,177,198,0.55);"></div>
+                                <div id="df6EkipDropdown" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:500;background:#fff;border:1px solid #E5E7EB;border-radius:8px;margin-top:4px;max-height:200px;overflow-y:auto;box-shadow:0 8px 32px rgba(163,177,198,0.55);"></div>
                             </div>
                             <div id="df6EkipTaglar" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;"></div>
                         </div>
@@ -1581,7 +1597,7 @@
                                     oninput="this.value=this.value.toUpperCase();df6PersonelAutocomplete(this)"
                                     onkeydown="df6PersonelKeyDown(event)"
                                     autocomplete="off">
-                                <div id="df6PersonelDropdown" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:500;background:#e0e5ec;border:1px solid rgba(255,255,255,0.12);border-radius:10px;margin-top:4px;max-height:200px;overflow-y:auto;box-shadow:0 8px 32px rgba(163,177,198,0.55);"></div>
+                                <div id="df6PersonelDropdown" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:500;background:#fff;border:1px solid #E5E7EB;border-radius:8px;margin-top:4px;max-height:200px;overflow-y:auto;box-shadow:0 8px 32px rgba(163,177,198,0.55);"></div>
                             </div>
                         </div>
 
@@ -1619,7 +1635,7 @@
                         </div>
 
                         <!-- BUTONLAR -->
-                        <button id="df6PdfBtn" onclick="df6PdfIndir()" style="width:100%;padding:13px;border-radius:12px;border:1px solid rgba(34,197,94,0.5);background:rgba(34,197,94,0.12);color:#4ade80;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;letter-spacing:1px;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.background='rgba(34,197,94,0.25)'" onmouseout="this.style.background='rgba(34,197,94,0.12)'">📥 PDF İNDİR</button>
+                        <button id="df6PdfBtn" onclick="df6PdfIndir()" style="width:100%;padding:11px;border-radius:8px;border:none;background:#1E3A8A;color:#fff;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s;">📥 PDF İNDİR</button>
                     </div>
 
                     <!-- SAĞ: SONUÇ -->
@@ -1662,7 +1678,7 @@
                         </div>
                         <div class="filtre-group" id="va7AralikGrp" style="display:none;flex-direction:row;gap:8px;align-items:flex-end;">
                             <div><div class="filtre-label">Başlangıç</div><input type="date" id="va7AralikBas" class="filtre-input" onchange="va7Sorgula()"></div>
-                            <div style="color:var(--muted);font-size:18px;font-weight:900;padding-bottom:8px;">—</div>
+                            <div style="color:var(--muted);font-size:18px;font-weight:700;padding-bottom:8px;">—</div>
                             <div><div class="filtre-label">Bitiş</div><input type="date" id="va7AralikBit" class="filtre-input" onchange="va7Sorgula()"></div>
                         </div>
                     </div>
@@ -1695,11 +1711,11 @@
                                             onfocus="hrShipmentAutocomplete(this)"
                                             onkeydown="hrShipmentKeyDown(event)"
                                             onblur="setTimeout(()=>{const d=document.getElementById('hrShipmentAcDropdown');if(d)d.style.display='none';},200)">
-                                        <div id="hrShipmentAcDropdown" style="display:none;position:absolute;top:100%;left:0;right:50px;z-index:500;background:#e0e5ec;border:1px solid rgba(255,255,255,0.12);border-radius:10px;margin-top:4px;max-height:200px;overflow-y:auto;box-shadow:0 8px 32px rgba(163,177,198,0.55);"></div>
-                                        <button onclick="hrShipmentAra()" style="padding:6px 14px;border-radius:6px;border:1px solid rgba(26,86,219,0.4);background:rgba(26,86,219,0.1);color:#1a56db;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:900;cursor:pointer;white-space:nowrap;transition:all 0.15s;" onmouseover="this.style.background='rgba(26,86,219,0.2)'" onmouseout="this.style.background='rgba(26,86,219,0.1)'">Ara</button>
+                                        <div id="hrShipmentAcDropdown" style="display:none;position:absolute;top:100%;left:0;right:50px;z-index:500;background:#fff;border:1px solid #E5E7EB;border-radius:8px;margin-top:4px;max-height:200px;overflow-y:auto;box-shadow:0 8px 32px rgba(163,177,198,0.55);"></div>
+                                        <button onclick="hrShipmentAra()" style="padding:6px 14px;border-radius:6px;border:none;background:#1E3A8A;color:#fff;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;transition:all 0.15s;">Ara</button>
                                     </div>
                                 </div>
-                                <div id="hrShipmentBilgi" style="display:none;background:#e8ecf4;border:1px solid rgba(26,86,219,0.2);border-radius:6px;padding:10px 12px;">
+                                <div id="hrShipmentBilgi" style="display:none;background:#F9FAFB;border:1px solid rgba(26,86,219,0.2);border-radius:6px;padding:10px 12px;">
                                     <div style="font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:#1a56db;margin-bottom:6px;">Bulunan Kayıt</div>
                                     <div id="hrShipmentBilgiIcerik" style="font-size:12px;line-height:1.7;color:var(--text);"></div>
                                 </div>
@@ -1716,19 +1732,19 @@
                                 <div class="filtre-group">
                                     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
                                         <div class="filtre-label" style="margin:0;">Lastik Kodları</div>
-                                        <button onclick="hrKodSatirEkle(undefined,undefined,undefined,true)" style="padding:2px 10px;border-radius:5px;border:1px solid rgba(26,86,219,0.35);background:rgba(26,86,219,0.08);color:#1a56db;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:900;cursor:pointer;">+ Ebat Ekle</button>
+                                        <button onclick="hrKodSatirEkle(undefined,undefined,undefined,true)" style="padding:3px 10px;border-radius:5px;border:1px solid #BFDBFE;background:#EFF6FF;color:#1E3A8A;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;cursor:pointer;">+ Ebat Ekle</button>
                                     </div>
                                     <div id="hrKodSatirlar" style="display:flex;flex-direction:column;gap:5px;"></div>
                                 </div>
 
                                 <div class="filtre-group">
                                     <div class="filtre-label">Açıklama</div>
-                                    <textarea id="hrAciklama" class="filtre-input" style="width:100%;min-height:56px;resize:vertical;font-family:'Barlow',sans-serif;" placeholder="Detay not..."></textarea>
+                                    <textarea id="hrAciklama" class="filtre-input" style="width:100%;min-height:56px;resize:vertical;" placeholder="Detay not..."></textarea>
                                 </div>
                                 <div id="hrFormMsg" style="display:none;font-size:11px;font-weight:700;padding:6px 10px;border-radius:6px;"></div>
-                                <button id="hrKaydetBtn" onclick="hrKaydet()" style="width:100%;padding:10px;border-radius:8px;border:1px solid rgba(26,86,219,0.4);background:rgba(26,86,219,0.12);color:#1a56db;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:900;letter-spacing:1px;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.background='rgba(26,86,219,0.22)'" onmouseout="this.style.background='rgba(26,86,219,0.12)'">💾 KAYDET</button>
-                                <button id="hrSilBtn" onclick="hrSilFormdan()" style="display:none;width:100%;padding:10px;border-radius:8px;border:1px solid rgba(220,38,38,0.35);background:rgba(220,38,38,0.08);color:#dc2626;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:900;letter-spacing:1px;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.background='rgba(220,38,38,0.18)'" onmouseout="this.style.background='rgba(220,38,38,0.08)'">🗑️ SİL</button>
-                                <button id="hrIptalBtn" onclick="hrFormSifirla()" style="display:none;width:100%;padding:8px;border-radius:8px;border:1px solid rgba(163,177,198,0.4);background:transparent;color:var(--text-dim);font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:900;letter-spacing:1px;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.background='rgba(163,177,198,0.12)'" onmouseout="this.style.background='transparent'">✕ İPTAL</button>
+                                <button id="hrKaydetBtn" onclick="hrKaydet()" style="width:100%;padding:10px;border-radius:8px;border:none;background:#1E3A8A;color:#fff;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s;">💾 KAYDET</button>
+                                <button id="hrSilBtn" onclick="hrSilFormdan()" style="display:none;width:100%;padding:10px;border-radius:8px;border:1px solid #FECACA;background:#FEF2F2;color:#dc2626;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s;">🗑️ SİL</button>
+                                <button id="hrIptalBtn" onclick="hrFormSifirla()" style="display:none;width:100%;padding:8px;border-radius:8px;border:1px solid #E5E7EB;background:#F9FAFB;color:#6B7280;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all 0.15s;">✕ İPTAL</button>
                             </div>
                         </div>
 
@@ -1767,7 +1783,7 @@
                                         <input type="date" id="hrAralikBit" class="filtre-input" style="width:100%;" onchange="hrListele()">
                                     </div>
                                 </div>
-                                <button onclick="hrPdfIndir()" style="width:100%;padding:10px;border-radius:8px;border:1px solid rgba(34,197,94,0.4);background:rgba(34,197,94,0.1);color:#16a34a;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:900;letter-spacing:1px;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.background='rgba(34,197,94,0.2)'" onmouseout="this.style.background='rgba(34,197,94,0.1)'">📥 PDF İNDİR</button>
+                                <button onclick="hrPdfIndir()" style="width:100%;padding:10px;border-radius:8px;border:none;background:#1E3A8A;color:#fff;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s;">📥 PDF İNDİR</button>
                             </div>
                         </div>
                     </div>
@@ -2071,10 +2087,10 @@
         }
         if (empty) empty.style.display = 'none';
         tbody.innerHTML = liste.map((p, i) => `
-            <tr id="personelRow_${p.sicil}" onclick="personelDuzenlemeSec('${p.sicil.replace(/'/g,"\\'")}')" style="cursor:pointer;transition:background 0.15s;" onmouseover="this.style.background='rgba(59,130,246,0.08)'" onmouseout="this.style.background=''">
+            <tr id="personelRow_${p.sicil}" onclick="personelDuzenlemeSec('${p.sicil.replace(/'/g,"\\'")}')" style="cursor:pointer;transition:background 0.15s;">
                 <td style="color:var(--muted);font-size:11px;">${i+1}</td>
                 <td style="font-weight:700;">${p.ad}</td>
-                <td style="color:var(--blue-light);font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:900;">${p.sicil}</td>
+                <td style="color:var(--blue-light);font-family:'Inter',sans-serif;font-size:15px;font-weight:700;">${p.sicil}</td>
                 <td onclick="event.stopPropagation()"><button onclick="personelSil('${p.sicil}')" style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:#f87171;border-radius:6px;padding:3px 8px;cursor:pointer;font-size:11px;font-weight:700;">SİL</button></td>
             </tr>`).join('');
     }
@@ -2178,11 +2194,11 @@
         }
         liste.innerHTML = filtreli.map(p => `
             <div onclick="personelDuzenlemeSec('${p.sicil.replace(/'/g,"\\'")}')"
-                style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-radius:10px;cursor:pointer;background:#e0e5ec;border:1px solid transparent;transition:all 0.15s;"
-                onmouseover="this.style.background='rgba(37,99,235,0.1)';this.style.borderColor='rgba(37,99,235,0.25)'"
-                onmouseout="this.style.background='#e0e5ec';this.style.borderColor='transparent'">
+                style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-radius:10px;cursor:pointer;background:#fff;border:1px solid transparent;transition:all 0.15s;"
+               
+               >
                 <span style="font-weight:700;font-size:13px;color:var(--text);">${p.ad}</span>
-                <span style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:900;color:#2563eb;">${p.sicil}</span>
+                <span style="font-family:'Inter',sans-serif;font-size:14px;font-weight:700;color:#2563eb;">${p.sicil}</span>
             </div>`).join('');
     }
 
@@ -3060,7 +3076,7 @@
 
             tr.innerHTML = `
                 <td style="padding:10px 12px;color:var(--muted);font-size:11px;">${i+1}</td>
-                <td style="padding:10px 12px;"><span style="font-size:12px;font-weight:900;padding:3px 9px;border-radius:4px;color:${k.vardiya==='A Vardiyası'?'#2563eb':'#d97706'};background:${k.vardiya==='A Vardiyası'?'rgba(37,99,235,0.1)':'rgba(217,119,6,0.1)'};border:1px solid ${k.vardiya==='A Vardiyası'?'rgba(37,99,235,0.3)':'rgba(217,119,6,0.3)'};">${k.vardiya==='A Vardiyası'?'A':'B'}</span></td>
+                <td style="padding:10px 12px;"><span style="font-size:12px;font-weight:700;padding:3px 9px;border-radius:4px;color:${k.vardiya==='A Vardiyası'?'#2563eb':'#d97706'};background:${k.vardiya==='A Vardiyası'?'rgba(37,99,235,0.1)':'rgba(217,119,6,0.1)'};border:1px solid ${k.vardiya==='A Vardiyası'?'rgba(37,99,235,0.3)':'rgba(217,119,6,0.3)'};">${k.vardiya==='A Vardiyası'?'A':'B'}</span></td>
                 <td style="padding:10px 12px;font-weight:600;font-size:11px;">${ekipKisaGoster(k.ekip)}</td>
                 <td style="padding:10px 12px;font-size:11px;color:var(--text-dim);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${forkliftciGoster}">${forkliftciGoster}</td>
                 <td style="padding:10px 12px;"><span class="badge ${tipBadge}">${k.aracTipi}</span></td>
@@ -3594,12 +3610,12 @@
                             <td style="color:var(--success); font-weight:700; text-align:center; padding:12px;">${r.m3.toFixed(1)}</td>
                         </tr>`).join('')}
                         <tr style="background:rgba(37,99,235,0.15); border-top:2px solid rgba(37,99,235,0.4);">
-                            <td colspan="3" style="font-weight:900; color:var(--blue-light); padding:15px;">YILLIK TOPLAM</td>
-                            <td style="font-weight:900; color:#92660a; text-align:center; padding:15px;">${genTir}</td>
-                            <td style="font-weight:900; color:#1e4d8c; text-align:center; padding:15px;">${genKamyon}</td>
-                            <td style="font-weight:900; color:#475569; text-align:center; padding:15px;">${genKonteyner}</td>
-                            <td style="font-weight:900; color:#b91c1c; text-align:center; padding:15px;">${genToplam}</td>
-                            <td style="font-weight:900; color:var(--success); text-align:center; padding:15px;">${genM3.toFixed(1)}</td>
+                            <td colspan="3" style="font-weight:700; color:var(--blue-light); padding:15px;">YILLIK TOPLAM</td>
+                            <td style="font-weight:700; color:#92660a; text-align:center; padding:15px;">${genTir}</td>
+                            <td style="font-weight:700; color:#1e4d8c; text-align:center; padding:15px;">${genKamyon}</td>
+                            <td style="font-weight:700; color:#475569; text-align:center; padding:15px;">${genKonteyner}</td>
+                            <td style="font-weight:700; color:#b91c1c; text-align:center; padding:15px;">${genToplam}</td>
+                            <td style="font-weight:700; color:var(--success); text-align:center; padding:15px;">${genM3.toFixed(1)}</td>
                         </tr>
                     </tbody></table></div></div>`;
         } else if (e2Donem === 'ay' || e2Donem === 'aralik') {
@@ -3622,12 +3638,12 @@
                             <td style="color:var(--success); font-weight:700; text-align:center; padding:12px;">${e.m3.toFixed(1)}</td>
                         </tr>`).join('')}
                         <tr style="background:rgba(37,99,235,0.15); border-top:2px solid rgba(37,99,235,0.4);">
-                            <td colspan="2" style="font-weight:900; color:var(--blue-light); padding:15px;">GENEL TOPLAM</td>
-                            <td style="font-weight:900; color:#92660a; text-align:center; padding:15px;">${genTir}</td>
-                            <td style="font-weight:900; color:#1e4d8c; text-align:center; padding:15px;">${genKamyon}</td>
-                            <td style="font-weight:900; color:#475569; text-align:center; padding:15px;">${genKonteyner}</td>
-                            <td style="font-weight:900; color:#b91c1c; text-align:center; padding:15px;">${genToplam}</td>
-                            <td style="font-weight:900; color:var(--success); text-align:center; padding:15px;">${genM3.toFixed(1)}</td>
+                            <td colspan="2" style="font-weight:700; color:var(--blue-light); padding:15px;">GENEL TOPLAM</td>
+                            <td style="font-weight:700; color:#92660a; text-align:center; padding:15px;">${genTir}</td>
+                            <td style="font-weight:700; color:#1e4d8c; text-align:center; padding:15px;">${genKamyon}</td>
+                            <td style="font-weight:700; color:#475569; text-align:center; padding:15px;">${genKonteyner}</td>
+                            <td style="font-weight:700; color:#b91c1c; text-align:center; padding:15px;">${genToplam}</td>
+                            <td style="font-weight:700; color:var(--success); text-align:center; padding:15px;">${genM3.toFixed(1)}</td>
                         </tr>
                     </tbody></table></div></div>`;
         } else {
@@ -3663,7 +3679,7 @@
                                             <td style="padding:8px;"><span class="badge ${k.aracTipi==='Tır'?'badge-tir':k.aracTipi==='Kamyon'?'badge-kamyon':'badge-konteyner'}">${k.aracTipi}</span></td>
                                             <td style="padding:8px; font-weight:700; font-size:10px;">${k.aracTuru||'—'}</td>
                                             <td style="padding:8px; font-weight:700; color:var(--success);">${k.m3||'—'}</td>
-                                            <td style="padding:8px; font-family:'Barlow Condensed',sans-serif; font-weight:700;">${k.shipment||'—'}</td>
+                                            <td style="padding:8px; font-family:'Inter',sans-serif; font-weight:700;">${k.shipment||'—'}</td>
                                             <td style="padding:8px;">${k.baslama}-${k.bitis}</td>
                                             <td style="padding:8px; font-weight:700;">${k.net}</td>
                                             <td style="padding:8px; font-weight:400; font-size:11px;">${k.forkliftci||'—'}</td>
@@ -4269,7 +4285,7 @@
                 rowStyle += 'background: rgba(245,158,11,0.08);'; // Hafif turuncu arka plan
             }
 
-            return `<tr onclick="mesaiDuzenle(${m.id})" style="${rowStyle}" onmouseover="this.style.background='rgba(0,0,0,0.05)'" onmouseout="this.style.background='${(m.tur==='Pazar'||m.tur==='Pazar15')?'rgba(220,38,38,0.1)':(m.vardiya==='B'?'rgba(245,158,11,0.08)':'')} '">
+            return `<tr onclick="mesaiDuzenle(${m.id})" style="${rowStyle}">
                 <td style="font-size:11px;">${tarihStr}</td>
                 <td style="font-weight:800;color:${vColor};">${m.vardiya}</td>
                 <td style="color:${tColor};font-weight:700;">${m.tur}</td>
@@ -4334,14 +4350,14 @@
             <div style="margin-top:4px;font-size:13px;font-weight:800;color:#6b9fff;text-align:center;margin-bottom:12px;">${label}</div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
                 <div style="background:#152247;border-radius:14px;padding:22px 18px;text-align:center;border-left:3px solid var(--yellow);">
-                    <div style="color:var(--yellow);font-weight:900;font-size:16px;margin-bottom:10px;">A VARDİYASI</div>
+                    <div style="color:var(--yellow);font-weight:700;font-size:16px;margin-bottom:10px;">A VARDİYASI</div>
                     <div style="font-size:13px;color:#6b9fff;margin-bottom:5px;display:block;">Normal: <b style="color:white;">${A.normal} gün</b></div>
                     <div style="font-size:13px;color:#6b9fff;margin-bottom:5px;display:block;">Pazar: <b style="color:white;">${A.pazar} gün</b></div>
                     <div style="font-size:13px;color:#6b9fff;margin-top:6px;">Toplam: <b style="color:var(--yellow);font-size:15px;">${aSaat} saat</b></div>
                     <div style="font-size:13px;color:#6b9fff;margin-top:8px;display:block;">Kişi: <b style="color:white;">${A.toplamKisi}</b></div>
                 </div>
                 <div style="background:#152247;border-radius:14px;padding:22px 18px;text-align:center;border-left:3px solid var(--blue-light);">
-                    <div style="color:var(--blue-light);font-weight:900;font-size:16px;margin-bottom:10px;">B VARDİYASI</div>
+                    <div style="color:var(--blue-light);font-weight:700;font-size:16px;margin-bottom:10px;">B VARDİYASI</div>
                     <div style="font-size:13px;color:#6b9fff;margin-bottom:5px;display:block;">Normal: <b style="color:white;">${B.normal} gün</b></div>
                     <div style="font-size:13px;color:#6b9fff;margin-bottom:5px;display:block;">Pazar: <b style="color:white;">${B.pazar} gün</b></div>
                     <div style="font-size:13px;color:#6b9fff;margin-top:6px;">Toplam: <b style="color:var(--blue-light);font-size:15px;">${bSaat} saat</b></div>
@@ -4349,7 +4365,7 @@
                 </div>
             </div>
             <div style="background:#152247;border-radius:14px;padding:16px;text-align:center;">
-                <div style="font-size:18px;font-weight:900;color:${kazananRenk};margin-bottom:8px;">${kazanan}</div>
+                <div style="font-size:18px;font-weight:700;color:${kazananRenk};margin-bottom:8px;">${kazanan}</div>
                 <div style="font-size:13px;color:#6b9fff;">Fark: %${fark}</div>
                 <div style="margin-top:6px;border-radius:8px;overflow:hidden;height:12px;background:#0a0f1a;">
                     <div style="display:flex;height:100%;">
@@ -5475,7 +5491,7 @@ function va7Sorgula() {
         if (!ekipler.length) return '<tr><td colspan="6" style="color:var(--muted);text-align:center;padding:20px;">Kayıt yok</td></tr>';
         return ekipler.map((e, i) => {
             const rankBadge = i < 3 
-                ? `<div style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:${i===0?'#f59e0b':i===1?'#94a3b8':'#c97c3a'};color:#fff;font-size:10px;font-weight:900;">${i+1}</div>`
+                ? `<div style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:${i===0?'#f59e0b':i===1?'#94a3b8':'#c97c3a'};color:#fff;font-size:10px;font-weight:700;">${i+1}</div>`
                 : `<div style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:rgba(163,177,198,0.2);color:var(--text-dim);font-size:10px;">${i+1}</div>`;
             
             return `<tr>
@@ -5497,7 +5513,7 @@ function va7Sorgula() {
                 <!-- A VARDİYASI -->
                 <div>
                     <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; border-bottom:2px solid rgba(37,99,235,0.2); padding-bottom:8px;">
-                        <div style="font-family:'Barlow Condensed',sans-serif; font-size:15px; font-weight:900; color:#2563eb; letter-spacing:1px;">A VARDİYASI</div>
+                        <div style="font-family:'Inter',sans-serif; font-size:15px; font-weight:700; color:#2563eb; letter-spacing:1px;">A VARDİYASI</div>
                         <div style="display:flex; gap:6px;">
                             <span class="stat-pill" style="background:rgba(37,99,235,0.1); color:#2563eb; font-size:11px;">${topA} Araç</span>
                             <span class="stat-pill" style="background:rgba(34,197,94,0.1); color:#16a34a; font-size:11px;">${m3A.toFixed(1)} M³</span>
@@ -5517,7 +5533,7 @@ function va7Sorgula() {
                 <!-- B VARDİYASI -->
                 <div>
                     <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; border-bottom:2px solid rgba(217,119,6,0.2); padding-bottom:8px;">
-                        <div style="font-family:'Barlow Condensed',sans-serif; font-size:15px; font-weight:900; color:#d97706; letter-spacing:1px;">B VARDİYASI</div>
+                        <div style="font-family:'Inter',sans-serif; font-size:15px; font-weight:700; color:#d97706; letter-spacing:1px;">B VARDİYASI</div>
                         <div style="display:flex; gap:6px;">
                             <span class="stat-pill" style="background:rgba(217,119,6,0.1); color:#d97706; font-size:11px;">${topB} Araç</span>
                             <span class="stat-pill" style="background:rgba(34,197,94,0.1); color:#16a34a; font-size:11px;">${m3B.toFixed(1)} M³</span>
@@ -5628,12 +5644,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     oninput="hrKodSatirGuncelle(${s.sid},'adet',this.value)"
                     class="filtre-input" style="flex:1;min-width:0;padding:5px 8px;font-size:12px;">
                 <select onchange="hrKodSatirGuncelle(${s.sid},'tur',this.value);hrKodSatirRender()"
-                    style="padding:5px 10px;border-radius:6px;border:1px solid ${turClr}33;background:${turBg};color:${turClr};font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:900;cursor:pointer;white-space:nowrap;min-width:85px;outline:none;transition:all 0.15s;">
+                    style="padding:5px 10px;border-radius:6px;border:1px solid ${turClr}33;background:${turBg};color:${turClr};font-family:'Inter',sans-serif;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;min-width:85px;outline:none;transition:all 0.15s;">
                     <option value="" ${!s.tur?'selected':''}>± SEÇ</option>
                     <option value="eksik" ${isEksik?'selected':''} style="color:#dc2626;background:#fff;">− EKSİK</option>
                     <option value="fazla" ${isFazla?'selected':''} style="color:#16a34a;background:#fff;">+ FAZLA</option>
                 </select>
-                ${idx > 0 ? `<button onclick="hrKodSatirKaldir(${s.sid})" style="padding:5px 8px;border-radius:6px;border:1px solid rgba(163,177,198,0.35);background:transparent;color:var(--muted);font-size:13px;font-weight:900;cursor:pointer;line-height:1;">✕</button>` : ''}
+                ${idx > 0 ? `<button onclick="hrKodSatirKaldir(${s.sid})" style="padding:5px 8px;border-radius:6px;border:1px solid rgba(163,177,198,0.35);background:transparent;color:var(--muted);font-size:13px;font-weight:700;cursor:pointer;line-height:1;">✕</button>` : ''}
             </div>`;
         }).join('');
     }
@@ -5695,7 +5711,7 @@ document.addEventListener('DOMContentLoaded', function() {
         dd.innerHTML = oneri.map((s, idx) =>
             `<div class="shipment-oneri-item" data-val="${s}" id="hrShipItem_${idx}" onclick="hrShipmentSec('${s}')"
                 style="padding:8px 12px;font-size:12px;font-weight:600;cursor:pointer;border-bottom:1px solid rgba(163,177,198,0.25);transition:background 0.1s;"
-                onmouseover="hrShipmentAcFocus(${idx})" onmouseout="this.style.background=''">${s}</div>`
+               >${s}</div>`
         ).join('');
     }
 
