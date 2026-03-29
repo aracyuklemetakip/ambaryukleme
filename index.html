@@ -6225,6 +6225,19 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // ── PDF ──────────────────────────────────────────────────
+    // Türkçe karakterleri jsPDF helvetica için güvenli ASCII'ye çevir
+    function trFix(str) {
+        if (!str) return '';
+        return String(str)
+            .replace(/İ/g,'I').replace(/ı/g,'i')
+            .replace(/Ğ/g,'G').replace(/ğ/g,'g')
+            .replace(/Ü/g,'U').replace(/ü/g,'u')
+            .replace(/Ş/g,'S').replace(/ş/g,'s')
+            .replace(/Ö/g,'O').replace(/ö/g,'o')
+            .replace(/Ç/g,'C').replace(/ç/g,'c');
+    }
+    function trRow(row) { return row.map(cell => trFix(cell)); }
+
     function hrPdfIndir() {
         try {
             let filtre = hrRaporlar.slice();
@@ -6269,11 +6282,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 // Üst bilgi
                 const infoRows = [
-                    ['Tarih',     r.tarih || '—'],
-                    ['Shipment',  r.shipment || '—'],
-                    ['Araç Türü', r.aracTipi || '—'],
-                    ['Araç Cinsi',r.aracTuru || '—'],
-                    ['Vardiya',   r.vardiya || '—'],
+                    [trFix('Tarih'),      trFix(r.tarih || '—')],
+                    [trFix('Shipment'),   trFix(r.shipment || '—')],
+                    [trFix('Arac Turu'),  trFix(r.aracTipi || '—')],
+                    [trFix('Arac Cinsi'), trFix(r.aracTuru || '—')],
+                    [trFix('Vardiya'),    trFix(r.vardiya || '—')],
                 ];
 
                 pdf.autoTable({
@@ -6292,22 +6305,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 pdf.setFont('helvetica','bold');
                 pdf.setFontSize(9);
                 pdf.setTextColor(26, 86, 219);
-                pdf.text('LASTİK KODLARI', margin, y);
+                pdf.text('LASTIK KODLARI', margin, y);
                 y += 4;
 
                 let kodRows = [];
                 if (Array.isArray(r.kodSatirlari) && r.kodSatirlari.length) {
-                    kodRows = r.kodSatirlari.map(s => [
+                    kodRows = r.kodSatirlari.map(s => trRow([
                         s.kod || '—',
                         String(s.adet || 0),
-                        s.tur === 'eksik' ? 'EKSİK' : 'FAZLA'
-                    ]);
+                        s.tur === 'eksik' ? 'EKSIK' : 'FAZLA'
+                    ]));
                 } else {
                     const kodlar = Array.isArray(r.lastikKodlar) ? r.lastikKodlar : (r.lastikKod||'').split(',').map(s=>s.trim()).filter(Boolean);
                     kodlar.forEach(k => {
-                        kodRows.push([k, String(r.adet||0), r.tur === 'eksik' ? 'EKSİK' : 'FAZLA']);
+                        kodRows.push(trRow([k, String(r.adet||0), r.tur === 'eksik' ? 'EKSIK' : 'FAZLA']));
                     });
-                    if (!kodRows.length) kodRows.push(['—', String(r.adet||0), r.tur === 'eksik' ? 'EKSİK' : 'FAZLA']);
+                    if (!kodRows.length) kodRows.push(trRow(['—', String(r.adet||0), r.tur === 'eksik' ? 'EKSIK' : 'FAZLA']));
                 }
 
                 pdf.autoTable({
@@ -6324,7 +6337,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     didDrawCell: function(data) {
                         if (data.section === 'body' && data.column.index === 2) {
                             const val = data.cell.raw;
-                            data.cell.styles.textColor = val === 'EKSİK' ? [185,28,28] : [21,128,61];
+                            data.cell.styles.textColor = val === 'EKSIK' ? [185,28,28] : [21,128,61];
                             data.cell.styles.fontStyle = 'bold';
                         }
                     },
@@ -6336,7 +6349,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 pdf.setFont('helvetica','bold');
                 pdf.setFontSize(9);
                 pdf.setTextColor(26, 86, 219);
-                pdf.text('EKİP', margin, y);
+                pdf.text('EKIP', margin, y);
                 y += 4;
 
                 const ekipArr = Array.isArray(r.ekip)
@@ -6346,13 +6359,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 const ekipRows = ekipArr.map(isim => {
                     const p = personelListesi.find(x => x.ad === isim);
                     const gosterim = p ? `${isim} (${p.sicil})` : isim;
-                    return [gosterim, ''];
+                    return [trFix(gosterim), ''];
                 });
 
                 if (ekipRows.length) {
                     pdf.autoTable({
                         startY: y,
-                        head: [['İsim', 'İmza']],
+                        head: [['Isim', 'Imza']],
                         body: ekipRows,
                         styles: { font:'helvetica', fontSize:8, cellPadding:4, lineColor:[200,210,220], lineWidth:0.3, textColor:[40,50,70] },
                         headStyles: { fillColor:[26,86,219], textColor:255, fontStyle:'bold', fontSize:8, halign:'center' },
@@ -6378,11 +6391,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     pdf.setFont('helvetica','bold');
                     pdf.setFontSize(9);
                     pdf.setTextColor(26, 86, 219);
-                    pdf.text('FORKLİFTÇİ', margin, y);
+                    pdf.text('FORKLIFTCI', margin, y);
                     y += 4;
                     pdf.autoTable({
                         startY: y,
-                        body: [['Forklift: ' + r.forkliftci.trim(), '']],
+                        body: [['Forklift: ' + trFix(r.forkliftci.trim()), '']],
                         styles: { font:'helvetica', fontSize:10, cellPadding:5, lineColor:[200,210,220], lineWidth:0.3, textColor:[40,50,70] },
                         columnStyles: {
                             0: { cellWidth:60, fontStyle:'bold' },
@@ -6406,9 +6419,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     pdf.setFont('helvetica','bold');
                     pdf.setFontSize(9);
                     pdf.setTextColor(100,100,100);
-                    pdf.text('AÇIKLAMA: ', margin, y);
+                    pdf.text('ACIKLAMA: ', margin, y);
                     pdf.setFont('helvetica','normal');
-                    const satirlar = pdf.splitTextToSize(r.aciklama.trim(), pageW - margin*2 - 28);
+                    const satirlar = pdf.splitTextToSize(trFix(r.aciklama.trim()), pageW - margin*2 - 28);
                     pdf.text(satirlar, margin + 28, y);
                     y += satirlar.length * 5 + 2;
                 }
@@ -6418,7 +6431,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 pdf.setFontSize(8);
                 pdf.setTextColor(160,160,160);
                 pdf.text(
-                    'Oluşturulma: ' + now.toLocaleDateString('tr-TR') + ' ' + now.toLocaleTimeString('tr-TR', {hour:'2-digit',minute:'2-digit'}),
+                    'Olusturulma: ' + now.toLocaleDateString('tr-TR') + ' ' + now.toLocaleTimeString('tr-TR', {hour:'2-digit',minute:'2-digit'}),
                     pageW - margin, 290, {align:'right'}
                 );
             });
