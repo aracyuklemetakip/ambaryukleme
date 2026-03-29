@@ -373,11 +373,11 @@
         .edit-cancel:hover { color:#ef4444; }
 
         .form-section-title {
-            font-size:10px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase;
-            color:#9CA3AF;
+            font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase;
+            color:#374151;
             padding:10px 0 6px 0;
             margin-bottom:4px; margin-top:14px;
-            border-bottom:1px solid #F3F4F6;
+            border-bottom:2px solid #E5E7EB;
             display:block; width:100%;
         }
         .form-section-title:first-of-type { margin-top:0; }
@@ -545,8 +545,8 @@
             font-weight:600; 
         }
         .sef-sidebar-label { 
-            font-size:9px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; 
-            color:#9CA3AF;
+            font-size:11px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; 
+            color:#374151;
             padding:6px 12px; margin:10px 0 4px;
         }
         .sef-content { padding:16px 20px; overflow-y:auto; height:calc(100vh - 52px); background:#F9FAFB; }
@@ -579,6 +579,11 @@
             border-color:#dc2626;
             background:#FEF2F2;
             color:#dc2626;font-weight:600;
+        }
+        .filtre-seg-btn.aktif-sari {
+            border-color:#d97706;
+            background:#FACC15;
+            color:#1E3A8A;font-weight:700;
         }
 
         .btn-pdf {
@@ -1029,9 +1034,9 @@
 </div>
 
 <div class="modal-overlay" id="mesaiKarsilastirmaModal" onclick="if(event.target===this)this.classList.remove('show')">
-    <div class="modal-box" style="width:520px;max-width:95vw;max-height:90vh;overflow-y:auto;text-align:left;padding:32px 36px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-            <div style="font-size:16px;font-weight:700;color:#0F172A;">📊 Vardiya Karşılaştırma</div>
+    <div class="modal-box" style="width:480px;max-width:95vw;max-height:90vh;overflow-y:auto;text-align:left;padding:28px 32px;background:#fff;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+            <div style="font-size:16px;font-weight:800;color:#0F172A;letter-spacing:0.5px;">📊 Mesai Hesaplama</div>
             <button onclick="document.getElementById('mesaiKarsilastirmaModal').classList.remove('show')" style="background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;line-height:1;">✕</button>
         </div>
         <div id="mesaiKarsilastirmaModalIcerik"></div>
@@ -4363,15 +4368,18 @@
     let mesaiDuzenleId = null;
 
     function mesaiVardiyaSec(el, val) {
-        const isActive = el.classList.contains('aktif');
-        document.querySelectorAll('#mesaiVardiyaSeg .filtre-seg-btn').forEach(b => b.classList.remove('aktif'));
+        const isActive = el.classList.contains('aktif') || el.classList.contains('aktif-sari');
+        document.querySelectorAll('#mesaiVardiyaSeg .filtre-seg-btn').forEach(b => b.classList.remove('aktif','aktif-sari'));
         if (isActive) {
-            // toggle: ilk butona (A) geri dön
             const ilk = document.querySelector('#mesaiVardiyaSeg .filtre-seg-btn');
             if (ilk) ilk.classList.add('aktif');
             mesaiSeciliVardiya = 'A';
         } else {
-            el.classList.add('aktif');
+            if (val === 'B') {
+                el.classList.add('aktif-sari');
+            } else {
+                el.classList.add('aktif');
+            }
             mesaiSeciliVardiya = val;
         }
     }
@@ -4449,7 +4457,10 @@
 
         // Vardiya seç
         document.querySelectorAll('#mesaiVardiyaSeg .filtre-seg-btn').forEach(b => {
-            b.classList.toggle('aktif', b.getAttribute('onclick').includes(`'${m.vardiya}'`));
+            b.classList.remove('aktif','aktif-sari');
+            if (b.getAttribute('onclick').includes(`'${m.vardiya}'`)) {
+                b.classList.add(m.vardiya === 'B' ? 'aktif-sari' : 'aktif');
+            }
         });
         mesaiSeciliVardiya = m.vardiya;
 
@@ -4549,13 +4560,12 @@
         let filtre, label;
 
         if (sonKacAy && sonKacAy > 0) {
-            // Son X ay modu
             const simdi = new Date();
             const baslangic = new Date(simdi.getFullYear(), simdi.getMonth() - sonKacAy + 1, 1);
             const bas = baslangic.toISOString().split('T')[0];
             const bit = simdi.toISOString().split('T')[0];
             filtre = mesaiDB.filter(k => k.tarih >= bas && k.tarih <= bit);
-            label = 'Son ' + sonKacAy + ' Ay (' + bas.split('-').reverse().join('.') + ' - ' + bit.split('-').reverse().join('.') + ')';
+            label = 'Son ' + sonKacAy + ' Ay (' + bas.split('-').reverse().join('.') + ' – ' + bit.split('-').reverse().join('.') + ')';
         } else {
             const yil = parseInt(document.getElementById('kYil').value) || new Date().getFullYear();
             const ay  = document.getElementById('kAy').value;
@@ -4567,57 +4577,73 @@
             }
         }
 
-        const A = { normal:0, pazar:0, normalKisi:0, pazarKisi:0, toplamKisi:0 };
-        const B = { normal:0, pazar:0, normalKisi:0, pazarKisi:0, toplamKisi:0 };
+        if (!filtre.length) {
+            mesaiKarsilastirmaModalGoster(`<div style="text-align:center;padding:32px;color:#9CA3AF;font-size:14px;">Bu dönem için kayıt bulunamadı.</div>`);
+            return;
+        }
+
+        // Her satır: tur (Normal / Pazar) + hesaplananGun (1 veya 1.5) + kisi
+        // Normal  → 4 saat/kişi,  1 gün
+        // Pazar   → 8 saat/kişi,  1 gün   (hesaplananGun===1)
+        // Pazar15 → 12 saat/kişi, 1.5 gün (hesaplananGun===1.5)
+
+        let normalGun = 0, normalSaat = 0, normalSatir = 0;
+        let pazarGun  = 0, pazarSaat  = 0, pazarSatir  = 0;
+        let pazar15Gun= 0, pazar15Saat= 0, pazar15Satir= 0;
+        let toplamSatir = 0;
 
         filtre.forEach(k => {
-            const hedef = k.vardiya === 'A' ? A : B;
-            const kisi  = parseInt(k.kisi) || 0;
-            hedef.toplamKisi += kisi;
-            if (k.tur === 'Normal') { hedef.normal += parseFloat(k.hesaplananGun)||0; hedef.normalKisi += kisi; }
-            else                    { hedef.pazar  += parseFloat(k.hesaplananGun)||0; hedef.pazarKisi  += kisi; }
+            const kisi = parseInt(k.kisi) || 0;
+            toplamSatir++;
+            if (k.tur === 'Normal') {
+                normalSatir++;
+                normalGun  += 1 * kisi;
+                normalSaat += 4 * kisi;
+            } else if (k.tur === 'Pazar') {
+                if ((parseFloat(k.hesaplananGun) || 1) === 1.5) {
+                    pazar15Satir++;
+                    pazar15Gun  += 1.5 * kisi;
+                    pazar15Saat += 12  * kisi;
+                } else {
+                    pazarSatir++;
+                    pazarGun  += 1 * kisi;
+                    pazarSaat += 8 * kisi;
+                }
+            }
         });
 
-        const aSaat = A.normal * 4 + A.pazar * 8;
-        const bSaat = B.normal * 4 + B.pazar * 8;
-        const total = aSaat + bSaat;
-        const percA = total > 0 ? Math.round(aSaat/total*100) : 50;
-        const percB = 100 - percA;
-        const fark  = total > 0 ? Math.round(Math.abs(aSaat-bSaat)/total*100) : 0;
-        const kazanan = aSaat > bSaat ? 'A VARDİYASI ÖNDE' : bSaat > aSaat ? 'B VARDİYASI ÖNDE' : 'EŞİT';
-        const kazananRenk = aSaat > bSaat ? 'var(--yellow)' : bSaat > aSaat ? 'var(--blue-light)' : '#d97706';
+        const toplamGun  = normalGun  + pazarGun  + pazar15Gun;
+        const toplamSaat = normalSaat + pazarSaat + pazar15Saat;
 
-        const icerik = `
-            <div style="margin-top:4px;font-size:13px;font-weight:800;color:#6b9fff;text-align:center;margin-bottom:12px;">${label}</div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
-                <div style="background:#152247;border-radius:14px;padding:22px 18px;text-align:center;border-left:3px solid var(--yellow);">
-                    <div style="color:var(--yellow);font-weight:700;font-size:16px;margin-bottom:10px;">A VARDİYASI</div>
-                    <div style="font-size:13px;color:#6b9fff;margin-bottom:5px;display:block;">Normal: <b style="color:white;">${A.normal} gün</b></div>
-                    <div style="font-size:13px;color:#6b9fff;margin-bottom:5px;display:block;">Pazar: <b style="color:white;">${A.pazar} gün</b></div>
-                    <div style="font-size:13px;color:#6b9fff;margin-top:6px;">Toplam: <b style="color:var(--yellow);font-size:15px;">${aSaat} saat</b></div>
-                    <div style="font-size:13px;color:#6b9fff;margin-top:8px;display:block;">Kişi: <b style="color:white;">${A.toplamKisi}</b></div>
-                </div>
-                <div style="background:#152247;border-radius:14px;padding:22px 18px;text-align:center;border-left:3px solid var(--blue-light);">
-                    <div style="color:var(--blue-light);font-weight:700;font-size:16px;margin-bottom:10px;">B VARDİYASI</div>
-                    <div style="font-size:13px;color:#6b9fff;margin-bottom:5px;display:block;">Normal: <b style="color:white;">${B.normal} gün</b></div>
-                    <div style="font-size:13px;color:#6b9fff;margin-bottom:5px;display:block;">Pazar: <b style="color:white;">${B.pazar} gün</b></div>
-                    <div style="font-size:13px;color:#6b9fff;margin-top:6px;">Toplam: <b style="color:var(--blue-light);font-size:15px;">${bSaat} saat</b></div>
-                    <div style="font-size:13px;color:#6b9fff;margin-top:8px;display:block;">Kişi: <b style="color:white;">${B.toplamKisi}</b></div>
-                </div>
-            </div>
-            <div style="background:#152247;border-radius:14px;padding:16px;text-align:center;">
-                <div style="font-size:18px;font-weight:700;color:${kazananRenk};margin-bottom:8px;">${kazanan}</div>
-                <div style="font-size:13px;color:#6b9fff;">Fark: %${fark}</div>
-                <div style="margin-top:6px;border-radius:8px;overflow:hidden;height:12px;background:#0a0f1a;">
-                    <div style="display:flex;height:100%;">
-                        <div style="width:${percA}%;background:var(--yellow);"></div>
-                        <div style="width:${percB}%;background:var(--blue-light);"></div>
-                    </div>
-                </div>
-                <div style="display:flex;justify-content:space-between;font-size:10px;color:#6b9fff;margin-top:3px;">
-                    <span>A %${percA}</span><span>B %${percB}</span>
+        function satirHtml(label, gun, saat, renk) {
+            if (gun === 0) return '';
+            return `
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-radius:10px;border:1px solid ${renk}22;background:${renk}08;margin-bottom:8px;">
+                <div style="font-size:14px;font-weight:700;color:${renk};">${label}</div>
+                <div style="text-align:right;">
+                    <span style="font-size:15px;font-weight:800;color:${renk};">${gun % 1 === 0 ? gun : gun.toFixed(1)} gün</span>
+                    <span style="font-size:12px;font-weight:500;color:${renk};opacity:0.75;margin-left:6px;">( ${saat} saat )</span>
                 </div>
             </div>`;
+        }
+
+        const icerik = `
+            <div style="font-size:13px;font-weight:700;color:#6B7280;text-align:center;margin-bottom:18px;letter-spacing:0.5px;">${label}</div>
+            ${satirHtml('Normal Mesai', normalGun, normalSaat, '#2563eb')}
+            ${satirHtml('Pazar Mesaisi', pazarGun, pazarSaat, '#dc2626')}
+            ${satirHtml('Pazar Mesaisi ×1.5', pazar15Gun, pazar15Saat, '#dc2626')}
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-radius:10px;border:2px solid #FACC15;background:#FEFCE8;margin-bottom:8px;margin-top:4px;">
+                <div style="font-size:15px;font-weight:800;color:#92400e;">Toplam Mesai</div>
+                <div style="text-align:right;">
+                    <span style="font-size:17px;font-weight:900;color:#d97706;">${toplamGun % 1 === 0 ? toplamGun : toplamGun.toFixed(1)} gün</span>
+                    <span style="font-size:13px;font-weight:600;color:#d97706;opacity:0.8;margin-left:6px;">( ${toplamSaat} saat )</span>
+                </div>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-radius:10px;border:1px solid #E5E7EB;background:#F9FAFB;">
+                <div style="font-size:14px;font-weight:700;color:#0F172A;">Toplam Personel Sayısı</div>
+                <span style="font-size:17px;font-weight:900;color:#0F172A;">${toplamSatir}</span>
+            </div>`;
+
         mesaiKarsilastirmaModalGoster(icerik);
     }
 
