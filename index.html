@@ -1209,7 +1209,9 @@
                 </div>
                 <div class="input-group">
                     <div class="input-label">Metreküp (M³)</div>
-                    <input type="number" id="m3" class="text-input" tabindex="8" placeholder="0.0" step="0.1" min="0" onkeydown="if(event.key==='Enter'){m3AralikKontrol(this);event.preventDefault();}">
+                    <input type="number" id="m3" class="text-input" tabindex="8" placeholder="0.0" step="0.1" min="0"
+                        onkeydown="if(event.key==='Enter'){m3AralikKontrol(this);event.preventDefault();}"
+                        onblur="m3AralikKontrol(this)">
                 </div>
                 <div class="input-group" style="position:relative;">
                     <div class="input-label">Shipment No</div>
@@ -1652,6 +1654,7 @@
                             <div id="personelGuncelMsg" style="display:none;font-size:12px;font-weight:700;text-align:center;padding:8px;border-radius:8px;"></div>
                             <div style="display:flex;gap:8px;">
                                 <button id="personelGuncelBtn" onclick="personelGuncelle()" style="flex:1;padding:10px;border-radius:8px;border:none;background:#FACC15;color:#1E3A8A;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.15s;">✏️ GÜNCELLE</button>
+                                <button id="personelGuncelSilBtn" onclick="personelGuncelleSil()" style="display:none;padding:10px 14px;border-radius:8px;border:1px solid rgba(239,68,68,0.4);background:rgba(239,68,68,0.08);color:#ef4444;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.15s;">🗑️</button>
                                 <button id="personelGuncelleIptal" onclick="personelGuncelleSifirla()" style="display:none;padding:10px 14px;border-radius:8px;border:1px solid #E5E7EB;background:#F9FAFB;color:#6B7280;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;cursor:pointer;">✕</button>
                             </div>
                         </div>
@@ -1659,12 +1662,29 @@
 
                 </div>
 
-                <!-- Personel Listesi (gizli, sadece JS için) -->
+                <!-- Personel Listesi (görünür tablo) -->
+                <div class="sef-bolum" style="margin-top:16px;">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+                        <div class="sef-bolum-baslik" style="margin:0;">👥 Personel Listesi <span id="personelSayac" style="font-size:11px;font-weight:500;color:#9CA3AF;"></span></div>
+                        <input type="text" id="personelAra" class="filtre-input" placeholder="🔍 Ara..." style="width:200px;font-size:12px;padding:6px 10px;" oninput="personelListeFiltre()">
+                    </div>
+                    <div id="personelEmptyState" style="display:none;text-align:center;padding:20px;color:#9CA3AF;font-size:13px;">Kayıtlı personel yok</div>
+                    <table style="width:100%;border-collapse:collapse;font-size:13px;">
+                        <thead>
+                            <tr style="border-bottom:2px solid #E5E7EB;">
+                                <th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:700;letter-spacing:1px;color:#9CA3AF;text-transform:uppercase;">#</th>
+                                <th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:700;letter-spacing:1px;color:#9CA3AF;text-transform:uppercase;">Ad Soyad</th>
+                                <th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:700;letter-spacing:1px;color:#9CA3AF;text-transform:uppercase;">Sicil</th>
+                                <th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:700;letter-spacing:1px;color:#9CA3AF;text-transform:uppercase;">Tip</th>
+                                <th style="padding:8px 10px;"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="personelTableBody"></tbody>
+                    </table>
+                </div>
+
+                <!-- Hidden placeholders for JS compat -->
                 <div style="display:none;">
-                    <table><tbody id="personelTableBody"></tbody></table>
-                    <div id="personelEmptyState"></div>
-                    <span id="personelSayac"></span>
-                    <input id="personelAra">
                     <div id="personelFormMsg"></div>
                     <div id="personelFormBaslik"></div>
                     <button id="personelKaydetBtn"></button>
@@ -2261,15 +2281,16 @@
             const isGecici = p.tip === 'gecici';
             const adColor  = isGecici ? '#ea580c' : '#0F172A';
             const rowBg    = isGecici ? 'rgba(249,115,22,0.04)' : '';
-            const tipBadge = isGecici
-                ? `<span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;background:rgba(249,115,22,0.12);color:#ea580c;border:1px solid rgba(249,115,22,0.3);margin-left:6px;">GEÇİCİ</span>`
-                : '';
+            const tipLabel = isGecici
+                ? `<span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;background:rgba(249,115,22,0.12);color:#ea580c;border:1px solid rgba(249,115,22,0.3);">GEÇİCİ</span>`
+                : `<span style="font-size:10px;font-weight:600;padding:2px 7px;border-radius:4px;background:rgba(37,99,235,0.08);color:#2563eb;border:1px solid rgba(37,99,235,0.2);">KADROLU</span>`;
             return `
-            <tr id="personelRow_${p.sicil}" onclick="personelDuzenlemeSec('${p.sicil.replace(/'/g,"\\'")}')" style="cursor:pointer;transition:background 0.15s;background:${rowBg};">
-                <td style="color:var(--muted);font-size:11px;">${i+1}</td>
-                <td style="font-weight:700;color:${adColor};">${p.ad}${tipBadge}</td>
-                <td style="color:var(--blue-light);font-family:'Inter',sans-serif;font-size:15px;font-weight:700;">${p.sicil}</td>
-                <td onclick="event.stopPropagation()"><button onclick="personelSil('${p.sicil}')" style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:#f87171;border-radius:6px;padding:3px 8px;cursor:pointer;font-size:11px;font-weight:700;">SİL</button></td>
+            <tr id="personelRow_${p.sicil}" onclick="personelDuzenlemeSec('${p.sicil.replace(/'/g,"\\'")}')" style="cursor:pointer;transition:background 0.15s;background:${rowBg};border-bottom:1px solid #F3F4F6;">
+                <td style="padding:8px 10px;color:var(--muted);font-size:11px;">${i+1}</td>
+                <td style="padding:8px 10px;font-weight:700;color:${adColor};">${p.ad}</td>
+                <td style="padding:8px 10px;color:#2563eb;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;">${p.sicil}</td>
+                <td style="padding:8px 10px;">${tipLabel}</td>
+                <td style="padding:8px 10px;" onclick="event.stopPropagation()"><button onclick="personelSil('${p.sicil}')" style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.25);color:#ef4444;border-radius:6px;padding:3px 8px;cursor:pointer;font-size:11px;font-weight:700;">SİL</button></td>
             </tr>`;
         }).join('');
     }
@@ -2292,6 +2313,8 @@
         if (btnText) btnText.textContent = p.ad + ' · ' + p.sicil;
         const iptalBtn = document.getElementById('personelGuncelleIptal');
         if (iptalBtn) iptalBtn.style.display = 'block';
+        const silBtn = document.getElementById('personelGuncelSilBtn');
+        if (silBtn) silBtn.style.display = 'block';
         personelSecModalKapat();
     }
 
@@ -2307,8 +2330,30 @@
         if (btnText) btnText.textContent = '— Personel Seç —';
         const iptalBtn = document.getElementById('personelGuncelleIptal');
         if (iptalBtn) iptalBtn.style.display = 'none';
+        const silBtn = document.getElementById('personelGuncelSilBtn');
+        if (silBtn) silBtn.style.display = 'none';
         const msgEl = document.getElementById('personelGuncelMsg');
         if (msgEl) msgEl.style.display = 'none';
+    }
+
+    function personelGuncelleSil() {
+        const sicil = _personelDuzenleSicil;
+        if (!sicil) return;
+        const p = personelListesi.find(x => x.sicil === sicil);
+        if (!p) return;
+        document.getElementById('personelSilBilgi').textContent = p.ad + ' · ' + p.sicil;
+        document.getElementById('personelSilModal').classList.add('show');
+        document.getElementById('personelSilOnayBtn').onclick = async function() {
+            document.getElementById('personelSilModal').classList.remove('show');
+            try {
+                const { doc, deleteDoc, db } = window._fb;
+                await deleteDoc(doc(db, 'personel', sicil));
+                personelListesi = personelListesi.filter(x => x.sicil !== sicil);
+                personelGuncelleSifirla();
+                personelListeRender();
+                showToast('🗑️ Personel silindi', 'warn');
+            } catch(e) { showToast('Hata: ' + e.message, 'warn'); }
+        };
     }
 
     async function personelGuncelle() {
@@ -3317,6 +3362,7 @@
         if (!val || !secilenAracTipi) return;
         const aralik = M3_ARALIKLAR[secilenAracTipi];
         if (!aralik) return;
+        if (document.getElementById('m3UyariModal').classList.contains('show')) return;
         if (val < aralik.min || val > aralik.max) {
             const yon = val < aralik.min ? 'DÜŞÜK' : 'YÜKSEK';
             document.getElementById('m3UyariTip').textContent = secilenAracTipi + ' — M³ ' + yon;
