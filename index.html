@@ -255,7 +255,7 @@
         .card-type { font-size:10px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; color:#6B7280; }
         .card-blue  .card-type { color:#1E3A8A; }
         .card-yellow .card-type { color:#92400e; }
-        .card-name { font-family:'Inter',sans-serif; font-size:22px; font-weight:800; text-transform:uppercase; line-height:1.15; color:#0F172A; }
+        .card-name { font-family:'Inter',sans-serif; font-size:32px; font-weight:800; text-transform:uppercase; line-height:1.15; color:#0F172A; }
         .card-enter { margin-top:auto; display:flex; align-items:center; gap:6px; font-size:12px; font-weight:600; letter-spacing:0.5px; color:#9CA3AF; transition:color 0.15s,gap 0.15s; }
         .ana-card:hover .card-enter { color:#1E3A8A; gap:10px; }
         .card-yellow .card-enter { }
@@ -1099,7 +1099,7 @@
         </div>
 
         <div class="ana-cards">
-            <div class="ana-card card-blue" onclick="showSplash(function(){ showModal('vardiyaModal'); })"
+            <div class="ana-card card-blue" onclick="showSplash(function(){ showSayfa('operatorSayfa'); })">
                 <div class="card-icon-wrap">
                     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <circle cx="9" cy="7" r="3.5" fill="#2563eb"/>
@@ -1110,14 +1110,14 @@
                 </div>
                 <div>
                     <div class="card-type">Operatör Paneli</div>
-                    <div class="card-name" style="font-size:38px;">OPERATÖR<br>GİRİŞİ</div>
+                    <div class="card-name">OPERATÖR<br>GİRİŞİ</div>
                 </div>
                 <div class="card-enter">Giriş Yap →</div>
             </div>
 
             <div class="ana-sep">ya da</div>
 
-            <div class="ana-card card-yellow" onclick="showSplash(function(){ sifreModalAc(); })"
+            <div class="ana-card card-yellow" onclick="showSplash(function(){ sifreModalAc(); })">
                 <div class="card-icon-wrap">
                     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <rect x="5" y="11" width="14" height="10" rx="2.5" fill="#d97706" opacity="0.9"/>
@@ -1127,7 +1127,7 @@
                 </div>
                 <div>
                     <div class="card-type">Yönetim Paneli</div>
-                    <div class="card-name" style="font-size:38px;">YETKİLİ<br>GİRİŞİ</div>
+                    <div class="card-name">YETKİLİ<br>GİRİŞİ</div>
                 </div>
                 <div class="card-enter">Giriş Yap →</div>
             </div>
@@ -1949,7 +1949,7 @@
                 el.classList.remove('splash-hiding');
                 if (typeof onComplete === 'function') onComplete();
             }, 220);
-        }, 1300);
+        }, 2000);
     }
 
     // ── SAYFA YÖNETİMİ ────────────────────────────────────
