@@ -321,7 +321,7 @@
             display:grid; grid-template-columns: 1fr auto 1fr; align-items:center;
             padding:0 16px;
             height:54px;
-            background: #2563eb;
+            background: linear-gradient(to left, #d97706 0%, #b45309 18%, #1d4ed8 42%, #2563eb 100%);
             border-bottom: 2px solid #1e4ed8;
             position:sticky; top:0; z-index:100;
             box-shadow: 
@@ -341,7 +341,6 @@
             letter-spacing: 1px;
             text-transform: uppercase;
             text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            transform: translateX(-60px);
         }
         .topbar-left { display:flex; align-items:center; gap:10px; }
         .back-btn {
@@ -959,6 +958,19 @@
     </div>
 </div>
 
+<!-- ══ M³ UYARI MODAL ══ -->
+<div class="modal-overlay" id="m3UyariModal" onclick="if(event.target===this)m3UyariKapat()">
+    <div class="modal-box" style="width:360px;text-align:center;">
+        <div style="font-size:36px;margin-bottom:12px;">⚠️</div>
+        <div id="m3UyariTip" style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;text-transform:uppercase;margin-bottom:6px;color:#d97706;"></div>
+        <div id="m3UyariMesaj" style="font-size:13px;color:#6b7a96;margin-bottom:8px;line-height:1.6;"></div>
+        <div id="m3UyariAralik" style="display:inline-flex;align-items:center;gap:8px;background:rgba(217,119,6,0.08);border:1px solid rgba(217,119,6,0.25);border-radius:8px;padding:7px 16px;font-size:12px;font-weight:800;color:#d97706;margin-bottom:20px;"></div>
+        <div class="modal-btns" style="justify-content:center;">
+            <button onclick="m3UyariKapat()" style="flex:1;padding:13px;border-radius:10px;border:none;background:#e0e5ec;box-shadow:4px 4px 10px rgba(163,177,198,0.7),-3px -3px 8px rgba(255,255,255,0.85);color:#6b7a96;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:900;letter-spacing:1px;cursor:pointer;transition:all 0.15s;">TAMAM</button>
+        </div>
+    </div>
+</div>
+
 <!-- ══ SİLME ONAY ══ -->
 <div class="confirm-overlay" id="confirmOverlay">
     <div class="confirm-box">
@@ -1032,8 +1044,8 @@
                 <button class="back-btn" onclick="sessionStorage.removeItem('aktifSayfa');sessionStorage.removeItem('aktifSekme');showSayfa('anaSayfa')">← Geri</button>
                 <span style="font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:900;text-transform:uppercase;letter-spacing:2px;color:#fff;">OPERATÖR PANELİ</span>
             </div>
-            <div class="topbar-center" id="dinamikBaslik">
-                <!-- Dinamik tarihli başlık buraya gelecek -->
+            <div class="topbar-center" id="dinamikBaslik" style="display:none;">
+                <!-- Başlık artık tablonun üzerinde -->
             </div>
             <div style="display:flex;align-items:center;justify-content:flex-end;gap:8px;">
                 <button onclick="tarihDegistir(-1)" style="width:24px;height:24px;border-radius:6px;border:1px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.1);color:#fff;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;">‹</button>
@@ -1079,7 +1091,7 @@
                 </div>
                 <div class="input-group">
                     <div class="input-label">Metreküp (M³)</div>
-                    <input type="number" id="m3" class="text-input" tabindex="8" placeholder="0.0" step="0.1" min="0">
+                    <input type="number" id="m3" class="text-input" tabindex="8" placeholder="0.0" step="0.1" min="0" oninput="m3AralikKontrol(this)">
                 </div>
                 <div class="input-group" style="position:relative;">
                     <div class="input-label">Shipment No</div>
@@ -1159,6 +1171,7 @@
         <div class="table-panel">
             <div class="table-header">
                 <div style="display:flex;align-items:center;gap:8px;">
+                    <div id="tabloDinamikBaslik" style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:var(--text);"></div>
                     <div class="table-count" id="kayitCount" style="display:none;">0 kayıt</div>
                 </div>
             </div>
@@ -2914,23 +2927,8 @@
         if (!secilenAracTipi) { showToast('⚠️  Araç Tipi seçiniz!','warn'); return; }
         if (!secilenAracTuru) { showToast('⚠️  Araç Türü seçiniz (O/E veya Piyasa)!','warn'); return; }
 
-        // M3 mantıksız değer kontrolü
         const m3Val = parseFloat(m3);
         if (isNaN(m3Val) || m3Val <= 0 || m3Val > 999) { showToast('⚠️  Lütfen geçerli bir M³ değeri girin!','warn'); return; }
-
-        // M3 araç tipine göre aralık uyarısı
-        const m3Araliklar = {
-            'Tır':       { min: 80,  max: 140 },
-            'Kamyon':    { min: 30,  max: 50  },
-            'Konteyner': { min: 70,  max: 100 }
-        };
-        const aralik = m3Araliklar[secilenAracTipi];
-        if (aralik && (m3Val < aralik.min || m3Val > aralik.max)) {
-            const mesaj = m3Val < aralik.min
-                ? `⚠️ ${secilenAracTipi} için M³ değeri düşük görünüyor (${aralik.min}–${aralik.max} m³ bekleniyor). Devam etmek istiyor musunuz?`
-                : `⚠️ ${secilenAracTipi} için M³ değeri yüksek görünüyor (${aralik.min}–${aralik.max} m³ bekleniyor). Devam etmek istiyor musunuz?`;
-            if (!confirm(mesaj)) return;
-        }
 
         // GÜNCELLEME MODUNDA ÇAKIŞMA KONTROLÜNÜ KALDIR (KULLANICI İSTEDİ)
         if (duzenleId === null) {
@@ -3000,8 +2998,8 @@
         const bugun     = kayitlar.filter(k => k.tarih===tarih);
         const sirali    = [...bugun].sort((a,b)=>b.id-a.id);
 
-        // Dinamik Orta Başlık
-        const dBaslik = document.getElementById('dinamikBaslik');
+        // Dinamik Tablo Başlığı
+        const dBaslik = document.getElementById('tabloDinamikBaslik');
         if (dBaslik) {
             const parcalar = tarih.split('-');
             const formatliTarih = `${parcalar[2]}.${parcalar[1]}.${parcalar[0]}`;
@@ -3088,7 +3086,7 @@
 
             tr.innerHTML = `
                 <td style="padding:10px 12px;color:var(--muted);font-size:11px;">${i+1}</td>
-                <td style="padding:10px 12px;"><span style="font-size:11px;font-weight:800;padding:2px 7px;border-radius:4px;color:${k.vardiya==='A Vardiyası'?'#2563eb':'#d97706'};background:${k.vardiya==='A Vardiyası'?'rgba(37,99,235,0.1)':'rgba(217,119,6,0.1)'};border:1px solid ${k.vardiya==='A Vardiyası'?'rgba(37,99,235,0.3)':'rgba(217,119,6,0.3)'};">${k.vardiya==='A Vardiyası'?'A VRD':'B VRD'}</span></td>
+                <td style="padding:10px 12px;"><span style="font-size:12px;font-weight:900;padding:3px 9px;border-radius:4px;color:${k.vardiya==='A Vardiyası'?'#2563eb':'#d97706'};background:${k.vardiya==='A Vardiyası'?'rgba(37,99,235,0.1)':'rgba(217,119,6,0.1)'};border:1px solid ${k.vardiya==='A Vardiyası'?'rgba(37,99,235,0.3)':'rgba(217,119,6,0.3)'};">${k.vardiya==='A Vardiyası'?'A':'B'}</span></td>
                 <td style="padding:10px 12px;font-weight:600;font-size:11px;">${ekipKisaGoster(k.ekip)}</td>
                 <td style="padding:10px 12px;font-size:11px;color:var(--text-dim);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${forkliftciGoster}">${forkliftciGoster}</td>
                 <td style="padding:10px 12px;"><span class="badge ${tipBadge}">${k.aracTipi}</span></td>
@@ -3129,6 +3127,36 @@
         const t = document.getElementById('toast');
         t.textContent = msg; t.className=`toast ${type}`; t.classList.add('show');
         setTimeout(()=>t.classList.remove('show'),2500);
+    }
+
+    // ── M³ ARALIK KONTROLÜ (realtime) ────────────────────
+    const M3_ARALIKLAR = {
+        'Tır':       { min: 80,  max: 140 },
+        'Kamyon':    { min: 30,  max: 50  },
+        'Konteyner': { min: 70,  max: 100 }
+    };
+    let _m3UyariGosterildi = false;
+
+    function m3AralikKontrol(input) {
+        const val = parseFloat(input.value);
+        if (!val || !secilenAracTipi) return;
+        const aralik = M3_ARALIKLAR[secilenAracTipi];
+        if (!aralik) return;
+        if (val < aralik.min || val > aralik.max) {
+            const yon = val < aralik.min ? 'DÜŞÜK' : 'YÜKSEK';
+            document.getElementById('m3UyariTip').textContent = secilenAracTipi + ' — M³ ' + yon;
+            document.getElementById('m3UyariMesaj').textContent = 
+                val < aralik.min 
+                    ? `Girilen değer (${val} m³), ${secilenAracTipi} için beklenen aralığın altında.`
+                    : `Girilen değer (${val} m³), ${secilenAracTipi} için beklenen aralığın üstünde.`;
+            document.getElementById('m3UyariAralik').textContent = `Beklenen: ${aralik.min} – ${aralik.max} m³`;
+            document.getElementById('m3UyariModal').classList.add('show');
+        }
+    }
+
+    function m3UyariKapat() {
+        document.getElementById('m3UyariModal').classList.remove('show');
+        document.getElementById('m3').focus();
     }
 
     // ── GLOBAL EVENTS ─────────────────────────────────────
