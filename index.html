@@ -1196,11 +1196,11 @@
             <div class="sef-sidebar-item" onclick="sekmeAc(this,'sekme1')" data-sekme="sekme1">📦 Araç Özet</div>
             <div class="sef-sidebar-item" onclick="sekmeAc(this,'sekme2')" data-sekme="sekme2">👥 Ekip Analizi</div>
             <div class="sef-sidebar-item" onclick="sekmeAc(this,'sekme7')" data-sekme="sekme7">🏆 Vardiya Analizi</div>
-            <div class="sef-sidebar-label">Yönetim</div>
-            <div class="sef-sidebar-item" onclick="sekmeAc(this,'sekme4')" data-sekme="sekme4">⏱️ Mesai Takip</div>
-            <div class="sef-sidebar-item" onclick="sekmeAc(this,'sekme5')" data-sekme="sekme5">🧑‍💼 Personel</div>
             <div class="sef-sidebar-item" onclick="sekmeAc(this,'sekme6')" data-sekme="sekme6">🔍 Detaylı Filtre</div>
             <div class="sef-sidebar-item" onclick="sekmeAc(this,'sekme8')" data-sekme="sekme8">🛑 Hata Raporları</div>
+            <div class="sef-sidebar-label">Yönetim</div>
+            <div class="sef-sidebar-item" onclick="sekmeAc(this,'sekme5')" data-sekme="sekme5">🧑‍💼 Personel</div>
+            <div class="sef-sidebar-item" onclick="sekmeAc(this,'sekme4')" data-sekme="sekme4">⏱️ Mesai Takip</div>
         </div>
 
         <!-- HIDDEN SEKMELER (JS compat) -->
@@ -1719,7 +1719,7 @@
                                 <div class="filtre-group">
                                     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
                                         <div class="filtre-label" style="margin:0;">Lastik Kodları</div>
-                                        <button onclick="hrKodSatirEkle()" style="padding:2px 10px;border-radius:5px;border:1px solid rgba(26,86,219,0.35);background:rgba(26,86,219,0.08);color:#1a56db;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:900;cursor:pointer;">+ Ebat Ekle</button>
+                                        <button onclick="hrKodSatirEkle(undefined,undefined,undefined,true)" style="padding:2px 10px;border-radius:5px;border:1px solid rgba(26,86,219,0.35);background:rgba(26,86,219,0.08);color:#1a56db;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:900;cursor:pointer;">+ Ebat Ekle</button>
                                     </div>
                                     <div id="hrKodSatirlar" style="display:flex;flex-direction:column;gap:5px;"></div>
                                 </div>
@@ -1787,7 +1787,6 @@
                                     <thead><tr>
                                         <th>#</th>
                                         <th>Tarih</th>
-                                        <th>Shipment</th>
                                         <th>Vardiya</th>
                                         <th>Ekip</th>
                                         <th>Forkliftçi</th>
@@ -5547,15 +5546,16 @@ document.addEventListener('DOMContentLoaded', function() {
     let hrKodSatirlari = [];
     let _hrSatirCounter = 0;
 
-    function hrKodSatirEkle(kod, adet, tur) {
+    function hrKodSatirEkle(kod, adet, tur, doFocus) {
         const sid = ++_hrSatirCounter;
         hrKodSatirlari.push({ sid, kod: kod||'', adet: adet||'', tur: tur||'' });
         hrKodSatirRender();
-        // Son eklenen satırın kod inputuna odaklan
-        setTimeout(() => {
-            const inp = document.getElementById('hrKodInp_' + sid);
-            if (inp) inp.focus();
-        }, 50);
+        if (doFocus) {
+            setTimeout(() => {
+                const inp = document.getElementById('hrKodInp_' + sid);
+                if (inp) inp.focus();
+            }, 50);
+        }
     }
 
     function hrKodSatirKaldir(sid) {
@@ -5906,7 +5906,6 @@ document.addEventListener('DOMContentLoaded', function() {
             return `<tr id="hrRow_${r.id}" style="height:28px;cursor:pointer;" onclick="hrSatirSec(${r.id})">
                 <td style="color:var(--muted);font-size:10px;padding:2px 6px;">${i+1}</td>
                 <td style="white-space:nowrap;padding:2px 6px;">${r.tarih||'—'}</td>
-                <td style="font-weight:800;color:#1a56db;padding:2px 6px;">${r.shipment||'—'}</td>
                 <td style="font-weight:700;padding:2px 6px;">${r.vardiya||'—'}</td>
                 <td style="font-size:11px;white-space:nowrap;padding:2px 6px;">${ekipStr||'—'}</td>
                 <td style="font-size:11px;white-space:nowrap;padding:2px 6px;">${r.forkliftci ? r.forkliftci.trim() : '—'}</td>
