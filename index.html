@@ -1461,7 +1461,7 @@
 
                     <!-- SOL: PERSONEL EKLE -->
                     <div class="sef-bolum">
-                        <div class="sef-bolum-baslik">➕ Personel Ekle</div>
+                        <div class="sef-bolum-baslik">👤 Personel Ekle</div>
                         <div style="display:flex;flex-direction:column;gap:12px;">
                             <div class="filtre-group">
                                 <div class="filtre-label">Ad Soyad</div>
@@ -1493,13 +1493,13 @@
                             </div>
                             <div class="filtre-group">
                                 <div class="filtre-label">Ad Soyad</div>
-                                <input type="text" id="guncelPersonelAd" class="filtre-input" placeholder="Personel seçin..."
-                                    style="width:100%;text-transform:uppercase;"
+                                <input type="text" id="guncelPersonelAd" class="filtre-input" placeholder=""
+                                    style="width:100%;text-transform:uppercase;background:rgba(163,177,198,0.15);"
                                     oninput="this.value=this.value.toUpperCase()">
                             </div>
                             <div class="filtre-group">
                                 <div class="filtre-label">Sicil No</div>
-                                <input type="text" id="guncelPersonelSicil" class="filtre-input" placeholder="Personel seçin..." style="width:100%;">
+                                <input type="text" id="guncelPersonelSicil" class="filtre-input" placeholder="" style="width:100%;background:rgba(163,177,198,0.15);">
                             </div>
                             <div id="personelGuncelMsg" style="display:none;font-size:12px;font-weight:700;text-align:center;padding:8px;border-radius:8px;"></div>
                             <div style="display:flex;gap:8px;">
@@ -2091,8 +2091,12 @@
         const p = personelListesi.find(x => x.sicil === sicil);
         if (!p) return;
         _personelDuzenleSicil = sicil;
-        document.getElementById('guncelPersonelAd').value = p.ad;
-        document.getElementById('guncelPersonelSicil').value = p.sicil;
+        const adEl = document.getElementById('guncelPersonelAd');
+        const sicilEl = document.getElementById('guncelPersonelSicil');
+        adEl.value = p.ad;
+        sicilEl.value = p.sicil;
+        adEl.style.background = '';
+        sicilEl.style.background = '';
         const btnText = document.getElementById('personelSecBtnText');
         if (btnText) btnText.textContent = p.ad + ' · ' + p.sicil;
         const iptalBtn = document.getElementById('personelGuncelleIptal');
@@ -2102,8 +2106,12 @@
 
     function personelGuncelleSifirla() {
         _personelDuzenleSicil = null;
-        document.getElementById('guncelPersonelAd').value = '';
-        document.getElementById('guncelPersonelSicil').value = '';
+        const adEl = document.getElementById('guncelPersonelAd');
+        const sicilEl = document.getElementById('guncelPersonelSicil');
+        adEl.value = '';
+        sicilEl.value = '';
+        adEl.style.background = 'rgba(163,177,198,0.15)';
+        sicilEl.style.background = 'rgba(163,177,198,0.15)';
         const btnText = document.getElementById('personelSecBtnText');
         if (btnText) btnText.textContent = '— Personel Seç —';
         const iptalBtn = document.getElementById('personelGuncelleIptal');
