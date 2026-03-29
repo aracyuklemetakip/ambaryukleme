@@ -4619,12 +4619,12 @@
         function satirHtml(label, gun, saat, kisi, renk) {
             if (gun === 0) return '';
             return `
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 16px;border-radius:8px;border:1px solid ${renk}22;background:${renk}09;margin-bottom:7px;">
-                <div>
+            <div style="padding:11px 16px;border-radius:8px;border:1px solid ${renk}22;background:${renk}09;margin-bottom:7px;">
+                <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:4px;">
                     <div style="font-size:13px;font-weight:700;color:${renk};">${label}</div>
-                    <div style="font-size:11px;font-weight:600;color:${renk};opacity:0.7;margin-top:2px;">${fmt(gun)} gün &nbsp;·&nbsp; ${saat} saat</div>
+                    <div style="font-size:16px;font-weight:900;color:${renk};">${fmt(gun)} gün <span style="font-size:12px;font-weight:600;opacity:0.75;">${saat} saat</span></div>
                 </div>
-                <div style="font-size:20px;font-weight:900;color:${renk};">${kisi} <span style="font-size:11px;font-weight:600;opacity:0.7;">kişi</span></div>
+                <div style="font-size:12px;font-weight:700;color:${renk};opacity:0.65;text-align:right;">${kisi} kişi</div>
             </div>`;
         }
 
@@ -4643,11 +4643,26 @@
                 ${satirHtml('Pazar Mesaisi ×1.5', v.pazar15Gun, v.pazar15Gun*12, v.pazar15Kisi, '#9333ea')}
                 <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-radius:8px;background:${kenarRenk}18;border:1px solid ${kenarRenk}44;margin-top:4px;">
                     <div style="font-size:13px;font-weight:700;color:${baslikRenk};">Toplam</div>
-                    <div style="text-align:right;">
-                        <span style="font-size:15px;font-weight:900;color:${baslikRenk};">${topKisi} kişi</span>
-                        <span style="font-size:11px;font-weight:600;color:${baslikRenk};opacity:0.7;margin-left:8px;">${fmt(topGun)} gün · ${topSaat} saat</span>
-                    </div>
+                    <div style="font-size:15px;font-weight:900;color:${baslikRenk};">${fmt(topGun)} gün <span style="font-size:12px;font-weight:600;opacity:0.75;">${topSaat} saat</span> <span style="font-size:12px;font-weight:700;opacity:0.8;margin-left:6px;">· ${topKisi} kişi</span></div>
                 </div>
+            </div>`;
+        }
+
+        // Genel toplamlar türe göre
+        const genNormalGun  = A.normalGun  + B.normalGun;
+        const genNormalSaat = genNormalGun * 4;
+        const genPazarGun   = A.pazarGun   + B.pazarGun;
+        const genPazarSaat  = genPazarGun  * 8;
+        const genP15Gun     = A.pazar15Gun  + B.pazar15Gun;
+        const genP15Saat    = genP15Gun    * 12;
+        const genTopGun     = genNormalGun + genPazarGun + genP15Gun;
+        const genTopSaat    = genNormalSaat + genPazarSaat + genP15Saat;
+
+        function genTopSatir(label, gun, saat, renk) {
+            if (gun === 0) return '';
+            return `<div style="display:flex;align-items:center;justify-content:space-between;padding:9px 14px;border-radius:7px;background:${renk}0d;border:1px solid ${renk}22;margin-bottom:6px;">
+                <div style="font-size:12px;font-weight:700;color:${renk};">${label}</div>
+                <div style="font-size:14px;font-weight:800;color:${renk};">${fmt(gun)} gün <span style="font-size:11px;font-weight:600;opacity:0.75;">${saat} saat</span></div>
             </div>`;
         }
 
@@ -4655,11 +4670,16 @@
             <div style="font-size:13px;font-weight:700;color:#6B7280;text-align:center;margin-bottom:16px;letter-spacing:0.5px;">${label}</div>
             ${vardiyaBlok('🔵 A Vardiyası', A, '#2563eb', '#1e3a8a', '#EFF6FF')}
             ${vardiyaBlok('🟡 B Vardiyası', B, '#FACC15', '#92400e', '#FEFCE8')}
-            ${(A.normalKisi+A.pazarKisi+A.pazar15Kisi+B.normalKisi+B.pazarKisi+B.pazar15Kisi) === 0 ? '' :
-            `<div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-radius:10px;border:2px solid #FACC15;background:#FEFCE8;">
-                <div style="font-size:14px;font-weight:800;color:#92400e;">Genel Toplam Kişi</div>
-                <span style="font-size:18px;font-weight:900;color:#d97706;">${A.normalKisi+A.pazarKisi+A.pazar15Kisi+B.normalKisi+B.pazarKisi+B.pazar15Kisi} kişi</span>
-            </div>`}`;
+            <div style="border:2px solid #FACC15;border-radius:12px;padding:14px;background:#FEFCE8;">
+                <div style="font-size:13px;font-weight:800;color:#92400e;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid #FDE68A;">Genel Toplam</div>
+                ${genTopSatir('Normal Mesai', genNormalGun, genNormalSaat, '#2563eb')}
+                ${genTopSatir('Pazar Mesaisi', genPazarGun, genPazarSaat, '#dc2626')}
+                ${genTopSatir('Pazar Mesaisi ×1.5', genP15Gun, genP15Saat, '#9333ea')}
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-radius:8px;background:#FACC1520;border:1px solid #FACC15;margin-top:4px;">
+                    <div style="font-size:13px;font-weight:800;color:#92400e;">Tüm Mesailerin Toplamı</div>
+                    <div style="font-size:16px;font-weight:900;color:#d97706;">${fmt(genTopGun)} gün <span style="font-size:12px;font-weight:600;opacity:0.8;">${genTopSaat} saat</span></div>
+                </div>
+            </div>`;
 
         mesaiKarsilastirmaModalGoster(icerik);
     }
