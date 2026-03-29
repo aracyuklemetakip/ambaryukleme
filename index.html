@@ -4582,67 +4582,84 @@
             return;
         }
 
-        // Her satır: tur (Normal / Pazar) + hesaplananGun (1 veya 1.5) + kisi
-        // Normal  → 4 saat/kişi,  1 gün
-        // Pazar   → 8 saat/kişi,  1 gün   (hesaplananGun===1)
-        // Pazar15 → 12 saat/kişi, 1.5 gün (hesaplananGun===1.5)
+        // Normal  → 4 saat / 1 gün
+        // Pazar   → 8 saat / 1 gün   (hesaplananGun===1)
+        // Pazar15 → 12 saat / 1.5 gün (hesaplananGun===1.5)
 
-        let normalGun = 0, normalSaat = 0, normalSatir = 0;
-        let pazarGun  = 0, pazarSaat  = 0, pazarSatir  = 0;
-        let pazar15Gun= 0, pazar15Saat= 0, pazar15Satir= 0;
-        let toplamSatir = 0;
-
-        filtre.forEach(k => {
-            const kisi = parseInt(k.kisi) || 0;
-            toplamSatir++;
-            if (k.tur === 'Normal') {
-                normalSatir++;
-                normalGun  += 1 * kisi;
-                normalSaat += 4 * kisi;
-            } else if (k.tur === 'Pazar') {
-                if ((parseFloat(k.hesaplananGun) || 1) === 1.5) {
-                    pazar15Satir++;
-                    pazar15Gun  += 1.5 * kisi;
-                    pazar15Saat += 12  * kisi;
-                } else {
-                    pazarSatir++;
-                    pazarGun  += 1 * kisi;
-                    pazarSaat += 8 * kisi;
+        function vardiyaHesapla(data) {
+            let normalGun=0, normalKisi=0;
+            let pazarGun=0,  pazarKisi=0;
+            let pazar15Gun=0, pazar15Kisi=0;
+            data.forEach(k => {
+                const kisi = parseInt(k.kisi) || 0;
+                const hGun = parseFloat(k.hesaplananGun) || 1;
+                if (k.tur === 'Normal') {
+                    normalGun  += 1;
+                    normalKisi += kisi;
+                } else if (k.tur === 'Pazar') {
+                    if (hGun === 1.5) {
+                        pazar15Gun  += 1.5;
+                        pazar15Kisi += kisi;
+                    } else {
+                        pazarGun  += 1;
+                        pazarKisi += kisi;
+                    }
                 }
-            }
-        });
+            });
+            return { normalGun, normalKisi, pazarGun, pazarKisi, pazar15Gun, pazar15Kisi };
+        }
 
-        const toplamGun  = normalGun  + pazarGun  + pazar15Gun;
-        const toplamSaat = normalSaat + pazarSaat + pazar15Saat;
+        const aData = filtre.filter(k => k.vardiya === 'A');
+        const bData = filtre.filter(k => k.vardiya === 'B');
+        const A = vardiyaHesapla(aData);
+        const B = vardiyaHesapla(bData);
 
-        function satirHtml(label, gun, saat, renk) {
+        function fmt(v) { return v % 1 === 0 ? v : v.toFixed(1); }
+
+        function satirHtml(label, gun, saat, kisi, renk) {
             if (gun === 0) return '';
             return `
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-radius:10px;border:1px solid ${renk}22;background:${renk}08;margin-bottom:8px;">
-                <div style="font-size:14px;font-weight:700;color:${renk};">${label}</div>
-                <div style="text-align:right;">
-                    <span style="font-size:15px;font-weight:800;color:${renk};">${gun % 1 === 0 ? gun : gun.toFixed(1)} gün</span>
-                    <span style="font-size:12px;font-weight:500;color:${renk};opacity:0.75;margin-left:6px;">( ${saat} saat )</span>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 16px;border-radius:8px;border:1px solid ${renk}22;background:${renk}09;margin-bottom:7px;">
+                <div>
+                    <div style="font-size:13px;font-weight:700;color:${renk};">${label}</div>
+                    <div style="font-size:11px;font-weight:600;color:${renk};opacity:0.7;margin-top:2px;">${fmt(gun)} gün &nbsp;·&nbsp; ${saat} saat</div>
+                </div>
+                <div style="font-size:20px;font-weight:900;color:${renk};">${kisi} <span style="font-size:11px;font-weight:600;opacity:0.7;">kişi</span></div>
+            </div>`;
+        }
+
+        function vardiyaBlok(baslik, v, kenarRenk, baslikRenk, bgRenk) {
+            const topKisi = v.normalKisi + v.pazarKisi + v.pazar15Kisi;
+            const topGun  = v.normalGun  + v.pazarGun  + v.pazar15Gun;
+            const topSaat = v.normalGun*4 + v.pazarGun*8 + v.pazar15Gun*12;
+            if (topKisi === 0 && topGun === 0) return '';
+            return `
+            <div style="border:2px solid ${kenarRenk};border-radius:12px;padding:16px;margin-bottom:14px;background:${bgRenk};">
+                <div style="font-size:15px;font-weight:800;color:${baslikRenk};margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid ${kenarRenk}44;">
+                    ${baslik}
+                </div>
+                ${satirHtml('Normal Mesai', v.normalGun, v.normalGun*4, v.normalKisi, '#2563eb')}
+                ${satirHtml('Pazar Mesaisi', v.pazarGun, v.pazarGun*8, v.pazarKisi, '#dc2626')}
+                ${satirHtml('Pazar Mesaisi ×1.5', v.pazar15Gun, v.pazar15Gun*12, v.pazar15Kisi, '#9333ea')}
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-radius:8px;background:${kenarRenk}18;border:1px solid ${kenarRenk}44;margin-top:4px;">
+                    <div style="font-size:13px;font-weight:700;color:${baslikRenk};">Toplam</div>
+                    <div style="text-align:right;">
+                        <span style="font-size:15px;font-weight:900;color:${baslikRenk};">${topKisi} kişi</span>
+                        <span style="font-size:11px;font-weight:600;color:${baslikRenk};opacity:0.7;margin-left:8px;">${fmt(topGun)} gün · ${topSaat} saat</span>
+                    </div>
                 </div>
             </div>`;
         }
 
         const icerik = `
-            <div style="font-size:13px;font-weight:700;color:#6B7280;text-align:center;margin-bottom:18px;letter-spacing:0.5px;">${label}</div>
-            ${satirHtml('Normal Mesai', normalGun, normalSaat, '#2563eb')}
-            ${satirHtml('Pazar Mesaisi', pazarGun, pazarSaat, '#dc2626')}
-            ${satirHtml('Pazar Mesaisi ×1.5', pazar15Gun, pazar15Saat, '#dc2626')}
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-radius:10px;border:2px solid #FACC15;background:#FEFCE8;margin-bottom:8px;margin-top:4px;">
-                <div style="font-size:15px;font-weight:800;color:#92400e;">Toplam Mesai</div>
-                <div style="text-align:right;">
-                    <span style="font-size:17px;font-weight:900;color:#d97706;">${toplamGun % 1 === 0 ? toplamGun : toplamGun.toFixed(1)} gün</span>
-                    <span style="font-size:13px;font-weight:600;color:#d97706;opacity:0.8;margin-left:6px;">( ${toplamSaat} saat )</span>
-                </div>
-            </div>
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-radius:10px;border:1px solid #E5E7EB;background:#F9FAFB;">
-                <div style="font-size:14px;font-weight:700;color:#0F172A;">Toplam Personel Sayısı</div>
-                <span style="font-size:17px;font-weight:900;color:#0F172A;">${toplamSatir}</span>
-            </div>`;
+            <div style="font-size:13px;font-weight:700;color:#6B7280;text-align:center;margin-bottom:16px;letter-spacing:0.5px;">${label}</div>
+            ${vardiyaBlok('🔵 A Vardiyası', A, '#2563eb', '#1e3a8a', '#EFF6FF')}
+            ${vardiyaBlok('🟡 B Vardiyası', B, '#FACC15', '#92400e', '#FEFCE8')}
+            ${(A.normalKisi+A.pazarKisi+A.pazar15Kisi+B.normalKisi+B.pazarKisi+B.pazar15Kisi) === 0 ? '' :
+            `<div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-radius:10px;border:2px solid #FACC15;background:#FEFCE8;">
+                <div style="font-size:14px;font-weight:800;color:#92400e;">Genel Toplam Kişi</div>
+                <span style="font-size:18px;font-weight:900;color:#d97706;">${A.normalKisi+A.pazarKisi+A.pazar15Kisi+B.normalKisi+B.pazarKisi+B.pazar15Kisi} kişi</span>
+            </div>`}`;
 
         mesaiKarsilastirmaModalGoster(icerik);
     }
