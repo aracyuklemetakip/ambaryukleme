@@ -802,8 +802,8 @@
         }
         .btn-primary-full:hover { background:#EAB308; }
         .vardiya-badge { font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px; }
-        .vardiya-a { color:#1C2B6E;background:#EFF6FF;border:1px solid #BFDBFE; }
-        .vardiya-b { color:#92400e;background:#FFFBEB;border:1px solid #FDE68A; }
+        .vardiya-a { color:#93C5FD;background:rgba(147,197,253,0.15);border:1px solid rgba(147,197,253,0.3); }
+        .vardiya-b { color:#FDE68A;background:rgba(253,230,138,0.15);border:1px solid rgba(253,230,138,0.3); }
         .badge-toplam { background:#FEF2F2;color:#dc2626;border:1px solid #FECACA; }
         .badge-m3 { background:#F0FDF4;color:#16a34a;border:1px solid #BBF7D0; }
         .ac-item { padding:10px 14px;cursor:pointer;font-size:13px;font-weight:600;border-bottom:1px solid #F3F4F6;transition:background 0.1s;color:#0F172A; }
@@ -3099,7 +3099,7 @@
             document.querySelectorAll('#tableBody tr').forEach(tr => {
                 const isSelected = parseInt(tr.dataset.id) === k.id;
                 tr.classList.toggle('selected', isSelected);
-                tr.style.background = isSelected ? '#FFFBEB' : '#fff';
+                tr.style.background = isSelected ? 'rgba(240,179,35,0.15)' : '#1C2B6E';
             });
             document.querySelector('.form-panel').scrollTo({top:0,behavior:'smooth'});
         } catch(err) {
@@ -3119,7 +3119,7 @@
         btn.classList.remove('update-mode');
         document.querySelectorAll('#tableBody tr').forEach(tr => {
             tr.classList.remove('selected');
-            tr.style.background = '#fff';
+            tr.style.background = '#1C2B6E';
         });
     }
 
@@ -3469,7 +3469,7 @@
 
             const tr = document.createElement('tr');
             tr.dataset.id = k.id;
-            tr.style.cssText = 'cursor:pointer;border-bottom:1px solid #F3F4F6;transition:background 0.1s;background:#fff;';
+            tr.style.cssText = 'cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.08);transition:background 0.1s;background:#1C2B6E;';
             if (duzenleId === k.id) tr.classList.add('selected');
 
             tr.innerHTML = `
@@ -3500,10 +3500,10 @@
 
             // Hover efekti
             tr.addEventListener('mouseenter', function() {
-                if (!tr.classList.contains('selected')) tr.style.background = '#F8FAFC';
+                if (!tr.classList.contains('selected')) tr.style.background = '#223380';
             });
             tr.addEventListener('mouseleave', function() {
-                if (!tr.classList.contains('selected')) tr.style.background = '#fff';
+                if (!tr.classList.contains('selected')) tr.style.background = '#1C2B6E';
             });
 
             tbody.appendChild(tr);
