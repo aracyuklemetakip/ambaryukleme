@@ -220,6 +220,7 @@
         #anaSayfa.active {
             display:flex; align-items:flex-start; justify-content:center;
             min-height:100vh; padding-top:72px;
+            position:relative; overflow:hidden;
         }
         .ana-wrapper {
             position:relative; z-index:1;
@@ -244,22 +245,26 @@
 
         .ana-cards { display:flex; align-items:stretch; gap:12px; }
         .ana-card {
-            position:relative; width:240px; padding:28px 24px; border-radius:12px;
-            background:#fff; cursor:pointer; color:#0F172A;
-            display:flex; flex-direction:column; gap:18px; border:1px solid #E5E7EB;
-            box-shadow:0 1px 3px rgba(0,0,0,0.06);
-            transition:border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+            position:relative; width:240px; padding:28px 24px; border-radius:14px;
+            background:rgba(255,255,255,0.45);
+            backdrop-filter:blur(12px);
+            -webkit-backdrop-filter:blur(12px);
+            cursor:pointer; color:#0F172A;
+            display:flex; flex-direction:column; gap:18px;
+            border:1px solid rgba(255,255,255,0.7);
+            box-shadow:0 2px 16px rgba(0,0,0,0.06);
+            transition:border-color 0.15s, box-shadow 0.15s, transform 0.15s, background 0.15s;
         }
         .ana-card::before { display:none; }
         .ana-card::after { display:none; }
-        .ana-card:hover { border-color:#1E3A8A; box-shadow:0 4px 16px rgba(30,58,138,0.12); transform:translateY(-2px); z-index:50; }
+        .ana-card:hover { background:rgba(255,255,255,0.65); border-color:rgba(30,58,138,0.35); box-shadow:0 6px 24px rgba(30,58,138,0.12); transform:translateY(-3px); z-index:50; }
         .ana-card:focus-visible { outline:2px solid #1E3A8A; outline-offset:3px; }
         .ana-card:active { transform:translateY(0); }
-        .card-icon-wrap { width:44px;height:44px; border-radius:8px; display:flex;align-items:center;justify-content:center; background:#F1F5F9; }
+        .card-icon-wrap { width:44px;height:44px; border-radius:8px; display:flex;align-items:center;justify-content:center; background:rgba(241,245,249,0.7); }
         .card-type { font-size:10px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; color:#6B7280; }
         .card-blue  .card-type { color:#1E3A8A; }
         .card-yellow .card-type { color:#92400e; }
-        .card-name { font-family:'Inter',sans-serif; font-size:32px; font-weight:800; text-transform:uppercase; line-height:1.15; color:#0F172A; }
+        .card-name { font-family:'Inter',sans-serif; font-size:28px; font-weight:800; text-transform:uppercase; line-height:1.15; color:#0F172A; }
         .card-enter { margin-top:auto; display:flex; align-items:center; gap:6px; font-size:12px; font-weight:600; letter-spacing:0.5px; color:#9CA3AF; transition:color 0.15s,gap 0.15s; }
         .ana-card:hover .card-enter { color:#1E3A8A; gap:10px; }
         .card-yellow .card-enter { }
@@ -785,14 +790,9 @@
         .ac-item:hover { background:#EFF6FF !important;color:#1E3A8A !important; }
     
         /* ── LOGO SCATTER PATTERN ── */
-        .logo-pattern-scatter { position:absolute; inset:0; pointer-events:none; z-index:0; overflow:hidden; }
-        .logo-scatter-icon {
-            position:absolute;
-            background-image:url('favicon.png');
-            background-size:contain;
-            background-repeat:no-repeat;
-            opacity:0.045;
-            filter:grayscale(1);
+        .logo-pattern-scatter {
+            position:absolute; inset:0;
+            pointer-events:none; z-index:0; overflow:hidden;
         }
 </style>
 </head>
@@ -808,23 +808,22 @@
 .neu-bg {
   position: absolute;
   inset: 0;
-  background: #F9FAFB;
-  background-image:
-    linear-gradient(rgba(0,0,0,0.02) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(0,0,0,0.02) 1px,transparent 1px);
-  background-size: 48px 48px;
+  background: #F4F6FB;
+  overflow: hidden;
 }
 
 .neu-card {
   position: relative;
   z-index: 1;
-  background: #fff;
-  border-radius: 12px;
-  padding: 40px 36px 36px;
+  background: rgba(255,255,255,0.55);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 16px;
+  padding: 44px 40px 40px;
   text-align: center;
-  width: 340px;
-  border: 1px solid #E5E7EB;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+  width: 360px;
+  border: 1px solid rgba(255,255,255,0.75);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.08);
   animation: neuFadeIn 0.4s ease;
 }
 
@@ -834,34 +833,35 @@
 }
 
 .neu-icon-wrap {
-  width: 72px;
-  height: 72px;
-  border-radius: 12px;
-  background: #F1F5F9;
+  width: 88px;
+  height: 88px;
+  border-radius: 16px;
+  background: rgba(239,246,255,0.8);
+  border: 1px solid rgba(255,255,255,0.8);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 20px;
+  margin: 0 auto 24px;
 }
 
 .neu-title {
   font-family: 'Inter', sans-serif;
-  font-size: 24px;
+  font-size: 30px;
   font-weight: 800;
   line-height: 1.1;
   color: #0F172A;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 .neu-title .acc-blue { color: #1E3A8A; }
 .neu-title .acc-yellow { color: #d97706; }
 
 .neu-sub {
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: 2px;
   text-transform: uppercase;
-  color: #9CA3AF;
-  margin-bottom: 32px;
+  color: #6B7280;
+  margin-bottom: 36px;
 }
 
 .neu-btn-google {
@@ -870,28 +870,32 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
-  padding: 13px 20px;
-  border-radius: 8px;
-  border: 1px solid #E5E7EB;
-  background: #fff;
-  color: #374151;
+  padding: 14px 20px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.8);
+  background: rgba(255,255,255,0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #1E3A8A;
   font-family: 'Inter', sans-serif;
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 15px;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.15s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
 }
 .neu-btn-google:hover {
-  border-color:#1E3A8A;
-  background:#EFF6FF;
-  color:#1E3A8A;
+  background: rgba(255,255,255,0.82);
+  border-color: rgba(30,58,138,0.3);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(30,58,138,0.1);
 }
 .neu-btn-google:focus-visible {
   outline: 2px solid #1E3A8A;
   outline-offset: 2px;
 }
 .neu-btn-google:active {
-  background: #DBEAFE;
+  transform: translateY(0);
 }
 
 .neu-hint {
@@ -918,6 +922,52 @@
 
 <div id="loginScreen" style="display:none;position:fixed;inset:0;z-index:9999;align-items:center;justify-content:center;">
   <div class="neu-bg">
+    <!-- Sağ sarı dalga -->
+    <svg style="position:absolute;top:0;right:0;width:55%;height:100%;overflow:visible;pointer-events:none;" viewBox="0 0 700 900" preserveAspectRatio="xMaxYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <defs>
+        <linearGradient id="lsWaveStroke" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="rgba(250,204,21,0.0)"/>
+          <stop offset="30%" stop-color="rgba(250,204,21,0.55)"/>
+          <stop offset="100%" stop-color="rgba(250,204,21,0.95)"/>
+        </linearGradient>
+        <linearGradient id="lsWaveFill1" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="rgba(250,204,21,0.0)"/>
+          <stop offset="35%" stop-color="rgba(250,204,21,0.16)"/>
+          <stop offset="100%" stop-color="rgba(250,204,21,0.45)"/>
+        </linearGradient>
+        <linearGradient id="lsWaveFill2" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="rgba(250,204,21,0.0)"/>
+          <stop offset="40%" stop-color="rgba(250,204,21,0.22)"/>
+          <stop offset="100%" stop-color="rgba(250,204,21,0.38)"/>
+        </linearGradient>
+      </defs>
+      <path d="M700 0 C700 0 560 60 510 220 C460 380 530 490 470 640 C410 790 260 900 140 900 L700 900 Z" fill="url(#lsWaveFill2)"/>
+      <path d="M700 0 C700 0 540 70 480 250 C420 430 500 540 430 690 C360 840 190 900 60 900 L700 900 Z" fill="url(#lsWaveFill1)"/>
+      <path d="M700 0 C700 0 540 70 480 250 C420 430 500 540 430 690 C360 840 190 900 60 900" fill="none" stroke="url(#lsWaveStroke)" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    <!-- Sol mavi dalga -->
+    <svg style="position:absolute;top:0;left:0;width:55%;height:100%;overflow:visible;pointer-events:none;" viewBox="0 0 700 900" preserveAspectRatio="xMinYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <defs>
+        <linearGradient id="lsBlueStroke" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="rgba(30,58,138,0.0)"/>
+          <stop offset="30%" stop-color="rgba(30,58,138,0.55)"/>
+          <stop offset="100%" stop-color="rgba(30,58,138,0.95)"/>
+        </linearGradient>
+        <linearGradient id="lsBlueFill1" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="rgba(30,58,138,0.0)"/>
+          <stop offset="35%" stop-color="rgba(30,58,138,0.16)"/>
+          <stop offset="100%" stop-color="rgba(30,58,138,0.45)"/>
+        </linearGradient>
+        <linearGradient id="lsBlueFill2" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="rgba(30,58,138,0.0)"/>
+          <stop offset="40%" stop-color="rgba(30,58,138,0.22)"/>
+          <stop offset="100%" stop-color="rgba(30,58,138,0.38)"/>
+        </linearGradient>
+      </defs>
+      <path d="M0 0 C0 0 140 60 190 220 C240 380 170 490 230 640 C290 790 440 900 560 900 L0 900 Z" fill="url(#lsBlueFill2)"/>
+      <path d="M0 0 C0 0 160 70 220 250 C280 430 200 540 270 690 C340 840 510 900 640 900 L0 900 Z" fill="url(#lsBlueFill1)"/>
+      <path d="M0 0 C0 0 160 70 220 250 C280 430 200 540 270 690 C340 840 510 900 640 900" fill="none" stroke="url(#lsBlueStroke)" stroke-width="2" stroke-linecap="round"/>
+    </svg>
     <div class="logo-pattern-scatter" aria-hidden="true"></div>
   </div>
   <div class="neu-card">
@@ -6672,24 +6722,49 @@ document.addEventListener('DOMContentLoaded', function() {
         var containers = document.querySelectorAll('.logo-pattern-scatter');
         containers.forEach(function(wrap) {
             wrap.innerHTML = '';
-            // Sabit seed ile rastgele ama tutarlı pozisyonlar
+            // 20 dağınık konum - tamamen rastgele görünümlü ama sabit
             var positions = [
-                {top:8,  left:6,  size:52, rot:-15},
-                {top:18, left:72, size:38, rot:20},
-                {top:42, left:18, size:44, rot:8},
-                {top:60, left:55, size:60, rot:-28},
-                {top:75, left:82, size:36, rot:15},
-                {top:30, left:88, size:48, rot:-5},
-                {top:88, left:30, size:40, rot:22},
-                {top:52, left:40, size:34, rot:-18},
-                {top:12, left:48, size:56, rot:12},
-                {top:70, left:10, size:42, rot:-10},
+                {top:4,  left:7,  size:48, rot:-18, op:0.10},
+                {top:9,  left:63, size:36, rot:25,  op:0.08},
+                {top:16, left:38, size:56, rot:-8,  op:0.07},
+                {top:22, left:81, size:42, rot:14,  op:0.09},
+                {top:30, left:14, size:40, rot:-30, op:0.08},
+                {top:38, left:55, size:52, rot:6,   op:0.07},
+                {top:44, left:90, size:38, rot:-20, op:0.09},
+                {top:50, left:28, size:44, rot:32,  op:0.08},
+                {top:57, left:70, size:46, rot:-12, op:0.07},
+                {top:63, left:45, size:34, rot:18,  op:0.09},
+                {top:68, left:5,  size:50, rot:-25, op:0.08},
+                {top:74, left:85, size:40, rot:10,  op:0.07},
+                {top:80, left:22, size:42, rot:-5,  op:0.09},
+                {top:85, left:60, size:36, rot:28,  op:0.08},
+                {top:90, left:42, size:52, rot:-15, op:0.07},
+                {top:13, left:92, size:44, rot:22,  op:0.08},
+                {top:35, left:3,  size:38, rot:-32, op:0.09},
+                {top:55, left:17, size:46, rot:16,  op:0.07},
+                {top:72, left:75, size:40, rot:-8,  op:0.08},
+                {top:95, left:88, size:48, rot:20,  op:0.07},
             ];
             positions.forEach(function(p) {
-                var el = document.createElement('div');
-                el.className = 'logo-scatter-icon';
-                el.style.cssText = 'top:'+p.top+'%;left:'+p.left+'%;width:'+p.size+'px;height:'+p.size+'px;transform:rotate('+p.rot+'deg);';
-                wrap.appendChild(el);
+                var img = document.createElement('img');
+                img.src = 'favicon.png';
+                img.alt = '';
+                img.draggable = false;
+                img.style.cssText = [
+                    'position:absolute',
+                    'top:'+p.top+'%',
+                    'left:'+p.left+'%',
+                    'width:'+p.size+'px',
+                    'height:'+p.size+'px',
+                    'transform:rotate('+p.rot+'deg)',
+                    'opacity:'+p.op,
+                    'mix-blend-mode:multiply',
+                    'pointer-events:none',
+                    'user-select:none',
+                    '-webkit-user-drag:none',
+                    'filter:grayscale(0.3)',
+                ].join(';');
+                wrap.appendChild(img);
             });
         });
     }
