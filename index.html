@@ -257,18 +257,36 @@
         }
         .ana-card::before { display:none; }
         .ana-card::after { display:none; }
-        .ana-card:hover { background:rgba(255,255,255,0.65); border-color:rgba(30,58,138,0.35); box-shadow:0 6px 24px rgba(30,58,138,0.12); transform:translateY(-3px); z-index:50; }
+        /* Lacivert kart - operatör */
+        .card-blue {
+            background: linear-gradient(135deg, rgba(15,30,90,0.92) 0%, rgba(30,58,138,0.88) 100%);
+            border-color: rgba(30,58,138,0.6);
+            box-shadow: 0 4px 20px rgba(15,30,90,0.35);
+        }
+        .card-blue .card-type { color: rgba(165,195,255,0.85); }
+        .card-blue .card-name { color: #fff; }
+        .card-blue .card-enter { color: rgba(165,195,255,0.7); }
+        .card-blue:hover { background: linear-gradient(135deg, rgba(15,30,110,0.96) 0%, rgba(30,58,160,0.96) 100%); transform:translateY(-3px); box-shadow:0 8px 32px rgba(15,30,90,0.45); }
+        .card-blue:hover .card-enter { color:#fff; gap:10px; }
+        .card-blue .card-icon-wrap { background: rgba(255,255,255,0.12); }
+        /* Sarı kart - yetkili */
+        .card-yellow {
+            background: linear-gradient(135deg, rgba(250,204,21,0.95) 0%, rgba(234,179,8,0.95) 100%);
+            border-color: rgba(234,179,8,0.5);
+            box-shadow: 0 4px 20px rgba(234,179,8,0.35);
+        }
+        .card-yellow .card-type { color: rgba(120,60,0,0.8); }
+        .card-yellow .card-name { color: #1E3A8A; }
+        .card-yellow .card-enter { color: rgba(30,58,138,0.6); }
+        .card-yellow:hover { background: linear-gradient(135deg, rgba(253,212,40,1) 0%, rgba(245,190,10,1) 100%); transform:translateY(-3px); box-shadow:0 8px 32px rgba(234,179,8,0.45); }
+        .card-yellow:hover .card-enter { color:#1E3A8A; gap:10px; }
+        .card-yellow .card-icon-wrap { background: rgba(255,255,255,0.35); }
         .ana-card:focus-visible { outline:2px solid #1E3A8A; outline-offset:3px; }
         .ana-card:active { transform:translateY(0); }
         .card-icon-wrap { width:44px;height:44px; border-radius:8px; display:flex;align-items:center;justify-content:center; background:rgba(241,245,249,0.7); }
         .card-type { font-size:10px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; color:#6B7280; }
-        .card-blue  .card-type { color:#1E3A8A; }
-        .card-yellow .card-type { color:#92400e; }
         .card-name { font-family:'Inter',sans-serif; font-size:28px; font-weight:800; text-transform:uppercase; line-height:1.15; color:#0F172A; }
         .card-enter { margin-top:auto; display:flex; align-items:center; gap:6px; font-size:12px; font-weight:600; letter-spacing:0.5px; color:#9CA3AF; transition:color 0.15s,gap 0.15s; }
-        .ana-card:hover .card-enter { color:#1E3A8A; gap:10px; }
-        .card-yellow .card-enter { }
-        .ana-card:hover.card-yellow .card-enter { color:#92400e; }
         .ana-sep { display:flex; flex-direction:column; align-items:center; gap:8px; padding:0 20px; color:#D1D5DB; font-size:10px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; }
         .ana-sep::before,.ana-sep::after { content:''; width:1px; height:40px; background:#E5E7EB; }
         .ana-footer { display:flex; background:#fff; border-radius:10px; overflow:hidden; border:1px solid #E5E7EB; }
@@ -701,14 +719,14 @@
             pointer-events: none;
         }
         .splash-logo-wrap {
-            width: 96px;
-            height: 96px;
+            width: 112px;
+            height: 112px;
             background: #fff;
-            border-radius: 22px;
+            border-radius: 26px;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.16), 0 1px 4px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 4px 28px rgba(0, 0, 0, 0.18), 0 1px 4px rgba(0, 0, 0, 0.08);
             transform: scale(0.88);
             opacity: 0;
             transition: transform 0.32s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.28s ease;
@@ -718,15 +736,15 @@
             opacity: 1;
         }
         .splash-logo-wrap img {
-            width: 62px;
-            height: 62px;
+            width: 74px;
+            height: 74px;
             object-fit: contain;
         }
         .splash-text {
             text-align: center;
             display: flex;
             flex-direction: column;
-            gap: 7px;
+            gap: 8px;
             opacity: 0;
             transform: translateY(6px);
             transition: opacity 0.28s ease 0.12s, transform 0.28s ease 0.12s;
@@ -737,14 +755,14 @@
         }
         .splash-title {
             font-family: 'Inter', sans-serif;
-            font-size: 22px;
+            font-size: 26px;
             font-weight: 800;
             color: #0F172A;
-            letter-spacing: -0.4px;
+            letter-spacing: -0.5px;
         }
         .splash-sub {
             font-family: 'Inter', sans-serif;
-            font-size: 14px;
+            font-size: 16px;
             font-weight: 500;
             color: #374151;
         }
@@ -1836,10 +1854,9 @@
                         <thead>
                             <tr style="border-bottom:2px solid #E5E7EB;">
                                 <th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:700;letter-spacing:1px;color:#9CA3AF;text-transform:uppercase;">#</th>
-                                <th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:700;letter-spacing:1px;color:#9CA3AF;text-transform:uppercase;">Ad Soyad</th>
                                 <th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:700;letter-spacing:1px;color:#9CA3AF;text-transform:uppercase;">Sicil</th>
                                 <th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:700;letter-spacing:1px;color:#9CA3AF;text-transform:uppercase;">Tip</th>
-                                <th style="padding:8px 10px;"></th>
+                                <th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:700;letter-spacing:1px;color:#9CA3AF;text-transform:uppercase;">İşlem</th>
                             </tr>
                         </thead>
                         <tbody id="personelTableBody"></tbody>
@@ -2448,18 +2465,19 @@
         if (empty) empty.style.display = 'none';
         tbody.innerHTML = liste.map((p, i) => {
             const isGecici = p.tip === 'gecici';
-            const adColor  = isGecici ? '#ea580c' : '#0F172A';
             const rowBg    = isGecici ? 'rgba(249,115,22,0.04)' : '';
             const tipLabel = isGecici
                 ? `<span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;background:rgba(249,115,22,0.12);color:#ea580c;border:1px solid rgba(249,115,22,0.3);">GEÇİCİ</span>`
                 : `<span style="font-size:10px;font-weight:600;padding:2px 7px;border-radius:4px;background:rgba(37,99,235,0.08);color:#2563eb;border:1px solid rgba(37,99,235,0.2);">KADROLU</span>`;
             return `
-            <tr id="personelRow_${p.sicil}" onclick="personelDuzenlemeSec('${p.sicil.replace(/'/g,"\\'")}')" style="cursor:pointer;transition:background 0.15s;background:${rowBg};border-bottom:1px solid #F3F4F6;">
+            <tr id="personelRow_${p.sicil}" style="background:${rowBg};border-bottom:1px solid #F3F4F6;">
                 <td style="padding:8px 10px;color:var(--muted);font-size:11px;">${i+1}</td>
-                <td style="padding:8px 10px;font-weight:700;color:${adColor};">${p.ad}</td>
                 <td style="padding:8px 10px;color:#2563eb;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;">${p.sicil}</td>
                 <td style="padding:8px 10px;">${tipLabel}</td>
-                <td style="padding:8px 10px;" onclick="event.stopPropagation()"><button onclick="personelSil('${p.sicil}')" style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.25);color:#ef4444;border-radius:6px;padding:3px 8px;cursor:pointer;font-size:11px;font-weight:700;">SİL</button></td>
+                <td style="padding:8px 10px;display:flex;gap:6px;align-items:center;">
+                    <button onclick="personelDuzenlemeSec('${p.sicil.replace(/'/g,"\\'")}')" style="background:rgba(37,99,235,0.08);border:1px solid rgba(37,99,235,0.25);color:#2563eb;border-radius:6px;padding:3px 8px;cursor:pointer;font-size:11px;font-weight:700;">✏️ GÜNCELLE</button>
+                    <button onclick="personelSil('${p.sicil.replace(/'/g,"\\'")}');event.stopPropagation();" style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.25);color:#ef4444;border-radius:6px;padding:3px 8px;cursor:pointer;font-size:11px;font-weight:700;">🗑️ SİL</button>
+                </td>
             </tr>`;
         }).join('');
     }
@@ -6747,7 +6765,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
 
-            var sizes  = [44, 38, 50, 40, 46];
+            var sizes  = [42];
             var opacs  = [0.10, 0.08, 0.09, 0.07, 0.10];
             var rots   = [0, 12, -10, 8, -14];
 
