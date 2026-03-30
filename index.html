@@ -536,7 +536,7 @@
         ::-webkit-scrollbar-thumb { background:#E5E7EB;border-radius:4px; }
 
         /* ══ ŞEF SAYFASI — DASHBOARD LAYOUT ══ */
-        .sef-layout { position:relative;z-index:1; display:grid; grid-template-columns:200px 1fr; grid-template-rows:52px 1fr; min-height:100vh; }
+        .sef-layout { position:relative;z-index:1; display:grid; grid-template-columns:200px 1fr; grid-template-rows:52px 1fr; min-height:100vh; background:#1C2B6E; }
         .sef-topbar { grid-column:1/-1; display:flex;align-items:center;justify-content:space-between; padding:0 16px; height:52px; background:#1C2B6E; border-bottom:1px solid #162d6b; position:sticky;top:0;z-index:100; }
         .sef-sidebar {
             background:#fff;
@@ -3096,6 +3096,18 @@
             const btn = document.getElementById('btnSubmit');
             btn.textContent = '✎  GÜNCELLE';
             btn.classList.add('update-mode');
+            const mevcutSilBtn = document.getElementById('btnSatirSil');
+            if (!mevcutSilBtn) {
+                const silBtn = document.createElement('button');
+                silBtn.id = 'btnSatirSil';
+                silBtn.type = 'button';
+                silBtn.textContent = '🗑️  SİL';
+                silBtn.style.cssText = 'width:100%;padding:12px;margin-top:8px;border-radius:10px;border:1px solid rgba(239,68,68,0.5);background:rgba(239,68,68,0.10);color:#ef4444;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.15s;';
+                silBtn.onmouseenter = () => { silBtn.style.background='rgba(239,68,68,0.22)'; silBtn.style.borderColor='rgba(239,68,68,0.7)'; };
+                silBtn.onmouseleave = () => { silBtn.style.background='rgba(239,68,68,0.10)'; silBtn.style.borderColor='rgba(239,68,68,0.5)'; };
+                silBtn.onclick = (e) => { e.stopPropagation(); if(duzenleId!==null) silKayit(duzenleId, e); };
+                btn.parentNode.insertBefore(silBtn, btn.nextSibling);
+            }
             document.querySelectorAll('#tableBody tr').forEach(tr => {
                 const isSelected = parseInt(tr.dataset.id) === k.id;
                 tr.classList.toggle('selected', isSelected);
@@ -3117,6 +3129,8 @@
         const btn = document.getElementById('btnSubmit');
         btn.innerHTML = '✓ &nbsp;SİSTEME İŞLE';
         btn.classList.remove('update-mode');
+        const satirSilBtn = document.getElementById('btnSatirSil');
+        if (satirSilBtn) satirSilBtn.remove();
         document.querySelectorAll('#tableBody tr').forEach(tr => {
             tr.classList.remove('selected');
             tr.style.background = '#1C2B6E';
@@ -3480,22 +3494,13 @@
                 <td style="padding:5px 8px;"><span class="badge ${tipBadge}">${k.aracTipi}</span></td>
                 <td style="padding:5px 8px;font-size:10px;font-weight:700;color:#fff;">${(k.aracTuru||'').toUpperCase().replace(' SEÇİMİ','')}</td>
                 <td style="padding:5px 8px;color:#fff;font-size:10px;white-space:nowrap;">${k.baslama} - ${k.bitis}</td>
-                <td style="padding:5px 8px;">${durum}</td>
-                <td style="padding:4px 8px;">
-                    <button class="del-btn" data-delid="${k.id}" title="Sil">🗑️</button>
-                </td>`;
+                <td style="padding:5px 8px;">${durum}</td>`;
 
             // Satır click → form doldur (butonlar hariç)
             tr.addEventListener('click', function(e) {
-                if (e.target.closest('.del-btn')) return;
+                if (e.target.closest('.row-sil-btn')) return;
                 console.log('Seçilen kayıt:', k);
                 formDoldur(k);
-            });
-
-            // Sil butonu
-            tr.querySelector('.del-btn').addEventListener('click', function(e) {
-                e.stopPropagation();
-                silKayit(k.id, e);
             });
 
             // Hover efekti
