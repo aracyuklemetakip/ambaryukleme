@@ -206,8 +206,8 @@
         .grid-bg { position:fixed; inset:0; z-index:0; pointer-events:none;
             background-image: linear-gradient(rgba(0,0,0,0.02) 1px,transparent 1px), linear-gradient(90deg,rgba(0,0,0,0.02) 1px,transparent 1px);
             background-size:48px 48px; }
-        .bg-wave { position:fixed; top:0; right:0; width:65vw; height:100vh; z-index:0; pointer-events:none; }
-        .splash-wave { position:absolute; top:0; right:0; width:65%; height:100%; pointer-events:none; }
+        .bg-wave { position:fixed; top:0; right:0; width:55vw; height:100vh; z-index:0; pointer-events:none; overflow:visible; }
+        .splash-wave { position:absolute; top:0; right:0; width:55%; height:100%; pointer-events:none; overflow:visible; }
 
         /* SAYFA YÖNETİMİ */
         .page { display:none; }
@@ -403,6 +403,7 @@
         .seg-btn.active-red    { background:#dc2626 !important; color:#fff !important; border-color:#dc2626 !important; }
         .seg-btn:focus { outline:none; }
         .seg-btn:focus:not(:focus-visible) { outline:none; }
+        .seg-btn:focus-visible { outline:2px solid #1E3A8A; outline-offset:1px; box-shadow:0 0 0 3px rgba(30,58,138,0.12); }
 
         .text-input {
             width:100%; background:#fff;
@@ -958,16 +959,16 @@
 <div class="grid-bg"></div>
 
 <!-- ══ ARKA PLAN DALGASI ══ -->
-<svg class="bg-wave" viewBox="0 0 800 900" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-    <path d="M800 0 C800 0 620 80 560 260 C500 440 580 560 500 700 C420 840 260 900 260 900 L800 900 Z" fill="rgba(217,119,6,0.22)"/>
-    <path d="M800 0 C800 0 680 60 640 200 C600 340 660 460 600 600 C540 740 420 820 380 900 L800 900 Z" fill="rgba(217,119,6,0.13)"/>
+<svg class="bg-wave" viewBox="0 0 600 900" preserveAspectRatio="xMaxYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <path d="M600 0 C600 0 420 80 360 260 C300 440 380 560 300 700 C220 840 60 900 0 900 L600 900 Z" fill="rgba(250,204,21,0.28)"/>
+    <path d="M600 0 C600 0 480 60 440 200 C400 340 460 460 400 600 C340 740 220 820 180 900 L600 900 Z" fill="rgba(250,204,21,0.18)"/>
 </svg>
 
 <!-- ══ SPLASH SCREEN ══ -->
 <div class="splash-overlay" id="splashOverlay" aria-hidden="true">
-    <svg class="splash-wave" viewBox="0 0 800 900" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path d="M800 0 C800 0 620 80 560 260 C500 440 580 560 500 700 C420 840 260 900 260 900 L800 900 Z" fill="rgba(217,119,6,0.22)"/>
-        <path d="M800 0 C800 0 680 60 640 200 C600 340 660 460 600 600 C540 740 420 820 380 900 L800 900 Z" fill="rgba(217,119,6,0.13)"/>
+    <svg class="splash-wave" viewBox="0 0 600 900" preserveAspectRatio="xMaxYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M600 0 C600 0 420 80 360 260 C300 440 380 560 300 700 C220 840 60 900 0 900 L600 900 Z" fill="rgba(250,204,21,0.28)"/>
+        <path d="M600 0 C600 0 480 60 440 200 C400 340 460 460 400 600 C340 740 220 820 180 900 L600 900 Z" fill="rgba(250,204,21,0.18)"/>
     </svg>
     <div class="splash-logo-wrap">
         <img src="favicon.png" alt="Logo" draggable="false">
@@ -1292,6 +1293,20 @@
                 <button class="btn-submit" id="btnSubmit" tabindex="16" onclick="kaydetVeyaGuncelle()">✓ &nbsp;SİSTEME İŞLE</button>
             </div>
         </div>
+
+        <script>
+        // seg-btn'lerde Space/Enter ile seçim
+        document.addEventListener('keydown', function(e) {
+            if ((e.key === ' ' || e.key === 'Enter') && e.target.classList.contains('seg-btn')) {
+                e.preventDefault();
+                e.target.click();
+            }
+        });
+        // seg-btn'lere role ekle
+        document.querySelectorAll('.seg-btn').forEach(function(btn) {
+            btn.setAttribute('role', 'button');
+        });
+        </script>
 
         <div class="table-panel">
             <div class="table-header">
