@@ -207,6 +207,7 @@
             background-image: linear-gradient(rgba(0,0,0,0.02) 1px,transparent 1px), linear-gradient(90deg,rgba(0,0,0,0.02) 1px,transparent 1px);
             background-size:48px 48px; }
         .bg-wave { position:fixed; top:0; right:0; width:55vw; height:100vh; z-index:0; pointer-events:none; overflow:visible; }
+        .left-wave { position:fixed; top:0; left:0; width:28vw; height:100vh; z-index:0; pointer-events:none; overflow:visible; }
         .splash-wave { position:absolute; top:0; right:0; width:55%; height:100%; pointer-events:none; overflow:visible; }
 
         /* SAYFA YÖNETİMİ */
@@ -959,16 +960,67 @@
 <div class="grid-bg"></div>
 
 <!-- ══ ARKA PLAN DALGASI ══ -->
-<svg class="bg-wave" viewBox="0 0 600 900" preserveAspectRatio="xMaxYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-    <path d="M600 0 C600 0 420 80 360 260 C300 440 380 560 300 700 C220 840 60 900 0 900 L600 900 Z" fill="rgba(250,204,21,0.28)"/>
-    <path d="M600 0 C600 0 480 60 440 200 C400 340 460 460 400 600 C340 740 220 820 180 900 L600 900 Z" fill="rgba(250,204,21,0.18)"/>
+<svg class="bg-wave" viewBox="0 0 700 900" preserveAspectRatio="xMaxYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <!-- Kalın alt alan: ince tepeden kalın tabana -->
+  <path d="M700 0 C700 0 560 60 510 220 C460 380 530 490 470 640 C410 790 260 900 160 900 L700 900 Z" fill="rgba(250,204,21,0.32)"/>
+  <!-- Orta katman -->
+  <path d="M700 0 C700 0 630 50 600 180 C570 310 620 420 580 560 C540 700 440 800 390 900 L700 900 Z" fill="rgba(250,204,21,0.20)"/>
+  <!-- İnce kenar çizgisi — tepede ince, aşağıda kalın görünsün diye stroke+clip -->
+  <defs>
+    <linearGradient id="waveStrokeGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="rgba(250,204,21,0.0)"/>
+      <stop offset="35%" stop-color="rgba(250,204,21,0.45)"/>
+      <stop offset="100%" stop-color="rgba(250,204,21,0.85)"/>
+    </linearGradient>
+    <linearGradient id="waveFillGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="rgba(250,204,21,0.0)"/>
+      <stop offset="40%" stop-color="rgba(250,204,21,0.12)"/>
+      <stop offset="100%" stop-color="rgba(250,204,21,0.38)"/>
+    </linearGradient>
+  </defs>
+  <!-- Gradient fill katman -->
+  <path d="M700 0 C700 0 540 70 480 250 C420 430 500 540 430 690 C360 840 190 900 80 900 L700 900 Z" fill="url(#waveFillGrad)"/>
+  <!-- Kenar çizgisi — gradient stroke -->
+  <path d="M700 0 C700 0 540 70 480 250 C420 430 500 540 430 690 C360 840 190 900 80 900" fill="none" stroke="url(#waveStrokeGrad)" stroke-width="2.5" stroke-linecap="round"/>
 </svg>
 
-<!-- ══ SPLASH SCREEN ══ -->
+<!-- ══ SOL MAVI DEKORATIF DALGA ══ -->
+<svg class="left-wave" viewBox="0 0 320 900" preserveAspectRatio="xMinYMid meet" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <defs>
+    <linearGradient id="lwFillGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="rgba(30,58,138,0.0)"/>
+      <stop offset="30%" stop-color="rgba(30,58,138,0.06)"/>
+      <stop offset="100%" stop-color="rgba(30,58,138,0.13)"/>
+    </linearGradient>
+    <linearGradient id="lwStrokeGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="rgba(30,58,138,0.0)"/>
+      <stop offset="25%" stop-color="rgba(30,58,138,0.18)"/>
+      <stop offset="100%" stop-color="rgba(30,58,138,0.45)"/>
+    </linearGradient>
+  </defs>
+  <!-- Ana dolgu -->
+  <path d="M0 0 C0 0 80 120 100 300 C120 480 60 580 90 720 C120 860 200 900 320 900 L0 900 Z" fill="url(#lwFillGrad)"/>
+  <!-- Kenar çizgisi -->
+  <path d="M0 0 C0 0 80 120 100 300 C120 480 60 580 90 720 C120 860 200 900 320 900" fill="none" stroke="url(#lwStrokeGrad)" stroke-width="1.5" stroke-linecap="round"/>
+</svg>
 <div class="splash-overlay" id="splashOverlay" aria-hidden="true">
-    <svg class="splash-wave" viewBox="0 0 600 900" preserveAspectRatio="xMaxYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path d="M600 0 C600 0 420 80 360 260 C300 440 380 560 300 700 C220 840 60 900 0 900 L600 900 Z" fill="rgba(250,204,21,0.28)"/>
-        <path d="M600 0 C600 0 480 60 440 200 C400 340 460 460 400 600 C340 740 220 820 180 900 L600 900 Z" fill="rgba(250,204,21,0.18)"/>
+    <svg class="splash-wave" viewBox="0 0 700 900" preserveAspectRatio="xMaxYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs>
+          <linearGradient id="swFillGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="rgba(250,204,21,0.0)"/>
+            <stop offset="40%" stop-color="rgba(250,204,21,0.12)"/>
+            <stop offset="100%" stop-color="rgba(250,204,21,0.38)"/>
+          </linearGradient>
+          <linearGradient id="swStrokeGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="rgba(250,204,21,0.0)"/>
+            <stop offset="35%" stop-color="rgba(250,204,21,0.45)"/>
+            <stop offset="100%" stop-color="rgba(250,204,21,0.85)"/>
+          </linearGradient>
+        </defs>
+        <path d="M700 0 C700 0 560 60 510 220 C460 380 530 490 470 640 C410 790 260 900 160 900 L700 900 Z" fill="rgba(250,204,21,0.32)"/>
+        <path d="M700 0 C700 0 630 50 600 180 C570 310 620 420 580 560 C540 700 440 800 390 900 L700 900 Z" fill="rgba(250,204,21,0.20)"/>
+        <path d="M700 0 C700 0 540 70 480 250 C420 430 500 540 430 690 C360 840 190 900 80 900 L700 900 Z" fill="url(#swFillGrad)"/>
+        <path d="M700 0 C700 0 540 70 480 250 C420 430 500 540 430 690 C360 840 190 900 80 900" fill="none" stroke="url(#swStrokeGrad)" stroke-width="2.5" stroke-linecap="round"/>
     </svg>
     <div class="splash-logo-wrap">
         <img src="favicon.png" alt="Logo" draggable="false">
