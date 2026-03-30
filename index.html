@@ -220,6 +220,8 @@
         #anaSayfa.active {
             display:flex; align-items:center; justify-content:center; min-height:100vh;
             padding-top: 0;
+            position: relative;
+            overflow: hidden;
         }
         .ana-wrapper {
             position:relative; z-index:1;
@@ -805,6 +807,32 @@
   background-size: 48px 48px;
 }
 
+/* Login ekranındaki dalgalar */
+.neu-bg .bg-wave-login {
+  position: absolute; top:0; right:0; width:55%; height:100%;
+  pointer-events:none; overflow:visible; z-index:0;
+}
+.neu-bg .left-wave-login {
+  position: absolute; top:0; left:0; width:55%; height:100%;
+  pointer-events:none; overflow:visible; z-index:0;
+}
+
+/* Logo pattern overlay - sadece ana sayfa + login için */
+.logo-pattern {
+  position: fixed; inset:0; z-index:0; pointer-events:none;
+  background-image: url('favicon.png');
+  background-repeat: repeat;
+  background-size: 72px 72px;
+  opacity: 0.07;
+  filter: grayscale(1);
+}
+/* Login içindeki logo-pattern absolute olsun */
+.neu-bg .logo-pattern {
+  position: absolute;
+  opacity: 0.07;
+  inset: 0;
+}
+
 .neu-card {
   position: relative;
   z-index: 1;
@@ -907,7 +935,55 @@
 </style>
 
 <div id="loginScreen" style="display:none;position:fixed;inset:0;z-index:9999;align-items:center;justify-content:center;">
-  <div class="neu-bg"></div>
+  <div class="neu-bg">
+    <!-- Sağ sarı dalga -->
+    <svg class="bg-wave-login" viewBox="0 0 700 900" preserveAspectRatio="xMaxYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <defs>
+        <linearGradient id="lwsStrokeGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="rgba(250,204,21,0.0)"/>
+          <stop offset="30%" stop-color="rgba(250,204,21,0.5)"/>
+          <stop offset="100%" stop-color="rgba(250,204,21,0.9)"/>
+        </linearGradient>
+        <linearGradient id="lwsFillGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="rgba(250,204,21,0.0)"/>
+          <stop offset="35%" stop-color="rgba(250,204,21,0.14)"/>
+          <stop offset="100%" stop-color="rgba(250,204,21,0.42)"/>
+        </linearGradient>
+        <linearGradient id="lwsFill2Grad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="rgba(250,204,21,0.0)"/>
+          <stop offset="40%" stop-color="rgba(250,204,21,0.20)"/>
+          <stop offset="100%" stop-color="rgba(250,204,21,0.36)"/>
+        </linearGradient>
+      </defs>
+      <path d="M700 0 C700 0 560 60 510 220 C460 380 530 490 470 640 C410 790 260 900 140 900 L700 900 Z" fill="url(#lwsFill2Grad)"/>
+      <path d="M700 0 C700 0 540 70 480 250 C420 430 500 540 430 690 C360 840 190 900 60 900 L700 900 Z" fill="url(#lwsFillGrad)"/>
+      <path d="M700 0 C700 0 540 70 480 250 C420 430 500 540 430 690 C360 840 190 900 60 900" fill="none" stroke="url(#lwsStrokeGrad)" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    <!-- Sol mavi dalga -->
+    <svg class="left-wave-login" viewBox="0 0 700 900" preserveAspectRatio="xMinYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <defs>
+        <linearGradient id="llwStrokeGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="rgba(30,58,138,0.0)"/>
+          <stop offset="30%" stop-color="rgba(30,58,138,0.5)"/>
+          <stop offset="100%" stop-color="rgba(30,58,138,0.9)"/>
+        </linearGradient>
+        <linearGradient id="llwFillGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="rgba(30,58,138,0.0)"/>
+          <stop offset="35%" stop-color="rgba(30,58,138,0.14)"/>
+          <stop offset="100%" stop-color="rgba(30,58,138,0.42)"/>
+        </linearGradient>
+        <linearGradient id="llwFill2Grad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="rgba(30,58,138,0.0)"/>
+          <stop offset="40%" stop-color="rgba(30,58,138,0.20)"/>
+          <stop offset="100%" stop-color="rgba(30,58,138,0.36)"/>
+        </linearGradient>
+      </defs>
+      <path d="M0 0 C0 0 140 60 190 220 C240 380 170 490 230 640 C290 790 440 900 560 900 L0 900 Z" fill="url(#llwFill2Grad)"/>
+      <path d="M0 0 C0 0 160 70 220 250 C280 430 200 540 270 690 C340 840 510 900 640 900 L0 900 Z" fill="url(#llwFillGrad)"/>
+      <path d="M0 0 C0 0 160 70 220 250 C280 430 200 540 270 690 C340 840 510 900 640 900" fill="none" stroke="url(#llwStrokeGrad)" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    <div class="logo-pattern" style="position:absolute;inset:0;z-index:0;pointer-events:none;"></div>
+  </div>
   <div class="neu-card">
 
     <div class="neu-icon-wrap">
@@ -1169,6 +1245,7 @@
      ANA SAYFA
 ══════════════════════════════════════ -->
 <div id="anaSayfa" class="page">
+    <div class="logo-pattern" style="position:absolute;inset:0;z-index:0;pointer-events:none;background-image:url('favicon.png');background-repeat:repeat;background-size:72px 72px;opacity:0.07;filter:grayscale(1);"></div>
     <div class="ana-wrapper">
         <div style="text-align:center;display:flex;flex-direction:column;align-items:center;gap:14px;">
             <div class="status-pill"><div class="status-dot"></div>Sistem Aktif</div>
