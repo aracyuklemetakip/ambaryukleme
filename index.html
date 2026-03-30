@@ -537,10 +537,10 @@
 
         /* ══ ŞEF SAYFASI — DASHBOARD LAYOUT ══ */
         .sef-layout { position:relative;z-index:1; display:grid; grid-template-columns:200px 1fr; grid-template-rows:52px 1fr; min-height:100vh; background:#1C2B6E; }
-        .sef-topbar { grid-column:1/-1; display:flex;align-items:center;justify-content:space-between; padding:0 16px; height:52px; background:#1C2B6E; border-bottom:1px solid #162d6b; position:sticky;top:0;z-index:100; }
+        .sef-topbar { grid-column:1/-1; display:flex;align-items:center;justify-content:space-between; padding:0 16px; height:52px; background:#F0B323; border-bottom:2px solid #d4971a; position:sticky;top:0;z-index:100; }
         .sef-sidebar {
-            background:#fff;
-            border-right:1px solid #E5E7EB;
+            background:#162566;
+            border-right:1px solid rgba(255,255,255,0.08);
             padding:12px 0;
             overflow-y:auto;
             height:calc(100vh - 52px);
@@ -550,7 +550,7 @@
         .sef-sidebar-item {
             display:flex; align-items:center; gap:8px;
             padding:8px 12px;
-            font-size:12px; font-weight:500; color:#6B7280;
+            font-size:12px; font-weight:500; color:rgba(255,255,255,0.65);
             cursor:pointer; transition:all 0.12s;
             border-left:2px solid transparent;
             user-select:none;
@@ -558,51 +558,51 @@
             margin:1px 0;
         }
         .sef-sidebar-item:hover { 
-            background:#F9FAFB;
-            color:#1C2B6E; 
-            border-left-color:#BFDBFE;
+            background:rgba(255,255,255,0.07);
+            color:#fff; 
+            border-left-color:rgba(240,179,35,0.5);
         }
         .sef-sidebar-item.aktif { 
-            background:#EFF6FF !important; 
-            color:#1C2B6E; 
-            border-left-color:#1C2B6E; 
-            font-weight:600; 
+            background:rgba(240,179,35,0.15) !important; 
+            color:#F0B323 !important; 
+            border-left-color:#F0B323; 
+            font-weight:700; 
         }
         .sef-sidebar-label { 
-            font-size:11px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; 
-            color:#374151;
+            font-size:10px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; 
+            color:rgba(255,255,255,0.35);
             padding:6px 12px; margin:10px 0 4px;
         }
-        .sef-content { padding:16px 20px; overflow-y:auto; height:calc(100vh - 52px); background:#F9FAFB; }
+        .sef-content { padding:16px 20px; overflow-y:auto; height:calc(100vh - 52px); background:#1C2B6E; }
 
-        .filtre-panel { background:#fff;border:1px solid #E5E7EB;border-radius:8px;padding:12px 14px;margin-bottom:14px; }
+        .filtre-panel { background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:12px 14px;margin-bottom:14px; }
         .filtre-row { display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap; }
         .filtre-group { display:flex;flex-direction:column;gap:4px; }
-        .filtre-label { font-size:10px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;color:#9CA3AF; }
-        .filtre-input { background:#fff;border:1px solid #E5E7EB;border-radius:6px;color:#0F172A;font-family:'Inter',sans-serif;font-size:12px;font-weight:400;padding:6px 10px;outline:none;transition:border-color 0.15s; }
-        .filtre-input:focus { border-color:#1C2B6E;box-shadow:0 0 0 3px rgba(30,58,138,0.06); }
+        .filtre-label { font-size:10px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;color:rgba(255,255,255,0.45); }
+        .filtre-input { background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:6px;color:#fff;font-family:'Inter',sans-serif;font-size:12px;font-weight:400;padding:6px 10px;outline:none;transition:border-color 0.15s; }
+        .filtre-input:focus { border-color:#F0B323;box-shadow:0 0 0 3px rgba(240,179,35,0.15); }
         .filtre-seg { display:flex;gap:3px; }
 
         .filtre-seg-btn {
             padding:5px 12px;border-radius:5px;
-            border:1px solid #E5E7EB;
-            background:#F9FAFB;
-            color:#9CA3AF;font-family:'Inter',sans-serif;
+            border:1px solid rgba(255,255,255,0.15);
+            background:rgba(255,255,255,0.06);
+            color:rgba(255,255,255,0.55);font-family:'Inter',sans-serif;
             font-size:11px;font-weight:500;cursor:pointer;
             user-select:none;outline:none;
             transition:all 0.12s;
         }
-        .filtre-seg-btn:hover { color:#374151; border-color:#D1D5DB; background:#fff; }
+        .filtre-seg-btn:hover { color:#fff; border-color:rgba(255,255,255,0.3); background:rgba(255,255,255,0.12); }
         .filtre-seg-btn:active { transform:scale(0.98); }
         .filtre-seg-btn.aktif {
-            border-color:#1C2B6E;
-            background:#1C2B6E;
-            color:#fff;font-weight:600;
+            border-color:#F0B323;
+            background:#F0B323;
+            color:#1C2B6E;font-weight:700;
         }
         .filtre-seg-btn.aktif-red {
-            border-color:#dc2626;
-            background:#FEF2F2;
-            color:#dc2626;font-weight:600;
+            border-color:#ef4444;
+            background:rgba(239,68,68,0.15);
+            color:#f87171;font-weight:600;
         }
         .filtre-seg-btn.aktif-sari {
             border-color:#d97706;
@@ -612,34 +612,34 @@
 
         .btn-pdf {
             padding:6px 14px;border-radius:6px;
-            border:1px solid #E5E7EB;
-            background:#fff;
-            color:#1C2B6E;font-family:'Inter',sans-serif;
+            border:1px solid rgba(240,179,35,0.4);
+            background:rgba(240,179,35,0.10);
+            color:#F0B323;font-family:'Inter',sans-serif;
             font-size:12px;font-weight:600;
             cursor:pointer;transition:all 0.12s;white-space:nowrap;outline:none;
         }
-        .btn-pdf:hover { border-color:#1C2B6E; background:#EFF6FF; }
+        .btn-pdf:hover { border-color:#F0B323; background:rgba(240,179,35,0.20); }
 
         .sef-ozet-kartlar { display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:14px; }
-        .sef-kart { background:#fff;border:1px solid #E5E7EB;border-radius:8px;padding:12px;text-align:center; }
-        .sef-kart-num { font-family:'Inter',sans-serif;font-size:24px;font-weight:800;line-height:1; }
-        .sef-kart-lbl { font-size:9px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#9CA3AF;margin-top:4px; }
+        .sef-kart { background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:12px;text-align:center; }
+        .sef-kart-num { font-family:'Inter',sans-serif;font-size:24px;font-weight:800;line-height:1;color:#fff; }
+        .sef-kart-lbl { font-size:9px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-top:4px; }
 
         .sef-bolum-baslik { 
             font-size:10px; font-weight:700; letter-spacing:1px; text-transform:uppercase; 
-            color:#9CA3AF;
+            color:rgba(255,255,255,0.4);
             padding:0 0 8px 0; margin-bottom:12px;
-            border-bottom:1px solid #F3F4F6;
+            border-bottom:1px solid rgba(255,255,255,0.08);
         }
-        .sef-bolum { background:#fff;border:1px solid #E5E7EB;border-radius:8px;padding:14px 16px;margin-bottom:10px; }
+        .sef-bolum { background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.10);border-radius:8px;padding:14px 16px;margin-bottom:10px; }
 
-        .ekip-stat-row { display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid #F9FAFB; }
+        .ekip-stat-row { display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.06); }
         .ekip-stat-row:last-child { border-bottom:none; }
-        .ekip-stat-name { font-size:13px;font-weight:600;flex:1;color:#0F172A; }
+        .ekip-stat-name { font-size:13px;font-weight:600;flex:1;color:#fff; }
         .ekip-stat-badges { display:flex;gap:6px;flex-wrap:wrap; }
         .stat-pill { display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:100px;font-size:11px;font-weight:600; }
 
-        .sef-bos { text-align:center;padding:60px 20px;color:#9CA3AF; }
+        .sef-bos { text-align:center;padding:60px 20px;color:rgba(255,255,255,0.35); }
         .sef-bos-icon { font-size:36px;margin-bottom:12px;opacity:0.25; }
         .sef-bos-text { font-size:13px;font-weight:500; }
 
@@ -1526,9 +1526,9 @@
 
             <!-- KARŞILAMA -->
             <div id="sekmeKarsilama" style="text-align:center;padding:80px 20px;">
-                <div style="font-size:48px;margin-bottom:16px;opacity:0.4;">📋</div>
-                <div style="font-size:18px;font-weight:600;color:#9CA3AF;">İncelemek istediğiniz sekmeye tıklayın</div>
-                <div style="font-size:12px;color:var(--muted);margin-top:8px;">Yukarıdaki sekmelerden birini seçin</div>
+                <div style="font-size:48px;margin-bottom:16px;opacity:0.3;">📋</div>
+                <div style="font-size:18px;font-weight:600;color:rgba(255,255,255,0.45);">İncelemek istediğiniz sekmeye tıklayın</div>
+                <div style="font-size:12px;color:rgba(255,255,255,0.25);margin-top:8px;">Yukarıdaki sekmelerden birini seçin</div>
             </div>
 
             <!-- SEKME 1: TOPLAM YÜKLEME -->
