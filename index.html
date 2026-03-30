@@ -203,9 +203,7 @@
         .bg-blobs { display:none; }
         .blob { display:none; }
         .blob-1,.blob-2,.blob-3 { display:none; }
-        .grid-bg { position:fixed; inset:0; z-index:0; pointer-events:none;
-            background-image: linear-gradient(rgba(0,0,0,0.02) 1px,transparent 1px), linear-gradient(90deg,rgba(0,0,0,0.02) 1px,transparent 1px);
-            background-size:48px 48px; }
+        .grid-bg { display:none; }
         .bg-wave { position:fixed; top:0; right:0; width:55vw; height:100vh; z-index:0; pointer-events:none; overflow:visible; }
         .left-wave { position:fixed; top:0; left:0; width:55vw; height:100vh; z-index:0; pointer-events:none; overflow:visible; }
         .splash-wave { position:absolute; top:0; right:0; width:55%; height:100%; pointer-events:none; overflow:visible; }
@@ -739,8 +737,8 @@
             opacity: 1;
         }
         .splash-logo-wrap img {
-            width: 112px;
-            height: 112px;
+            width: 168px;
+            height: 168px;
             object-fit: contain;
         }
         .splash-text {
@@ -812,8 +810,7 @@
     
         /* ── LOGO SCATTER PATTERN ── */
         .logo-pattern-scatter {
-            position:absolute; inset:0;
-            pointer-events:none; z-index:0; overflow:hidden;
+            display:none;
         }
 </style>
 </head>
@@ -1124,12 +1121,7 @@
     <div class="splash-text">
         <div class="splash-title">Goodyear Adapazarı Fabrikası</div>
         <div class="splash-sub">Ön Ambar Yükleme Takip Sistemi</div>
-        <div class="splash-sub" style="font-size:22px;color:#1C2B6E;font-weight:600;">Veriler senkronize ediliyor...</div>
-    </div>
-    <div class="splash-dots">
-        <div class="splash-dot"></div>
-        <div class="splash-dot"></div>
-        <div class="splash-dot"></div>
+        <div style="display:flex;align-items:center;gap:8px;justify-content:center;font-size:22px;font-weight:600;color:#000000;">Veriler senkronize ediliyor<span class="splash-dots" style="display:flex;align-items:center;gap:6px;opacity:1;"><span class="splash-dot" style="background:#000;"></span><span class="splash-dot" style="background:#000;"></span><span class="splash-dot" style="background:#000;"></span></span></div>
     </div>
 </div>
 
