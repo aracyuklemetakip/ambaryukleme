@@ -207,7 +207,7 @@
             background-image: linear-gradient(rgba(0,0,0,0.02) 1px,transparent 1px), linear-gradient(90deg,rgba(0,0,0,0.02) 1px,transparent 1px);
             background-size:48px 48px; }
         .bg-wave { position:fixed; top:0; right:0; width:55vw; height:100vh; z-index:0; pointer-events:none; overflow:visible; }
-        .left-wave { position:fixed; top:0; left:0; width:28vw; height:100vh; z-index:0; pointer-events:none; overflow:visible; }
+        .left-wave { position:fixed; top:0; left:0; width:55vw; height:100vh; z-index:0; pointer-events:none; overflow:visible; }
         .splash-wave { position:absolute; top:0; right:0; width:55%; height:100%; pointer-events:none; overflow:visible; }
 
         /* SAYFA YÖNETİMİ */
@@ -961,47 +961,50 @@
 
 <!-- ══ ARKA PLAN DALGASI ══ -->
 <svg class="bg-wave" viewBox="0 0 700 900" preserveAspectRatio="xMaxYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-  <!-- Kalın alt alan: ince tepeden kalın tabana -->
-  <path d="M700 0 C700 0 560 60 510 220 C460 380 530 490 470 640 C410 790 260 900 160 900 L700 900 Z" fill="rgba(250,204,21,0.32)"/>
-  <!-- Orta katman -->
-  <path d="M700 0 C700 0 630 50 600 180 C570 310 620 420 580 560 C540 700 440 800 390 900 L700 900 Z" fill="rgba(250,204,21,0.20)"/>
-  <!-- İnce kenar çizgisi — tepede ince, aşağıda kalın görünsün diye stroke+clip -->
   <defs>
     <linearGradient id="waveStrokeGrad" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="rgba(250,204,21,0.0)"/>
-      <stop offset="35%" stop-color="rgba(250,204,21,0.45)"/>
-      <stop offset="100%" stop-color="rgba(250,204,21,0.85)"/>
+      <stop offset="30%" stop-color="rgba(250,204,21,0.5)"/>
+      <stop offset="100%" stop-color="rgba(250,204,21,0.9)"/>
     </linearGradient>
     <linearGradient id="waveFillGrad" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="rgba(250,204,21,0.0)"/>
-      <stop offset="40%" stop-color="rgba(250,204,21,0.12)"/>
-      <stop offset="100%" stop-color="rgba(250,204,21,0.38)"/>
+      <stop offset="35%" stop-color="rgba(250,204,21,0.14)"/>
+      <stop offset="100%" stop-color="rgba(250,204,21,0.42)"/>
+    </linearGradient>
+    <linearGradient id="waveFill2Grad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="rgba(250,204,21,0.0)"/>
+      <stop offset="40%" stop-color="rgba(250,204,21,0.20)"/>
+      <stop offset="100%" stop-color="rgba(250,204,21,0.36)"/>
     </linearGradient>
   </defs>
-  <!-- Gradient fill katman -->
-  <path d="M700 0 C700 0 540 70 480 250 C420 430 500 540 430 690 C360 840 190 900 80 900 L700 900 Z" fill="url(#waveFillGrad)"/>
-  <!-- Kenar çizgisi — gradient stroke -->
-  <path d="M700 0 C700 0 540 70 480 250 C420 430 500 540 430 690 C360 840 190 900 80 900" fill="none" stroke="url(#waveStrokeGrad)" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M700 0 C700 0 560 60 510 220 C460 380 530 490 470 640 C410 790 260 900 140 900 L700 900 Z" fill="url(#waveFill2Grad)"/>
+  <path d="M700 0 C700 0 540 70 480 250 C420 430 500 540 430 690 C360 840 190 900 60 900 L700 900 Z" fill="url(#waveFillGrad)"/>
+  <path d="M700 0 C700 0 540 70 480 250 C420 430 500 540 430 690 C360 840 190 900 60 900" fill="none" stroke="url(#waveStrokeGrad)" stroke-width="2" stroke-linecap="round"/>
 </svg>
 
 <!-- ══ SOL MAVI DEKORATIF DALGA ══ -->
-<svg class="left-wave" viewBox="0 0 320 900" preserveAspectRatio="xMinYMid meet" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+<svg class="left-wave" viewBox="0 0 700 900" preserveAspectRatio="xMinYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
   <defs>
-    <linearGradient id="lwFillGrad" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="rgba(30,58,138,0.0)"/>
-      <stop offset="30%" stop-color="rgba(30,58,138,0.06)"/>
-      <stop offset="100%" stop-color="rgba(30,58,138,0.13)"/>
-    </linearGradient>
     <linearGradient id="lwStrokeGrad" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="rgba(30,58,138,0.0)"/>
-      <stop offset="25%" stop-color="rgba(30,58,138,0.18)"/>
-      <stop offset="100%" stop-color="rgba(30,58,138,0.45)"/>
+      <stop offset="30%" stop-color="rgba(30,58,138,0.5)"/>
+      <stop offset="100%" stop-color="rgba(30,58,138,0.9)"/>
+    </linearGradient>
+    <linearGradient id="lwFillGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="rgba(30,58,138,0.0)"/>
+      <stop offset="35%" stop-color="rgba(30,58,138,0.14)"/>
+      <stop offset="100%" stop-color="rgba(30,58,138,0.42)"/>
+    </linearGradient>
+    <linearGradient id="lwFill2Grad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="rgba(30,58,138,0.0)"/>
+      <stop offset="40%" stop-color="rgba(30,58,138,0.20)"/>
+      <stop offset="100%" stop-color="rgba(30,58,138,0.36)"/>
     </linearGradient>
   </defs>
-  <!-- Ana dolgu -->
-  <path d="M0 0 C0 0 80 120 100 300 C120 480 60 580 90 720 C120 860 200 900 320 900 L0 900 Z" fill="url(#lwFillGrad)"/>
-  <!-- Kenar çizgisi -->
-  <path d="M0 0 C0 0 80 120 100 300 C120 480 60 580 90 720 C120 860 200 900 320 900" fill="none" stroke="url(#lwStrokeGrad)" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M0 0 C0 0 140 60 190 220 C240 380 170 490 230 640 C290 790 440 900 560 900 L0 900 Z" fill="url(#lwFill2Grad)"/>
+  <path d="M0 0 C0 0 160 70 220 250 C280 430 200 540 270 690 C340 840 510 900 640 900 L0 900 Z" fill="url(#lwFillGrad)"/>
+  <path d="M0 0 C0 0 160 70 220 250 C280 430 200 540 270 690 C340 840 510 900 640 900" fill="none" stroke="url(#lwStrokeGrad)" stroke-width="2" stroke-linecap="round"/>
 </svg>
 <div class="splash-overlay" id="splashOverlay" aria-hidden="true">
     <svg class="splash-wave" viewBox="0 0 700 900" preserveAspectRatio="xMaxYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -1230,7 +1233,7 @@
                 <div id="userInfoBar" style="display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25);border-radius:6px;padding:3px 8px;">
                     <img id="userAvatar" src="" width="24" height="24" referrerpolicy="no-referrer" style="border-radius:50%;object-fit:cover;border:1px solid rgba(163,177,198,0.5);flex-shrink:0;display:none;">
                     <span id="userDisplayName" style="font-size:12px;font-weight:700;color:#fff;white-space:nowrap;"></span>
-                    <button onclick="window._logout()" title="Oturumu Kapat" style="display:flex;align-items:center;gap:4px;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);border-radius:4px;color:#ef4444;cursor:pointer;font-size:10px;font-weight:700;padding:3px 8px;transition:all 0.15s;"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2v6"/><path d="M6.3 6.3A8 8 0 1 0 17.7 6.3"/></svg> Çıkış</button>
+                    <button onclick="window._logout()" title="Oturumu Kapat" style="display:flex;align-items:center;gap:4px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);border-radius:4px;color:#fff;cursor:pointer;font-size:10px;font-weight:700;padding:3px 8px;transition:all 0.15s;"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2v6"/><path d="M6.3 6.3A8 8 0 1 0 17.7 6.3"/></svg> Çıkış</button>
                 </div>
             </div>
         </div>
@@ -1347,14 +1350,29 @@
         </div>
 
         <script>
-        // seg-btn'lerde Space/Enter ile seçim
         document.addEventListener('keydown', function(e) {
-            if ((e.key === ' ' || e.key === 'Enter') && e.target.classList.contains('seg-btn')) {
+            if (!e.target.classList.contains('seg-btn')) return;
+            const btn = e.target;
+            const group = btn.closest('.seg-group');
+            if (!group) return;
+            const btns = Array.from(group.querySelectorAll('.seg-btn'));
+            const idx = btns.indexOf(btn);
+
+            if (e.key === ' ' || e.key === 'Enter') {
                 e.preventDefault();
-                e.target.click();
+                btn.click();
+            } else if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                e.preventDefault();
+                const next = btns[(idx + 1) % btns.length];
+                next.focus();
+                next.click();
+            } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                e.preventDefault();
+                const prev = btns[(idx - 1 + btns.length) % btns.length];
+                prev.focus();
+                prev.click();
             }
         });
-        // seg-btn'lere role ekle
         document.querySelectorAll('.seg-btn').forEach(function(btn) {
             btn.setAttribute('role', 'button');
         });
@@ -1400,7 +1418,7 @@
                 <div style="display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25);border-radius:6px;padding:3px 8px;">
                     <img id="sefUserAvatar" src="" width="24" height="24" referrerpolicy="no-referrer" style="border-radius:50%;object-fit:cover;border:1px solid rgba(163,177,198,0.5);flex-shrink:0;display:none;">
                     <span id="sefUserName" style="font-size:12px;font-weight:700;color:#fff;white-space:nowrap;"></span>
-                    <button onclick="window._logout()" title="Oturumu Kapat" style="display:flex;align-items:center;gap:4px;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);border-radius:4px;color:#ef4444;cursor:pointer;font-size:10px;font-weight:700;padding:3px 8px;transition:all 0.15s;"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2v6"/><path d="M6.3 6.3A8 8 0 1 0 17.7 6.3"/></svg> Çıkış</button>
+                    <button onclick="window._logout()" title="Oturumu Kapat" style="display:flex;align-items:center;gap:4px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);border-radius:4px;color:#fff;cursor:pointer;font-size:10px;font-weight:700;padding:3px 8px;transition:all 0.15s;"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2v6"/><path d="M6.3 6.3A8 8 0 1 0 17.7 6.3"/></svg> Çıkış</button>
                 </div>
             </div>
         </div>
