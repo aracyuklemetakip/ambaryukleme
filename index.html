@@ -336,7 +336,7 @@
             grid-template-columns:240px 1fr;
             grid-template-rows:52px 1fr;
             min-height:100vh;
-            background:#F9FAFB;
+            background:#1C2B6E;
         }
 
         /* TOPBAR */
@@ -345,28 +345,28 @@
             display:flex; align-items:center; justify-content:space-between;
             padding:0 20px;
             height:52px;
-            background:#1C2B6E;
-            border-bottom:1px solid #162d6b;
+            background:#F0B323;
+            border-bottom:1px solid #d9a01f;
             position:sticky; top:0; z-index:100;
         }
         .topbar-center { display:none; }
         .topbar-left { display:flex; align-items:center; gap:12px; }
         .back-btn {
             display:flex; align-items:center; gap:5px;
-            background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.18);
+            background:rgba(0,0,0,0.10); border:1px solid rgba(0,0,0,0.20);
             border-radius:6px; padding:5px 12px;
-            font-size:11px; font-weight:500;
-            color:rgba(255,255,255,0.85); cursor:pointer; transition:background 0.15s;
+            font-size:11px; font-weight:600;
+            color:#1C2B6E; cursor:pointer; transition:background 0.15s;
         }
-        .back-btn:hover { background:rgba(255,255,255,0.15); }
-        .back-btn:focus-visible { outline:2px solid #F0B323; outline-offset:2px; }
+        .back-btn:hover { background:rgba(0,0,0,0.18); }
+        .back-btn:focus-visible { outline:2px solid #1C2B6E; outline-offset:2px; }
         .tarih-display {
-            font-size:11px; font-weight:500; color:rgba(255,255,255,0.65);
-            background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.12);
+            font-size:11px; font-weight:500; color:rgba(28,43,110,0.8);
+            background:rgba(0,0,0,0.08); border:1px solid rgba(0,0,0,0.15);
             border-radius:5px; padding:4px 10px;
         }
         .vardiya-bar { display:flex;align-items:center;gap:6px; }
-        .vardiya-label { font-size:10px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;color:rgba(255,255,255,0.45); }
+        .vardiya-label { font-size:10px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;color:rgba(28,43,110,0.6); }
         .vardiya-pills { display:flex;gap:3px; }
         .vardiya-pill {
             padding:3px 10px; border-radius:4px;
@@ -378,14 +378,14 @@
 
         /* FORM PANEL */
         .form-panel {
-            background:#fff;
-            border-right:1px solid #E5E7EB;
+            background:#1C2B6E;
+            border-right:1px solid #162d6b;
             padding:16px;
             overflow-y:auto;
             height:calc(100vh - 52px);
         }
         .form-card {
-            background:#fff;
+            background:transparent;
             display:flex;
             flex-direction:column;
             gap:10px;
@@ -397,71 +397,71 @@
 
         .form-section-title {
             font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase;
-            color:#374151;
+            color:rgba(255,255,255,0.5);
             padding:10px 0 6px 0;
             margin-bottom:4px; margin-top:14px;
-            border-bottom:2px solid #E5E7EB;
+            border-bottom:2px solid rgba(255,255,255,0.12);
             display:block; width:100%;
         }
         .form-section-title:first-of-type { margin-top:0; }
 
         .input-group { display:flex;flex-direction:column;gap:4px;margin-bottom:8px; }
-        .input-label { font-size:11px;font-weight:500;color:#374151; }
-        .input-label .opt { font-weight:400;color:#9ca3af;margin-left:4px; }
+        .input-label { font-size:11px;font-weight:500;color:rgba(255,255,255,0.7); }
+        .input-label .opt { font-weight:400;color:rgba(255,255,255,0.35);margin-left:4px; }
 
         .seg-group { display:flex;gap:4px; }
         .seg-btn {
             flex:1;padding:7px 4px;border-radius:6px;
-            border:1px solid #E5E7EB;background:#F9FAFB;
-            color:#6B7280;font-family:'Inter',sans-serif;
+            border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.07);
+            color:rgba(255,255,255,0.7);font-family:'Inter',sans-serif;
             font-size:11px;font-weight:500;cursor:pointer;
             transition:all 0.12s; text-align:center;user-select:none;outline:none;
             display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
         }
-        .seg-btn:hover { border-color:#1C2B6E; color:#1C2B6E; background:#EFF6FF; }
-        .seg-btn:focus-visible { outline:2px solid #1C2B6E; outline-offset:1px; }
-        .seg-btn:active { background:#DBEAFE; }
-        .seg-btn.active-blue   { background:#1C2B6E !important; color:#fff !important; border-color:#1C2B6E !important; }
+        .seg-btn:hover { border-color:rgba(255,255,255,0.4); color:#fff; background:rgba(255,255,255,0.14); }
+        .seg-btn:focus-visible { outline:2px solid #F0B323; outline-offset:1px; }
+        .seg-btn:active { background:rgba(255,255,255,0.2); }
+        .seg-btn.active-blue   { background:#F0B323 !important; color:#1C2B6E !important; border-color:#F0B323 !important; font-weight:700 !important; }
         .seg-btn.active-yellow { background:#F0B323 !important; color:#1C2B6E !important; border-color:#F0B323 !important; font-weight:700 !important; }
         .seg-btn.active-red    { background:#dc2626 !important; color:#fff !important; border-color:#dc2626 !important; }
         .seg-btn:focus { outline:none; }
         .seg-btn:focus:not(:focus-visible) { outline:none; }
-        .seg-btn:focus-visible { outline:2px solid #1C2B6E; outline-offset:1px; box-shadow:0 0 0 3px rgba(30,58,138,0.12); }
+        .seg-btn:focus-visible { outline:2px solid #F0B323; outline-offset:1px; box-shadow:0 0 0 3px rgba(240,179,35,0.2); }
 
         .text-input {
-            width:100%; background:#fff;
-            border:1px solid #E5E7EB; border-radius:6px;
-            color:#0F172A; font-family:'Inter',sans-serif;
+            width:100%; background:rgba(255,255,255,0.08);
+            border:1px solid rgba(255,255,255,0.15); border-radius:6px;
+            color:#fff; font-family:'Inter',sans-serif;
             font-size:12px; font-weight:400; padding:7px 10px;
             outline:none; transition:border-color 0.15s;
         }
-        .text-input:focus { border-color:#1C2B6E; box-shadow:0 0 0 3px rgba(30,58,138,0.06); }
-        .text-input::placeholder { color:#9CA3AF; }
+        .text-input:focus { border-color:#F0B323; box-shadow:0 0 0 3px rgba(240,179,35,0.15); }
+        .text-input::placeholder { color:rgba(255,255,255,0.3); }
 
         .time-row { display:grid;grid-template-columns:1fr auto 1fr;gap:6px;align-items:center; }
-        .time-sep { font-size:12px;font-weight:400;color:#D1D5DB;text-align:center; }
+        .time-sep { font-size:12px;font-weight:400;color:rgba(255,255,255,0.3);text-align:center; }
 
         .durus-list { display:flex;flex-direction:column;gap:4px;margin-bottom:6px; }
         .durus-item { display:grid;grid-template-columns:1fr 60px 24px; gap:4px;align-items:center; animation:fadeIn 0.15s ease; }
         @keyframes fadeIn { from{opacity:0;transform:translateY(-3px)} to{opacity:1;transform:translateY(0)} }
-        .durus-dk { text-align:center;font-weight:600;color:#1C2B6E; }
-        .durus-remove { width:22px;height:22px;border-radius:4px; border:1px solid #fecaca;background:#fff; color:#ef4444;font-size:11px;cursor:pointer; display:flex;align-items:center;justify-content:center; transition:all 0.12s; }
-        .durus-remove:hover { background:#FEF2F2; }
+        .durus-dk { text-align:center;font-weight:600;color:#F0B323; }
+        .durus-remove { width:22px;height:22px;border-radius:4px; border:1px solid rgba(239,68,68,0.4);background:rgba(239,68,68,0.1); color:#ef4444;font-size:11px;cursor:pointer; display:flex;align-items:center;justify-content:center; transition:all 0.12s; }
+        .durus-remove:hover { background:rgba(239,68,68,0.2); }
 
         .durus-dropdown-wrap { position:relative; }
         .btn-add-durus {
             width:100%;padding:7px;border-radius:6px;
-            border:1px dashed #E5E7EB; background:#F9FAFB;
-            color:#9CA3AF;font-family:'Inter',sans-serif;
+            border:1px dashed rgba(255,255,255,0.2); background:rgba(255,255,255,0.05);
+            color:rgba(255,255,255,0.4);font-family:'Inter',sans-serif;
             font-size:11px;font-weight:500;
             cursor:pointer;transition:all 0.15s;
         }
-        .btn-add-durus:hover { border-color:#1C2B6E;color:#1C2B6E;background:#EFF6FF; }
-        .durus-menu { display:none; position:absolute; bottom:calc(100% + 4px); left:0;right:0; background:#fff; border:1px solid #E5E7EB; border-radius:8px;overflow:hidden; z-index:200; box-shadow:0 4px 16px rgba(0,0,0,0.08); }
+        .btn-add-durus:hover { border-color:#F0B323;color:#F0B323;background:rgba(240,179,35,0.1); }
+        .durus-menu { display:none; position:absolute; bottom:calc(100% + 4px); left:0;right:0; background:#1e3a8a; border:1px solid rgba(255,255,255,0.15); border-radius:8px;overflow:hidden; z-index:200; box-shadow:0 4px 16px rgba(0,0,0,0.3); }
         .durus-menu.open { display:block; }
-        .durus-menu-item { padding:8px 12px; font-size:12px;font-weight:500;color:#374151; cursor:pointer;transition:background 0.1s; border-bottom:1px solid #F9FAFB; }
+        .durus-menu-item { padding:8px 12px; font-size:12px;font-weight:500;color:rgba(255,255,255,0.8); cursor:pointer;transition:background 0.1s; border-bottom:1px solid rgba(255,255,255,0.08); }
         .durus-menu-item:last-child { border-bottom:none; }
-        .durus-menu-item:hover { background:#EFF6FF;color:#1C2B6E; }
+        .durus-menu-item:hover { background:rgba(240,179,35,0.15);color:#F0B323; }
 
         .btn-submit {
             width:100%;margin-top:10px;padding:11px;border-radius:8px;
@@ -477,8 +477,7 @@
         .btn-submit.update-mode:hover { background:#1e40af; }
 
         /* TABLE PANEL */
-        .table-panel { padding:16px 18px; overflow-y:auto; height:calc(100vh - 52px); background: #F9FAFB; position:relative; }
-        .table-panel::after { content:''; pointer-events:none; position:fixed; bottom:0; right:0; width:75vw; height:75vh; background: radial-gradient(ellipse at bottom right, rgba(240,179,35,0.55) 0%, rgba(240,179,35,0.25) 35%, rgba(240,179,35,0.08) 60%, transparent 80%); z-index:0; }
+        .table-panel { padding:16px 18px; overflow-y:auto; height:calc(100vh - 52px); background: #1C2B6E; position:relative; }
         .table-header { display:flex;align-items:center;justify-content:space-between; margin-bottom:12px; }
         .table-title { font-family:'Inter',sans-serif;font-size:14px;font-weight:700;color:#0F172A; }
         .table-count { background:#EFF6FF;border:1px solid #BFDBFE; border-radius:20px;padding:2px 10px; font-size:11px;font-weight:600;color:#1C2B6E; }
@@ -1297,19 +1296,19 @@
         <div class="topbar">
             <div class="topbar-left">
                 <button class="back-btn" onclick="sessionStorage.removeItem('aktifSayfa');sessionStorage.removeItem('aktifSekme');showSayfa('anaSayfa')">← Geri</button>
-                <span style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#fff;">OPERATÖR PANELİ</span>
+                <span style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#1C2B6E;">OPERATÖR PANELİ</span>
             </div>
             <div class="topbar-center" id="dinamikBaslik" style="display:none;">
                 <!-- Başlık artık tablonun üzerinde -->
             </div>
             <div style="display:flex;align-items:center;justify-content:flex-end;gap:8px;">
-                <button onclick="tarihDegistir(-1)" style="width:24px;height:24px;border-radius:6px;border:1px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.1);color:#fff;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;">‹</button>
-                <input type="date" id="secilenTarih" style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);border-radius:6px;color:#fff;font-family:'Inter',sans-serif;font-size:11px;font-weight:700;padding:2px 6px;outline:none;cursor:pointer;" onchange="renderTablo()">
-                <button onclick="tarihDegistir(1)" style="width:24px;height:24px;border-radius:6px;border:1px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.1);color:#fff;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;">›</button>
-                <div id="userInfoBar" style="display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25);border-radius:6px;padding:3px 8px;">
+                <button onclick="tarihDegistir(-1)" style="width:24px;height:24px;border-radius:6px;border:1px solid rgba(0,0,0,0.2);background:rgba(0,0,0,0.10);color:#1C2B6E;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;">‹</button>
+                <input type="date" id="secilenTarih" style="background:rgba(0,0,0,0.08);border:1px solid rgba(0,0,0,0.2);border-radius:6px;color:#1C2B6E;font-family:'Inter',sans-serif;font-size:11px;font-weight:700;padding:2px 6px;outline:none;cursor:pointer;" onchange="renderTablo()">
+                <button onclick="tarihDegistir(1)" style="width:24px;height:24px;border-radius:6px;border:1px solid rgba(0,0,0,0.2);background:rgba(0,0,0,0.10);color:#1C2B6E;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;">›</button>
+                <div id="userInfoBar" style="display:flex;align-items:center;gap:6px;background:rgba(0,0,0,0.10);border:1px solid rgba(0,0,0,0.18);border-radius:6px;padding:3px 8px;">
                     <img id="userAvatar" src="" width="24" height="24" referrerpolicy="no-referrer" style="border-radius:50%;object-fit:cover;border:1px solid rgba(163,177,198,0.5);flex-shrink:0;display:none;">
-                    <span id="userDisplayName" style="font-size:12px;font-weight:700;color:#fff;white-space:nowrap;"></span>
-                    <button onclick="window._logout()" title="Oturumu Kapat" style="display:flex;align-items:center;gap:4px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);border-radius:4px;color:#fff;cursor:pointer;font-size:10px;font-weight:700;padding:3px 8px;transition:all 0.15s;"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2v6"/><path d="M6.3 6.3A8 8 0 1 0 17.7 6.3"/></svg> Çıkış</button>
+                    <span id="userDisplayName" style="font-size:12px;font-weight:700;color:#1C2B6E;white-space:nowrap;"></span>
+                    <button onclick="window._logout()" title="Oturumu Kapat" style="display:flex;align-items:center;gap:4px;background:rgba(0,0,0,0.10);border:1px solid rgba(0,0,0,0.20);border-radius:4px;color:#1C2B6E;cursor:pointer;font-size:10px;font-weight:700;padding:3px 8px;transition:all 0.15s;"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2v6"/><path d="M6.3 6.3A8 8 0 1 0 17.7 6.3"/></svg> Çıkış</button>
                 </div>
             </div>
         </div>
@@ -1487,14 +1486,14 @@
         <div class="sef-topbar">
             <div style="display:flex;align-items:center;gap:12px;">
                 <button class="back-btn" onclick="sessionStorage.removeItem('aktifSayfa');sessionStorage.removeItem('aktifSekme');showSayfa('anaSayfa')">← Geri</button>
-                <span style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#fff;">YETKİLİ PANELİ</span>
+                <span style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#1C2B6E;">YETKİLİ PANELİ</span>
             </div>
             <div style="display:flex;align-items:center;gap:8px;">
                 <div class="tarih-display" id="sefTarihDisplay"></div>
-                <div style="display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25);border-radius:6px;padding:3px 8px;">
+                <div style="display:flex;align-items:center;gap:6px;background:rgba(0,0,0,0.10);border:1px solid rgba(0,0,0,0.18);border-radius:6px;padding:3px 8px;">
                     <img id="sefUserAvatar" src="" width="24" height="24" referrerpolicy="no-referrer" style="border-radius:50%;object-fit:cover;border:1px solid rgba(163,177,198,0.5);flex-shrink:0;display:none;">
-                    <span id="sefUserName" style="font-size:12px;font-weight:700;color:#fff;white-space:nowrap;"></span>
-                    <button onclick="window._logout()" title="Oturumu Kapat" style="display:flex;align-items:center;gap:4px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);border-radius:4px;color:#fff;cursor:pointer;font-size:10px;font-weight:700;padding:3px 8px;transition:all 0.15s;"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2v6"/><path d="M6.3 6.3A8 8 0 1 0 17.7 6.3"/></svg> Çıkış</button>
+                    <span id="sefUserName" style="font-size:12px;font-weight:700;color:#1C2B6E;white-space:nowrap;"></span>
+                    <button onclick="window._logout()" title="Oturumu Kapat" style="display:flex;align-items:center;gap:4px;background:rgba(0,0,0,0.10);border:1px solid rgba(0,0,0,0.20);border-radius:4px;color:#1C2B6E;cursor:pointer;font-size:10px;font-weight:700;padding:3px 8px;transition:all 0.15s;"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2v6"/><path d="M6.3 6.3A8 8 0 1 0 17.7 6.3"/></svg> Çıkış</button>
                 </div>
             </div>
         </div>
