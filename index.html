@@ -701,14 +701,14 @@
             pointer-events: none;
         }
         .splash-logo-wrap {
-            width: 72px;
-            height: 72px;
+            width: 96px;
+            height: 96px;
             background: #fff;
-            border-radius: 16px;
+            border-radius: 22px;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.10), 0 1px 3px rgba(0, 0, 0, 0.06);
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.16), 0 1px 4px rgba(0, 0, 0, 0.08);
             transform: scale(0.88);
             opacity: 0;
             transition: transform 0.32s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.28s ease;
@@ -718,15 +718,15 @@
             opacity: 1;
         }
         .splash-logo-wrap img {
-            width: 44px;
-            height: 44px;
+            width: 62px;
+            height: 62px;
             object-fit: contain;
         }
         .splash-text {
             text-align: center;
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: 7px;
             opacity: 0;
             transform: translateY(6px);
             transition: opacity 0.28s ease 0.12s, transform 0.28s ease 0.12s;
@@ -737,16 +737,16 @@
         }
         .splash-title {
             font-family: 'Inter', sans-serif;
-            font-size: 16px;
-            font-weight: 700;
+            font-size: 22px;
+            font-weight: 800;
             color: #0F172A;
-            letter-spacing: -0.2px;
+            letter-spacing: -0.4px;
         }
         .splash-sub {
             font-family: 'Inter', sans-serif;
-            font-size: 12px;
-            font-weight: 400;
-            color: #6B7280;
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
         }
         .splash-dots {
             display: flex;
@@ -1071,21 +1071,29 @@
   <path d="M0 0 C0 0 160 70 220 250 C280 430 200 540 270 690 C340 840 510 900 640 900" fill="none" stroke="url(#lwStrokeGrad)" stroke-width="2" stroke-linecap="round"/>
 </svg>
 <div class="splash-overlay" id="splashOverlay" aria-hidden="true">
-    <svg class="splash-wave" viewBox="0 0 700 900" preserveAspectRatio="xMaxYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <svg class="splash-wave" viewBox="0 0 700 900" preserveAspectRatio="xMaxYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="position:absolute;inset:0;width:100%;height:100%;">
         <defs>
           <linearGradient id="swFillGrad" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stop-color="rgba(250,204,21,0.0)"/>
-            <stop offset="40%" stop-color="rgba(250,204,21,0.12)"/>
-            <stop offset="100%" stop-color="rgba(250,204,21,0.38)"/>
+            <stop offset="40%" stop-color="rgba(250,204,21,0.18)"/>
+            <stop offset="100%" stop-color="rgba(250,204,21,0.55)"/>
           </linearGradient>
           <linearGradient id="swStrokeGrad" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stop-color="rgba(250,204,21,0.0)"/>
-            <stop offset="35%" stop-color="rgba(250,204,21,0.45)"/>
-            <stop offset="100%" stop-color="rgba(250,204,21,0.85)"/>
+            <stop offset="35%" stop-color="rgba(250,204,21,0.6)"/>
+            <stop offset="100%" stop-color="rgba(250,204,21,1.0)"/>
+          </linearGradient>
+          <linearGradient id="swLeftGrad" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="rgba(15,30,90,0.92)"/>
+            <stop offset="100%" stop-color="rgba(15,30,90,0.0)"/>
           </linearGradient>
         </defs>
-        <path d="M700 0 C700 0 560 60 510 220 C460 380 530 490 470 640 C410 790 260 900 160 900 L700 900 Z" fill="rgba(250,204,21,0.32)"/>
-        <path d="M700 0 C700 0 630 50 600 180 C570 310 620 420 580 560 C540 700 440 800 390 900 L700 900 Z" fill="rgba(250,204,21,0.20)"/>
+        <!-- Sol lacivert dolgu -->
+        <path d="M0 0 C0 0 160 70 220 250 C280 430 200 540 270 690 C340 840 510 900 640 900 L0 900 Z" fill="rgba(15,30,90,0.88)"/>
+        <path d="M0 0 C0 0 140 60 190 220 C240 380 170 490 230 640 C290 790 440 900 560 900 L0 900 Z" fill="rgba(15,30,90,0.60)"/>
+        <!-- Sağ sarı dolgu -->
+        <path d="M700 0 C700 0 560 60 510 220 C460 380 530 490 470 640 C410 790 260 900 160 900 L700 900 Z" fill="rgba(250,204,21,0.55)"/>
+        <path d="M700 0 C700 0 630 50 600 180 C570 310 620 420 580 560 C540 700 440 800 390 900 L700 900 Z" fill="rgba(250,204,21,0.32)"/>
         <path d="M700 0 C700 0 540 70 480 250 C420 430 500 540 430 690 C360 840 190 900 80 900 L700 900 Z" fill="url(#swFillGrad)"/>
         <path d="M700 0 C700 0 540 70 480 250 C420 430 500 540 430 690 C360 840 190 900 80 900" fill="none" stroke="url(#swStrokeGrad)" stroke-width="2.5" stroke-linecap="round"/>
     </svg>
@@ -6722,42 +6730,42 @@ document.addEventListener('DOMContentLoaded', function() {
         var containers = document.querySelectorAll('.logo-pattern-scatter');
         containers.forEach(function(wrap) {
             wrap.innerHTML = '';
-            // 20 dağınık konum - tamamen rastgele görünümlü ama sabit
-            var positions = [
-                {top:4,  left:7,  size:48, rot:-18, op:0.10},
-                {top:9,  left:63, size:36, rot:25,  op:0.08},
-                {top:16, left:38, size:56, rot:-8,  op:0.07},
-                {top:22, left:81, size:42, rot:14,  op:0.09},
-                {top:30, left:14, size:40, rot:-30, op:0.08},
-                {top:38, left:55, size:52, rot:6,   op:0.07},
-                {top:44, left:90, size:38, rot:-20, op:0.09},
-                {top:50, left:28, size:44, rot:32,  op:0.08},
-                {top:57, left:70, size:46, rot:-12, op:0.07},
-                {top:63, left:45, size:34, rot:18,  op:0.09},
-                {top:68, left:5,  size:50, rot:-25, op:0.08},
-                {top:74, left:85, size:40, rot:10,  op:0.07},
-                {top:80, left:22, size:42, rot:-5,  op:0.09},
-                {top:85, left:60, size:36, rot:28,  op:0.08},
-                {top:90, left:42, size:52, rot:-15, op:0.07},
-                {top:13, left:92, size:44, rot:22,  op:0.08},
-                {top:35, left:3,  size:38, rot:-32, op:0.09},
-                {top:55, left:17, size:46, rot:16,  op:0.07},
-                {top:72, left:75, size:40, rot:-8,  op:0.08},
-                {top:95, left:88, size:48, rot:20,  op:0.07},
-            ];
-            positions.forEach(function(p) {
+            // Çaprazlama (diyagonal) sıralı yerleşim - sol üstten başlar, sağ-aşağı yayılır
+            // Grid: 5 sütun x 5 satır = 25 logo, çapraz sırayla dolduruluyor
+            var cols = 5, rows = 5;
+            var colStep = 100 / cols;   // %20 aralık
+            var rowStep = 100 / rows;   // %20 aralık
+
+            // Çapraz sıra: diagonal index = row + col, sırayla sol üstten sağ alta
+            var diagonalOrder = [];
+            for (var d = 0; d < cols + rows - 1; d++) {
+                for (var r = 0; r < rows; r++) {
+                    var c = d - r;
+                    if (c >= 0 && c < cols) {
+                        diagonalOrder.push({row: r, col: c});
+                    }
+                }
+            }
+
+            var sizes  = [44, 38, 50, 40, 46];
+            var opacs  = [0.10, 0.08, 0.09, 0.07, 0.10];
+            var rots   = [0, 12, -10, 8, -14];
+
+            diagonalOrder.slice(0, 25).forEach(function(pos, i) {
+                var topPct  = (pos.row * rowStep) + rowStep * 0.25;
+                var leftPct = (pos.col * colStep) + colStep * 0.25;
                 var img = document.createElement('img');
                 img.src = 'favicon.png';
                 img.alt = '';
                 img.draggable = false;
                 img.style.cssText = [
                     'position:absolute',
-                    'top:'+p.top+'%',
-                    'left:'+p.left+'%',
-                    'width:'+p.size+'px',
-                    'height:'+p.size+'px',
-                    'transform:rotate('+p.rot+'deg)',
-                    'opacity:'+p.op,
+                    'top:'  + topPct  + '%',
+                    'left:' + leftPct + '%',
+                    'width:'  + sizes[i % sizes.length] + 'px',
+                    'height:' + sizes[i % sizes.length] + 'px',
+                    'transform:rotate(' + rots[i % rots.length] + 'deg)',
+                    'opacity:' + opacs[i % opacs.length],
                     'mix-blend-mode:multiply',
                     'pointer-events:none',
                     'user-select:none',
