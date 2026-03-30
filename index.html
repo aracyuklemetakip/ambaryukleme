@@ -218,16 +218,13 @@
            ANA SAYFA
         ══════════════════════════════════════ */
         #anaSayfa.active {
-            display:flex; align-items:center; justify-content:center; min-height:100vh;
-            padding-top: 0;
-            position: relative;
-            overflow: hidden;
+            display:flex; align-items:flex-start; justify-content:center;
+            min-height:100vh; padding-top:72px;
         }
         .ana-wrapper {
             position:relative; z-index:1;
-            display:flex; flex-direction:column; align-items:center; gap:48px;
+            display:flex; flex-direction:column; align-items:center; gap:40px;
             animation:rise 0.5s ease both;
-            margin-top: -60px;
         }
         @keyframes rise { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
         @keyframes popIn { from{opacity:0;transform:scale(0.96)} to{opacity:1;transform:scale(1)} }
@@ -786,7 +783,18 @@
         .badge-m3 { background:#F0FDF4;color:#16a34a;border:1px solid #BBF7D0; }
         .ac-item { padding:10px 14px;cursor:pointer;font-size:13px;font-weight:600;border-bottom:1px solid #F3F4F6;transition:background 0.1s;color:#0F172A; }
         .ac-item:hover { background:#EFF6FF !important;color:#1E3A8A !important; }
-    </style>
+    
+        /* ── LOGO SCATTER PATTERN ── */
+        .logo-pattern-scatter { position:absolute; inset:0; pointer-events:none; z-index:0; overflow:hidden; }
+        .logo-scatter-icon {
+            position:absolute;
+            background-image:url('favicon.png');
+            background-size:contain;
+            background-repeat:no-repeat;
+            opacity:0.045;
+            filter:grayscale(1);
+        }
+</style>
 </head>
 <body>
 
@@ -805,32 +813,6 @@
     linear-gradient(rgba(0,0,0,0.02) 1px,transparent 1px),
     linear-gradient(90deg,rgba(0,0,0,0.02) 1px,transparent 1px);
   background-size: 48px 48px;
-}
-
-/* Login ekranındaki dalgalar */
-.neu-bg .bg-wave-login {
-  position: absolute; top:0; right:0; width:55%; height:100%;
-  pointer-events:none; overflow:visible; z-index:0;
-}
-.neu-bg .left-wave-login {
-  position: absolute; top:0; left:0; width:55%; height:100%;
-  pointer-events:none; overflow:visible; z-index:0;
-}
-
-/* Logo pattern overlay - sadece ana sayfa + login için */
-.logo-pattern {
-  position: fixed; inset:0; z-index:0; pointer-events:none;
-  background-image: url('favicon.png');
-  background-repeat: repeat;
-  background-size: 72px 72px;
-  opacity: 0.07;
-  filter: grayscale(1);
-}
-/* Login içindeki logo-pattern absolute olsun */
-.neu-bg .logo-pattern {
-  position: absolute;
-  opacity: 0.07;
-  inset: 0;
 }
 
 .neu-card {
@@ -936,53 +918,7 @@
 
 <div id="loginScreen" style="display:none;position:fixed;inset:0;z-index:9999;align-items:center;justify-content:center;">
   <div class="neu-bg">
-    <!-- Sağ sarı dalga -->
-    <svg class="bg-wave-login" viewBox="0 0 700 900" preserveAspectRatio="xMaxYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <defs>
-        <linearGradient id="lwsStrokeGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="rgba(250,204,21,0.0)"/>
-          <stop offset="30%" stop-color="rgba(250,204,21,0.5)"/>
-          <stop offset="100%" stop-color="rgba(250,204,21,0.9)"/>
-        </linearGradient>
-        <linearGradient id="lwsFillGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="rgba(250,204,21,0.0)"/>
-          <stop offset="35%" stop-color="rgba(250,204,21,0.14)"/>
-          <stop offset="100%" stop-color="rgba(250,204,21,0.42)"/>
-        </linearGradient>
-        <linearGradient id="lwsFill2Grad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="rgba(250,204,21,0.0)"/>
-          <stop offset="40%" stop-color="rgba(250,204,21,0.20)"/>
-          <stop offset="100%" stop-color="rgba(250,204,21,0.36)"/>
-        </linearGradient>
-      </defs>
-      <path d="M700 0 C700 0 560 60 510 220 C460 380 530 490 470 640 C410 790 260 900 140 900 L700 900 Z" fill="url(#lwsFill2Grad)"/>
-      <path d="M700 0 C700 0 540 70 480 250 C420 430 500 540 430 690 C360 840 190 900 60 900 L700 900 Z" fill="url(#lwsFillGrad)"/>
-      <path d="M700 0 C700 0 540 70 480 250 C420 430 500 540 430 690 C360 840 190 900 60 900" fill="none" stroke="url(#lwsStrokeGrad)" stroke-width="2" stroke-linecap="round"/>
-    </svg>
-    <!-- Sol mavi dalga -->
-    <svg class="left-wave-login" viewBox="0 0 700 900" preserveAspectRatio="xMinYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <defs>
-        <linearGradient id="llwStrokeGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="rgba(30,58,138,0.0)"/>
-          <stop offset="30%" stop-color="rgba(30,58,138,0.5)"/>
-          <stop offset="100%" stop-color="rgba(30,58,138,0.9)"/>
-        </linearGradient>
-        <linearGradient id="llwFillGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="rgba(30,58,138,0.0)"/>
-          <stop offset="35%" stop-color="rgba(30,58,138,0.14)"/>
-          <stop offset="100%" stop-color="rgba(30,58,138,0.42)"/>
-        </linearGradient>
-        <linearGradient id="llwFill2Grad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="rgba(30,58,138,0.0)"/>
-          <stop offset="40%" stop-color="rgba(30,58,138,0.20)"/>
-          <stop offset="100%" stop-color="rgba(30,58,138,0.36)"/>
-        </linearGradient>
-      </defs>
-      <path d="M0 0 C0 0 140 60 190 220 C240 380 170 490 230 640 C290 790 440 900 560 900 L0 900 Z" fill="url(#llwFill2Grad)"/>
-      <path d="M0 0 C0 0 160 70 220 250 C280 430 200 540 270 690 C340 840 510 900 640 900 L0 900 Z" fill="url(#llwFillGrad)"/>
-      <path d="M0 0 C0 0 160 70 220 250 C280 430 200 540 270 690 C340 840 510 900 640 900" fill="none" stroke="url(#llwStrokeGrad)" stroke-width="2" stroke-linecap="round"/>
-    </svg>
-    <div class="logo-pattern" style="position:absolute;inset:0;z-index:0;pointer-events:none;"></div>
+    <div class="logo-pattern-scatter" aria-hidden="true"></div>
   </div>
   <div class="neu-card">
 
@@ -1245,9 +1181,9 @@
      ANA SAYFA
 ══════════════════════════════════════ -->
 <div id="anaSayfa" class="page">
-    <div class="logo-pattern" style="position:absolute;inset:0;z-index:0;pointer-events:none;background-image:url('favicon.png');background-repeat:repeat;background-size:72px 72px;opacity:0.07;filter:grayscale(1);"></div>
+    <div class="logo-pattern-scatter" aria-hidden="true"></div>
     <div class="ana-wrapper">
-        <div style="text-align:center;display:flex;flex-direction:column;align-items:center;gap:14px;">
+        <div style="text-align:center;display:flex;flex-direction:column;align-items:center;gap:12px;">
             <div class="status-pill"><div class="status-dot"></div>Sistem Aktif</div>
             <div class="ana-title"><div><span class="blue">AMBAR</span> YÖNETİM</div><div><span class="yellow">SİSTEMİ</span></div></div>
         </div>
@@ -6728,6 +6664,41 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     // ── END HATA RAPORLARI ────────────────────────────────────
 
+</script>
+
+<script>
+(function() {
+    function buildScatter() {
+        var containers = document.querySelectorAll('.logo-pattern-scatter');
+        containers.forEach(function(wrap) {
+            wrap.innerHTML = '';
+            // Sabit seed ile rastgele ama tutarlı pozisyonlar
+            var positions = [
+                {top:8,  left:6,  size:52, rot:-15},
+                {top:18, left:72, size:38, rot:20},
+                {top:42, left:18, size:44, rot:8},
+                {top:60, left:55, size:60, rot:-28},
+                {top:75, left:82, size:36, rot:15},
+                {top:30, left:88, size:48, rot:-5},
+                {top:88, left:30, size:40, rot:22},
+                {top:52, left:40, size:34, rot:-18},
+                {top:12, left:48, size:56, rot:12},
+                {top:70, left:10, size:42, rot:-10},
+            ];
+            positions.forEach(function(p) {
+                var el = document.createElement('div');
+                el.className = 'logo-scatter-icon';
+                el.style.cssText = 'top:'+p.top+'%;left:'+p.left+'%;width:'+p.size+'px;height:'+p.size+'px;transform:rotate('+p.rot+'deg);';
+                wrap.appendChild(el);
+            });
+        });
+    }
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', buildScatter);
+    } else {
+        buildScatter();
+    }
+})();
 </script>
 </body>
 </html>
