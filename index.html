@@ -1870,7 +1870,7 @@
                     <!-- Arama -->
                     <div style="position:relative;margin-bottom:12px;">
                         <input type="text" id="personelModalAra" class="filtre-input"
-                            placeholder="🔍  Sicil no ara..."
+                            placeholder="🔍  İsim veya sicil ara..."
                             style="width:100%;padding-left:14px;font-size:13px;"
                             oninput="personelModalFiltre(this.value)" autocomplete="off">
                     </div>
@@ -2585,7 +2585,7 @@
         const liste = document.getElementById('personelModalListe');
         const ara = aramaStr.toUpperCase();
         const filtreli = personelListesi.filter(p =>
-            p.sicil.toUpperCase().includes(ara)
+            p.ad.toUpperCase().includes(ara) || p.sicil.toUpperCase().includes(ara)
         );
         if (!filtreli.length) {
             liste.innerHTML = '<div style="text-align:center;padding:24px;color:var(--muted);font-size:13px;">Sonuç yok</div>';
@@ -2601,7 +2601,10 @@
                 style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-radius:10px;cursor:pointer;background:#fff;border:1px solid #E5E7EB;transition:all 0.15s;"
                 onmouseover="this.style.background='#EFF6FF';this.style.borderColor='#BFDBFE';"
                 onmouseout="this.style.background='#fff';this.style.borderColor='#E5E7EB';">
-                <span style="font-family:'Inter',sans-serif;font-size:15px;font-weight:800;color:#1C2B6E;">${p.sicil}</span>
+                <div style="display:flex;flex-direction:column;gap:2px;">
+                    <span style="font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:#0F172A;">${p.ad}</span>
+                    <span style="font-family:'Inter',sans-serif;font-size:12px;font-weight:600;color:#2563eb;">${p.sicil}</span>
+                </div>
                 ${tipLabel}
             </div>`;
         }).join('');
