@@ -708,7 +708,8 @@
             gap: 20px;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.22s ease;
+            transition: opacity 0.65s ease, transform 0.65s ease;
+            transform: translateY(0) scale(1);
         }
         .splash-overlay.splash-visible {
             opacity: 1;
@@ -716,7 +717,9 @@
         }
         .splash-overlay.splash-hiding {
             opacity: 0;
+            transform: translateY(30px) scale(0.97);
             pointer-events: none;
+            transition: opacity 0.65s ease, transform 0.65s ease;
         }
         .splash-logo-wrap {
             width: 112px;
@@ -755,14 +758,14 @@
         }
         .splash-title {
             font-family: 'Inter', sans-serif;
-            font-size: 34px;
+            font-size: 52px;
             font-weight: 800;
             color: #0F172A;
             letter-spacing: -0.5px;
         }
         .splash-sub {
             font-family: 'Inter', sans-serif;
-            font-size: 21px;
+            font-size: 32px;
             font-weight: 500;
             color: #374151;
         }
@@ -1121,7 +1124,7 @@
     <div class="splash-text">
         <div class="splash-title">Goodyear Adapazarı Fabrikası</div>
         <div class="splash-sub">Ön Ambar Yükleme Takip Sistemi</div>
-        <div class="splash-sub" style="font-size:15px;color:#9CA3AF;font-weight:400;">Veriler senkronize ediliyor...</div>
+        <div class="splash-sub" style="font-size:22px;color:#1C2B6E;font-weight:600;">Veriler senkronize ediliyor...</div>
     </div>
     <div class="splash-dots">
         <div class="splash-dot"></div>
@@ -2158,8 +2161,8 @@
             setTimeout(() => {
                 el.classList.remove('splash-hiding');
                 if (typeof onComplete === 'function') onComplete();
-            }, 220);
-        }, 3000);
+            }, 680);
+        }, 4000);
     }
 
     // ── SAYFA YÖNETİMİ ────────────────────────────────────
