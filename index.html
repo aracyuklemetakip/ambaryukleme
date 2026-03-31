@@ -1205,10 +1205,10 @@
         <path d="M0 0 C0 0 160 70 220 250 C280 430 200 540 270 690 C340 840 510 900 640 900 L0 900 Z" fill="rgba(15,30,90,0.88)"/>
         <path d="M0 0 C0 0 140 60 190 220 C240 380 170 490 230 640 C290 790 440 900 560 900 L0 900 Z" fill="rgba(15,30,90,0.60)"/>
         <!-- Sağ sarı dolgu -->
-        <path d="M700 0 C700 0 560 60 510 220 C460 380 530 490 470 640 C410 790 260 900 160 900 L700 900 Z" fill="rgba(250,204,21,0.55)"/>
-        <path d="M700 0 C700 0 630 50 600 180 C570 310 620 420 580 560 C540 700 440 800 390 900 L700 900 Z" fill="rgba(250,204,21,0.32)"/>
-        <path d="M700 0 C700 0 540 70 480 250 C420 430 500 540 430 690 C360 840 190 900 350 900 L700 900 Z" fill="url(#swFillGrad)"/>
-        <path d="M700 0 C700 0 540 70 480 250 C420 430 500 540 430 690 C360 840 190 900 350 900" fill="none" stroke="url(#swStrokeGrad)" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="M700 0 C700 0 660 60 640 220 C620 380 650 490 630 640 C610 790 580 900 550 900 L700 900 Z" fill="rgba(250,204,21,0.55)"/>
+        <path d="M700 0 C700 0 680 50 670 180 C660 310 680 420 670 560 C660 700 640 800 620 900 L700 900 Z" fill="rgba(250,204,21,0.32)"/>
+        <path d="M700 0 C700 0 670 70 650 250 C630 430 660 540 640 690 C620 840 600 900 580 900 L700 900 Z" fill="url(#swFillGrad)"/>
+        <path d="M700 0 C700 0 670 70 650 250 C630 430 660 540 640 690 C620 840 600 900 580 900" fill="none" stroke="url(#swStrokeGrad)" stroke-width="2.5" stroke-linecap="round"/>
     </svg>
     <div class="splash-logo-wrap">
         <img src="logo.png" alt="Logo" draggable="false">
@@ -2654,7 +2654,7 @@
         const liste = document.getElementById('personelModalListe');
         const ara = window.trUpper(aramaStr);
         const filtreli = personelListesi.filter(p =>
-            window.trUpper(p.ad).includes(ara) || window.trUpper(p.sicil).includes(ara)
+            window.trUpper(p.ad).startsWith(ara) || window.trUpper(p.sicil).startsWith(ara)
         ).sort((a,b) => window.trSort(a, b, 'ad'));
         if (!filtreli.length) {
             liste.innerHTML = '<div style="text-align:center;padding:24px;color:var(--muted);font-size:13px;">Sonuç yok</div>';
@@ -2712,7 +2712,9 @@
         // Eşleşenleri filtrele ve A-Z sırala
         const eslesen = personelListesi.filter(p => {
             if (seciliAdlar.includes(p.ad)) return false; // zaten seçili
-            return window.trUpper(p.ad).includes(window.trUpper(son));
+            const adUpper = window.trUpper(p.ad);
+            const sonUpper = window.trUpper(son);
+            return adUpper.startsWith(sonUpper);
         }).sort((a,b) => window.trSort(a, b, 'ad'));
 
         if (eslesen.length === 0) { dd.style.display='none'; _acDropdownIdx=-1; return; }
