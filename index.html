@@ -152,6 +152,9 @@
       window._googleLogin = async function() {
         const provider = new GoogleAuthProvider();
         try {
+          // Giriş yapmadan önce eski oturum verilerini temizle ki seçim sayfasına gitsin
+          sessionStorage.removeItem('aktifSayfa');
+          sessionStorage.removeItem('aktifSekme');
           await signInWithPopup(auth, provider);
         } catch(e) {
           console.error(e);
@@ -161,6 +164,8 @@
 
       // ── Çıkış ──
       window._logout = async function() {
+        sessionStorage.removeItem('aktifSayfa');
+        sessionStorage.removeItem('aktifSekme');
         await signOut(auth);
         showToast('👋 Çıkış yapıldı', 'warn');
       };
@@ -794,13 +799,13 @@
             position: fixed;
             inset: 0;
             z-index: 99999;
-            background: #F9FAFB;
+            background: #1C2B6E;
             display: flex;
             flex-direction: column;
-            align-items: flex-start;
-            justify-content: flex-start;
+            align-items: center;
+            justify-content: center;
             padding: 40px 28px;
-            gap: 16px;
+            gap: 24px;
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.65s ease, transform 0.65s ease;
@@ -839,13 +844,13 @@
             object-fit: contain;
         }
         .splash-text {
-            text-align: left;
+            text-align: center;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 12px;
             opacity: 0;
-            transform: translateY(6px);
-            transition: opacity 0.28s ease 0.12s, transform 0.28s ease 0.12s;
+            transform: translateY(12px);
+            transition: opacity 0.35s ease 0.15s, transform 0.35s ease 0.15s;
         }
         .splash-overlay.splash-visible .splash-text {
             opacity: 1;
@@ -853,21 +858,23 @@
         }
         .splash-title {
             font-family: 'Inter', sans-serif;
-            font-size: 50px;
+            font-size: 52px;
             font-weight: 800;
-            color: #1C2B6E;
+            color: #F0B323;
             letter-spacing: -0.5px;
+            line-height: 1.1;
         }
         .splash-sub {
             font-family: 'Inter', sans-serif;
-            font-size: 30px;
-            font-weight: 500;
-            color: #374151;
+            font-size: 32px;
+            font-weight: 600;
+            color: #FDE68A;
         }
         .splash-dots {
             display: flex;
             align-items: center;
-            gap: 6px;
+            justify-content: center;
+            gap: 8px;
             opacity: 0;
             transition: opacity 0.2s ease 0.22s;
         }
@@ -875,10 +882,10 @@
             opacity: 1;
         }
         .splash-dot {
-            width: 5px;
-            height: 5px;
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
-            background: #1C2B6E;
+            background: #F0B323;
             opacity: 0.2;
         }
         .splash-dot:nth-child(1) { animation: splashDot 1.1s ease-in-out 0s infinite; }
@@ -937,7 +944,7 @@
   border-radius: 0;
   padding: 20px 28px 20px;
   text-align: center;
-  width: 300px;
+  width: 450px;
   border: none;
   box-shadow: none;
   animation: neuFadeIn 0.4s ease;
@@ -962,22 +969,22 @@
 
 .neu-title {
   font-family: 'Inter', sans-serif;
-  font-size: 22px;
+  font-size: 33px;
   font-weight: 800;
   line-height: 1.1;
   color: #0F172A;
-  margin-bottom: 4px;
+  margin-bottom: 8px;
 }
-.neu-title .acc-blue { color: #ffffff; }
+.neu-title .acc-blue { color: #F0B323; }
 .neu-title .acc-yellow { color: #F0B323; }
 
 .neu-sub {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 2px;
+  font-size: 33px;
+  font-weight: 800;
+  letter-spacing: 0px;
   text-transform: uppercase;
-  color: rgba(255,255,255,0.7);
-  margin-bottom: 20px;
+  color: #F0B323;
+  margin-bottom: 30px;
 }
 
 .neu-btn-google {
@@ -985,26 +992,26 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  padding: 14px 20px;
-  border-radius: 10px;
+  gap: 15px;
+  padding: 18px 24px;
+  border-radius: 12px;
   border: 1px solid rgba(255,255,255,0.8);
   background: rgba(255,255,255,0.6);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   color: #1C2B6E;
   font-family: 'Inter', sans-serif;
-  font-size: 15px;
-  font-weight: 600;
+  font-size: 22px;
+  font-weight: 700;
   cursor: pointer;
   transition: all 0.15s;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
 }
 .neu-btn-google:hover {
   background: rgba(255,255,255,0.82);
   border-color: rgba(30,58,138,0.3);
   transform: translateY(-1px);
-  box-shadow: 0 4px 14px rgba(30,58,138,0.1);
+  box-shadow: 0 6px 18px rgba(30,58,138,0.15);
 }
 .neu-btn-google:focus-visible {
   outline: 2px solid #1C2B6E;
@@ -1015,10 +1022,10 @@
 }
 
 .neu-hint {
-  margin-top: 14px;
-  font-size: 11px;
+  margin-top: 18px;
+  font-size: 16px;
   color: #9CA3AF;
-  font-weight: 400;
+  font-weight: 500;
 }
 
 .neu-error {
@@ -1089,7 +1096,7 @@
   <div class="neu-card" style="position:absolute;top:32px;left:50%;transform:translateX(-50%);margin-top:0;">
 
     <div class="neu-icon-wrap" style="background:transparent;border:none;box-shadow:none;">
-      <img src="logo.png" alt="Logo" style="width:56px;height:56px;object-fit:contain;" draggable="false">
+      <img src="logo.png" alt="Logo" style="width:84px;height:84px;object-fit:contain;" draggable="false">
     </div>
 
     <div class="neu-title">
@@ -1098,7 +1105,7 @@
     <div class="neu-sub">YÖNETİM SİSTEMİ</div>
 
     <button class="neu-btn-google" onclick="window._googleLogin()">
-      <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <svg width="30" height="30" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
         <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
         <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
         <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
@@ -1207,7 +1214,7 @@
     <div class="splash-text">
         <div class="splash-title">Goodyear Adapazarı Fabrikası</div>
         <div class="splash-sub">Ön Ambar Yükleme Takip Sistemi</div>
-        <div style="display:flex;align-items:center;gap:8px;justify-content:flex-start;font-size:15px;font-weight:600;color:#000000;">Veriler senkronize ediliyor<span style="display:inline-flex;align-items:center;gap:6px;margin-left:4px;"><span class="splash-dot" style="background:#000;opacity:0.2;"></span><span class="splash-dot" style="background:#000;opacity:0.2;"></span><span class="splash-dot" style="background:#000;opacity:0.2;"></span></span></div>
+        <div style="display:flex;align-items:center;gap:10px;justify-content:center;font-size:18px;font-weight:600;color:#F0B323;margin-top:10px;">Veriler senkronize ediliyor<span style="display:inline-flex;align-items:center;gap:6px;margin-left:4px;"><span class="splash-dot" style="background:#F0B323;opacity:0.2;"></span><span class="splash-dot" style="background:#F0B323;opacity:0.2;"></span><span class="splash-dot" style="background:#F0B323;opacity:0.2;"></span></span></div>
     </div>
 </div>
 
@@ -2239,7 +2246,7 @@
                 el.classList.remove('splash-hiding');
                 if (typeof onComplete === 'function') onComplete();
             }, 680);
-        }, 4000);
+        }, 3000);
     }
 
     // ── SAYFA YÖNETİMİ ────────────────────────────────────
