@@ -80,14 +80,10 @@
             if (sefName) sefName.textContent = displayName;
             setAvatar(document.getElementById('sefUserAvatar'), photoURL);
 
-            // Eğer sessionStorage'da kayıtlı sayfa yoksa anaSayfa'ya yönlendir (panel seçimi)
-            try {
-              const savedPage = sessionStorage.getItem('aktifSayfa');
-              if (!savedPage) {
-                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-                document.getElementById('anaSayfa').classList.add('active');
-              }
-            } catch(e) {}
+            // Her login'de anaSayfa'ya yönlendir — kullanıcı panel seçsin
+            try { sessionStorage.removeItem('aktifSayfa'); sessionStorage.removeItem('aktifSekme'); } catch(e) {}
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('anaSayfa').classList.add('active');
 
             window._fbLoadData();
           } else {
@@ -2177,59 +2173,12 @@
         document.body.style.visibility = 'visible';
     }
 
-    // ── İLK YÜKLEMEde ANINDA SAYFA RESTORE ──────────────
-    // Firebase'den BAĞIMSIZ: sessionStorage okunur, sayfa hemen açılır
+    // ── İLK YÜKLEMEde sadece anaSayfa göster, auth gelince _applyAuthState yönlendirir ──
     (function() {
-        // DOMContentLoaded beklemeden çalışır çünkü script body içinde
         try {
-            var s = sessionStorage.getItem('aktifSayfa');
-            if (s && document.getElementById(s)) {
-                // Hemen göster — Firebase race condition yok
-                document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
-                document.getElementById(s).classList.add('active');
-                window._pendingSayfa = s;
-                // sefSayfa için DOMContentLoaded'dan sonra init çalıştır
-                if (s === 'sefSayfa') {
-                    document.addEventListener('DOMContentLoaded', function() {
-                        if (typeof sefTarihGoster === 'function') sefTarihGoster();
-                        // Aktif sekme restore
-                        try {
-                            var aktifSekme = sessionStorage.getItem('aktifSekme');
-                            if (aktifSekme && document.getElementById(aktifSekme)) {
-                                var secimler = { sekme1:0, sekme2:1, sekme4:2, sekme5:3, sekme6:4, sekme7:5 };
-                                var btnIdx = secimler[aktifSekme];
-                                var btnEl = document.querySelectorAll('.sef-sekme')[btnIdx];
-                                if (btnEl) {
-                                    document.querySelectorAll('.sef-sekme').forEach(function(s) { s.classList.remove('aktif'); });
-                                    document.querySelectorAll('.sef-sidebar-item').forEach(function(s) { s.classList.remove('aktif'); });
-                                    document.querySelectorAll('.sekme-icerik').forEach(function(s) { s.classList.remove('aktif'); });
-                                    btnEl.classList.add('aktif');
-                                    document.querySelectorAll('.sef-sidebar-item[data-sekme="'+aktifSekme+'"]').forEach(function(s) { s.classList.add('aktif'); });
-                                    document.getElementById(aktifSekme).classList.add('aktif');
-                                    var k = document.getElementById('sekmeKarsilama');
-                                    if (k) k.style.display = 'none';
-                                    if (aktifSekme === 'sekme4' && typeof mesaiInit === 'function') setTimeout(mesaiInit, 200);
-                                    if (aktifSekme === 'sekme6' && typeof df6Init === 'function') setTimeout(df6Init, 200);
-                                }
-                            }
-                        } catch(e2) {}
-                    });
-                } else if (s === 'operatorSayfa') {
-                    document.addEventListener('DOMContentLoaded', function() {
-                        if (typeof tarihGoster === 'function') tarihGoster();
-                        if (typeof renderTablo === 'function') renderTablo();
-                    });
-                }
-            } else {
-                // sessionStorage boş: anaSayfa default
-                document.getElementById('anaSayfa').classList.add('active');
-                window._pendingSayfa = null;
-            }
-        } catch(e) {
+            document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
             document.getElementById('anaSayfa').classList.add('active');
-            window._pendingSayfa = null;
-        }
-        // Body'yi görünür yap — flicker yok çünkü doğru sayfa zaten açık
+        } catch(e) {}
         document.body.style.visibility = 'visible';
     })();
 
