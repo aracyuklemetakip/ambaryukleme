@@ -1165,22 +1165,22 @@
 
 <!-- ══ YETKİLİ ŞİFRE MODAL ══ -->
 <div class="modal-overlay" id="sifreModal">
-    <div class="modal-box" style="width:320px;">
+    <div class="modal-box" style="width:320px;background:#0F1E4A;border:1px solid rgba(255,255,255,0.12);box-shadow:0 8px 40px rgba(0,0,0,0.5);">
         <div style="font-size:32px;margin-bottom:12px;">🔐</div>
-        <div class="modal-title" style="color:#d97706;">Yetkili Girişi</div>
-        <div class="modal-sub">Şifrenizi girin</div>
+        <div class="modal-title" style="color:#F0B323;">Yetkili Girişi</div>
+        <div class="modal-sub" style="color:rgba(255,255,255,0.5);">Şifrenizi girin</div>
         <input type="password" id="sifreInput" placeholder="••••••"
-            style="width:100%;padding:10px 14px;border-radius:8px;border:1px solid #E5E7EB;background:#fff;color:#0F172A;font-family:'Inter',sans-serif;font-size:18px;font-weight:700;letter-spacing:6px;text-align:center;outline:none;margin-bottom:8px;transition:border-color 0.15s;"
+            style="width:100%;padding:10px 14px;border-radius:8px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.07);color:#fff;font-family:'Inter',sans-serif;font-size:18px;font-weight:700;letter-spacing:6px;text-align:center;outline:none;margin-bottom:8px;transition:border-color 0.15s;"
             onkeydown="if(event.key==='Enter')sifreKontrol()"
             oninput="document.getElementById('sifreHata').style.display='none'; if(this.value.length===4) sifreKontrol();"
-            onfocus="this.style.borderColor='rgba(251,191,36,0.6)'"
-            onblur="this.style.borderColor='rgba(251,191,36,0.3)'">
-        <div id="sifreHata" style="display:none;color:#ef4444;font-size:11px;font-weight:700;letter-spacing:1px;margin-bottom:10px;">YANLIŞ ŞİFRE</div>
-        <div id="sifreYukleniyor" style="display:none;color:#6b7a96;font-size:11px;font-weight:700;letter-spacing:1px;margin-bottom:10px;">Kontrol ediliyor...</div>
+            onfocus="this.style.borderColor='rgba(240,179,35,0.7)'"
+            onblur="this.style.borderColor='rgba(255,255,255,0.15)'">
+        <div id="sifreHata" style="display:none;color:#f87171;font-size:11px;font-weight:700;letter-spacing:1px;margin-bottom:10px;">YANLIŞ ŞİFRE</div>
+        <div id="sifreYukleniyor" style="display:none;color:rgba(255,255,255,0.5);font-size:11px;font-weight:700;letter-spacing:1px;margin-bottom:10px;">Kontrol ediliyor...</div>
         <div class="modal-btns">
             <button onclick="sifreKontrol()" style="flex:1;padding:11px;border-radius:8px;border:none;background:#F0B323;color:#1C2B6E;font-family:'Inter',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.15s;">GİRİŞ YAP</button>
         </div>
-        <button class="modal-cancel" onclick="sifreModalKapat()" style="margin-top:14px;">İptal</button>
+        <button class="modal-cancel" onclick="sifreModalKapat()" style="margin-top:14px;color:rgba(255,255,255,0.4);">İptal</button>
     </div>
 </div>
 
@@ -1990,7 +1990,7 @@
                         </div>
 
                         <!-- BUTONLAR -->
-                        <button id="df6PdfBtn" onclick="df6PdfIndir()" style="width:100%;padding:11px;border-radius:8px;border:none;background:#1C2B6E;color:#fff;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s;">📥 PDF İNDİR</button>
+                        <button id="df6PdfBtn" onclick="df6PdfIndir()" style="width:100%;padding:11px;border-radius:8px;border:none;background:#F0B323;color:#1C2B6E;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.15s;">📥 PDF İNDİR</button>
                     </div>
 
                     <!-- SAĞ: SONUÇ -->
@@ -4080,7 +4080,7 @@
                 ${ekipler.map((ekip,ekipIdx) => `
                     <div class="sef-bolum" style="margin-bottom:16px;">
                         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
-                            <div style="font-size:14px;font-weight:700;color:${ekipIdx===0?'#3b82f6':'#fff'};">${ekipKisaGoster(ekip.ad)}</div>
+                            <div style="font-size:14px;font-weight:700;color:#fff;">${ekipKisaGoster(ekip.ad)}</div>
                             <div style="display:flex;gap:6px;flex-wrap:wrap;">
                                 ${ekip.tir>0?`<span class="stat-pill badge-tir">🚛 ${ekip.tir} Tır</span>`:''}
                                 ${ekip.kamyon>0?`<span class="stat-pill badge-kamyon">🚚 ${ekip.kamyon} Kamyon</span>`:''}
@@ -4915,21 +4915,30 @@
         const bData  = filtre.filter(k => k.vardiya === 'B');
 
         function hesapla(data) {
-            let normal=0, pazar=0, normalKisi=0, pazarKisi=0, toplamKisi=0;
+            let normalGun=0, pazarGun=0, pazar15Gun=0;
+            let normalKisi=0, pazarKisi=0, pazar15Kisi=0, toplamKisi=0;
             data.forEach(k => {
                 const kisi = parseInt(k.kisi)||0;
+                const hGun = parseFloat(k.hesaplananGun)||1;
                 toplamKisi += kisi;
-                if (k.tur==='Normal') { normal += parseFloat(k.hesaplananGun)||0; normalKisi += kisi; }
-                else                  { pazar  += parseFloat(k.hesaplananGun)||0; pazarKisi  += kisi; }
+                if (k.tur==='Normal') {
+                    normalGun += 1; normalKisi += kisi;
+                } else if (k.tur==='Pazar15' || hGun === 1.5) {
+                    pazar15Gun += 1.5; pazar15Kisi += kisi;
+                } else {
+                    pazarGun += 1; pazarKisi += kisi;
+                }
             });
-            return { normal, pazar, normalSaat:normal*4, pazarSaat:pazar*8, toplamKisi, normalKisi, pazarKisi };
+            return { normalGun, pazarGun, pazar15Gun,
+                     normalSaat: normalGun*4, pazarSaat: pazarGun*8, pazar15Saat: pazar15Gun*12,
+                     normalKisi, pazarKisi, pazar15Kisi, toplamKisi };
         }
         const A = hesapla(aData);
         const B = hesapla(bData);
         const fmt = s => Number.isInteger(s) ? s.toString() : s.toFixed(1);
         const fmtTarih = t => t.split('-').reverse().join('.');
 
-        const LACIVERT=[15,23,42], MAVI=[30,100,210], SARI=[234,179,8];
+        const LACIVERT=[15,23,42], MAVI=[30,100,210], SARI=[234,179,8], MOR=[150,80,200];
 
         doc.setFillColor(...LACIVERT); doc.rect(0,0,210,40,'F');
         doc.setTextColor(255,255,255);
@@ -4953,21 +4962,28 @@
         doc.text('B VARDIYASI', col2+(col0+tableW-col2)/2, y+8.5, {align:'center'});
         y += rowH;
 
-        const rows = [
-            { label:'Normal Mesai', a:`${fmt(A.normal)} gun (${A.normalSaat} saat)  ${A.normalKisi} kisi`, b:`${fmt(B.normal)} gun (${B.normalSaat} saat)  ${B.normalKisi} kisi`, alt:false },
-            { label:'Pazar Mesaisi', a:`${fmt(A.pazar)} gun (${A.pazarSaat} saat)  ${A.pazarKisi} kisi`, b:`${fmt(B.pazar)} gun (${B.pazarSaat} saat)  ${B.pazarKisi} kisi`, alt:true },
-            { label:'Toplam Kisi', a:`${A.toplamKisi} kisi`, b:`${B.toplamKisi} kisi`, alt:false },
-        ];
+        const rows = [];
+        if (A.normalGun > 0 || B.normalGun > 0)
+            rows.push({ label:'Normal Mesai', a:`${fmt(A.normalGun)} gun (${A.normalSaat} saat)  ${A.normalKisi} kisi`, b:`${fmt(B.normalGun)} gun (${B.normalSaat} saat)  ${B.normalKisi} kisi`, alt:false });
+        if (A.pazarGun > 0 || B.pazarGun > 0)
+            rows.push({ label:'Pazar Mesaisi', a:`${fmt(A.pazarGun)} gun (${A.pazarSaat} saat)  ${A.pazarKisi} kisi`, b:`${fmt(B.pazarGun)} gun (${B.pazarSaat} saat)  ${B.pazarKisi} kisi`, alt:true });
+        if (A.pazar15Gun > 0 || B.pazar15Gun > 0)
+            rows.push({ label:'Pazar Mesaisi x1.5', a:`${fmt(A.pazar15Gun)} gun (${A.pazar15Saat} saat)  ${A.pazar15Kisi} kisi`, b:`${fmt(B.pazar15Gun)} gun (${B.pazar15Saat} saat)  ${B.pazar15Kisi} kisi`, alt:false, mor:true });
+        rows.push({ label:'Toplam Kisi', a:`${A.toplamKisi} kisi`, b:`${B.toplamKisi} kisi`, alt:true, bold:true });
 
         rows.forEach(row => {
-            doc.setFillColor(row.alt ? 245 : 255, row.alt ? 248 : 255, 255);
+            const bg = row.bold ? [220,230,250] : row.alt ? [245,248,255] : [255,255,255];
+            doc.setFillColor(...bg);
             doc.rect(col0, y, tableW, rowH, 'F');
             doc.setDrawColor(180,190,210); doc.setLineWidth(0.2);
             doc.line(col0,y,col0+tableW,y);
             doc.line(col1,y,col1,y+rowH);
             doc.line(col2,y,col2,y+rowH);
             const cy = y+rowH/2+3.5;
-            doc.setTextColor(...LACIVERT); doc.setFont('helvetica','normal'); doc.setFontSize(10);
+            doc.setFont('helvetica', row.bold ? 'bold' : 'normal');
+            doc.setFontSize(row.bold ? 10 : 9);
+            const lblColor = row.mor ? MOR : LACIVERT;
+            doc.setTextColor(...lblColor); 
             doc.text(row.label, col0+(col1-col0)/2, cy, {align:'center'});
             doc.setTextColor(...MAVI); doc.text(row.a, col1+(col2-col1)/2, cy, {align:'center'});
             doc.setTextColor(160,120,0); doc.text(row.b, col2+(col0+tableW-col2)/2, cy, {align:'center'});
@@ -4981,7 +4997,7 @@
         doc.text(`Olusturma: ${new Date().toLocaleDateString('tr-TR')} ${new Date().toLocaleTimeString('tr-TR')}`, 190, 290, {align:'right'});
 
         doc.save(`Mesai_Raporu_${bas}_${bit}.pdf`);
-        showToast('✓ PDF indirildi', 'success');
+        showToast('\u2713 PDF indirildi', 'success');
     }
 
     function mesaiInit() {
@@ -5296,10 +5312,14 @@
 
     function df6EkipSec(ad) {
         if (!df6EkipListesi.includes(ad)) df6EkipListesi.push(ad);
-        document.getElementById('df6EkipInput').value = '';
+        // Input'ta mevcut isimleri virgülle göster, sona imleç bırak
+        const inp = document.getElementById('df6EkipInput');
+        inp.value = df6EkipListesi.join(', ') + ', ';
         document.getElementById('df6EkipDropdown').style.display = 'none';
         _df6EkipDropIdx = -1;
         df6EkipTagRender();
+        // Sona imleç
+        setTimeout(() => { inp.focus(); inp.selectionStart = inp.selectionEnd = inp.value.length; }, 10);
     }
 
     function df6EkipHover(idx) {
@@ -5325,8 +5345,9 @@
                 const eslesen = personelListesi.find(p => turkceNormalize(p.ad) === turkceNormalize(val));
                 const eklenecek = eslesen ? eslesen.ad : val;
                 if (!df6EkipListesi.includes(eklenecek)) { df6EkipListesi.push(eklenecek); df6EkipTagRender(); }
-                inp.value = '';
+                inp.value = df6EkipListesi.join(', ') + ', ';
                 dd.style.display = 'none'; _df6EkipDropIdx = -1;
+                setTimeout(() => { inp.selectionStart = inp.selectionEnd = inp.value.length; }, 10);
             }
             return;
         }
@@ -5981,10 +6002,10 @@ function va7Sorgula() {
             
             return `<tr>
                 <td style="text-align:center;padding:8px 4px;">${rankBadge}</td>
-                <td style="font-weight:700;color:var(--text);font-size:12px;padding:8px 4px;">${ekipKisaGoster(e.ad)}</td>
-                <td style="font-weight:800;text-align:center;padding:8px 4px;"><span style="background:rgba(253,230,138,0.4);color:#92660a;border-radius:4px;padding:1px 6px;">${e.tir || '—'}</span></td>
-                <td style="font-weight:800;text-align:center;padding:8px 4px;"><span style="background:rgba(147,197,253,0.35);color:#1e4d8c;border-radius:4px;padding:1px 6px;">${e.kamyon || '—'}</span></td>
-                <td style="font-weight:800;text-align:center;padding:8px 4px;"><span style="background:rgba(203,213,225,0.45);color:#475569;border-radius:4px;padding:1px 6px;">${e.konteyner || '—'}</span></td>
+                <td style="font-weight:700;color:#fff;font-size:12px;padding:8px 4px;">${ekipKisaGoster(e.ad)}</td>
+                <td style="font-weight:800;text-align:center;padding:8px 4px;"><span style="background:rgba(240,179,35,0.25);color:#F0B323;border-radius:4px;padding:1px 6px;">${e.tir || '—'}</span></td>
+                <td style="font-weight:800;text-align:center;padding:8px 4px;"><span style="background:rgba(147,197,253,0.4);color:#93C5FD;border-radius:4px;padding:1px 6px;">${e.kamyon || '—'}</span></td>
+                <td style="font-weight:800;text-align:center;padding:8px 4px;"><span style="background:rgba(226,232,240,0.25);color:#e2e8f0;border:1px solid rgba(226,232,240,0.4);border-radius:4px;padding:1px 6px;">${e.konteyner || '—'}</span></td>
                 <td style="color:var(--success);font-weight:700;text-align:center;padding:8px 4px;">${e.m3.toFixed(1)}</td>
             </tr>`;
         }).join('');
@@ -6005,9 +6026,9 @@ function va7Sorgula() {
                         </div>
                     </div>
                     <div style="display:flex; gap:4px; margin-bottom:12px; justify-content:center;">
-                        <span style="font-size:10px; font-weight:800; color:#92660a; background:rgba(253,230,138,0.3); padding:2px 8px; border-radius:4px;">🚛 ${topTirA}</span>
-                        <span style="font-size:10px; font-weight:800; color:#1e4d8c; background:rgba(147,197,253,0.3); padding:2px 8px; border-radius:4px;">🚚 ${topKamyonA}</span>
-                        <span style="font-size:10px; font-weight:800; color:#475569; background:rgba(203,213,225,0.4); padding:2px 8px; border-radius:4px;">📦 ${topKonteynerA}</span>
+                        <span style="font-size:10px; font-weight:800; color:#F0B323; background:rgba(240,179,35,0.25); padding:2px 8px; border-radius:4px;">🚛 ${topTirA}</span>
+                        <span style="font-size:10px; font-weight:800; color:#93C5FD; background:rgba(147,197,253,0.4); padding:2px 8px; border-radius:4px;">🚚 ${topKamyonA}</span>
+                        <span style="font-size:10px; font-weight:800; color:#e2e8f0; background:rgba(226,232,240,0.25); border:1px solid rgba(226,232,240,0.4); padding:2px 8px; border-radius:4px;">📦 ${topKonteynerA}</span>
                     </div>
                     <table class="data-table" style="font-size:11px;">
                         <thead><tr><th style="width:30px;">#</th><th>Ekip</th><th style="text-align:center;">T</th><th style="text-align:center;">K</th><th style="text-align:center;">C</th><th style="text-align:center;">M³</th></tr></thead>
@@ -6025,9 +6046,9 @@ function va7Sorgula() {
                         </div>
                     </div>
                     <div style="display:flex; gap:4px; margin-bottom:12px; justify-content:center;">
-                        <span style="font-size:10px; font-weight:800; color:#92660a; background:rgba(253,230,138,0.3); padding:2px 8px; border-radius:4px;">🚛 ${topTirB}</span>
-                        <span style="font-size:10px; font-weight:800; color:#1e4d8c; background:rgba(147,197,253,0.3); padding:2px 8px; border-radius:4px;">🚚 ${topKamyonB}</span>
-                        <span style="font-size:10px; font-weight:800; color:#475569; background:rgba(203,213,225,0.4); padding:2px 8px; border-radius:4px;">📦 ${topKonteynerB}</span>
+                        <span style="font-size:10px; font-weight:800; color:#F0B323; background:rgba(240,179,35,0.25); padding:2px 8px; border-radius:4px;">🚛 ${topTirB}</span>
+                        <span style="font-size:10px; font-weight:800; color:#93C5FD; background:rgba(147,197,253,0.4); padding:2px 8px; border-radius:4px;">🚚 ${topKamyonB}</span>
+                        <span style="font-size:10px; font-weight:800; color:#e2e8f0; background:rgba(226,232,240,0.25); border:1px solid rgba(226,232,240,0.4); padding:2px 8px; border-radius:4px;">📦 ${topKonteynerB}</span>
                     </div>
                     <table class="data-table" style="font-size:11px;">
                         <thead><tr><th style="width:30px;">#</th><th>Ekip</th><th style="text-align:center;">T</th><th style="text-align:center;">K</th><th style="text-align:center;">C</th><th style="text-align:center;">M³</th></tr></thead>
