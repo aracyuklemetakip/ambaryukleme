@@ -4024,24 +4024,24 @@
             sonuc.innerHTML = `
                 <div class="donem-badge">📅 ${donem.label}${e2Vardiya !== 'hepsi' ? ' · ' + e2Vardiya : ''} · ${genToplam} araç</div>
                 <div class="sef-bolum"><div style="overflow-x:auto;"><table class="data-table" style="font-size:14px; width:100%; border-collapse:separate; border-spacing:0 8px;">
-                    <thead><tr><th style="padding:12px;">S.No</th><th style="padding:12px;">Ay</th><th style="padding:12px;">Ekip</th><th style="color:#92660a; padding:12px; text-align:center;">Tır</th><th style="color:#1e4d8c; padding:12px; text-align:center;">Kamyon</th><th style="color:#475569; padding:12px; text-align:center;">Konteyner</th><th style="color:#b91c1c; padding:12px; text-align:center;">Toplam</th><th style="color:var(--success); padding:12px; text-align:center;">M³</th></tr></thead>
+                    <thead><tr><th style="padding:12px;color:#fff;">S.No</th><th style="padding:12px;color:#fff;">Ay</th><th style="padding:12px;">Ekip</th><th style="color:#F0B323; padding:12px; text-align:center;">Tır</th><th style="color:#93C5FD; padding:12px; text-align:center;">Kamyon</th><th style="color:#e2e8f0; padding:12px; text-align:center;">Konteyner</th><th style="color:#b91c1c; padding:12px; text-align:center;">Toplam</th><th style="color:var(--success); padding:12px; text-align:center;">M³</th></tr></thead>
                     <tbody>
                         ${satirlar.map((r,idx)=>`<tr>
-                            <td style="padding:12px; color:var(--muted); font-size:12px;">${idx+1}</td>
-                            <td style="font-weight:700; color:var(--text-dim); padding:12px;">${r.grupLabel}</td>
+                            <td style="padding:12px; color:#fff; font-size:12px; font-weight:700;">${idx+1}</td>
+                            <td style="font-weight:700; color:#fff; padding:12px;">${r.grupLabel}</td>
                             <td style="font-weight:400; font-size:13px; padding:12px;">${ekipKisaGoster(r.ekipAd)}</td>
-                            <td style="font-weight:700; text-align:center; padding:12px;"><span style="background:rgba(253,230,138,0.5); color:#92660a; border-radius:5px; padding:4px 10px;">${r.tir||'—'}</span></td>
-                            <td style="font-weight:700; text-align:center; padding:12px;"><span style="background:rgba(147,197,253,0.4); color:#1e4d8c; border-radius:5px; padding:4px 10px;">${r.kamyon||'—'}</span></td>
-                            <td style="font-weight:700; text-align:center; padding:12px;"><span style="background:rgba(203,213,225,0.5); color:#475569; border-radius:5px; padding:4px 10px;">${r.konteyner||'—'}</span></td>
-                            <td style="font-weight:800; text-align:center; padding:12px;"><span style="background:rgba(254,202,202,0.4); color:#b91c1c; border-radius:5px; padding:4px 10px;">${r.toplam}</span></td>
+                            <td style="font-weight:700; text-align:center; padding:12px;"><span style="background:rgba(240,179,35,0.25); color:#F0B323; border-radius:5px; padding:4px 10px;">${r.tir||'—'}</span></td>
+                            <td style="font-weight:700; text-align:center; padding:12px;"><span style="background:rgba(147,197,253,0.4); color:#93C5FD; border-radius:5px; padding:4px 10px;">${r.kamyon||'—'}</span></td>
+                            <td style="font-weight:700; text-align:center; padding:12px;"><span style="background:rgba(226,232,240,0.25); color:#e2e8f0; border:1px solid rgba(226,232,240,0.4); border-radius:5px; padding:4px 10px;">${r.konteyner||'—'}</span></td>
+                            <td style="font-weight:800; text-align:center; padding:12px;"><span style="background:rgba(254,202,202,0.4); color:#f87171; border-radius:5px; padding:4px 10px;">${r.toplam}</span></td>
                             <td style="color:var(--success); font-weight:700; text-align:center; padding:12px;">${r.m3.toFixed(1)}</td>
                         </tr>`).join('')}
                         <tr style="background:rgba(37,99,235,0.15); border-top:2px solid rgba(37,99,235,0.4);">
-                            <td colspan="3" style="font-weight:700; color:var(--blue-light); padding:15px;">YILLIK TOPLAM</td>
-                            <td style="font-weight:700; color:#92660a; text-align:center; padding:15px;">${genTir}</td>
-                            <td style="font-weight:700; color:#1e4d8c; text-align:center; padding:15px;">${genKamyon}</td>
-                            <td style="font-weight:700; color:#475569; text-align:center; padding:15px;">${genKonteyner}</td>
-                            <td style="font-weight:700; color:#b91c1c; text-align:center; padding:15px;">${genToplam}</td>
+                            <td colspan="3" style="font-weight:700; color:#fff; padding:15px;">YILLIK TOPLAM</td>
+                            <td style="font-weight:700; color:#F0B323; text-align:center; padding:15px;">${genTir}</td>
+                            <td style="font-weight:700; color:#93C5FD; text-align:center; padding:15px;">${genKamyon}</td>
+                            <td style="font-weight:700; color:#e2e8f0; text-align:center; padding:15px;">${genKonteyner}</td>
+                            <td style="font-weight:700; color:#f87171; text-align:center; padding:15px;">${genToplam}</td>
                             <td style="font-weight:700; color:var(--success); text-align:center; padding:15px;">${genM3.toFixed(1)}</td>
                         </tr>
                     </tbody></table></div></div>`;
@@ -4053,23 +4053,23 @@
             sonuc.innerHTML = `
                 <div class="donem-badge">📅 ${donem.label}${e2Vardiya !== 'hepsi' ? ' · ' + e2Vardiya : ''} · ${genToplam} araç</div>
                 <div class="sef-bolum"><div style="overflow-x:auto;"><table class="data-table" style="font-size:14px; width:100%; border-collapse:separate; border-spacing:0 8px;">
-                    <thead><tr><th style="padding:12px;">S.No</th><th style="padding:12px;">Ekip</th><th style="color:#92660a; padding:12px; text-align:center;">Tır</th><th style="color:#1e4d8c; padding:12px; text-align:center;">Kamyon</th><th style="color:#475569; padding:12px; text-align:center;">Konteyner</th><th style="color:#b91c1c; padding:12px; text-align:center;">Toplam</th><th style="color:var(--success); padding:12px; text-align:center;">M³</th></tr></thead>
+                    <thead><tr><th style="padding:12px;color:#fff;">S.No</th><th style="padding:12px;">Ekip</th><th style="color:#F0B323; padding:12px; text-align:center;">Tır</th><th style="color:#93C5FD; padding:12px; text-align:center;">Kamyon</th><th style="color:#e2e8f0; padding:12px; text-align:center;">Konteyner</th><th style="color:#b91c1c; padding:12px; text-align:center;">Toplam</th><th style="color:var(--success); padding:12px; text-align:center;">M³</th></tr></thead>
                     <tbody>
                         ${ekipler.map((e,idx)=>`<tr>
-                            <td style="padding:12px; color:var(--muted); font-size:12px;">${idx+1}</td>
+                            <td style="padding:12px; color:#fff; font-size:12px; font-weight:700;">${idx+1}</td>
                             <td style="font-weight:400; font-size:13px; padding:12px;">${ekipKisaGoster(e.ad)}</td>
-                            <td style="font-weight:700; text-align:center; padding:12px;"><span style="background:rgba(253,230,138,0.5); color:#92660a; border-radius:5px; padding:4px 10px;">${e.tir||'—'}</span></td>
-                            <td style="font-weight:700; text-align:center; padding:12px;"><span style="background:rgba(147,197,253,0.4); color:#1e4d8c; border-radius:5px; padding:4px 10px;">${e.kamyon||'—'}</span></td>
-                            <td style="font-weight:700; text-align:center; padding:12px;"><span style="background:rgba(203,213,225,0.5); color:#475569; border-radius:5px; padding:4px 10px;">${e.konteyner||'—'}</span></td>
-                            <td style="font-weight:800; text-align:center; padding:12px;"><span style="background:rgba(254,202,202,0.4); color:#b91c1c; border-radius:5px; padding:4px 10px;">${e.kayitlar.length}</span></td>
+                            <td style="font-weight:700; text-align:center; padding:12px;"><span style="background:rgba(240,179,35,0.25); color:#F0B323; border-radius:5px; padding:4px 10px;">${e.tir||'—'}</span></td>
+                            <td style="font-weight:700; text-align:center; padding:12px;"><span style="background:rgba(147,197,253,0.4); color:#93C5FD; border-radius:5px; padding:4px 10px;">${e.kamyon||'—'}</span></td>
+                            <td style="font-weight:700; text-align:center; padding:12px;"><span style="background:rgba(226,232,240,0.25); color:#e2e8f0; border:1px solid rgba(226,232,240,0.4); border-radius:5px; padding:4px 10px;">${e.konteyner||'—'}</span></td>
+                            <td style="font-weight:800; text-align:center; padding:12px;"><span style="background:rgba(254,202,202,0.4); color:#f87171; border-radius:5px; padding:4px 10px;">${e.kayitlar.length}</span></td>
                             <td style="color:var(--success); font-weight:700; text-align:center; padding:12px;">${e.m3.toFixed(1)}</td>
                         </tr>`).join('')}
                         <tr style="background:rgba(37,99,235,0.15); border-top:2px solid rgba(37,99,235,0.4);">
-                            <td colspan="2" style="font-weight:700; color:var(--blue-light); padding:15px;">GENEL TOPLAM</td>
-                            <td style="font-weight:700; color:#92660a; text-align:center; padding:15px;">${genTir}</td>
-                            <td style="font-weight:700; color:#1e4d8c; text-align:center; padding:15px;">${genKamyon}</td>
-                            <td style="font-weight:700; color:#475569; text-align:center; padding:15px;">${genKonteyner}</td>
-                            <td style="font-weight:700; color:#b91c1c; text-align:center; padding:15px;">${genToplam}</td>
+                            <td colspan="2" style="font-weight:700; color:#fff; padding:15px;">GENEL TOPLAM</td>
+                            <td style="font-weight:700; color:#F0B323; text-align:center; padding:15px;">${genTir}</td>
+                            <td style="font-weight:700; color:#93C5FD; text-align:center; padding:15px;">${genKamyon}</td>
+                            <td style="font-weight:700; color:#e2e8f0; text-align:center; padding:15px;">${genKonteyner}</td>
+                            <td style="font-weight:700; color:#f87171; text-align:center; padding:15px;">${genToplam}</td>
                             <td style="font-weight:700; color:var(--success); text-align:center; padding:15px;">${genM3.toFixed(1)}</td>
                         </tr>
                     </tbody></table></div></div>`;
@@ -4077,10 +4077,10 @@
             // ══ GÜNLÜK: Detay ══
             sonuc.innerHTML = `
                 <div class="donem-badge">📅 ${donem.label}${e2Vardiya !== 'hepsi' ? ' · ' + e2Vardiya : ''}</div>
-                ${ekipler.map(ekip => `
+                ${ekipler.map((ekip,ekipIdx) => `
                     <div class="sef-bolum" style="margin-bottom:16px;">
                         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
-                            <div style="font-size:14px;font-weight:700;color:var(--text);">${ekipKisaGoster(ekip.ad)}</div>
+                            <div style="font-size:14px;font-weight:700;color:${ekipIdx===0?'#3b82f6':'#fff'};">${ekipKisaGoster(ekip.ad)}</div>
                             <div style="display:flex;gap:6px;flex-wrap:wrap;">
                                 ${ekip.tir>0?`<span class="stat-pill badge-tir">🚛 ${ekip.tir} Tır</span>`:''}
                                 ${ekip.kamyon>0?`<span class="stat-pill badge-kamyon">🚚 ${ekip.kamyon} Kamyon</span>`:''}
