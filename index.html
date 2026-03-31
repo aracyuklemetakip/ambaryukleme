@@ -578,8 +578,9 @@
         .filtre-panel { background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:12px 14px;margin-bottom:14px; }
         .filtre-row { display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap; }
         .filtre-group { display:flex;flex-direction:column;gap:4px; }
-        .filtre-label { font-size:10px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;color:rgba(255,255,255,0.45); }
+        .filtre-label { font-size:12px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:rgba(255,255,255,0.9); }
         .filtre-input { background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:6px;color:#fff;font-family:'Inter',sans-serif;font-size:12px;font-weight:400;padding:6px 10px;outline:none;transition:border-color 0.15s; }
+        .filtre-input::placeholder { color:rgba(255,255,255,0.45); }
         .filtre-input:focus { border-color:#F0B323;box-shadow:0 0 0 3px rgba(240,179,35,0.15); }
         .filtre-seg { display:flex;gap:3px; }
 
@@ -626,8 +627,8 @@
         .sef-kart-lbl { font-size:9px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-top:4px; }
 
         .sef-bolum-baslik { 
-            font-size:10px; font-weight:700; letter-spacing:1px; text-transform:uppercase; 
-            color:rgba(255,255,255,0.4);
+            font-size:12px; font-weight:700; letter-spacing:1px; text-transform:uppercase; 
+            color:rgba(255,255,255,0.9);
             padding:0 0 8px 0; margin-bottom:12px;
             border-bottom:1px solid rgba(255,255,255,0.08);
         }
@@ -1165,9 +1166,9 @@
 </div>
 
 <div class="modal-overlay" id="mesaiKarsilastirmaModal" onclick="if(event.target===this)this.classList.remove('show')">
-    <div class="modal-box" style="width:480px;max-width:95vw;max-height:90vh;overflow-y:auto;text-align:left;padding:28px 32px;background:#fff;">
+    <div class="modal-box" style="width:480px;max-width:95vw;max-height:90vh;overflow-y:auto;text-align:left;padding:28px 32px;background:#0F1E4A;border:1px solid rgba(255,255,255,0.12);color:#fff;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-            <div style="font-size:16px;font-weight:800;color:#0F172A;letter-spacing:0.5px;">📊 Mesai Hesaplama</div>
+            <div style="font-size:16px;font-weight:800;color:#fff;letter-spacing:0.5px;">📊 Mesai Hesaplama</div>
             <button onclick="document.getElementById('mesaiKarsilastirmaModal').classList.remove('show')" style="background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;line-height:1;">✕</button>
         </div>
         <div id="mesaiKarsilastirmaModalIcerik"></div>
@@ -4709,8 +4710,8 @@
                 <td style="font-size:11px;">${tarihStr}</td>
                 <td style="font-weight:800;color:${vColor};">${m.vardiya}</td>
                 <td style="color:${tColor};font-weight:700;">${m.tur}</td>
-                <td style="font-weight:800;color:#3d4f6e;">${m.kisi}</td>
-                <td style="color:var(--text-dim);">${m.hesaplananGun}</td>
+                <td style="font-weight:800;color:#fff;">${m.kisi}</td>
+                <td style="color:rgba(255,255,255,0.85);">${m.hesaplananGun}</td>
                 <td><button class="del-btn" onclick="mesaiSil(${m.id},event)" title="Sil">🗑️</button></td>
             </tr>`;
         }).join('');
@@ -4787,7 +4788,7 @@
         function satirHtml(label, gun, saat, kisi, renk) {
             if (gun === 0) return '';
             return `
-            <div style="padding:11px 16px;border-radius:8px;border:1px solid ${renk}22;background:${renk}09;margin-bottom:7px;">
+            <div style="padding:11px 16px;border-radius:8px;border:1px solid ${renk}44;background:${renk}15;margin-bottom:7px;">
                 <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:4px;">
                     <div style="font-size:13px;font-weight:700;color:${renk};">${label}</div>
                     <div style="font-size:16px;font-weight:900;color:${renk};">${fmt(gun)} gün <span style="font-size:12px;font-weight:600;opacity:0.75;">${saat} saat</span></div>
@@ -4802,14 +4803,14 @@
             const topSaat = v.normalGun*4 + v.pazarGun*8 + v.pazar15Gun*12;
             if (topKisi === 0 && topGun === 0) return '';
             return `
-            <div style="border:2px solid ${kenarRenk};border-radius:12px;padding:16px;margin-bottom:14px;background:${bgRenk};">
-                <div style="font-size:15px;font-weight:800;color:${baslikRenk};margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid ${kenarRenk}44;">
+            <div style="border:2px solid ${kenarRenk}66;border-radius:12px;padding:16px;margin-bottom:14px;background:${bgRenk};">
+                <div style="font-size:15px;font-weight:800;color:${baslikRenk};margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid ${kenarRenk}33;">
                     ${baslik}
                 </div>
-                ${satirHtml('Normal Mesai', v.normalGun, v.normalGun*4, v.normalKisi, '#2563eb')}
-                ${satirHtml('Pazar Mesaisi', v.pazarGun, v.pazarGun*8, v.pazarKisi, '#dc2626')}
-                ${satirHtml('Pazar Mesaisi ×1.5', v.pazar15Gun, v.pazar15Gun*12, v.pazar15Kisi, '#9333ea')}
-                <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-radius:8px;background:${kenarRenk}18;border:1px solid ${kenarRenk}44;margin-top:4px;">
+                ${satirHtml('Normal Mesai', v.normalGun, v.normalGun*4, v.normalKisi, '#60a5fa')}
+                ${satirHtml('Pazar Mesaisi', v.pazarGun, v.pazarGun*8, v.pazarKisi, '#f87171')}
+                ${satirHtml('Pazar Mesaisi ×1.5', v.pazar15Gun, v.pazar15Gun*12, v.pazar15Kisi, '#c084fc')}
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-radius:8px;background:${kenarRenk}20;border:1px solid ${kenarRenk}44;margin-top:4px;">
                     <div style="font-size:13px;font-weight:700;color:${baslikRenk};">Toplam</div>
                     <div style="font-size:15px;font-weight:900;color:${baslikRenk};">${fmt(topGun)} gün <span style="font-size:12px;font-weight:600;opacity:0.75;">${topSaat} saat</span> <span style="font-size:12px;font-weight:700;opacity:0.8;margin-left:6px;">· ${topKisi} kişi</span></div>
                 </div>
@@ -4835,17 +4836,17 @@
         }
 
         const icerik = `
-            <div style="font-size:13px;font-weight:700;color:#6B7280;text-align:center;margin-bottom:16px;letter-spacing:0.5px;">${label}</div>
-            ${vardiyaBlok('🔵 A Vardiyası', A, '#2563eb', '#1C2B6E', '#EFF6FF')}
-            ${vardiyaBlok('🟡 B Vardiyası', B, '#F0B323', '#92400e', '#FEFCE8')}
-            <div style="border:2px solid #F0B323;border-radius:12px;padding:14px;background:#FEFCE8;">
-                <div style="font-size:13px;font-weight:800;color:#92400e;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid #FDE68A;">Genel Toplam</div>
-                ${genTopSatir('Normal Mesai', genNormalGun, genNormalSaat, '#2563eb')}
-                ${genTopSatir('Pazar Mesaisi', genPazarGun, genPazarSaat, '#dc2626')}
-                ${genTopSatir('Pazar Mesaisi ×1.5', genP15Gun, genP15Saat, '#9333ea')}
-                <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-radius:8px;background:#F0B32320;border:1px solid #F0B323;margin-top:4px;">
-                    <div style="font-size:13px;font-weight:800;color:#92400e;">Tüm Mesailerin Toplamı</div>
-                    <div style="font-size:16px;font-weight:900;color:#d97706;">${fmt(genTopGun)} gün <span style="font-size:12px;font-weight:600;opacity:0.8;">${genTopSaat} saat</span></div>
+            <div style="font-size:13px;font-weight:700;color:rgba(255,255,255,0.6);text-align:center;margin-bottom:16px;letter-spacing:0.5px;">${label}</div>
+            ${vardiyaBlok('🔵 A Vardiyası', A, '#3b82f6', '#93C5FD', 'rgba(59,130,246,0.12)')}
+            ${vardiyaBlok('🟡 B Vardiyası', B, '#F0B323', '#FCD34D', 'rgba(240,179,35,0.12)')}
+            <div style="border:2px solid rgba(240,179,35,0.5);border-radius:12px;padding:14px;background:rgba(240,179,35,0.08);">
+                <div style="font-size:13px;font-weight:800;color:#FCD34D;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid rgba(240,179,35,0.3);">Genel Toplam</div>
+                ${genTopSatir('Normal Mesai', genNormalGun, genNormalSaat, '#60a5fa')}
+                ${genTopSatir('Pazar Mesaisi', genPazarGun, genPazarSaat, '#f87171')}
+                ${genTopSatir('Pazar Mesaisi ×1.5', genP15Gun, genP15Saat, '#c084fc')}
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-radius:8px;background:rgba(240,179,35,0.15);border:1px solid rgba(240,179,35,0.4);margin-top:4px;">
+                    <div style="font-size:13px;font-weight:800;color:#FCD34D;">Tüm Mesailerin Toplamı</div>
+                    <div style="font-size:16px;font-weight:900;color:#F0B323;">${fmt(genTopGun)} gün <span style="font-size:12px;font-weight:600;opacity:0.8;">${genTopSaat} saat</span></div>
                 </div>
             </div>`;
 
@@ -6110,16 +6111,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 <input id="hrKodInp_${s.sid}" type="text" value="${s.kod}"
                     placeholder="Lastik kodu"
                     oninput="hrKodSatirGuncelle(${s.sid},'kod',this.value.toUpperCase());this.value=this.value.toUpperCase();"
-                    class="filtre-input" style="flex:2;min-width:0;padding:5px 8px;font-size:12px;text-transform:uppercase;">
+                    class="filtre-input" style="flex:2;min-width:0;padding:5px 8px;font-size:12px;text-transform:uppercase;color:#fff;">
                 <input id="hrAdetInp_${s.sid}" type="number" value="${s.adet}"
                     placeholder="Adet" min="0"
                     oninput="hrKodSatirGuncelle(${s.sid},'adet',this.value)"
-                    class="filtre-input" style="flex:1;min-width:0;padding:5px 8px;font-size:12px;">
+                    class="filtre-input" style="flex:1;min-width:0;padding:5px 8px;font-size:12px;color:#fff;">
                 <select onchange="hrKodSatirGuncelle(${s.sid},'tur',this.value);hrKodSatirRender()"
-                    style="padding:5px 10px;border-radius:6px;border:1px solid ${turClr}33;background:${turBg};color:${turClr};font-family:'Inter',sans-serif;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;min-width:85px;outline:none;transition:all 0.15s;">
-                    <option value="" ${!s.tur?'selected':''}>± SEÇ</option>
-                    <option value="eksik" ${isEksik?'selected':''} style="color:#dc2626;background:#fff;">− EKSİK</option>
-                    <option value="fazla" ${isFazla?'selected':''} style="color:#16a34a;background:#fff;">+ FAZLA</option>
+                    style="padding:5px 12px;border-radius:8px;border:1px solid ${turClr}55;background:${turBg};color:${turClr};font-family:'Inter',sans-serif;font-size:12px;font-weight:700;cursor:pointer;min-width:90px;outline:none;transition:all 0.2s;appearance:none;-webkit-appearance:none;background-image:url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 12 8%22><path d=%22M1 1l5 5 5-5%22 stroke=%22%23888%22 stroke-width=%222%22 fill=%22none%22 stroke-linecap=%22round%22/></svg>');background-repeat:no-repeat;background-position:right 8px center;background-size:10px;padding-right:26px;">
+                    <option value="" ${!s.tur?'selected':''} style="background:#1C2B6E;color:#aaa;">± SEÇ</option>
+                    <option value="eksik" ${isEksik?'selected':''} style="background:#1C2B6E;color:#dc2626;">− EKSİK</option>
+                    <option value="fazla" ${isFazla?'selected':''} style="background:#1C2B6E;color:#16a34a;">+ FAZLA</option>
                 </select>
                 ${idx > 0 ? `<button onclick="hrKodSatirKaldir(${s.sid})" style="padding:5px 8px;border-radius:6px;border:1px solid rgba(163,177,198,0.35);background:transparent;color:var(--muted);font-size:13px;font-weight:700;cursor:pointer;line-height:1;">✕</button>` : ''}
             </div>`;
