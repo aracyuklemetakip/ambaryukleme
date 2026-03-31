@@ -823,6 +823,30 @@
 </head>
 <body>
 
+<!-- ══ SPLASH SCREEN ══ -->
+<div id="splashScreen" style="position:fixed;inset:0;z-index:99999;background:#1C2B6E;display:flex;align-items:center;justify-content:center;transition:opacity 1.2s ease;opacity:1;">
+    <img src="girislogo.png" alt="Logo" style="width:220px;max-width:70vw;object-fit:contain;animation:splashPulse 1.5s ease-in-out infinite;">
+</div>
+<style>
+@keyframes splashPulse {
+    0%,100% { opacity:0.85; transform:scale(1); }
+    50%      { opacity:1;    transform:scale(1.04); }
+}
+</style>
+<script>
+(function() {
+    // 3.5 saniye bekle, sonra yumuşak kaybol
+    setTimeout(function() {
+        var s = document.getElementById('splashScreen');
+        if (!s) return;
+        s.style.opacity = '0';
+        setTimeout(function() {
+            s.style.display = 'none';
+        }, 1200);
+    }, 3500);
+})();
+</script>
+
 <!-- ══ GİRİŞ EKRANI ══ -->
 <style>
 #loginScreen {
