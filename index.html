@@ -1207,8 +1207,8 @@
         <!-- Sağ sarı dolgu -->
         <path d="M700 0 C700 0 560 60 510 220 C460 380 530 490 470 640 C410 790 260 900 160 900 L700 900 Z" fill="rgba(250,204,21,0.55)"/>
         <path d="M700 0 C700 0 630 50 600 180 C570 310 620 420 580 560 C540 700 440 800 390 900 L700 900 Z" fill="rgba(250,204,21,0.32)"/>
-        <path d="M700 0 C700 0 540 70 480 250 C420 430 500 540 430 690 C360 840 190 900 80 900 L700 900 Z" fill="url(#swFillGrad)"/>
-        <path d="M700 0 C700 0 540 70 480 250 C420 430 500 540 430 690 C360 840 190 900 80 900" fill="none" stroke="url(#swStrokeGrad)" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="M700 0 C700 0 540 70 480 250 C420 430 500 540 430 690 C360 840 190 900 350 900 L700 900 Z" fill="url(#swFillGrad)"/>
+        <path d="M700 0 C700 0 540 70 480 250 C420 430 500 540 430 690 C360 840 190 900 350 900" fill="none" stroke="url(#swStrokeGrad)" stroke-width="2.5" stroke-linecap="round"/>
     </svg>
     <div class="splash-logo-wrap">
         <img src="logo.png" alt="Logo" draggable="false">
@@ -1806,7 +1806,7 @@
                                 </div>
                                 <div class="filtre-group">
                                     <div class="filtre-label">Ay Seçimi</div>
-                                    <select id="kAy" class="filtre-input" style="width:100%;cursor:pointer;">
+                                    <select id="kAy" class="filtre-input" style="width:100%;cursor:pointer;color:#0F172A;background:#fff;">
                                         <option value="">Tüm Yıl</option>
                                         <option value="1">Ocak</option><option value="2">Şubat</option>
                                         <option value="3">Mart</option><option value="4">Nisan</option>
@@ -1885,11 +1885,11 @@
                                 </div>
                             </div>
                             <div class="filtre-group">
-                                <div class="filtre-label">Ad Soyad</div>
-                                <input type="text" id="yeniPersonelAd" class="filtre-input" placeholder="Buraya giriniz"
-                                    style="width:100%;text-transform:uppercase;"
-                                    oninput="this.value=this.value.toUpperCase()">
-                            </div>
+            <div class="filtre-label">Ad Soyad</div>
+            <input type="text" id="yeniPersonelAd" class="filtre-input" placeholder="Buraya giriniz"
+                style="width:100%;text-transform:uppercase;"
+                oninput="this.value=window.trUpper(this.value)">
+        </div>
                             <div class="filtre-group">
                                 <div class="filtre-label">Sicil No</div>
                                 <input type="text" id="yeniPersonelSicil" class="filtre-input" placeholder="Buraya giriniz" style="width:100%;">
@@ -1916,7 +1916,7 @@
                                 <div class="filtre-label">Ad Soyad</div>
                                 <input type="text" id="guncelPersonelAd" class="filtre-input" placeholder=""
                                     style="width:100%;text-transform:uppercase;background:#F9FAFB;"
-                                    oninput="this.value=this.value.toUpperCase()">
+                                    oninput="this.value=window.trUpper(this.value)">
                             </div>
                             <div class="filtre-group">
                                 <div class="filtre-label">Sicil No</div>
@@ -1962,7 +1962,7 @@
                         <input type="text" id="personelModalAra" class="filtre-input"
                             placeholder="🔍  İsim veya sicil ara..."
                             style="width:100%;padding-left:14px;font-size:13px;color:#1C2B6E;background:#f3f4f6;border:1px solid #d1d5db;"
-                            oninput="personelModalFiltre(this.value)" autocomplete="off">
+                            oninput="this.value=window.trUpper(this.value);personelModalFiltre(this.value)" autocomplete="off">
                     </div>
                     <!-- Liste -->
                     <div id="personelModalListe" style="overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:4px;">
@@ -2242,6 +2242,17 @@
         return localDate.toISOString().split('T')[0];
     };
 
+    window.trUpper = function(str) {
+        if (!str) return "";
+        return str.replace(/i/g, "İ").replace(/ı/g, "I").toUpperCase();
+    };
+
+    window.trSort = function(a, b, key) {
+        const valA = key ? (a[key] || "") : (a || "");
+        const valB = key ? (b[key] || "") : (b || "");
+        return valA.localeCompare(valB, "tr");
+    };
+
     // ── SPLASH SCREEN ────────────────────────────────────
     function showSplash(onComplete) {
         const el = document.getElementById('splashOverlay');
@@ -2342,10 +2353,10 @@
         try {
             const { collection, getDocs, db } = window._fb;
             const snap = await getDocs(collection(db, 'personel'));
-            personelListesi = snap.docs.map(d => d.data()).sort((a,b) => a.ad.localeCompare(b.ad,'tr'));
+            personelListesi = snap.docs.map(d => d.data()).sort((a,b) => window.trSort(a, b, 'ad'));
         } catch(e) {
             // Firestore henüz boşsa sabit listeyle başla
-            personelListesi = BASLANGIC_PERSONEL.slice();
+            personelListesi = BASLANGIC_PERSONEL.slice().sort((a,b) => window.trSort(a, b, 'ad'));
         }
         personelListeRender();
     }
@@ -2411,9 +2422,9 @@
                 for (const p of BASLANGIC_PERSONEL) {
                     await setDoc(doc(db, 'personel', p.sicil), p);
                 }
-                personelListesi = BASLANGIC_PERSONEL.slice();
+                personelListesi = BASLANGIC_PERSONEL.slice().sort((a,b) => window.trSort(a, b, 'ad'));
             } else {
-                personelListesi = snap.docs.map(d => d.data()).sort((a,b) => a.ad.localeCompare(b.ad,'tr'));
+                personelListesi = snap.docs.map(d => d.data()).sort((a,b) => window.trSort(a, b, 'ad'));
             }
         } catch(e) {
             personelListesi = BASLANGIC_PERSONEL.slice();
@@ -2641,10 +2652,10 @@
 
     function personelModalFiltre(aramaStr) {
         const liste = document.getElementById('personelModalListe');
-        const ara = aramaStr.toUpperCase();
+        const ara = window.trUpper(aramaStr);
         const filtreli = personelListesi.filter(p =>
-            p.ad.toUpperCase().includes(ara) || p.sicil.toUpperCase().includes(ara)
-        );
+            window.trUpper(p.ad).includes(ara) || window.trUpper(p.sicil).includes(ara)
+        ).sort((a,b) => window.trSort(a, b, 'ad'));
         if (!filtreli.length) {
             liste.innerHTML = '<div style="text-align:center;padding:24px;color:var(--muted);font-size:13px;">Sonuç yok</div>';
             return;
