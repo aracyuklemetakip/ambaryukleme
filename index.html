@@ -721,23 +721,23 @@
         #ekipDropdown::-webkit-scrollbar-thumb { background:#E5E7EB; border-radius:4px; }
 
         .vardiya-dashboards { display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px; }
-        .vd-panel { background:#fff;border:1px solid #E5E7EB;border-radius:8px;padding:14px 16px;position:relative;overflow:hidden; }
+        .vd-panel { background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.10);border-radius:8px;padding:14px 16px;position:relative;overflow:hidden; }
         .vd-panel > * { position:relative;z-index:1; }
         .vd-a { border-left:3px solid #F0B323; }
-        .vd-b { border-left:3px solid #1C2B6E; }
+        .vd-b { border-left:3px solid #60a5fa; }
         .vd-baslik { display:flex;align-items:center;gap:8px;margin-bottom:10px; }
         .vd-baslik-text { font-family:'Inter',sans-serif;font-size:14px;font-weight:700; }
-        .vd-a .vd-baslik-text { color:#92400e; }
-        .vd-b .vd-baslik-text { color:#1C2B6E; }
+        .vd-a .vd-baslik-text { color:#F0B323; }
+        .vd-b .vd-baslik-text { color:#93C5FD; }
         .vd-kartlar { display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px; }
-        .vd-kart { background:#F9FAFB;border:1px solid #E5E7EB;border-radius:6px;padding:8px 4px;text-align:center; }
+        .vd-kart { background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:8px 4px;text-align:center; }
         .vd-kart-num { font-family:'Inter',sans-serif;font-size:18px;font-weight:800;line-height:1; }
-        .vd-kart-lbl { font-size:8px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;color:#9CA3AF;margin-top:2px; }
+        .vd-kart-lbl { font-size:8px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;color:rgba(255,255,255,0.45);margin-top:2px; }
         .vd-toplam { display:flex;gap:6px;margin-top:4px; }
-        .vd-toplam-item { flex:1;background:#F9FAFB;border:1px solid #E5E7EB;border-radius:6px;padding:6px 4px;text-align:center; }
+        .vd-toplam-item { flex:1;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:6px 4px;text-align:center; }
 
         @keyframes pulseRed { 0%,100%{opacity:1} 50%{opacity:0.45} }
-        .donem-badge { display:inline-flex;align-items:center;gap:8px;background:#FFFBEB;border:1px solid #FDE68A;border-radius:100px;padding:5px 14px;font-size:12px;font-weight:700;color:#92400e;margin-bottom:14px; }
+        .donem-badge { display:inline-flex;align-items:center;gap:8px;background:rgba(240,179,35,0.12);border:1px solid rgba(240,179,35,0.35);border-radius:100px;padding:5px 14px;font-size:12px;font-weight:700;color:#F0B323;margin-bottom:14px; }
 
         /* ══════════════════════════════════════
            SPLASH SCREEN
@@ -3733,25 +3733,25 @@
                 </div>
                 <div class="vd-kartlar">
                     <div class="vd-kart">
-                        <div class="vd-kart-num" style="color:#92660a;background:rgba(253,230,138,0.4);border-radius:8px;padding:4px 8px;">${fmt(s.tir)}</div>
+                        <div class="vd-kart-num" style="color:#FCD34D;background:rgba(240,179,35,0.2);border-radius:8px;padding:4px 8px;">${fmt(s.tir)}</div>
                         <div class="vd-kart-lbl">Tır</div>
                     </div>
                     <div class="vd-kart">
-                        <div class="vd-kart-num" style="color:#1e4d8c;background:rgba(147,197,253,0.4);border-radius:8px;padding:4px 8px;">${fmt(s.kamyon)}</div>
+                        <div class="vd-kart-num" style="color:#93C5FD;background:rgba(59,130,246,0.2);border-radius:8px;padding:4px 8px;">${fmt(s.kamyon)}</div>
                         <div class="vd-kart-lbl">Kamyon</div>
                     </div>
                     <div class="vd-kart">
-                        <div class="vd-kart-num" style="color:#475569;background:rgba(203,213,225,0.5);border-radius:8px;padding:4px 8px;">${fmt(s.konteyner)}</div>
+                        <div class="vd-kart-num" style="color:#CBD5E1;background:rgba(148,163,184,0.2);border-radius:8px;padding:4px 8px;">${fmt(s.konteyner)}</div>
                         <div class="vd-kart-lbl">Konteyner</div>
                     </div>
                 </div>
                 <div class="vd-toplam">
                     <div class="vd-toplam-item">
-                        <div class="vd-kart-num" style="color:#b91c1c;font-size:22px;background:rgba(254,202,202,0.4);border-radius:8px;padding:4px 10px;">${fmt(s.toplam)}</div>
+                        <div class="vd-kart-num" style="color:#fca5a5;font-size:22px;background:rgba(239,68,68,0.2);border-radius:8px;padding:4px 10px;">${fmt(s.toplam)}</div>
                         <div class="vd-kart-lbl">Toplam Araç</div>
                     </div>
                     <div class="vd-toplam-item">
-                        <div class="vd-kart-num" style="color:var(--success);font-size:22px;">${fmtM3(s.m3)}</div>
+                        <div class="vd-kart-num" style="color:#6ee7b7;font-size:22px;">${fmtM3(s.m3)}</div>
                         <div class="vd-kart-lbl">Toplam M³</div>
                     </div>
                 </div>
@@ -3770,14 +3770,14 @@
             <!-- Genel toplam -->
             <div class="vd-panel" style="border-color:rgba(255,255,255,0.12);">
                 <div class="vd-baslik">
-                    <div class="vd-baslik-text" style="color:var(--text);">Genel Toplam</div>
+                    <div class="vd-baslik-text" style="color:rgba(255,255,255,0.9);">Genel Toplam</div>
                 </div>
                 <div class="vd-kartlar" style="grid-template-columns:repeat(5,1fr);">
-                    <div class="vd-kart"><div class="vd-kart-num" style="color:#92660a;background:rgba(253,230,138,0.4);border-radius:8px;padding:4px 8px;">${sT.tir||'<span style="color:var(--muted);font-size:18px;">—</span>'}</div><div class="vd-kart-lbl">Tır</div></div>
-                    <div class="vd-kart"><div class="vd-kart-num" style="color:#1e4d8c;background:rgba(147,197,253,0.4);border-radius:8px;padding:4px 8px;">${sT.kamyon||'<span style="color:var(--muted);font-size:18px;">—</span>'}</div><div class="vd-kart-lbl">Kamyon</div></div>
-                    <div class="vd-kart"><div class="vd-kart-num" style="color:#475569;background:rgba(203,213,225,0.5);border-radius:8px;padding:4px 8px;">${sT.konteyner||'<span style="color:var(--muted);font-size:18px;">—</span>'}</div><div class="vd-kart-lbl">Konteyner</div></div>
-                    <div class="vd-kart"><div class="vd-kart-num" style="color:#b91c1c;background:rgba(254,202,202,0.4);border-radius:8px;padding:4px 8px;animation:pulseRed 2.5s ease-in-out infinite">${sT.toplam||'<span style="color:var(--muted);font-size:18px;animation:none">—</span>'}</div><div class="vd-kart-lbl">Toplam Araç</div></div>
-                    <div class="vd-kart"><div class="vd-kart-num" style="color:var(--success);font-size:22px;">${sT.m3>0?sT.m3.toFixed(1):'<span style="color:var(--muted);font-size:18px;">—</span>'}</div><div class="vd-kart-lbl">Toplam M³</div></div>
+                    <div class="vd-kart"><div class="vd-kart-num" style="color:#FCD34D;background:rgba(240,179,35,0.2);border-radius:8px;padding:4px 8px;">${sT.tir||'<span style="color:rgba(255,255,255,0.25);font-size:18px;">—</span>'}</div><div class="vd-kart-lbl">Tır</div></div>
+                    <div class="vd-kart"><div class="vd-kart-num" style="color:#93C5FD;background:rgba(59,130,246,0.2);border-radius:8px;padding:4px 8px;">${sT.kamyon||'<span style="color:rgba(255,255,255,0.25);font-size:18px;">—</span>'}</div><div class="vd-kart-lbl">Kamyon</div></div>
+                    <div class="vd-kart"><div class="vd-kart-num" style="color:#CBD5E1;background:rgba(148,163,184,0.2);border-radius:8px;padding:4px 8px;">${sT.konteyner||'<span style="color:rgba(255,255,255,0.25);font-size:18px;">—</span>'}</div><div class="vd-kart-lbl">Konteyner</div></div>
+                    <div class="vd-kart"><div class="vd-kart-num" style="color:#fca5a5;background:rgba(239,68,68,0.2);border-radius:8px;padding:4px 8px;animation:pulseRed 2.5s ease-in-out infinite">${sT.toplam||'<span style="color:rgba(255,255,255,0.25);font-size:18px;animation:none">—</span>'}</div><div class="vd-kart-lbl">Toplam Araç</div></div>
+                    <div class="vd-kart"><div class="vd-kart-num" style="color:#6ee7b7;font-size:22px;">${sT.m3>0?sT.m3.toFixed(1):'<span style="color:rgba(255,255,255,0.25);font-size:18px;">—</span>'}</div><div class="vd-kart-lbl">Toplam M³</div></div>
                 </div>
             </div>`;
 
