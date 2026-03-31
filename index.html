@@ -1204,11 +1204,11 @@
         <!-- Sol lacivert dolgu -->
         <path d="M0 0 C0 0 160 70 220 250 C280 430 200 540 270 690 C340 840 510 900 640 900 L0 900 Z" fill="rgba(15,30,90,0.88)"/>
         <path d="M0 0 C0 0 140 60 190 220 C240 380 170 490 230 640 C290 790 440 900 560 900 L0 900 Z" fill="rgba(15,30,90,0.60)"/>
-        <!-- Sağ sarı dolgu -->
-        <path d="M700 0 C700 0 660 60 640 220 C620 380 650 490 630 640 C610 790 580 900 550 900 L700 900 Z" fill="rgba(250,204,21,0.55)"/>
-        <path d="M700 0 C700 0 680 50 670 180 C660 310 680 420 670 560 C660 700 640 800 620 900 L700 900 Z" fill="rgba(250,204,21,0.32)"/>
-        <path d="M700 0 C700 0 670 70 650 250 C630 430 660 540 640 690 C620 840 600 900 580 900 L700 900 Z" fill="url(#swFillGrad)"/>
-        <path d="M700 0 C700 0 670 70 650 250 C630 430 660 540 640 690 C620 840 600 900 580 900" fill="none" stroke="url(#swStrokeGrad)" stroke-width="2.5" stroke-linecap="round"/>
+        <!-- Sağ sarı dolgu (Maksimum Dar) -->
+        <path d="M700 0 C700 0 698 60 696 220 C694 380 698 490 696 640 C694 790 692 900 690 900 L700 900 Z" fill="rgba(250,204,21,0.55)"/>
+        <path d="M700 0 C700 0 699 50 698 180 C697 310 699 420 698 560 C697 700 696 800 695 900 L700 900 Z" fill="rgba(250,204,21,0.32)"/>
+        <path d="M700 0 C700 0 698 70 697 250 C696 430 698 540 697 690 C696 840 695 900 694 900 L700 900 Z" fill="url(#swFillGrad)"/>
+        <path d="M700 0 C700 0 698 70 697 250 C696 430 698 540 697 690 C696 840 695 900 694 900" fill="none" stroke="url(#swStrokeGrad)" stroke-width="2.5" stroke-linecap="round"/>
     </svg>
     <div class="splash-logo-wrap">
         <img src="logo.png" alt="Logo" draggable="false">
@@ -2499,8 +2499,11 @@
     }
 
     function personelListeRender() {
-        const filtre = (document.getElementById('personelAra')?.value || '').toUpperCase();
-        const liste = personelListesi.filter(p => p.ad.includes(filtre) || p.sicil.includes(filtre));
+        const input = document.getElementById('personelAra');
+        const filtre = window.trUpper(input ? input.value : '');
+        const liste = personelListesi.filter(p => 
+            window.trUpper(p.ad).startsWith(filtre) || p.sicil.startsWith(filtre)
+        ).sort((a,b) => window.trSort(a, b, 'ad'));
         const tbody = document.getElementById('personelTableBody');
         const empty = document.getElementById('personelEmptyState');
         const sayac = document.getElementById('personelSayac');
@@ -2509,7 +2512,7 @@
         if (ddn) {
             const currentVal = ddn.value;
             ddn.innerHTML = '<option value="">— Personel Seç —</option>' + 
-                personelListesi.map(p => `<option value="${p.sicil}" ${p.sicil === currentVal ? 'selected' : ''}>${p.ad} (${p.sicil})</option>`).join('');
+                personelListesi.slice().sort((a,b) => window.trSort(a, b, 'ad')).map(p => `<option value="${p.sicil}" ${p.sicil === currentVal ? 'selected' : ''}>${p.ad} (${p.sicil})</option>`).join('');
         }
 
         if (!tbody) return;
@@ -2529,6 +2532,7 @@
             return `
             <tr id="personelRow_${p.sicil}" style="background:${rowBg};border-bottom:1px solid #F3F4F6;">
                 <td style="padding:8px 10px;color:var(--muted);font-size:11px;">${i+1}</td>
+                <td style="padding:8px 10px;color:#2563eb;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;">${p.ad}</td>
                 <td style="padding:8px 10px;color:#2563eb;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;">${p.sicil}</td>
                 <td style="padding:8px 10px;">${tipLabel}</td>
                 <td style="padding:8px 10px;display:flex;gap:6px;align-items:center;">
@@ -2763,12 +2767,13 @@
     let _fkDropdownIdx = -1;
 
     function forkliftciAutocomplete(input) {
-        const val = input.value.toUpperCase();
+        const val = window.trUpper(input.value);
         input.value = val;
         const dd = document.getElementById('forkliftciDropdown');
         if (!val.trim()) { dd.style.display='none'; _fkDropdownIdx=-1; return; }
 
-        const eslesen = personelListesi.filter(p => turkceNormalize(p.ad).includes(turkceNormalize(val)));
+        const eslesen = personelListesi.filter(p => window.trUpper(p.ad).startsWith(val))
+            .sort((a,b) => window.trSort(a, b, 'ad'));
         if (eslesen.length === 0) { dd.style.display='none'; _fkDropdownIdx=-1; return; }
 
         const adSayisi = {};
@@ -5508,14 +5513,14 @@
 
     function df6EkipAutocomplete(input) {
         const dd = document.getElementById('df6EkipDropdown');
-        // Son virgülden sonraki kısmı al
-        const parts = input.value.split(',');
-        const val = parts[parts.length - 1].trim().toUpperCase();
-        if (!val) { dd.style.display = 'none'; _df6EkipDropIdx = -1; return; }
+        const val = window.trUpper(input.value);
+        input.value = val;
+        if (!val.trim()) { dd.style.display = 'none'; _df6EkipDropIdx = -1; return; }
+
         const eslesen = personelListesi.filter(p =>
-            turkceNormalize(p.ad).includes(turkceNormalize(val)) &&
+            window.trUpper(p.ad).startsWith(val) &&
             !df6EkipListesi.includes(p.ad)
-        );
+        ).sort((a,b) => window.trSort(a, b, 'ad'));
         if (!eslesen.length) { dd.style.display = 'none'; return; }
         dd.innerHTML = eslesen.map((p, i) => `
             <div class="ac-item" data-idx="${i}" data-ad="${p.ad}"
@@ -5551,9 +5556,9 @@
             }
             // Dropdown kapalıysa veya seçim yoksa — mevcut input değerini direkt tag yap
             const inp = document.getElementById('df6EkipInput');
-            const val = inp.value.trim().toUpperCase();
+            const val = window.trUpper(inp.value.trim());
             if (val) {
-                const eslesen = personelListesi.find(p => turkceNormalize(p.ad) === turkceNormalize(val));
+                const eslesen = personelListesi.find(p => window.trUpper(p.ad) === val);
                 const eklenecek = eslesen ? eslesen.ad : val;
                 if (!df6EkipListesi.includes(eklenecek)) { df6EkipListesi.push(eklenecek); df6EkipTagRender(); }
                 inp.value = '';
@@ -5572,9 +5577,11 @@
     // ── PERSONEL AUTOCOMPLETE ──
     function df6PersonelAutocomplete(input) {
         const dd = document.getElementById('df6PersonelDropdown');
-        const val = input.value.toUpperCase();
+        const val = window.trUpper(input.value);
+        input.value = val;
         if (!val.trim()) { dd.style.display='none'; _df6PerDropIdx=-1; return; }
-        const eslesen = personelListesi.filter(p => turkceNormalize(p.ad).includes(turkceNormalize(val)));
+        const eslesen = personelListesi.filter(p => window.trUpper(p.ad).startsWith(val))
+            .sort((a,b) => window.trSort(a, b, 'ad'));
         if (!eslesen.length) { dd.style.display='none'; return; }
         dd.innerHTML = eslesen.map((p,i) => `
             <div class="ac-item" data-idx="${i}" data-ad="${p.ad}"
