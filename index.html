@@ -80,10 +80,52 @@
             if (sefName) sefName.textContent = displayName;
             setAvatar(document.getElementById('sefUserAvatar'), photoURL);
 
-            // Her login'de anaSayfa'ya yönlendir — kullanıcı panel seçsin
-            try { sessionStorage.removeItem('aktifSayfa'); sessionStorage.removeItem('aktifSekme'); } catch(e) {}
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById('anaSayfa').classList.add('active');
+            // Yenileme mi yoksa yeni giriş mi?
+            try {
+              const savedPage = sessionStorage.getItem('aktifSayfa');
+              if (savedPage && document.getElementById(savedPage)) {
+                // Yenileme — aynı sayfada kal
+                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+                document.getElementById(savedPage).classList.add('active');
+                // Sekme restore
+                if (savedPage === 'sefSayfa') {
+                  setTimeout(() => {
+                    if (typeof sefTarihGoster === 'function') sefTarihGoster();
+                    try {
+                      const aktifSekme = sessionStorage.getItem('aktifSekme');
+                      if (aktifSekme && document.getElementById(aktifSekme)) {
+                        const secimler = { sekme1:0, sekme2:1, sekme4:2, sekme5:3, sekme6:4, sekme7:5 };
+                        const btnEl = document.querySelectorAll('.sef-sekme')[secimler[aktifSekme]];
+                        if (btnEl) {
+                          document.querySelectorAll('.sef-sekme').forEach(b => b.classList.remove('aktif'));
+                          document.querySelectorAll('.sef-sidebar-item').forEach(b => b.classList.remove('aktif'));
+                          document.querySelectorAll('.sekme-icerik').forEach(b => b.classList.remove('aktif'));
+                          btnEl.classList.add('aktif');
+                          document.querySelectorAll(`.sef-sidebar-item[data-sekme="${aktifSekme}"]`).forEach(b => b.classList.add('aktif'));
+                          document.getElementById(aktifSekme).classList.add('aktif');
+                          const k = document.getElementById('sekmeKarsilama');
+                          if (k) k.style.display = 'none';
+                          if (aktifSekme === 'sekme4' && typeof mesaiInit === 'function') setTimeout(mesaiInit, 200);
+                          if (aktifSekme === 'sekme6' && typeof df6Init === 'function') setTimeout(df6Init, 200);
+                        }
+                      }
+                    } catch(e2) {}
+                  }, 200);
+                } else if (savedPage === 'operatorSayfa') {
+                  setTimeout(() => {
+                    if (typeof tarihGoster === 'function') tarihGoster();
+                    if (typeof renderTablo === 'function') renderTablo();
+                  }, 100);
+                }
+              } else {
+                // Yeni giriş — anaSayfa'ya git, panel seçsin
+                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+                document.getElementById('anaSayfa').classList.add('active');
+              }
+            } catch(e) {
+              document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+              document.getElementById('anaSayfa').classList.add('active');
+            }
 
             window._fbLoadData();
           } else {
@@ -6145,8 +6187,8 @@ document.addEventListener('DOMContentLoaded', function() {
         setVal('hrYil', now.getFullYear());
         setVal('hrAralikBas', bugun);
         setVal('hrAralikBit', bugun);
-        // Başlangıçta 1 boş satır ekle
-        hrKodSatirEkle();
+        // Başlangıçta sadece liste boşsa 1 boş satır ekle
+        if (!hrKodSatirlari.length) hrKodSatirEkle();
         hrListele();
     }
 
