@@ -40,13 +40,6 @@
       window._fb = { auth, db, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged,
                      collection, doc, setDoc, deleteDoc, getDocs, getDoc, onSnapshot, query, orderBy, where, limit, startAfter };
 
-      window.getLocalISOString = function() {
-        const now = new Date();
-        const offset = now.getTimezoneOffset();
-        const localDate = new Date(now.getTime() - (offset * 60 * 1000));
-        return localDate.toISOString().split('T')[0];
-      };
-
       // ── Auth durumu izle ──
       // ── İzinli mail adresleri ──
       const IZINLI_MAILLER = [
@@ -2241,6 +2234,14 @@
 <div class="toast" id="toast"></div>
 
 <script>
+    // ── GLOBAL YARDIMCI FONKSİYONLAR ────────────────────────
+    window.getLocalISOString = function() {
+        const now = new Date();
+        const offset = now.getTimezoneOffset();
+        const localDate = new Date(now.getTime() - (offset * 60 * 1000));
+        return localDate.toISOString().split('T')[0];
+    };
+
     // ── SPLASH SCREEN ────────────────────────────────────
     function showSplash(onComplete) {
         const el = document.getElementById('splashOverlay');
@@ -2313,13 +2314,13 @@
     });
 
     document.addEventListener('keydown', function(e) {
-    if (e.code === 'Space' && e.target.classList.contains('seg-btn')) {
-        e.preventDefault();
-        e.target.click();
-    }
-});
+        if (e.code === 'Space' && e.target.classList.contains('seg-btn')) {
+            e.preventDefault();
+            e.target.click();
+        }
+    });
 
-// ── STATE ─────────────────────────────────────────────
+    // ── STATE ─────────────────────────────────────────────
     let secilenVardiya  = '';
     let secilenAracTipi = '';
     let secilenAracTuru = '';
@@ -2947,7 +2948,6 @@
             // Bir sonraki inputa odaklan
             const next = document.getElementById('m3');
             if (next) next.focus();
-        }
         }
     }
 
