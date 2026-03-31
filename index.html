@@ -1315,7 +1315,7 @@
 
             <div class="ana-sep">ya da</div>
 
-            <div class="ana-card card-yellow" onclick="showSplash(function(){ sifreModalAc(); })">
+            <div class="ana-card card-yellow" onclick="sifreModalAc()">
                 <div class="card-icon-wrap">
                     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <rect x="5" y="11" width="14" height="10" rx="2.5" fill="#d97706" opacity="0.9"/>
@@ -5663,7 +5663,8 @@
         y += 18;
 
         // ── DETAY TABLO ──
-        const durusStr = k => (k.duruslar||[]).filter(d=>d.sure).map(d=>d.sebep+'('+d.sure+'dk)').join(', ') || '—';
+        const trFixLocal = s => (s||'').replace(/Ç/g,'C').replace(/ç/g,'c').replace(/Ğ/g,'G').replace(/ğ/g,'g').replace(/İ/g,'I').replace(/ı/g,'i').replace(/Ö/g,'O').replace(/ö/g,'o').replace(/Ş/g,'S').replace(/ş/g,'s').replace(/Ü/g,'U').replace(/ü/g,'u');
+        const durusStr = k => (k.duruslar||[]).filter(d=>d.sure).map(d=>trFixLocal(d.sebep)+'('+d.sure+'dk)').join(', ') || '-';
         const tarihFmt = t => {
             const dt = new Date(t + 'T00:00:00');
             return String(dt.getDate()).padStart(2,'0') + '.' + String(dt.getMonth()+1).padStart(2,'0') + '.' + dt.getFullYear();
@@ -5673,15 +5674,15 @@
         const dataBody = r.liste.map((k, i) => [
             i + 1,
             tarihFmt(k.tarih),
-            k.aracTipi,
-            k.aracTuru,
-            k.m3 != null ? String(k.m3) : '—',
-            k.shipment || '—',
-            k.baslama + '-' + k.bitis,
+            trFixLocal(k.aracTipi) || '-',
+            k.aracTuru || '-',
+            k.m3 != null ? String(k.m3) : '-',
+            k.shipment || '-',
+            (k.baslama||'') + '-' + (k.bitis||''),
             k.gec ? 'Gecikti' : 'Uygun',
-            k.kaliteci || '—',
+            trFixLocal(k.kaliteci) || '-',
             durusStr(k),
-            k.aciklama || '—'
+            trFixLocal(k.aciklama) || '-'
         ]);
 
         doc.autoTable({
@@ -5699,24 +5700,25 @@
             },
             bodyStyles: {
                 fontSize: 7,
-                cellPadding: { top: 1.8, bottom: 1.8, left: 2, right: 2 },
+                cellPadding: { top: 2.5, bottom: 2.5, left: 2, right: 2 },
                 lineColor: [210, 218, 235],
                 lineWidth: 0.15,
                 valign: 'middle',
+                overflow: 'linebreak',
             },
             alternateRowStyles: { fillColor: [246, 248, 255] },
             columnStyles: {
-                0: { halign: 'center', cellWidth: 7 },
-                1: { cellWidth: 20, halign: 'center' },
-                2: { cellWidth: 22 },
-                3: { cellWidth: 13, halign: 'center' },
-                4: { cellWidth: 12, halign: 'center' },
-                5: { cellWidth: 28 },
-                6: { cellWidth: 22, halign: 'center' },
-                7: { cellWidth: 18, halign: 'center' },
-                8: { cellWidth: 26 },
-                9: { cellWidth: 42 },
-                10: { cellWidth: 'auto' },
+                0: { halign: 'center', cellWidth: 6 },
+                1: { cellWidth: 18, halign: 'center' },
+                2: { cellWidth: 18, halign: 'center' },
+                3: { cellWidth: 12, halign: 'center' },
+                4: { cellWidth: 10, halign: 'center' },
+                5: { cellWidth: 22 },
+                6: { cellWidth: 20, halign: 'center' },
+                7: { cellWidth: 14, halign: 'center' },
+                8: { cellWidth: 22 },
+                9: { cellWidth: 55, overflow: 'linebreak' },
+                10: { cellWidth: 'auto', overflow: 'linebreak' },
             },
             didParseCell: (data) => {
                 // Satır rengi: Gecikti = açık kırmızı, Uygun = açık yeşil
@@ -5737,13 +5739,69 @@
             margin: { left: MARGIN, right: MARGIN },
         });
 
+        // ── AYLIK ÖZET (son sayfaya ekle) ──
+        {
+            const AYLAR_TR = ['Ocak','Subat','Mart','Nisan','Mayis','Haziran','Temmuz','Agustos','Eylul','Ekim','Kasim','Aralik'];
+            // Tüm liste aylarına göre grupla
+            const ayGrup = {};
+            r.liste.forEach(k => {
+                const dt = new Date(k.tarih + 'T00:00:00');
+                const key = dt.getFullYear() + '-' + String(dt.getMonth()+1).padStart(2,'0');
+                const lbl = AYLAR_TR[dt.getMonth()] + ' ' + dt.getFullYear();
+                if (!ayGrup[key]) ayGrup[key] = { lbl, tir:0, kamyon:0, konteyner:0, toplam:0 };
+                if (k.aracTipi==='Tır') ayGrup[key].tir++;
+                else if (k.aracTipi==='Kamyon') ayGrup[key].kamyon++;
+                else ayGrup[key].konteyner++;
+                ayGrup[key].toplam++;
+            });
+            const aylar = Object.keys(ayGrup).sort().map(k => ayGrup[k]);
+            if (aylar.length > 0) {
+                // Son sayfaya ekle, yer varsa, yoksa yeni sayfa
+                const lastPage = doc.internal.getNumberOfPages();
+                doc.setPage(lastPage);
+                const finalY = doc.lastAutoTable ? doc.lastAutoTable.finalY : 0;
+                let oy = finalY + 10;
+                if (oy > 185) { doc.addPage('a4', 'landscape'); oy = 14; }
+
+                doc.setFontSize(8); doc.setFont('helvetica','bold'); doc.setTextColor(37,99,235);
+                doc.text('AYLIK OZET', MARGIN, oy); oy += 5;
+
+                // Yanyana grupla (3 sütun halinde)
+                const cols3 = 3;
+                const cw = (tableW) / cols3;
+                aylar.forEach((a, idx) => {
+                    const col = idx % cols3;
+                    const row = Math.floor(idx / cols3);
+                    const ox = MARGIN + col * cw;
+                    const rowH2 = 9;
+                    const ry = oy + row * rowH2;
+                    // arka plan
+                    doc.setFillColor(idx%2===0?245:240, idx%2===0?247:244, 255);
+                    doc.rect(ox, ry, cw-2, rowH2-1, 'F');
+                    doc.setDrawColor(210,218,235); doc.setLineWidth(0.15);
+                    doc.rect(ox, ry, cw-2, rowH2-1, 'S');
+                    // ay etiketi
+                    doc.setFont('helvetica','bold'); doc.setFontSize(7); doc.setTextColor(30,58,138);
+                    doc.text(a.lbl, ox+2, ry+3.8);
+                    // sayılar
+                    const parts = [];
+                    if(a.tir>0) parts.push(a.tir+' Tir');
+                    if(a.kamyon>0) parts.push(a.kamyon+' Kamyon');
+                    if(a.konteyner>0) parts.push(a.konteyner+' Konteyner');
+                    parts.push('Toplam: '+a.toplam);
+                    doc.setFont('helvetica','normal'); doc.setFontSize(6.5); doc.setTextColor(60,80,120);
+                    doc.text(parts.join('  |  '), ox+2, ry+7);
+                });
+            }
+        }
+
         // Alt bilgi
         const pc = doc.internal.getNumberOfPages();
         for (let i = 1; i <= pc; i++) {
             doc.setPage(i);
             doc.setFontSize(7); doc.setFont('helvetica','normal'); doc.setTextColor(150);
             doc.text(
-                'Sayfa ' + i + '/' + pc + '  ·  Ambar Yönetim Sistemi  ·  ' + new Date().toLocaleDateString('tr-TR'),
+                'Sayfa ' + i + '/' + pc + '  ·  Ambar Yonetim Sistemi  ·  ' + new Date().toLocaleDateString('tr-TR'),
                 W/2, 206, { align: 'center' }
             );
         }
@@ -5839,7 +5897,7 @@ async function sifreKontrol() {
         yukEl.style.display = 'none';
         if (snap.exists() && snap.data().sifre === girilen) {
             sifreModalKapat();
-            showSayfa('sefSayfa');
+            showSplash(function(){ showSayfa('sefSayfa'); });
         } else {
             hataEl.style.display = 'block';
             const inp = document.getElementById('sifreInput');
