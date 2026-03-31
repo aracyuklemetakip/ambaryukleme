@@ -20,7 +20,7 @@
       import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
       import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged }
         from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
-      import { getFirestore, collection, doc, setDoc, deleteDoc, getDocs, getDoc, onSnapshot, query, orderBy }
+      import { getFirestore, collection, doc, setDoc, deleteDoc, getDocs, getDoc, onSnapshot, query, orderBy, where, limit, startAfter }
         from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
 
       const firebaseConfig = {
@@ -38,7 +38,7 @@
 
       // ── Global erişim ──
       window._fb = { auth, db, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged,
-                     collection, doc, setDoc, deleteDoc, getDocs, getDoc, onSnapshot, query, orderBy };
+                     collection, doc, setDoc, deleteDoc, getDocs, getDoc, onSnapshot, query, orderBy, where, limit, startAfter };
 
       // ── Auth durumu izle ──
       // ── İzinli mail adresleri ──
@@ -112,8 +112,9 @@
                     } catch(e2) {}
                   }, 200);
                 } else if (savedPage === 'operatorSayfa') {
-                  setTimeout(() => {
+                  setTimeout(async () => {
                     if (typeof tarihGoster === 'function') tarihGoster();
+                    if (window._fbKayitGunlukCek) await window._fbKayitGunlukCek();
                     if (typeof renderTablo === 'function') renderTablo();
                   }, 100);
                 }
@@ -164,31 +165,78 @@
         showToast('👋 Çıkış yapıldı', 'warn');
       };
 
-      // ── Firestore: veri yükle ──
+      // ── Firestore: başlangıç yükle (sadece mesai + personel; ambar_kayitlar sayfa bazlı çekilir) ──
       window._fbLoadData = async function() {
         const { collection, getDocs, db } = window._fb;
         try {
-          const snap1 = await getDocs(collection(db, 'ambar_kayitlar'));
-          kayitlar = snap1.docs.map(d => d.data());
-          renderTablo();
-
+          // Mesai verisini yükle (az veri, tümü çekilebilir)
           const snap2 = await getDocs(collection(db, 'mesaiDB'));
           mesaiDB = snap2.docs.map(d => d.data());
-          mesaiRenderTablo();
-          showToast('☁️ Veriler yüklendi', 'success');
 
           // Personel listesi
           setTimeout(async () => {
             if (typeof personelIlkYukle === 'function') await personelIlkYukle();
           }, 100);
 
-          // sefSayfa'daysa sekme restore et
-          if (window._pendingSayfa === 'sefSayfa' && typeof sefTarihGoster === 'function') {
-            setTimeout(function() { sefTarihGoster(); }, 100);
+          // Operatör sayfasındaysa bugünün kayıtlarını çek
+          const savedPage = sessionStorage.getItem('aktifSayfa');
+          if (!savedPage || savedPage === 'operatorSayfa') {
+            await window._fbKayitGunlukCek();
+          } else if (savedPage === 'sefSayfa') {
+            // Şef sayfası kendi sorgularını yapacak
+            mesaiRenderTablo();
+            if (typeof sefTarihGoster === 'function') setTimeout(sefTarihGoster, 200);
           }
+
+          showToast('☁️ Veriler yüklendi', 'success');
         } catch(e) {
           console.error('Firestore yükleme hatası:', e);
           showToast('⚠️ Firestore erişim hatası', 'warn');
+        }
+      };
+
+      // ── Operatör sayfası: belirli bir günün kayıtlarını çek ──
+      window._fbKayitGunlukCek = async function(tarih) {
+        const { collection, getDocs, query, where, db } = window._fb;
+        const today = new Date().toISOString().split('T')[0];
+        const hedefTarih = tarih || document.getElementById('secilenTarih')?.value || today;
+        try {
+          const q = query(collection(db, 'ambar_kayitlar'), where('tarih', '==', hedefTarih));
+          const snap = await getDocs(q);
+          const gunKayitlari = snap.docs.map(d => d.data());
+          // kayitlar dizisinde bu günün kayıtlarını güncelle (diğer günler kalabilir kısa süre)
+          kayitlar = kayitlar.filter(k => k.tarih !== hedefTarih).concat(gunKayitlari);
+          if (typeof renderTablo === 'function') renderTablo();
+        } catch(e) {
+          console.error('Günlük kayıt çekme hatası:', e);
+        }
+      };
+
+      // ── Şef sekmesi: tarih aralığı için kayıtları çek ──
+      window._fbKayitAralikCek = async function(bas, bit) {
+        const { collection, getDocs, query, where, orderBy, db } = window._fb;
+        try {
+          const q = query(
+            collection(db, 'ambar_kayitlar'),
+            where('tarih', '>=', bas),
+            where('tarih', '<=', bit),
+            orderBy('tarih', 'asc')
+          );
+          const snap = await getDocs(q);
+          return snap.docs.map(d => d.data());
+        } catch(e) {
+          console.error('Aralık kayıt çekme hatası:', e);
+          // Firestore composite index henüz oluşturulmamış olabilir
+          // Fallback: tüm koleksiyonu çek, client'ta filtrele
+          try {
+            const { collection, getDocs, db } = window._fb;
+            const snap = await getDocs(collection(db, 'ambar_kayitlar'));
+            const all = snap.docs.map(d => d.data());
+            return all.filter(k => k.tarih >= bas && k.tarih <= bit);
+          } catch(e2) {
+            console.error('Fallback da başarısız:', e2);
+            return [];
+          }
         }
       };
 
@@ -861,6 +909,7 @@
         .logo-pattern-scatter {
             display:none;
         }
+        @keyframes spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
 </style>
 </head>
 <body>
@@ -1351,7 +1400,7 @@
             </div>
             <div style="display:flex;align-items:center;justify-content:flex-end;gap:8px;">
                 <button onclick="tarihDegistir(-1)" style="width:24px;height:24px;border-radius:6px;border:1px solid rgba(0,0,0,0.2);background:rgba(0,0,0,0.10);color:#1C2B6E;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;">‹</button>
-                <input type="date" id="secilenTarih" style="background:rgba(0,0,0,0.08);border:1px solid rgba(0,0,0,0.2);border-radius:6px;color:#1C2B6E;font-family:'Inter',sans-serif;font-size:11px;font-weight:700;padding:2px 6px;outline:none;cursor:pointer;" onchange="renderTablo()">
+                <input type="date" id="secilenTarih" style="background:rgba(0,0,0,0.08);border:1px solid rgba(0,0,0,0.2);border-radius:6px;color:#1C2B6E;font-family:'Inter',sans-serif;font-size:11px;font-weight:700;padding:2px 6px;outline:none;cursor:pointer;" onchange="tarihDegisince()">
                 <button onclick="tarihDegistir(1)" style="width:24px;height:24px;border-radius:6px;border:1px solid rgba(0,0,0,0.2);background:rgba(0,0,0,0.10);color:#1C2B6E;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;">›</button>
                 <div id="userInfoBar" style="display:flex;align-items:center;gap:6px;background:rgba(0,0,0,0.10);border:1px solid rgba(0,0,0,0.18);border-radius:6px;padding:3px 8px;">
                     <img id="userAvatar" src="" width="24" height="24" referrerpolicy="no-referrer" style="border-radius:50%;object-fit:cover;border:1px solid rgba(163,177,198,0.5);flex-shrink:0;display:none;">
@@ -2199,7 +2248,7 @@
         document.getElementById(id).classList.add('active');
         if (id === 'operatorSayfa') {
             tarihGoster();
-            renderTablo();
+            tarihDegisince();
             setTimeout(() => {
                 document.querySelector('#segVardiya .seg-btn').focus();
             }, 100);
@@ -2830,12 +2879,12 @@
         const dt  = new Date(el.value);
         dt.setDate(dt.getDate() + gun);
         el.value  = dt.toISOString().split('T')[0];
-        renderTablo();
+        tarihDegisince();
     }
 
     function buguneGit() {
         document.getElementById('secilenTarih').value = new Date().toISOString().split('T')[0];
-        renderTablo();
+        tarihDegisince();
     }
 
     // ── VARDİYA ───────────────────────────────────────────
@@ -3170,19 +3219,32 @@
 
     // ── SHİPMENT ÖNERİ ────────────────────────────────────
     function sonShipmentleriGetir() {
-        // En son girilen farklı shipment numaralarını döndür
-        const tumShipment = kayitlar
-            .filter(k => k.shipment && k.shipment.trim())
-            .map(k => k.shipment.trim());
-        // Son kaydedilenden geriye doğru, tekrar etmeyenleri al
-        const benzersiz = [];
-        for (let i = tumShipment.length - 1; i >= 0; i--) {
-            if (!benzersiz.includes(tumShipment[i])) {
-                benzersiz.push(tumShipment[i]);
-                if (benzersiz.length >= 5) break;
+        // localStorage'dan son 20 benzersiz shipment no'yu getir
+        // (kayitlar[] artık sadece o günü içeriyor, tarihe göre çekiliyor)
+        try {
+            const stored = JSON.parse(localStorage.getItem('shipmentGecmis') || '[]');
+            // Günlük kayıtlardakileri de ekle (o gün girilenlerin öneri göstermesi için)
+            const gunluk = kayitlar.filter(k => k.shipment && k.shipment.trim()).map(k => k.shipment.trim());
+            const birlesik = [...gunluk, ...stored];
+            const benzersiz = [];
+            for (const s of birlesik) {
+                if (!benzersiz.includes(s)) benzersiz.push(s);
+                if (benzersiz.length >= 20) break;
             }
+            return benzersiz;
+        } catch(e) {
+            return kayitlar.filter(k => k.shipment && k.shipment.trim()).map(k => k.shipment.trim()).slice(-5);
         }
-        return benzersiz;
+    }
+
+    function shipmentGecmisEkle(no) {
+        if (!no || !no.trim()) return;
+        try {
+            const stored = JSON.parse(localStorage.getItem('shipmentGecmis') || '[]');
+            const filtre = stored.filter(s => s !== no.trim());
+            filtre.unshift(no.trim());
+            localStorage.setItem('shipmentGecmis', JSON.stringify(filtre.slice(0, 50)));
+        } catch(e) {}
     }
 
     let shipmentOneriIndex = -1;
@@ -3351,7 +3413,9 @@
             selectedRecord = null;
             iptalDuzenle(); renderTablo(); playSoundGuncelle(); showToast('✓  Kayıt güncellendi','success');
         } else {
-            kayitlar.push({ id:Date.now(), tarih:kayitTarih, vardiya:secilenVardiya, aracTipi:secilenAracTipi, aracTuru:secilenAracTuru, m3:parseFloat(m3), shipment, ekip, baslama, bitis, kaliteci, forkliftci, aciklama, eksikFazla, lastikler:[...lastikler], duruslar:[...duruslar], brut:sure.brut, net:sure.net, gec:sure.gec, fark:sure.fark, gecSure:sure.gecSure });
+            const yeniKayit = { id:Date.now(), tarih:kayitTarih, vardiya:secilenVardiya, aracTipi:secilenAracTipi, aracTuru:secilenAracTuru, m3:parseFloat(m3), shipment, ekip, baslama, bitis, kaliteci, forkliftci, aciklama, eksikFazla, lastikler:[...lastikler], duruslar:[...duruslar], brut:sure.brut, net:sure.net, gec:sure.gec, fark:sure.fark, gecSure:sure.gecSure };
+            kayitlar.push(yeniKayit);
+            if (shipment) shipmentGecmisEkle(shipment);
             if(window._fbSaveKayit) window._fbSaveKayit(kayitlar[kayitlar.length-1]);
             formTemizle(); renderTablo(); playSoundKaydet(); showToast('✓  Kayıt başarıyla eklendi','success');
             // Tır'ı seçili getir
@@ -3394,6 +3458,20 @@
     function confirmCancel() { silPendingId=null; document.getElementById('confirmOverlay').classList.remove('show'); }
 
     // ── TABLO RENDER ──────────────────────────────────────
+    // tarih değişince Firestore'dan o günü çek
+    function tarihDegisince() {
+        const secilenEl = document.getElementById('secilenTarih');
+        if (!secilenEl) return;
+        const tarih = secilenEl.value;
+        // Bu tarihin verisi hafızada yoksa çek
+        const mevcut = kayitlar.filter(k => k.tarih === tarih);
+        if (mevcut.length === 0 && window._fbKayitGunlukCek) {
+            window._fbKayitGunlukCek(tarih);
+        } else {
+            renderTablo();
+        }
+    }
+
     function renderTablo() {
         const secilenEl = document.getElementById('secilenTarih');
         const today     = new Date().toISOString().split('T')[0];
@@ -3645,7 +3723,7 @@
         if (tip !== 'aralik') sefSorgula();
     }
 
-    function sefSorgula() {
+    async function sefSorgula() {
         let bas, bit, donemLabel;
         const aylar = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
         if (secilenDonem === 'gun') {
@@ -3668,7 +3746,9 @@
             donemLabel = `${bas.split('-').reverse().join('.')} — ${bit.split('-').reverse().join('.')}`;
         }
         if (!bas || !bit) { showToast('⚠️ Tarih seçiniz','warn'); return; }
-        const filtre = kayitlar.filter(k => k.tarih >= bas && k.tarih <= bit);
+        const sonucEl = document.getElementById('sefSonuc');
+        sonucEl.innerHTML = '<div class="sef-bos"><div class="sef-bos-icon" style="animation:spin 1s linear infinite">⏳</div><div class="sef-bos-text">Yükleniyor...</div></div>';
+        const filtre = await window._fbKayitAralikCek(bas, bit);
         sefRaporGoster(filtre, donemLabel);
     }
 
@@ -3966,14 +4046,15 @@
         return { bas, bit, label };
     }
 
-    function ekipSorgula() {
+    async function ekipSorgula() {
         const donem = e2TarihAralik();
         if (!donem) return;
-
-        let liste = kayitlar.filter(k => k.tarih >= donem.bas && k.tarih <= donem.bit);
+        const sonuc = document.getElementById('ekipSonuc');
+        sonuc.innerHTML = '<div class="sef-bos"><div class="sef-bos-icon">⏳</div><div class="sef-bos-text">Yükleniyor...</div></div>';
+        const tumListe = await window._fbKayitAralikCek(donem.bas, donem.bit);
+        let liste = tumListe;
         if (e2Vardiya !== 'hepsi') liste = liste.filter(k => k.vardiya === e2Vardiya);
 
-        const sonuc = document.getElementById('ekipSonuc');
         const btn2  = document.getElementById('btnPdf2');
 
         if (liste.length === 0) {
@@ -4339,7 +4420,7 @@
         return { bas, bit, label };
     }
 
-    function personelSorgula() {
+    async function personelSorgula() {
         const donem = e3TarihAralik();
         const isim  = document.getElementById('e3Isim').value.trim();
         const sonuc = document.getElementById('personelSonuc');
@@ -4350,8 +4431,9 @@
             return;
         }
 
-        const liste = kayitlar.filter(k =>
-            k.tarih >= donem.bas && k.tarih <= donem.bit &&
+        if (sonuc) sonuc.innerHTML = '<div class="sef-bos"><div class="sef-bos-icon">⏳</div><div class="sef-bos-text">Yükleniyor...</div></div>';
+        const tumListe = await window._fbKayitAralikCek(donem.bas, donem.bit);
+        const liste = tumListe.filter(k =>
             k.ekip.toUpperCase().split(',').map(s=>s.trim()).some(ad => turkceNormalize(ad).includes(turkceNormalize(isim)))
         ).sort((a,b) => a.id - b.id);
 
@@ -5153,12 +5235,12 @@
         return { bas, bit, label };
     }
 
-    function analizSorgula() {
+    async function analizSorgula() {
         const donem = a5TarihAralik();
         const sonuc = document.getElementById('analizSonuc');
         if (!donem) return;
-
-        const yuklemeler = kayitlar.filter(k => k.tarih >= donem.bas && k.tarih <= donem.bit);
+        sonuc.innerHTML = '<div class="sef-bos"><div class="sef-bos-icon">⏳</div><div class="sef-bos-text">Yükleniyor...</div></div>';
+        const yuklemeler = await window._fbKayitAralikCek(donem.bas, donem.bit);
         const mesailer   = mesaiDB.filter(k => k.tarih >= donem.bas && k.tarih <= donem.bit);
         const mesaiGunler = new Set(mesailer.map(k => k.tarih));
 
@@ -5473,7 +5555,7 @@
     });
 
     // ── SORGULA ──
-    function df6Sorgula(showUI = true) {
+    async function df6Sorgula(showUI = true) {
         const donem = df6TarihAralik();
         const sonuc = document.getElementById('df6Sonuc');
         if (!donem) { if (showUI) showToast('⚠️ Tarih seçiniz', 'warn'); return; }
@@ -5490,10 +5572,10 @@
         if (df6Tur === 'ekip') {
             if (!df6EkipListesi.length) { if (showUI) showToast('⚠️ En az bir isim ekleyin', 'warn'); return; }
 
-            // Ekip kombinasyonunu bul: girilen isimlerin hepsi ekipte olmalı
+            // Firestore'dan aralıktaki kayıtları çek, sonra ekip filtrele
             const aranan = df6EkipListesi.map(n => n.toUpperCase());
-            const liste = kayitlar.filter(k => {
-                if (k.tarih < donem.bas || k.tarih > donem.bit) return false;
+            const tumListe = await window._fbKayitAralikCek(donem.bas, donem.bit);
+            const liste = tumListe.filter(k => {
                 const ekipAd = k.ekip.toUpperCase().split(',').map(s=>s.trim());
                 return aranan.every(ad => ekipAd.some(ea => turkceNormalize(ea).includes(turkceNormalize(ad))));
             }).sort((a,b) => new Date(a.tarih) - new Date(b.tarih) || a.id - b.id);
@@ -5560,8 +5642,8 @@
             const isim = document.getElementById('df6PersonelInput').value.trim();
             if (!isim) { if (showUI) showToast('⚠️ Personel adı giriniz', 'warn'); return; }
 
-            const liste = kayitlar.filter(k =>
-                k.tarih >= donem.bas && k.tarih <= donem.bit &&
+            const tumListe2 = await window._fbKayitAralikCek(donem.bas, donem.bit);
+            const liste = tumListe2.filter(k =>
                 k.ekip.toUpperCase().split(',').map(s=>s.trim()).some(ad => turkceNormalize(ad).includes(turkceNormalize(isim)))
             ).sort((a,b) => new Date(a.tarih) - new Date(b.tarih) || a.id - b.id);
 
@@ -6080,12 +6162,12 @@ function va7TarihAralik() {
     }
 }
 
-function va7Sorgula() {
+async function va7Sorgula() {
     const donem = va7TarihAralik();
     if (!donem) return;
-
-    const liste = kayitlar.filter(k => k.tarih >= donem.bas && k.tarih <= donem.bit);
     const sonuc = document.getElementById('va7Sonuc');
+    sonuc.innerHTML = '<div class="sef-bos"><div class="sef-bos-icon">⏳</div><div class="sef-bos-text">Yükleniyor...</div></div>';
+    const liste = await window._fbKayitAralikCek(donem.bas, donem.bit);
 
     if (liste.length === 0) {
         sonuc.innerHTML = `<div class="sef-bos"><div class="sef-bos-icon">🔍</div><div class="sef-bos-text">Bu dönemde kayıt bulunamadı</div></div>`;
@@ -6360,7 +6442,11 @@ document.addEventListener('DOMContentLoaded', function() {
         const dd = document.getElementById('hrShipmentAcDropdown');
         if (!dd) return;
         const val = input.value.trim().toUpperCase();
+        // localStorage geçmişi + hrRaporlar + günlük kayıtlar
+        let gecmis = [];
+        try { gecmis = JSON.parse(localStorage.getItem('shipmentGecmis') || '[]'); } catch(e) {}
         const all = [
+            ...gecmis,
             ...kayitlar.map(k => k.shipment),
             ...hrRaporlar.map(r => r.shipment)
         ].filter(s => s && s.trim()).map(s => s.trim().toUpperCase());
@@ -6429,7 +6515,7 @@ document.addEventListener('DOMContentLoaded', function() {
         hrShipmentAra();
     }
 
-    function hrShipmentAra() {
+    async function hrShipmentAra() {
         const no = document.getElementById('hrShipmentInput').value.trim().toUpperCase();
         const bilgiEl  = document.getElementById('hrShipmentBilgi');
         const yokEl    = document.getElementById('hrShipmentYok');
@@ -6437,7 +6523,17 @@ document.addEventListener('DOMContentLoaded', function() {
         bilgiEl.style.display = 'none';
         yokEl.style.display   = 'none';
         if (!no) return;
-        const eslesme = kayitlar.filter(k => k.shipment && k.shipment.trim().toUpperCase() === no);
+        // Firestore'dan shipment no'ya göre ara
+        let eslesme = [];
+        try {
+            const { collection, getDocs, query, where, db } = window._fb;
+            const q = query(collection(db, 'ambar_kayitlar'), where('shipment', '==', no));
+            const snap = await getDocs(q);
+            eslesme = snap.docs.map(d => d.data());
+        } catch(e) {
+            // Fallback: hafızadaki veriler (az kayıt varken)
+            eslesme = kayitlar.filter(k => k.shipment && k.shipment.trim().toUpperCase() === no);
+        }
         if (!eslesme.length) { yokEl.style.display = 'block'; return; }
         const k = eslesme[0];
         icEl.innerHTML =
@@ -6481,8 +6577,16 @@ document.addEventListener('DOMContentLoaded', function() {
         const now = new Date();
         const tarihStr = String(now.getDate()).padStart(2,'0') + '.' + String(now.getMonth()+1).padStart(2,'0') + '.' + now.getFullYear();
 
-        const eslesme = kayitlar.filter(k => k.shipment && k.shipment.trim().toUpperCase() === shipment);
-        const ref = eslesme.length ? eslesme[0] : null;
+        // Shipment'a ait yükleme kaydını Firestore'dan bul
+        let ref = null;
+        try {
+            const { collection, getDocs, query, where, db } = window._fb;
+            const q2 = query(collection(db, 'ambar_kayitlar'), where('shipment', '==', shipment));
+            const snap2 = await getDocs(q2);
+            if (!snap2.empty) ref = snap2.docs[0].data();
+        } catch(e) {
+            ref = kayitlar.find(k => k.shipment && k.shipment.trim().toUpperCase() === shipment) || null;
+        }
 
         // kodSatirlari: [{kod, adet, tur}] — ana veri
         const kodSatirlari = gecerliSatirlar.map(s => ({
