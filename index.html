@@ -2696,24 +2696,24 @@
 
     // ── AUTOCOMPLETE ──────────────────────────────────────
     function ekipAutocomplete(input) {
-        const val = input.value.toUpperCase();
+        const val = window.trUpper(input.value);
         input.value = val;
         const dd = document.getElementById('ekipDropdown');
         if (!val.trim()) { dd.style.display='none'; _acDropdownIdx=-1; return; }
 
         // Virgülle ayrılmış isimlerde son girilen kelimeyi bul
         const parts = val.split(',');
-        const son = parts[parts.length - 1].trim();
+        let son = parts[parts.length - 1].trim();
         if (!son) { dd.style.display='none'; _acDropdownIdx=-1; return; }
 
-        // Zaten seçili olanlar
+        // Zaten seçili olanlar (sonuncusu hariç)
         const seciliAdlar = parts.slice(0, -1).map(s => s.trim()).filter(Boolean);
 
-        // Eşleşenleri filtrele
+        // Eşleşenleri filtrele ve A-Z sırala
         const eslesen = personelListesi.filter(p => {
             if (seciliAdlar.includes(p.ad)) return false; // zaten seçili
-            return turkceNormalize(p.ad).includes(turkceNormalize(son));
-        });
+            return window.trUpper(p.ad).includes(window.trUpper(son));
+        }).sort((a,b) => window.trSort(a, b, 'ad'));
 
         if (eslesen.length === 0) { dd.style.display='none'; _acDropdownIdx=-1; return; }
 
@@ -2736,11 +2736,22 @@
 
     function ekipSec(ad) {
         const input = document.getElementById('ekip');
-        const parts = input.value.toUpperCase().split(',');
+        const currentVal = input.value;
+        const parts = currentVal.split(',');
+        
+        // Son parçayı temizle ve yeni ismi ekle
         parts[parts.length - 1] = ' ' + ad;
-        const joined = parts.join(',').replace(/^,\s*/, '');
-        const sayim = joined.split(',').filter(s => s.trim()).length;
-        input.value = sayim >= 4 ? joined : joined + ', ';
+        
+        // Boş parçaları temizle ve birleştir
+        let joined = parts.map(s => s.trim()).filter(Boolean).join(', ');
+        
+        // Maksimum 4 kişi sınırı varsa kontrol et (isteğe bağlı, şu anki mantıkta 4'ten azsa virgül ekliyor)
+        const sayim = joined.split(',').length;
+        if (sayim < 4) {
+            joined += ', ';
+        }
+        
+        input.value = joined;
         document.getElementById('ekipDropdown').style.display = 'none';
         _acDropdownIdx = -1;
         input.focus();
@@ -5460,8 +5471,9 @@
             const ay = document.getElementById('df6Ay').value;
             if (!ay) return null;
             bas = ay + '-01';
-            const dt = new Date(bas);
-            bit = new Date(dt.getFullYear(), dt.getMonth()+1, 0).toISOString().split('T')[0];
+            const dt = new Date(bas + 'T00:00:00');
+            const lastDay = new Date(dt.getFullYear(), dt.getMonth() + 1, 0).getDate();
+            bit = ay + '-' + String(lastDay).padStart(2, '0');
             label = `${aylar[dt.getMonth()]} ${dt.getFullYear()}`;
         } else if (df6Donem === 'yil') {
             const yil = document.getElementById('df6Yil').value;
@@ -5605,6 +5617,9 @@
         const donem = df6TarihAralik();
         const sonuc = document.getElementById('df6Sonuc');
         if (!donem) { if (showUI) showToast('⚠️ Tarih seçiniz', 'warn'); return; }
+
+        // Mevcut _df6Rapor verisini sıfırla ki eski verilerle çakışmasın
+        _df6Rapor = null;
 
         const durusStr = k => (k.duruslar||[]).filter(d=>d.sure).length > 0
             ? k.duruslar.filter(d=>d.sure).map(d=>`${d.sebep}(${d.sure}dk)`).join(', ')
