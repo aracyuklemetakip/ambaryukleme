@@ -4914,87 +4914,160 @@
         const aData  = filtre.filter(k => k.vardiya === 'A');
         const bData  = filtre.filter(k => k.vardiya === 'B');
 
-        function hesapla(data) {
-            let normalGun=0, pazarGun=0, pazar15Gun=0;
-            let normalKisi=0, pazarKisi=0, pazar15Kisi=0, toplamKisi=0;
+        // Hesapla modalıyla birebir aynı hesaplama mantığı
+        function vardiyaHesaplaP(data) {
+            let normalGun=0, normalKisi=0;
+            let pazarGun=0,  pazarKisi=0;
+            let pazar15Gun=0, pazar15Kisi=0;
             data.forEach(k => {
-                const kisi = parseInt(k.kisi)||0;
-                const hGun = parseFloat(k.hesaplananGun)||1;
-                toplamKisi += kisi;
-                if (k.tur==='Normal') {
-                    normalGun += 1; normalKisi += kisi;
-                } else if (k.tur==='Pazar15' || hGun === 1.5) {
-                    pazar15Gun += 1.5; pazar15Kisi += kisi;
-                } else {
-                    pazarGun += 1; pazarKisi += kisi;
+                const kisi = parseInt(k.kisi) || 0;
+                const hGun = parseFloat(k.hesaplananGun) || 1;
+                if (k.tur === 'Normal') {
+                    normalGun  += 1;
+                    normalKisi += kisi;
+                } else if (k.tur === 'Pazar') {
+                    if (hGun === 1.5) {
+                        pazar15Gun  += 1.5;
+                        pazar15Kisi += kisi;
+                    } else {
+                        pazarGun  += 1;
+                        pazarKisi += kisi;
+                    }
                 }
             });
-            return { normalGun, pazarGun, pazar15Gun,
-                     normalSaat: normalGun*4, pazarSaat: pazarGun*8, pazar15Saat: pazar15Gun*12,
-                     normalKisi, pazarKisi, pazar15Kisi, toplamKisi };
+            return { normalGun, normalKisi, pazarGun, pazarKisi, pazar15Gun, pazar15Kisi };
         }
-        const A = hesapla(aData);
-        const B = hesapla(bData);
-        const fmt = s => Number.isInteger(s) ? s.toString() : s.toFixed(1);
-        const fmtTarih = t => t.split('-').reverse().join('.');
 
-        const LACIVERT=[15,23,42], MAVI=[30,100,210], SARI=[234,179,8], MOR=[150,80,200];
+        const A = vardiyaHesaplaP(aData);
+        const B = vardiyaHesaplaP(bData);
+        const fmt = v => v % 1 === 0 ? String(v) : v.toFixed(1);
 
-        doc.setFillColor(...LACIVERT); doc.rect(0,0,210,40,'F');
-        doc.setTextColor(255,255,255);
-        doc.setFontSize(16); doc.setFont('helvetica','bold');
-        doc.text('MESAI KARSILASTIRMA RAPORU', 105, 17, {align:'center'});
+        // Genel toplamlar
+        const genNormalGun  = A.normalGun  + B.normalGun;
+        const genNormalKisi = A.normalKisi + B.normalKisi;
+        const genPazarGun   = A.pazarGun   + B.pazarGun;
+        const genPazarKisi  = A.pazarKisi  + B.pazarKisi;
+        const genP15Gun     = A.pazar15Gun + B.pazar15Gun;
+        const genP15Kisi    = A.pazar15Kisi+ B.pazar15Kisi;
+        const genTopGun     = genNormalGun + genPazarGun + genP15Gun;
+        const genTopSaat    = genNormalGun*4 + genPazarGun*8 + genP15Gun*12;
+        const genTopKisi    = genNormalKisi + genPazarKisi + genP15Kisi;
+
+        const LACIVERT=[15,23,42], BEYAZ=[255,255,255];
+        const MAVI_KOYU=[20,60,160], MAVI=[59,130,246], SARI_KOYU=[160,100,0], SARI=[234,179,8];
+        const KIRMIZI=[220,38,38], MOR=[150,80,200];
+
+        const pageW=210, M=12;
+        let y = 0;
+
+        // === HEADER ===
+        doc.setFillColor(...LACIVERT); doc.rect(0,0,pageW,38,'F');
+        doc.setTextColor(...BEYAZ);
+        doc.setFontSize(15); doc.setFont('helvetica','bold');
+        doc.text('MESAI KARSILASTIRMA RAPORU', pageW/2, 15, {align:'center'});
         doc.setFontSize(10); doc.setFont('helvetica','normal');
-        doc.setTextColor(200,210,230);
-        doc.text(donemLabel, 105, 30, {align:'center'});
+        doc.setTextColor(180,200,240);
+        doc.text(donemLabel, pageW/2, 27, {align:'center'});
+        y = 46;
 
-        const col0=15, col1=80, col2=148, tableW=180, rowH=13;
-        let y = 52;
+        const bw = (pageW - M*2 - 6) / 2;  // blok genişliği
 
-        // Başlık satırı
-        doc.setFillColor(...LACIVERT); doc.rect(col0,y,col1-col0,rowH,'F');
-        doc.setTextColor(255,255,255); doc.setFontSize(10); doc.setFont('helvetica','bold');
-        doc.text('MESAILER', col0+(col1-col0)/2, y+8.5, {align:'center'});
-        doc.setFillColor(...MAVI); doc.rect(col1,y,col2-col1,rowH,'F');
-        doc.text('A VARDIYASI', col1+(col2-col1)/2, y+8.5, {align:'center'});
-        doc.setFillColor(...SARI); doc.rect(col2,y,col0+tableW-col2,rowH,'F');
-        doc.setTextColor(30,20,0);
-        doc.text('B VARDIYASI', col2+(col0+tableW-col2)/2, y+8.5, {align:'center'});
-        y += rowH;
+        function pdfBlok(xStart, baslik, v, headerRgb, headerTextRgb) {
+            const lh = 11, pad = 10, bx = xStart;
+            // Başlık
+            doc.setFillColor(...headerRgb);
+            doc.rect(bx, y, bw, lh, 'F');
+            doc.setTextColor(...headerTextRgb);
+            doc.setFont('helvetica','bold'); doc.setFontSize(9);
+            doc.text(baslik, bx + bw/2, y+7.5, {align:'center'});
+            let by = y + lh;
 
-        const rows = [];
-        if (A.normalGun > 0 || B.normalGun > 0)
-            rows.push({ label:'Normal Mesai', a:`${fmt(A.normalGun)} gun (${A.normalSaat} saat)  ${A.normalKisi} kisi`, b:`${fmt(B.normalGun)} gun (${B.normalSaat} saat)  ${B.normalKisi} kisi`, alt:false });
-        if (A.pazarGun > 0 || B.pazarGun > 0)
-            rows.push({ label:'Pazar Mesaisi', a:`${fmt(A.pazarGun)} gun (${A.pazarSaat} saat)  ${A.pazarKisi} kisi`, b:`${fmt(B.pazarGun)} gun (${B.pazarSaat} saat)  ${B.pazarKisi} kisi`, alt:true });
-        if (A.pazar15Gun > 0 || B.pazar15Gun > 0)
-            rows.push({ label:'Pazar Mesaisi x1.5', a:`${fmt(A.pazar15Gun)} gun (${A.pazar15Saat} saat)  ${A.pazar15Kisi} kisi`, b:`${fmt(B.pazar15Gun)} gun (${B.pazar15Saat} saat)  ${B.pazar15Kisi} kisi`, alt:false, mor:true });
-        rows.push({ label:'Toplam Kisi', a:`${A.toplamKisi} kisi`, b:`${B.toplamKisi} kisi`, alt:true, bold:true });
+            const topGun  = v.normalGun  + v.pazarGun  + v.pazar15Gun;
+            const topSaat = v.normalGun*4 + v.pazarGun*8 + v.pazar15Gun*12;
+            const topKisi = v.normalKisi + v.pazarKisi + v.pazar15Kisi;
 
-        rows.forEach(row => {
-            const bg = row.bold ? [220,230,250] : row.alt ? [245,248,255] : [255,255,255];
-            doc.setFillColor(...bg);
-            doc.rect(col0, y, tableW, rowH, 'F');
-            doc.setDrawColor(180,190,210); doc.setLineWidth(0.2);
-            doc.line(col0,y,col0+tableW,y);
-            doc.line(col1,y,col1,y+rowH);
-            doc.line(col2,y,col2,y+rowH);
-            const cy = y+rowH/2+3.5;
-            doc.setFont('helvetica', row.bold ? 'bold' : 'normal');
-            doc.setFontSize(row.bold ? 10 : 9);
-            const lblColor = row.mor ? MOR : LACIVERT;
-            doc.setTextColor(...lblColor); 
-            doc.text(row.label, col0+(col1-col0)/2, cy, {align:'center'});
-            doc.setTextColor(...MAVI); doc.text(row.a, col1+(col2-col1)/2, cy, {align:'center'});
-            doc.setTextColor(160,120,0); doc.text(row.b, col2+(col0+tableW-col2)/2, cy, {align:'center'});
-            y += rowH;
+            const satirlar = [];
+            if (v.normalGun > 0)  satirlar.push({ label:'Normal Mesai',       gun: v.normalGun,  saat: v.normalGun*4,   kisi: v.normalKisi,  rgb:[230,240,255], txtRgb:[20,60,160] });
+            if (v.pazarGun > 0)   satirlar.push({ label:'Pazar Mesaisi',      gun: v.pazarGun,   saat: v.pazarGun*8,    kisi: v.pazarKisi,   rgb:[255,235,235], txtRgb:[180,30,30] });
+            if (v.pazar15Gun > 0) satirlar.push({ label:'Pazar x1.5',         gun: v.pazar15Gun, saat: v.pazar15Gun*12, kisi: v.pazar15Kisi, rgb:[245,235,255], txtRgb:[130,60,190] });
+
+            if (!satirlar.length) {
+                doc.setFillColor(240,242,248);
+                doc.rect(bx, by, bw, lh, 'F');
+                doc.setTextColor(160,170,190); doc.setFont('helvetica','normal'); doc.setFontSize(8);
+                doc.text('Kayit yok', bx + bw/2, by+7.5, {align:'center'});
+                by += lh;
+            }
+
+            satirlar.forEach(s => {
+                doc.setFillColor(...s.rgb);
+                doc.rect(bx, by, bw, lh, 'F');
+                doc.setTextColor(...s.txtRgb);
+                doc.setFont('helvetica','bold'); doc.setFontSize(8);
+                doc.text(s.label, bx+4, by+7.5);
+                doc.setFont('helvetica','normal');
+                doc.text(`${fmt(s.gun)} gun  ${s.saat} saat  ${s.kisi} kisi`, bx+bw-4, by+7.5, {align:'right'});
+                by += lh;
+            });
+
+            // Toplam satırı
+            doc.setFillColor(...headerRgb);
+            doc.rect(bx, by, bw, lh, 'F');
+            doc.setTextColor(...headerTextRgb);
+            doc.setFont('helvetica','bold'); doc.setFontSize(8.5);
+            doc.text('Toplam', bx+4, by+7.5);
+            doc.text(`${fmt(topGun)} gun  ${topSaat} saat  ${topKisi} kisi`, bx+bw-4, by+7.5, {align:'right'});
+            by += lh;
+
+            // Border
+            doc.setDrawColor(180,190,210); doc.setLineWidth(0.3);
+            doc.rect(bx, y, bw, by-y, 'S');
+
+            return by - y; // yükseklik
+        }
+
+        const xA = M, xB = M + bw + 6;
+        const hA = pdfBlok(xA, 'A VARDIYASI', A, [30,80,200], BEYAZ);
+        const hB = pdfBlok(xB, 'B VARDIYASI', B, [200,155,0], [30,20,0]);
+        y += Math.max(hA, hB) + 8;
+
+        // === GENEL TOPLAM BLOĞU ===
+        const genLh = 11;
+        doc.setFillColor(...LACIVERT);
+        doc.rect(M, y, pageW-M*2, genLh, 'F');
+        doc.setTextColor(...BEYAZ); doc.setFont('helvetica','bold'); doc.setFontSize(10);
+        doc.text('GENEL TOPLAM', (pageW)/2, y+7.5, {align:'center'});
+        y += genLh;
+
+        const genSatirlar = [];
+        if (genNormalGun > 0) genSatirlar.push({ label:'Normal Mesai',    gun:genNormalGun, saat:genNormalGun*4,  kisi:genNormalKisi, rgb:[230,240,255], txt:[20,60,160] });
+        if (genPazarGun  > 0) genSatirlar.push({ label:'Pazar Mesaisi',   gun:genPazarGun,  saat:genPazarGun*8,  kisi:genPazarKisi,  rgb:[255,235,235], txt:[180,30,30] });
+        if (genP15Gun    > 0) genSatirlar.push({ label:'Pazar x1.5',      gun:genP15Gun,    saat:genP15Gun*12,   kisi:genP15Kisi,    rgb:[245,235,255], txt:[130,60,190] });
+
+        genSatirlar.forEach(s => {
+            doc.setFillColor(...s.rgb);
+            doc.rect(M, y, pageW-M*2, genLh, 'F');
+            doc.setTextColor(...s.txt);
+            doc.setFont('helvetica','bold'); doc.setFontSize(9);
+            doc.text(s.label, M+6, y+7.5);
+            doc.setFont('helvetica','normal');
+            doc.text(`${fmt(s.gun)} gun  ${s.saat} saat  ${s.kisi} kisi`, pageW-M-4, y+7.5, {align:'right'});
+            y += genLh;
         });
 
-        doc.setDrawColor(80,100,160); doc.setLineWidth(0.6);
-        doc.rect(col0, 52, tableW, y-52, 'S');
+        // Tüm mesailerin toplamı
+        doc.setFillColor(...SARI);
+        doc.rect(M, y, pageW-M*2, genLh+2, 'F');
+        doc.setTextColor(30,20,0); doc.setFont('helvetica','bold'); doc.setFontSize(9.5);
+        doc.text('Tum Mesailerin Toplami', M+6, y+8.5);
+        doc.text(`${fmt(genTopGun)} gun  ${genTopSaat} saat  ${genTopKisi} kisi`, pageW-M-4, y+8.5, {align:'right'});
+        y += genLh+2;
+
+        doc.setDrawColor(80,100,160); doc.setLineWidth(0.5);
+        doc.rect(M, 46+Math.max(hA,hB)+8, pageW-M*2, y-(46+Math.max(hA,hB)+8), 'S');
 
         doc.setFontSize(8); doc.setTextColor(150);
-        doc.text(`Olusturma: ${new Date().toLocaleDateString('tr-TR')} ${new Date().toLocaleTimeString('tr-TR')}`, 190, 290, {align:'right'});
+        doc.text(`Olusturulma: ${new Date().toLocaleDateString('tr-TR')} ${new Date().toLocaleTimeString('tr-TR')}`, pageW-M, 290, {align:'right'});
 
         doc.save(`Mesai_Raporu_${bas}_${bit}.pdf`);
         showToast('\u2713 PDF indirildi', 'success');
@@ -5312,14 +5385,10 @@
 
     function df6EkipSec(ad) {
         if (!df6EkipListesi.includes(ad)) df6EkipListesi.push(ad);
-        // Input'ta mevcut isimleri virgülle göster, sona imleç bırak
-        const inp = document.getElementById('df6EkipInput');
-        inp.value = df6EkipListesi.join(', ') + ', ';
+        document.getElementById('df6EkipInput').value = '';
         document.getElementById('df6EkipDropdown').style.display = 'none';
         _df6EkipDropIdx = -1;
         df6EkipTagRender();
-        // Sona imleç
-        setTimeout(() => { inp.focus(); inp.selectionStart = inp.selectionEnd = inp.value.length; }, 10);
     }
 
     function df6EkipHover(idx) {
@@ -5345,9 +5414,8 @@
                 const eslesen = personelListesi.find(p => turkceNormalize(p.ad) === turkceNormalize(val));
                 const eklenecek = eslesen ? eslesen.ad : val;
                 if (!df6EkipListesi.includes(eklenecek)) { df6EkipListesi.push(eklenecek); df6EkipTagRender(); }
-                inp.value = df6EkipListesi.join(', ') + ', ';
+                inp.value = '';
                 dd.style.display = 'none'; _df6EkipDropIdx = -1;
-                setTimeout(() => { inp.selectionStart = inp.selectionEnd = inp.value.length; }, 10);
             }
             return;
         }
