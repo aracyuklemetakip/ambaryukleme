@@ -83,46 +83,11 @@
             // Eğer sessionStorage'da kayıtlı sayfa yoksa anaSayfa'ya yönlendir (panel seçimi)
             try {
               const savedPage = sessionStorage.getItem('aktifSayfa');
-              document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-              if (!savedPage || !document.getElementById(savedPage)) {
+              if (!savedPage) {
+                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
                 document.getElementById('anaSayfa').classList.add('active');
-              } else {
-                document.getElementById(savedPage).classList.add('active');
-                // Sekme restore
-                if (savedPage === 'sefSayfa') {
-                  setTimeout(() => {
-                    if (typeof sefTarihGoster === 'function') sefTarihGoster();
-                    try {
-                      const aktifSekme = sessionStorage.getItem('aktifSekme');
-                      if (aktifSekme && document.getElementById(aktifSekme)) {
-                        const secimler = { sekme1:0, sekme2:1, sekme4:2, sekme5:3, sekme6:4, sekme7:5 };
-                        const btnEl = document.querySelectorAll('.sef-sekme')[secimler[aktifSekme]];
-                        if (btnEl) {
-                          document.querySelectorAll('.sef-sekme').forEach(b => b.classList.remove('aktif'));
-                          document.querySelectorAll('.sef-sidebar-item').forEach(b => b.classList.remove('aktif'));
-                          document.querySelectorAll('.sekme-icerik').forEach(b => b.classList.remove('aktif'));
-                          btnEl.classList.add('aktif');
-                          document.querySelectorAll(`.sef-sidebar-item[data-sekme="${aktifSekme}"]`).forEach(b => b.classList.add('aktif'));
-                          document.getElementById(aktifSekme).classList.add('aktif');
-                          const k = document.getElementById('sekmeKarsilama');
-                          if (k) k.style.display = 'none';
-                          if (aktifSekme === 'sekme4' && typeof mesaiInit === 'function') setTimeout(mesaiInit, 200);
-                          if (aktifSekme === 'sekme6' && typeof df6Init === 'function') setTimeout(df6Init, 200);
-                        }
-                      }
-                    } catch(e2) {}
-                  }, 200);
-                } else if (savedPage === 'operatorSayfa') {
-                  setTimeout(() => {
-                    if (typeof tarihGoster === 'function') tarihGoster();
-                    if (typeof renderTablo === 'function') renderTablo();
-                  }, 100);
-                }
               }
-            } catch(e) {
-              document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-              document.getElementById('anaSayfa').classList.add('active');
-            }
+            } catch(e) {}
 
             window._fbLoadData();
           } else {
@@ -2213,21 +2178,58 @@
     }
 
     // ── İLK YÜKLEMEde ANINDA SAYFA RESTORE ──────────────
-    // Auth onaylandıktan sonra _applyAuthState doğru sayfayı açar
+    // Firebase'den BAĞIMSIZ: sessionStorage okunur, sayfa hemen açılır
     (function() {
+        // DOMContentLoaded beklemeden çalışır çünkü script body içinde
         try {
             var s = sessionStorage.getItem('aktifSayfa');
-            // _pendingSayfa'yı kaydet — auth confirm olunca _applyAuthState kullanır
-            window._pendingSayfa = s || null;
-            window._pendingSekme = sessionStorage.getItem('aktifSekme') || null;
-            // Başlangıçta her zaman anaSayfa göster (loginScreen üstünde olduğu için görünmez)
-            document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
-            document.getElementById('anaSayfa').classList.add('active');
+            if (s && document.getElementById(s)) {
+                // Hemen göster — Firebase race condition yok
+                document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+                document.getElementById(s).classList.add('active');
+                window._pendingSayfa = s;
+                // sefSayfa için DOMContentLoaded'dan sonra init çalıştır
+                if (s === 'sefSayfa') {
+                    document.addEventListener('DOMContentLoaded', function() {
+                        if (typeof sefTarihGoster === 'function') sefTarihGoster();
+                        // Aktif sekme restore
+                        try {
+                            var aktifSekme = sessionStorage.getItem('aktifSekme');
+                            if (aktifSekme && document.getElementById(aktifSekme)) {
+                                var secimler = { sekme1:0, sekme2:1, sekme4:2, sekme5:3, sekme6:4, sekme7:5 };
+                                var btnIdx = secimler[aktifSekme];
+                                var btnEl = document.querySelectorAll('.sef-sekme')[btnIdx];
+                                if (btnEl) {
+                                    document.querySelectorAll('.sef-sekme').forEach(function(s) { s.classList.remove('aktif'); });
+                                    document.querySelectorAll('.sef-sidebar-item').forEach(function(s) { s.classList.remove('aktif'); });
+                                    document.querySelectorAll('.sekme-icerik').forEach(function(s) { s.classList.remove('aktif'); });
+                                    btnEl.classList.add('aktif');
+                                    document.querySelectorAll('.sef-sidebar-item[data-sekme="'+aktifSekme+'"]').forEach(function(s) { s.classList.add('aktif'); });
+                                    document.getElementById(aktifSekme).classList.add('aktif');
+                                    var k = document.getElementById('sekmeKarsilama');
+                                    if (k) k.style.display = 'none';
+                                    if (aktifSekme === 'sekme4' && typeof mesaiInit === 'function') setTimeout(mesaiInit, 200);
+                                    if (aktifSekme === 'sekme6' && typeof df6Init === 'function') setTimeout(df6Init, 200);
+                                }
+                            }
+                        } catch(e2) {}
+                    });
+                } else if (s === 'operatorSayfa') {
+                    document.addEventListener('DOMContentLoaded', function() {
+                        if (typeof tarihGoster === 'function') tarihGoster();
+                        if (typeof renderTablo === 'function') renderTablo();
+                    });
+                }
+            } else {
+                // sessionStorage boş: anaSayfa default
+                document.getElementById('anaSayfa').classList.add('active');
+                window._pendingSayfa = null;
+            }
         } catch(e) {
-            try { document.getElementById('anaSayfa').classList.add('active'); } catch(e2) {}
+            document.getElementById('anaSayfa').classList.add('active');
             window._pendingSayfa = null;
-            window._pendingSekme = null;
         }
+        // Body'yi görünür yap — flicker yok çünkü doğru sayfa zaten açık
         document.body.style.visibility = 'visible';
     })();
 
@@ -2398,7 +2400,7 @@
             msgEl.textContent='✓ Personel eklendi!';
             setTimeout(() => { msgEl.style.display='none'; }, 2500);
             personelListeRender();
-            showToast('✓ ' + ad + ' eklendi', 'success');
+            playSoundKaydet(); showToast('✓ ' + ad + ' eklendi', 'success');
         } catch(e) {
             msgEl.style.display='block'; msgEl.style.color='#f87171'; msgEl.textContent='Hata: ' + e.message;
         }
@@ -2416,7 +2418,7 @@
                 await deleteDoc(doc(db, 'personel', sicil));
                 personelListesi = personelListesi.filter(x => x.sicil !== sicil);
                 personelListeRender();
-                showToast('🗑️ Personel silindi', 'warn');
+                playSoundSil(); showToast('🗑️ Personel silindi', 'warn');
             } catch(e) { showToast('Hata: ' + e.message, 'warn'); }
         };
     }
@@ -2518,7 +2520,7 @@
                 personelListesi = personelListesi.filter(x => x.sicil !== sicil);
                 personelGuncelleSifirla();
                 personelListeRender();
-                showToast('🗑️ Personel silindi', 'warn');
+                playSoundSil(); showToast('🗑️ Personel silindi', 'warn');
             } catch(e) { showToast('Hata: ' + e.message, 'warn'); }
         };
     }
@@ -2554,7 +2556,7 @@
             setTimeout(() => { msgEl.style.display='none'; }, 2000);
             personelGuncelleSifirla();
             personelListeRender();
-            showToast('✓ ' + ad + ' güncellendi', 'success');
+            playSoundGuncelle(); showToast('✓ ' + ad + ' güncellendi', 'success');
         } catch(e) {
             msgEl.style.display='block'; msgEl.style.color='#f87171'; msgEl.textContent='Hata: ' + e.message;
         }
@@ -3356,11 +3358,11 @@
             const updated = kayitlar.find(k=>k.id===duzenleId);
             if(window._fbSaveKayit) window._fbSaveKayit(updated);
             selectedRecord = null;
-            iptalDuzenle(); renderTablo(); showToast('✓  Kayıt güncellendi','success');
+            iptalDuzenle(); renderTablo(); playSoundGuncelle(); showToast('✓  Kayıt güncellendi','success');
         } else {
             kayitlar.push({ id:Date.now(), tarih:kayitTarih, vardiya:secilenVardiya, aracTipi:secilenAracTipi, aracTuru:secilenAracTuru, m3:parseFloat(m3), shipment, ekip, baslama, bitis, kaliteci, forkliftci, aciklama, eksikFazla, lastikler:[...lastikler], duruslar:[...duruslar], brut:sure.brut, net:sure.net, gec:sure.gec, fark:sure.fark, gecSure:sure.gecSure });
             if(window._fbSaveKayit) window._fbSaveKayit(kayitlar[kayitlar.length-1]);
-            formTemizle(); renderTablo(); showToast('✓  Kayıt başarıyla eklendi','success');
+            formTemizle(); renderTablo(); playSoundKaydet(); showToast('✓  Kayıt başarıyla eklendi','success');
             // Tır'ı seçili getir
             const tirBtn = document.querySelector('#segTip .seg-btn');
             if (tirBtn) { tirBtn.classList.add('active-blue'); secilenAracTipi = 'Tır'; tirBtn.focus(); }
@@ -3396,7 +3398,7 @@
         if (duzenleId===silPendingId) { selectedRecord=null; iptalDuzenle(); }
         silPendingId=null;
         document.getElementById('confirmOverlay').classList.remove('show');
-        renderTablo(); showToast('🗑️  Kayıt silindi','warn');
+        renderTablo(); playSoundSil(); showToast('🗑️  Kayıt silindi','warn');
     }
     function confirmCancel() { silPendingId=null; document.getElementById('confirmOverlay').classList.remove('show'); }
 
@@ -3524,6 +3526,18 @@
     }
 
     // ── TOAST ─────────────────────────────────────────────
+    // ── SES BİLDİRİMLERİ ──────────────────────────────────
+    function playSound(name) {
+        try {
+            const audio = new Audio(name + '.mp3');
+            audio.volume = 0.6;
+            audio.play().catch(() => {});
+        } catch(e) {}
+    }
+    function playSoundKaydet()  { playSound('kaydet'); }
+    function playSoundGuncelle() { playSound('guncelle'); }
+    function playSoundSil()     { playSound('sil'); }
+
     function showToast(msg, type='success') {
         const t = document.getElementById('toast');
         t.textContent = msg; t.className=`toast ${type}`; t.classList.add('show');
@@ -4595,7 +4609,7 @@
         if(window._fbSaveMesai) window._fbSaveMesai(mesaiDB[mesaiDB.length-1]);
         document.getElementById('mesaiKisi').value = '';
         mesaiRenderTablo();
-        showToast('✓ Mesai kaydedildi', 'success');
+        playSoundKaydet(); showToast('✓ Mesai kaydedildi', 'success');
     }
 
     function mesaiSil(id, e) {
@@ -4618,7 +4632,7 @@
             if (window._fbDeleteMesai) window._fbDeleteMesai(id);
             if (mesaiDuzenleId === id) mesaiFormTemizle();
             mesaiRenderTablo();
-            showToast('🗑️ Mesai silindi', 'warn');
+            playSoundSil(); showToast('🗑️ Mesai silindi', 'warn');
             document.getElementById('mesaiSilModalEl').classList.remove('show');
         };
         document.getElementById('mesaiSilModalEl').classList.add('show');
@@ -4672,7 +4686,7 @@
         if(window._fbSaveMesai) window._fbSaveMesai(mesaiDB[mesaiDB.findIndex(k=>k.id===mesaiDuzenleId)]);
         mesaiFormTemizle();
         mesaiRenderTablo();
-        showToast('✓ Mesai güncellendi', 'success');
+        playSoundGuncelle(); showToast('✓ Mesai güncellendi', 'success');
     }
 
     function mesaiFormTemizle() {
@@ -6123,12 +6137,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     placeholder="Adet" min="0"
                     oninput="hrKodSatirGuncelle(${s.sid},'adet',this.value)"
                     class="filtre-input" style="flex:1;min-width:0;padding:5px 8px;font-size:12px;color:#fff;">
-                <div style="display:flex;flex-direction:column;gap:2px;min-width:72px;">
-                    <button onclick="hrKodSatirGuncelle(${s.sid},'tur','eksik');hrKodSatirRender()"
-                        style="padding:3px 6px;border-radius:5px;border:1px solid ${isEksik?'#dc2626':'rgba(220,38,38,0.3)'};background:${isEksik?'rgba(220,38,38,0.18)':'transparent'};color:${isEksik?'#f87171':'rgba(220,38,38,0.5)'};font-family:'Inter',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all 0.15s;width:100%;">− EKSİK</button>
-                    <button onclick="hrKodSatirGuncelle(${s.sid},'tur','fazla');hrKodSatirRender()"
-                        style="padding:3px 6px;border-radius:5px;border:1px solid ${isFazla?'#16a34a':'rgba(22,163,74,0.3)'};background:${isFazla?'rgba(22,163,74,0.18)':'transparent'};color:${isFazla?'#4ade80':'rgba(22,163,74,0.5)'};font-family:'Inter',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all 0.15s;width:100%;">+ FAZLA</button>
-                </div>
+                <select onchange="hrKodSatirGuncelle(${s.sid},'tur',this.value);hrKodSatirRender()"
+                    style="padding:5px 12px;border-radius:8px;border:1px solid ${turClr}55;background:${turBg};color:${turClr};font-family:'Inter',sans-serif;font-size:12px;font-weight:700;cursor:pointer;min-width:90px;outline:none;transition:all 0.2s;appearance:none;-webkit-appearance:none;background-image:url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 12 8%22><path d=%22M1 1l5 5 5-5%22 stroke=%22%23888%22 stroke-width=%222%22 fill=%22none%22 stroke-linecap=%22round%22/></svg>');background-repeat:no-repeat;background-position:right 8px center;background-size:10px;padding-right:26px;">
+                    <option value="" ${!s.tur?'selected':''} style="background:#1C2B6E;color:#aaa;">± SEÇ</option>
+                    <option value="eksik" ${isEksik?'selected':''} style="background:#1C2B6E;color:#dc2626;">− EKSİK</option>
+                    <option value="fazla" ${isFazla?'selected':''} style="background:#1C2B6E;color:#16a34a;">+ FAZLA</option>
+                </select>
                 ${idx > 0 ? `<button onclick="hrKodSatirKaldir(${s.sid})" style="padding:5px 8px;border-radius:6px;border:1px solid rgba(163,177,198,0.35);background:transparent;color:var(--muted);font-size:13px;font-weight:700;cursor:pointer;line-height:1;">✕</button>` : ''}
             </div>`;
         }).join('');
@@ -6336,10 +6350,10 @@ document.addEventListener('DOMContentLoaded', function() {
             if (hrDuzenleId) {
                 const idx = hrRaporlar.findIndex(r => r.id === hrDuzenleId);
                 if (idx !== -1) hrRaporlar[idx] = rapor; else hrRaporlar.push(rapor);
-                showToast('✅ Kayıt güncellendi', 'success');
+                showToast('✅ Kayıt güncellendi', 'success'); playSoundGuncelle();
             } else {
                 hrRaporlar.push(rapor);
-                showToast('✅ Kayıt eklendi', 'success');
+                showToast('✅ Kayıt eklendi', 'success'); playSoundKaydet();
             }
             hrMsg('✓ Kayıt başarıyla ' + (hrDuzenleId ? 'güncellendi' : 'eklendi'), true);
             const oncekiDuzenleId = hrDuzenleId;
@@ -6497,7 +6511,7 @@ document.addEventListener('DOMContentLoaded', function() {
             hrSeciliRowId = null;
             hrFormSifirla();
             hrListele();
-            showToast('🗑️ Kayıt silindi', 'warn');
+            playSoundSil(); showToast('🗑️ Kayıt silindi', 'warn');
         } catch(e2) {
             showToast('⚠️ Silinemedi: ' + e2.message, 'warn');
         }
