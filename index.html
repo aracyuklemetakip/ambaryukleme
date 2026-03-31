@@ -80,6 +80,15 @@
             if (sefName) sefName.textContent = displayName;
             setAvatar(document.getElementById('sefUserAvatar'), photoURL);
 
+            // Eğer sessionStorage'da kayıtlı sayfa yoksa anaSayfa'ya yönlendir (panel seçimi)
+            try {
+              const savedPage = sessionStorage.getItem('aktifSayfa');
+              if (!savedPage) {
+                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+                document.getElementById('anaSayfa').classList.add('active');
+              }
+            } catch(e) {}
+
             window._fbLoadData();
           } else {
             window._fbUser = null;
@@ -2050,7 +2059,7 @@
                                     <textarea id="hrAciklama" class="filtre-input" style="width:100%;min-height:56px;resize:vertical;" placeholder="Detay not..."></textarea>
                                 </div>
                                 <div id="hrFormMsg" style="display:none;font-size:11px;font-weight:700;padding:6px 10px;border-radius:6px;"></div>
-                                <button id="hrKaydetBtn" onclick="hrKaydet()" style="width:100%;padding:10px;border-radius:8px;border:none;background:#1C2B6E;color:#fff;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s;">💾 KAYDET</button>
+                                <button id="hrKaydetBtn" onclick="hrKaydet()" style="width:100%;padding:10px;border-radius:8px;border:none;background:#F0B323;color:#1C2B6E;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.15s;">💾 KAYDET</button>
                                 <button id="hrSilBtn" onclick="hrSilFormdan()" style="display:none;width:100%;padding:10px;border-radius:8px;border:1px solid #FECACA;background:#FEF2F2;color:#dc2626;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s;">🗑️ SİL</button>
                                 <button id="hrIptalBtn" onclick="hrFormSifirla()" style="display:none;width:100%;padding:8px;border-radius:8px;border:1px solid #E5E7EB;background:#F9FAFB;color:#6B7280;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all 0.15s;">✕ İPTAL</button>
                             </div>
@@ -2091,7 +2100,7 @@
                                         <input type="date" id="hrAralikBit" class="filtre-input" style="width:100%;" onchange="hrListele()">
                                     </div>
                                 </div>
-                                <button onclick="hrPdfIndir()" style="width:100%;padding:10px;border-radius:8px;border:none;background:#1C2B6E;color:#fff;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s;">📥 PDF İNDİR</button>
+                                <button onclick="hrPdfIndir()" style="width:100%;padding:10px;border-radius:8px;border:none;background:#F0B323;color:#1C2B6E;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.15s;">📥 PDF İNDİR</button>
                             </div>
                         </div>
                     </div>
