@@ -6074,10 +6074,12 @@ document.addEventListener('DOMContentLoaded', function() {
         wrap.innerHTML = hrKodSatirlari.map((s, idx) => {
             const isEksik = s.tur === 'eksik';
             const isFazla = s.tur === 'fazla';
-            const turBg   = isEksik ? 'rgba(220,38,38,0.12)' : isFazla ? 'rgba(22,163,74,0.12)' : 'rgba(163,177,198,0.15)';
-            const turClr  = isEksik ? '#dc2626' : isFazla ? '#16a34a' : '#6b7a96';
-            
-            return `<div style="display:flex;gap:5px;align-items:center;">
+            const label   = isEksik ? '− EKSİK' : isFazla ? '+ FAZLA' : '± SEÇ';
+            const btnClr  = isEksik ? '#f87171' : isFazla ? '#4ade80' : 'rgba(255,255,255,0.4)';
+            const btnBg   = isEksik ? 'rgba(220,38,38,0.18)' : isFazla ? 'rgba(22,163,74,0.18)' : 'rgba(255,255,255,0.06)';
+            const btnBrd  = isEksik ? 'rgba(220,38,38,0.5)' : isFazla ? 'rgba(22,163,74,0.5)' : 'rgba(255,255,255,0.15)';
+
+            return `<div style="display:flex;gap:5px;align-items:flex-start;position:relative;">
                 <input id="hrKodInp_${s.sid}" type="text" value="${s.kod}"
                     placeholder="Lastik kodu"
                     oninput="hrKodSatirGuncelle(${s.sid},'kod',this.value.toUpperCase());this.value=this.value.toUpperCase();"
@@ -6086,16 +6088,43 @@ document.addEventListener('DOMContentLoaded', function() {
                     placeholder="Adet" min="0"
                     oninput="hrKodSatirGuncelle(${s.sid},'adet',this.value)"
                     class="filtre-input" style="flex:1;min-width:0;padding:5px 8px;font-size:12px;color:#fff;">
-                <select onchange="hrKodSatirGuncelle(${s.sid},'tur',this.value);hrKodSatirRender()"
-                    style="padding:5px 12px;border-radius:8px;border:1px solid ${turClr}55;background:${turBg};color:${turClr};font-family:'Inter',sans-serif;font-size:12px;font-weight:700;cursor:pointer;min-width:90px;outline:none;transition:all 0.2s;appearance:none;-webkit-appearance:none;background-image:url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 12 8%22><path d=%22M1 1l5 5 5-5%22 stroke=%22%23888%22 stroke-width=%222%22 fill=%22none%22 stroke-linecap=%22round%22/></svg>');background-repeat:no-repeat;background-position:right 8px center;background-size:10px;padding-right:26px;">
-                    <option value="" ${!s.tur?'selected':''} style="background:#1C2B6E;color:#aaa;">± SEÇ</option>
-                    <option value="eksik" ${isEksik?'selected':''} style="background:#1C2B6E;color:#dc2626;">− EKSİK</option>
-                    <option value="fazla" ${isFazla?'selected':''} style="background:#1C2B6E;color:#16a34a;">+ FAZLA</option>
-                </select>
+                <div style="position:relative;min-width:80px;">
+                    <button onclick="hrTurDropdownToggle(${s.sid})"
+                        style="width:100%;padding:5px 10px;border-radius:8px;border:1px solid ${btnBrd};background:${btnBg};color:${btnClr};font-family:'Inter',sans-serif;font-size:11px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:4px;white-space:nowrap;">
+                        <span>${label}</span><span style="font-size:9px;opacity:0.7;">▾</span>
+                    </button>
+                    <div id="hrTurDrop_${s.sid}" style="display:none;position:absolute;top:calc(100% + 3px);left:0;right:0;z-index:999;border-radius:8px;overflow:hidden;border:1px solid rgba(255,255,255,0.15);box-shadow:0 8px 24px rgba(0,0,0,0.4);">
+                        <div onclick="hrTurSec(${s.sid},'eksik')" style="padding:8px 12px;background:#1a0a0a;color:#f87171;font-family:'Inter',sans-serif;font-size:12px;font-weight:700;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.08);transition:background 0.1s;" onmouseenter="this.style.background='rgba(220,38,38,0.25)'" onmouseleave="this.style.background='#1a0a0a'">− EKSİK</div>
+                        <div onclick="hrTurSec(${s.sid},'fazla')" style="padding:8px 12px;background:#0a1a0a;color:#4ade80;font-family:'Inter',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:background 0.1s;" onmouseenter="this.style.background='rgba(22,163,74,0.25)'" onmouseleave="this.style.background='#0a1a0a'">+ FAZLA</div>
+                    </div>
+                </div>
                 ${idx > 0 ? `<button onclick="hrKodSatirKaldir(${s.sid})" style="padding:5px 8px;border-radius:6px;border:1px solid rgba(163,177,198,0.35);background:transparent;color:var(--muted);font-size:13px;font-weight:700;cursor:pointer;line-height:1;">✕</button>` : ''}
             </div>`;
         }).join('');
     }
+
+    function hrTurDropdownToggle(sid) {
+        // Diğer açık dropdownları kapat
+        document.querySelectorAll('[id^="hrTurDrop_"]').forEach(d => {
+            if (d.id !== 'hrTurDrop_' + sid) d.style.display = 'none';
+        });
+        const drop = document.getElementById('hrTurDrop_' + sid);
+        if (drop) drop.style.display = drop.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function hrTurSec(sid, tur) {
+        hrKodSatirGuncelle(sid, 'tur', tur);
+        const drop = document.getElementById('hrTurDrop_' + sid);
+        if (drop) drop.style.display = 'none';
+        hrKodSatirRender();
+    }
+
+    // Dışarı tıklayınca dropdown kapat
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('[id^="hrTurDrop_"]') && !e.target.closest('button[onclick*="hrTurDropdownToggle"]')) {
+            document.querySelectorAll('[id^="hrTurDrop_"]').forEach(d => d.style.display = 'none');
+        }
+    });
 
     // ── Init ──────────────────────────────────────────────────
     async function hrInit() {
