@@ -40,6 +40,13 @@
       window._fb = { auth, db, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged,
                      collection, doc, setDoc, deleteDoc, getDocs, getDoc, onSnapshot, query, orderBy, where, limit, startAfter };
 
+      window.getLocalISOString = function() {
+        const now = new Date();
+        const offset = now.getTimezoneOffset();
+        const localDate = new Date(now.getTime() - (offset * 60 * 1000));
+        return localDate.toISOString().split('T')[0];
+      };
+
       // ── Auth durumu izle ──
       // ── İzinli mail adresleri ──
       const IZINLI_MAILLER = [
@@ -203,7 +210,7 @@
       // ── Operatör sayfası: belirli bir günün kayıtlarını çek ──
       window._fbKayitGunlukCek = async function(tarih) {
         const { collection, getDocs, query, where, db } = window._fb;
-        const today = new Date().toISOString().split('T')[0];
+        const today = window.getLocalISOString();
         const hedefTarih = tarih || document.getElementById('secilenTarih')?.value || today;
         try {
           const q = query(collection(db, 'ambar_kayitlar'), where('tarih', '==', hedefTarih));
@@ -833,6 +840,7 @@
             transform: scale(0.88);
             opacity: 0;
             transition: transform 0.32s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.28s ease;
+            margin-right: 180px; /* Text ile aynı hizaya almak için */
         }
         .splash-overlay.splash-visible .splash-logo-wrap {
             transform: scale(1);
@@ -851,7 +859,7 @@
             opacity: 0;
             transform: translateY(12px);
             transition: opacity 0.35s ease 0.15s, transform 0.35s ease 0.15s;
-            margin-right: 40px; /* Sağa yaslanmayı engellemek için */
+            margin-right: 180px; /* Sağa yaslanmayı daha fazla engellemek için */
         }
         .splash-overlay.splash-visible .splash-text {
             opacity: 1;
@@ -2304,7 +2312,14 @@
         if (e.target === this) closeModal('vardiyaModal');
     });
 
-    // ── STATE ─────────────────────────────────────────────
+    document.addEventListener('keydown', function(e) {
+    if (e.code === 'Space' && e.target.classList.contains('seg-btn')) {
+        e.preventDefault();
+        e.target.click();
+    }
+});
+
+// ── STATE ─────────────────────────────────────────────
     let secilenVardiya  = '';
     let secilenAracTipi = '';
     let secilenAracTuru = '';
@@ -2875,15 +2890,8 @@
     }
 
     // ── INIT ──────────────────────────────────────────────
-    function getLocalISOString() {
-        const now = new Date();
-        const offset = now.getTimezoneOffset();
-        const localDate = new Date(now.getTime() - (offset * 60 * 1000));
-        return localDate.toISOString().split('T')[0];
-    }
-
     function tarihGoster() {
-        const bugun = getLocalISOString();
+        const bugun = window.getLocalISOString();
         const el = document.getElementById('secilenTarih');
         if (el) el.value = bugun;
     }
@@ -2900,7 +2908,7 @@
     }
 
     function buguneGit() {
-        document.getElementById('secilenTarih').value = getLocalISOString();
+        document.getElementById('secilenTarih').value = window.getLocalISOString();
         tarihDegisince();
     }
 
@@ -2925,11 +2933,21 @@
         }
         if (field === 'aracTipi') {
             el.classList.add('active-blue'); secilenAracTipi = val;
+            // Bir sonraki seg-btn'e veya inputa odaklan
+            const next = document.querySelector('[tabindex="'+(parseInt(el.tabIndex)+1)+'"]');
+            if (next) next.focus();
         } else if (field === 'vardiya') {
             el.classList.add(val === 'A Vardiyası' ? 'active-blue' : 'active-yellow'); secilenVardiya = val;
             _ilkGiris = false;
+            // Bir sonraki seg-btn'e odaklan
+            const next = document.querySelector('[tabindex="'+(parseInt(el.tabIndex)+1)+'"]');
+            if (next) next.focus();
         } else {
             el.classList.add(val === 'O/E' ? 'active-red' : 'active-blue'); secilenAracTuru = val;
+            // Bir sonraki inputa odaklan
+            const next = document.getElementById('m3');
+            if (next) next.focus();
+        }
         }
     }
 
@@ -3083,7 +3101,7 @@
     // ── ÇAKIŞMA KONTROLÜ ──────────────────────────────────
     function cakismaKontrol(ekip, baslama) {
         if (!baslama || baslama.length < 5) return null;
-        const tarih = document.getElementById('secilenTarih').value || new Date().toISOString().split('T')[0];
+        const tarih = document.getElementById('secilenTarih').value || window.getLocalISOString();
         const key   = ekipKey(ekip);
         const [yh,ym] = baslama.split(':').map(Number);
         const yeniBasDk = yh*60+ym;
@@ -3419,7 +3437,7 @@
         }
 
         const sure  = hesaplaSure(baslama, bitis, secilenAracTipi, duruslar);
-        const today = new Date().toISOString().split('T')[0];
+        const today = window.getLocalISOString();
         const kayitTarih = document.getElementById('secilenTarih').value || today;
 
         if (duzenleId !== null) {
@@ -3491,7 +3509,7 @@
 
     function renderTablo() {
         const secilenEl = document.getElementById('secilenTarih');
-        const today     = new Date().toISOString().split('T')[0];
+        const today     = window.getLocalISOString();
         const tarih     = secilenEl ? secilenEl.value : today;
         const bugun     = kayitlar.filter(k => k.tarih===tarih);
         const sirali    = [...bugun].sort((a,b)=>b.id-a.id);
@@ -3700,13 +3718,13 @@
     let secilenDonem = 'gun';
 
     function sefTarihGoster() {
+        const bugun = window.getLocalISOString();
         const now   = new Date();
         const gunler = ['Pazar','Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'];
         const aylar  = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
         const el = document.getElementById('sefTarihDisplay');
         if (el) el.textContent = `${gunler[now.getDay()]}, ${now.getDate()} ${aylar[now.getMonth()]} ${now.getFullYear()}`;
 
-        const bugun = now.toISOString().split('T')[0];
         const ayStr = String(now.getMonth()+1).padStart(2,'0');
         const ayVal = `${now.getFullYear()}-${ayStr}`;
         const yil   = now.getFullYear();
@@ -5173,8 +5191,8 @@
     }
 
     function mesaiInit() {
+        const bugun = window.getLocalISOString();
         const now = new Date();
-        const bugun = now.toISOString().split('T')[0];
         const ayStr = String(now.getMonth()+1).padStart(2,'0');
         document.getElementById('mesaiTarih').value = bugun;
         // Takvim görsel input güncelle
@@ -5199,7 +5217,7 @@
     const _origSefTarihGoster = sefTarihGoster;
     sefTarihGoster = function() {
         _origSefTarihGoster();
-        const bugun = new Date().toISOString().split('T')[0];
+        const bugun = window.getLocalISOString();
         const now   = new Date();
         const ayStr = String(now.getMonth()+1).padStart(2,'0');
         document.getElementById('e3Tarih').value    = bugun;
@@ -5926,8 +5944,8 @@
         document.getElementById('df6PersonelDropdown').style.display = 'none';
 
         // Tarih inputlarını bugüne sıfırla
+        const bugun = window.getLocalISOString();
         const now = new Date();
-        const bugun = now.toISOString().split('T')[0];
         const ayStr = String(now.getMonth()+1).padStart(2,'0');
         document.getElementById('df6Gun').value       = bugun;
         document.getElementById('df6Ay').value        = now.getFullYear() + '-' + ayStr;
@@ -5943,8 +5961,8 @@
     }
 
     function df6Init() {
+        const bugun = window.getLocalISOString();
         const now = new Date();
-        const bugun = now.toISOString().split('T')[0];
         const ayStr = String(now.getMonth()+1).padStart(2,'0');
         document.getElementById('df6Gun').value       = bugun;
         document.getElementById('df6Ay').value        = now.getFullYear() + '-' + ayStr;
@@ -5955,8 +5973,8 @@
     }
 
     function analizInit() {
+        const bugun = window.getLocalISOString();
         const now = new Date();
-        const bugun = now.toISOString().split('T')[0];
         const ayStr = String(now.getMonth()+1).padStart(2,'0');
         document.getElementById('a5Tarih').value    = bugun;
         document.getElementById('a5AyTarih').value  = `${now.getFullYear()}-${ayStr}`;
@@ -6157,7 +6175,7 @@ function va7DonemSec(el, tip) {
 }
 
 function va7TarihAralik() {
-    const bugun = new Date().toISOString().split('T')[0];
+    const bugun = window.getLocalISOString();
     if (va7Donem === 'gun') {
         const t = document.getElementById('va7Tarih').value || bugun;
         return { bas: t, bit: t, label: t };
@@ -6287,8 +6305,8 @@ async function va7Sorgula() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+    const bugun = window.getLocalISOString();
     const now = new Date();
-    const bugun = now.toISOString().split('T')[0];
 
     const inp = document.getElementById('va7Tarih');
     if (inp && !inp.value) inp.value = bugun;
@@ -6424,7 +6442,7 @@ document.addEventListener('DOMContentLoaded', function() {
             hrRaporlar = [];
             console.warn('Hata raporları yüklenemedi:', e);
         }
-        const bugun = new Date().toISOString().split('T')[0];
+        const bugun = window.getLocalISOString();
         const now = new Date();
         const ayStr = String(now.getMonth()+1).padStart(2,'0');
         const setVal = (id, v) => { const el = document.getElementById(id); if (el && !el.value) el.value = v; };
