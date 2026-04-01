@@ -805,7 +805,7 @@
             align-items: center;
             justify-content: center;
             padding: 40px 28px;
-            padding-bottom: 22vh;
+            padding-bottom: 25vh; /* Logoyu ve yazıları daha yukarı almak için */
             gap: 24px;
             opacity: 0;
             pointer-events: none;
@@ -1550,8 +1550,26 @@
             var btns = Array.from(grp.querySelectorAll('.seg-btn'));
             var idx  = btns.indexOf(btn);
 
-            if (e.key === ' ' || e.key === 'Enter') {
-                // Sadece bu butonu seç — başka bir şey yapma
+            if (e.key === ' ') {
+                // Space: Seç ve bir sonraki gruba atla
+                e.preventDefault();
+                btn.click();
+                
+                // Bir sonraki grubun ilk/aktif butonuna odaklan
+                var allGrps = Array.from(document.querySelectorAll('#operatorSayfa .seg-group'));
+                var gi = allGrps.indexOf(grp);
+                if (gi < allGrps.length - 1) {
+                    var ng = allGrps[gi + 1];
+                    var na = ng.querySelector('.seg-btn.active-blue,.seg-btn.active-yellow,.seg-btn.active-red') || ng.querySelector('.seg-btn');
+                    if (na) na.focus();
+                } else {
+                    // Eğer son grup ise M3 inputuna odaklan
+                    var m3 = document.getElementById('m3');
+                    if (m3) m3.focus();
+                }
+
+            } else if (e.key === 'Enter') {
+                // Enter: Sadece seç
                 e.preventDefault();
                 btn.click();
 
@@ -1564,23 +1582,32 @@
                 btns[(idx - 1 + btns.length) % btns.length].focus();
 
             } else if (e.key === 'Tab') {
+                // Tab: Seçim yapmadan bir sonraki gruba geç
                 e.preventDefault();
                 var allGrps = Array.from(document.querySelectorAll('#operatorSayfa .seg-group'));
                 var gi = allGrps.indexOf(grp);
+                
                 if (!e.shiftKey) {
-                    if (gi < allGrps.length - 1) {
-                        // Sonraki grubun aktif/ilk butonuna git
+                    // İleri git: Sıradaki buton (grup içinde) veya sonraki grup
+                    if (idx < btns.length - 1) {
+                        btns[idx + 1].focus();
+                    } else if (gi < allGrps.length - 1) {
                         var ng = allGrps[gi + 1];
                         var na = ng.querySelector('.seg-btn.active-blue,.seg-btn.active-yellow,.seg-btn.active-red') || ng.querySelector('.seg-btn');
-                        na.focus();
+                        if (na) na.focus();
                     } else {
-                        document.getElementById('btnSubmit').focus();
+                        // Son gruptaysa inputlara geç
+                        var m3 = document.getElementById('m3');
+                        if (m3) m3.focus();
                     }
                 } else {
-                    if (gi > 0) {
+                    // Geri git
+                    if (idx > 0) {
+                        btns[idx - 1].focus();
+                    } else if (gi > 0) {
                         var pg = allGrps[gi - 1];
                         var pa = pg.querySelector('.seg-btn.active-blue,.seg-btn.active-yellow,.seg-btn.active-red') || pg.querySelector('.seg-btn');
-                        pa.focus();
+                        if (pa) pa.focus();
                     }
                 }
             }
