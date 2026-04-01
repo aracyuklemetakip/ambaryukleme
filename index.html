@@ -1429,23 +1429,23 @@
                 <div class="input-group">
                     <div class="input-label">Vardiya</div>
                     <div class="seg-group" id="segVardiya">
-                        <div class="seg-btn" tabindex="1" onclick="setSeg(this,'vardiya','A Vardiyası')"><span style="font-size:16px;font-weight:700;">A</span></div>
-                        <div class="seg-btn" tabindex="2" onclick="setSeg(this,'vardiya','B Vardiyası')"><span style="font-size:16px;font-weight:700;">B</span></div>
+                        <div class="seg-btn" tabindex="-1" onclick="setSeg(this,'vardiya','A Vardiyası')"><span style="font-size:16px;font-weight:700;">A</span></div>
+                        <div class="seg-btn" tabindex="-1" onclick="setSeg(this,'vardiya','B Vardiyası')"><span style="font-size:16px;font-weight:700;">B</span></div>
                     </div>
                 </div>
                 <div class="input-group">
                     <div class="input-label">Araç Tipi</div>
                     <div class="seg-group" id="segTip">
-                        <div class="seg-btn" tabindex="3" onclick="setSeg(this,'aracTipi','Tır')"><span>🚛</span><span>Tır</span></div>
-                        <div class="seg-btn" tabindex="4" onclick="setSeg(this,'aracTipi','Kamyon')"><span>🚚</span><span>Kamyon</span></div>
-                        <div class="seg-btn" tabindex="5" onclick="setSeg(this,'aracTipi','Konteyner')"><span>📦</span><span>Konteyner</span></div>
+                        <div class="seg-btn" tabindex="-1" onclick="setSeg(this,'aracTipi','Tır')"><span>🚛</span><span>Tır</span></div>
+                        <div class="seg-btn" tabindex="-1" onclick="setSeg(this,'aracTipi','Kamyon')"><span>🚚</span><span>Kamyon</span></div>
+                        <div class="seg-btn" tabindex="-1" onclick="setSeg(this,'aracTipi','Konteyner')"><span>📦</span><span>Konteyner</span></div>
                     </div>
                 </div>
                 <div class="input-group">
                     <div class="input-label">Araç Türü</div>
                     <div class="seg-group" id="segTur">
-                        <div class="seg-btn" tabindex="6" onclick="setSeg(this,'aracTuru','O/E')"><span>O/E</span></div>
-                        <div class="seg-btn" tabindex="7" onclick="setSeg(this,'aracTuru','Piyasa')"><span>PİYASA</span></div>
+                        <div class="seg-btn" tabindex="-1" onclick="setSeg(this,'aracTuru','O/E')"><span>O/E</span></div>
+                        <div class="seg-btn" tabindex="-1" onclick="setSeg(this,'aracTuru','Piyasa')"><span>PİYASA</span></div>
                     </div>
                 </div>
                 <div class="input-group">
@@ -1530,32 +1530,95 @@
         </div>
 
         <script>
+        // ── Her seg-group için: tüm butonlar tabindex=-1,
+        //    sadece aktif olan (yoksa ilk) tabindex=0 alır.
+        function segTabRefresh() {
+            document.querySelectorAll('#operatorSayfa .seg-group').forEach(function(grp) {
+                var btns = grp.querySelectorAll('.seg-btn');
+                var aktif = grp.querySelector('.seg-btn.active-blue,.seg-btn.active-yellow,.seg-btn.active-red');
+                btns.forEach(function(b) { b.tabIndex = -1; });
+                (aktif || btns[0]).tabIndex = 0;
+            });
+        }
+
+        // ── Keyboard handler ──
         document.addEventListener('keydown', function(e) {
-            if (!e.target.classList.contains('seg-btn')) return;
-            const btn = e.target;
-            const group = btn.closest('.seg-group');
-            if (!group) return;
-            const btns = Array.from(group.querySelectorAll('.seg-btn'));
-            const idx = btns.indexOf(btn);
+            var btn = e.target;
+            if (!btn.classList.contains('seg-btn')) return;
+            var grp = btn.closest('.seg-group');
+            if (!grp) return;
+            var btns = Array.from(grp.querySelectorAll('.seg-btn'));
+            var idx  = btns.indexOf(btn);
 
             if (e.key === ' ' || e.key === 'Enter') {
+                // Sadece bu butonu seç — başka bir şey yapma
                 e.preventDefault();
                 btn.click();
+
             } else if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
                 e.preventDefault();
-                const next = btns[(idx + 1) % btns.length];
-                next.focus();
-                next.click();
+                btns[(idx + 1) % btns.length].focus();
+
             } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
                 e.preventDefault();
-                const prev = btns[(idx - 1 + btns.length) % btns.length];
-                prev.focus();
-                prev.click();
+                btns[(idx - 1 + btns.length) % btns.length].focus();
+
+            } else if (e.key === 'Tab') {
+                e.preventDefault();
+                var allGrps = Array.from(document.querySelectorAll('#operatorSayfa .seg-group'));
+                var gi = allGrps.indexOf(grp);
+                if (!e.shiftKey) {
+                    if (gi < allGrps.length - 1) {
+                        // Sonraki grubun aktif/ilk butonuna git
+                        var ng = allGrps[gi + 1];
+                        var na = ng.querySelector('.seg-btn.active-blue,.seg-btn.active-yellow,.seg-btn.active-red') || ng.querySelector('.seg-btn');
+                        na.focus();
+                    } else {
+                        document.getElementById('btnSubmit').focus();
+                    }
+                } else {
+                    if (gi > 0) {
+                        var pg = allGrps[gi - 1];
+                        var pa = pg.querySelector('.seg-btn.active-blue,.seg-btn.active-yellow,.seg-btn.active-red') || pg.querySelector('.seg-btn');
+                        pa.focus();
+                    }
+                }
             }
         });
-        document.querySelectorAll('.seg-btn').forEach(function(btn) {
-            btn.setAttribute('role', 'button');
+
+        // ── Submit butonu: Tab ile gelince ince border outline ──
+        document.head.insertAdjacentHTML('beforeend',
+            '<style>' +
+            '#btnSubmit { outline: none; }' +
+            '#btnSubmit:focus-visible {' +
+            '  outline: 2px solid rgba(240,179,35,0.8);' +
+            '  outline-offset: 3px;' +
+            '  box-shadow: none;' +
+            '}' +
+            '</style>'
+        );
+
+        // ── Click ile seçim sonrası tabindex'leri güncelle ──
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('#operatorSayfa .seg-btn')) {
+                setTimeout(segTabRefresh, 0);
+            }
         });
+
+        // ── Operatör sayfası active olunca A'yı otomatik seç (eğer hiç seçili yoksa) ──
+        (function() {
+            var opSayfa = document.getElementById('operatorSayfa');
+            if (!opSayfa) return;
+            new MutationObserver(function() {
+                if (opSayfa.classList.contains('active')) {
+                    var vg = document.getElementById('segVardiya');
+                    if (vg && !vg.querySelector('.seg-btn.active-blue,.seg-btn.active-yellow,.seg-btn.active-red')) {
+                        vg.querySelector('.seg-btn').click();
+                    }
+                    segTabRefresh();
+                }
+            }).observe(opSayfa, { attributes: true, attributeFilter: ['class'] });
+        })();
         </script>
 
         <div class="table-panel">
