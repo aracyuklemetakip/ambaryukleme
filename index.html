@@ -2160,33 +2160,27 @@
 
             <!-- SEKME 7: VARDİYA ANALİZİ -->
             <div id="sekme7" class="sekme-icerik">
-                <div class="filtre-panel">
-                    <div class="filtre-row">
-                        <div class="filtre-group">
-                            <div class="filtre-label">Dönem</div>
-                            <div class="filtre-seg" id="va7DonemSeg">
-                                <div class="filtre-seg-btn aktif" onclick="va7DonemSec(this,'gun')">Günlük</div>
-                                <div class="filtre-seg-btn" onclick="va7DonemSec(this,'ay')">Aylık</div>
-                                <div class="filtre-seg-btn" onclick="va7DonemSec(this,'yil')">Yıllık</div>
-                                <div class="filtre-seg-btn" onclick="va7DonemSec(this,'aralik')">Tarih Aralığı Seç</div>
-                            </div>
+                <div class="filtre-panel" style="padding:8px 10px;margin-bottom:6px;">
+                    <div class="filtre-row" style="gap:8px;align-items:flex-end;flex-wrap:wrap;">
+                        <div class="filtre-seg" id="va7DonemSeg" style="gap:3px;">
+                            <div class="filtre-seg-btn aktif" onclick="va7DonemSec(this,'gun')" style="font-size:11px;padding:4px 10px;">Günlük</div>
+                            <div class="filtre-seg-btn" onclick="va7DonemSec(this,'ay')" style="font-size:11px;padding:4px 10px;">Aylık</div>
+                            <div class="filtre-seg-btn" onclick="va7DonemSec(this,'yil')" style="font-size:11px;padding:4px 10px;">Yıllık</div>
+                            <div class="filtre-seg-btn" onclick="va7DonemSec(this,'aralik')" style="font-size:11px;padding:4px 10px;">Aralık</div>
                         </div>
-                        <div class="filtre-group" id="va7GunGrp">
-                            <div class="filtre-label">Tarih</div>
-                            <input type="date" id="va7Tarih" class="filtre-input" onchange="va7Sorgula()">
+                        <div id="va7GunGrp">
+                            <input type="date" id="va7Tarih" class="filtre-input" style="padding:5px 8px;font-size:12px;" onchange="va7Sorgula()">
                         </div>
-                        <div class="filtre-group" id="va7AyGrp" style="display:none;">
-                            <div class="filtre-label">Ay / Yıl</div>
-                            <input type="month" id="va7AyTarih" class="filtre-input" onchange="va7Sorgula()">
+                        <div id="va7AyGrp" style="display:none;">
+                            <input type="month" id="va7AyTarih" class="filtre-input" style="padding:5px 8px;font-size:12px;" onchange="va7Sorgula()">
                         </div>
-                        <div class="filtre-group" id="va7YilGrp" style="display:none;">
-                            <div class="filtre-label">Yıl</div>
-                            <input type="number" id="va7YilSayi" class="filtre-input" style="width:110px;" min="2020" max="2099" onchange="va7Sorgula()">
+                        <div id="va7YilGrp" style="display:none;">
+                            <input type="number" id="va7YilSayi" class="filtre-input" style="width:90px;padding:5px 8px;font-size:12px;" min="2020" max="2099" onchange="va7Sorgula()">
                         </div>
-                        <div class="filtre-group" id="va7AralikGrp" style="display:none;flex-direction:row;gap:8px;align-items:flex-end;">
-                            <div><div class="filtre-label">Başlangıç</div><input type="date" id="va7AralikBas" class="filtre-input" onchange="va7Sorgula()"></div>
-                            <div style="color:var(--muted);font-size:18px;font-weight:700;padding-bottom:8px;">—</div>
-                            <div><div class="filtre-label">Bitiş</div><input type="date" id="va7AralikBit" class="filtre-input" onchange="va7Sorgula()"></div>
+                        <div id="va7AralikGrp" style="display:none;flex-direction:row;gap:6px;align-items:center;">
+                            <input type="date" id="va7AralikBas" class="filtre-input" style="padding:5px 8px;font-size:12px;" onchange="va7Sorgula()">
+                            <span style="color:var(--muted);font-weight:700;">—</span>
+                            <input type="date" id="va7AralikBit" class="filtre-input" style="padding:5px 8px;font-size:12px;" onchange="va7Sorgula()">
                         </div>
                     </div>
                 </div>
@@ -6390,51 +6384,45 @@ async function va7Sorgula() {
     }
 
     sonuc.innerHTML = `
-        <div class="donem-badge">📅 ${donem.label} · Toplam ${liste.length} Araç</div>
-        <div class="sef-bolum" style="padding:20px;">
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:24px;">
-                
-                <!-- A VARDİYASI -->
-                <div>
-                    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; border-bottom:2px solid rgba(37,99,235,0.2); padding-bottom:8px;">
-                        <div style="font-family:'Inter',sans-serif; font-size:15px; font-weight:700; color:#2563eb; letter-spacing:1px;">A VARDİYASI</div>
-                        <div style="display:flex; gap:6px;">
-                            <span class="stat-pill" style="background:rgba(37,99,235,0.1); color:#2563eb; font-size:11px;">${topA} Araç</span>
-                            <span class="stat-pill" style="background:rgba(34,197,94,0.1); color:#16a34a; font-size:11px;">${m3A.toFixed(1)} M³</span>
-                        </div>
-                    </div>
-                    <div style="display:flex; gap:4px; margin-bottom:12px; justify-content:center;">
-                        <span style="font-size:10px; font-weight:800; color:#F0B323; background:rgba(240,179,35,0.25); padding:2px 8px; border-radius:4px;">🚛 ${topTirA}</span>
-                        <span style="font-size:10px; font-weight:800; color:#93C5FD; background:rgba(147,197,253,0.4); padding:2px 8px; border-radius:4px;">🚚 ${topKamyonA}</span>
-                        <span style="font-size:10px; font-weight:800; color:#e2e8f0; background:rgba(226,232,240,0.25); border:1px solid rgba(226,232,240,0.4); padding:2px 8px; border-radius:4px;">📦 ${topKonteynerA}</span>
-                    </div>
-                    <table class="data-table" style="font-size:11px;">
-                        <thead><tr><th style="width:30px;">#</th><th>Ekip</th><th style="text-align:center;">T</th><th style="text-align:center;">K</th><th style="text-align:center;">C</th><th style="text-align:center;">M³</th></tr></thead>
-                        <tbody>${liderSatir(ekipA)}</tbody>
-                    </table>
-                </div>
+        <div class="donem-badge" style="margin-bottom:6px;">📅 ${donem.label} · Toplam ${liste.length} Araç</div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
 
-                <!-- B VARDİYASI -->
-                <div>
-                    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; border-bottom:2px solid rgba(217,119,6,0.2); padding-bottom:8px;">
-                        <div style="font-family:'Inter',sans-serif; font-size:15px; font-weight:700; color:#d97706; letter-spacing:1px;">B VARDİYASI</div>
-                        <div style="display:flex; gap:6px;">
-                            <span class="stat-pill" style="background:rgba(217,119,6,0.1); color:#d97706; font-size:11px;">${topB} Araç</span>
-                            <span class="stat-pill" style="background:rgba(34,197,94,0.1); color:#16a34a; font-size:11px;">${m3B.toFixed(1)} M³</span>
-                        </div>
+            <!-- A VARDİYASI -->
+            <div style="background:rgba(37,99,235,0.07);border:1.5px solid rgba(37,99,235,0.25);border-radius:10px;padding:10px 12px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;border-bottom:1.5px solid rgba(37,99,235,0.18);padding-bottom:6px;">
+                    <div style="font-family:'Inter',sans-serif;font-size:14px;font-weight:800;color:#60a5fa;letter-spacing:1px;">🔵 A VARDİYASI</div>
+                    <div style="display:flex;gap:4px;align-items:center;">
+                        <span class="stat-pill" style="background:rgba(37,99,235,0.15);color:#93C5FD;font-size:11px;padding:2px 7px;">${topA} Araç</span>
+                        <span class="stat-pill" style="background:rgba(34,197,94,0.12);color:#4ade80;font-size:11px;padding:2px 7px;">${m3A.toFixed(1)} M³</span>
+                        <span style="font-size:10px;font-weight:800;color:#F0B323;background:rgba(240,179,35,0.2);padding:2px 7px;border-radius:4px;">🚛 ${topTirA}</span>
+                        <span style="font-size:10px;font-weight:800;color:#93C5FD;background:rgba(147,197,253,0.3);padding:2px 7px;border-radius:4px;">🚚 ${topKamyonA}</span>
+                        <span style="font-size:10px;font-weight:800;color:#e2e8f0;background:rgba(226,232,240,0.15);border:1px solid rgba(226,232,240,0.3);padding:2px 7px;border-radius:4px;">📦 ${topKonteynerA}</span>
                     </div>
-                    <div style="display:flex; gap:4px; margin-bottom:12px; justify-content:center;">
-                        <span style="font-size:10px; font-weight:800; color:#F0B323; background:rgba(240,179,35,0.25); padding:2px 8px; border-radius:4px;">🚛 ${topTirB}</span>
-                        <span style="font-size:10px; font-weight:800; color:#93C5FD; background:rgba(147,197,253,0.4); padding:2px 8px; border-radius:4px;">🚚 ${topKamyonB}</span>
-                        <span style="font-size:10px; font-weight:800; color:#e2e8f0; background:rgba(226,232,240,0.25); border:1px solid rgba(226,232,240,0.4); padding:2px 8px; border-radius:4px;">📦 ${topKonteynerB}</span>
-                    </div>
-                    <table class="data-table" style="font-size:11px;">
-                        <thead><tr><th style="width:30px;">#</th><th>Ekip</th><th style="text-align:center;">T</th><th style="text-align:center;">K</th><th style="text-align:center;">C</th><th style="text-align:center;">M³</th></tr></thead>
-                        <tbody>${liderSatir(ekipB)}</tbody>
-                    </table>
                 </div>
-
+                <table class="data-table" style="font-size:11px;margin:0;">
+                    <thead><tr><th style="width:28px;padding:5px 4px;">#</th><th style="padding:5px 4px;">Ekip</th><th style="text-align:center;padding:5px 4px;">Tır</th><th style="text-align:center;padding:5px 4px;">Kmyn</th><th style="text-align:center;padding:5px 4px;">Kont</th><th style="text-align:center;padding:5px 4px;">M³</th></tr></thead>
+                    <tbody>${liderSatir(ekipA)}</tbody>
+                </table>
             </div>
+
+            <!-- B VARDİYASI -->
+            <div style="background:rgba(217,119,6,0.07);border:1.5px solid rgba(217,119,6,0.25);border-radius:10px;padding:10px 12px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;border-bottom:1.5px solid rgba(217,119,6,0.18);padding-bottom:6px;">
+                    <div style="font-family:'Inter',sans-serif;font-size:14px;font-weight:800;color:#FCD34D;letter-spacing:1px;">🟡 B VARDİYASI</div>
+                    <div style="display:flex;gap:4px;align-items:center;">
+                        <span class="stat-pill" style="background:rgba(217,119,6,0.15);color:#FCD34D;font-size:11px;padding:2px 7px;">${topB} Araç</span>
+                        <span class="stat-pill" style="background:rgba(34,197,94,0.12);color:#4ade80;font-size:11px;padding:2px 7px;">${m3B.toFixed(1)} M³</span>
+                        <span style="font-size:10px;font-weight:800;color:#F0B323;background:rgba(240,179,35,0.2);padding:2px 7px;border-radius:4px;">🚛 ${topTirB}</span>
+                        <span style="font-size:10px;font-weight:800;color:#93C5FD;background:rgba(147,197,253,0.3);padding:2px 7px;border-radius:4px;">🚚 ${topKamyonB}</span>
+                        <span style="font-size:10px;font-weight:800;color:#e2e8f0;background:rgba(226,232,240,0.15);border:1px solid rgba(226,232,240,0.3);padding:2px 7px;border-radius:4px;">📦 ${topKonteynerB}</span>
+                    </div>
+                </div>
+                <table class="data-table" style="font-size:11px;margin:0;">
+                    <thead><tr><th style="width:28px;padding:5px 4px;">#</th><th style="padding:5px 4px;">Ekip</th><th style="text-align:center;padding:5px 4px;">Tır</th><th style="text-align:center;padding:5px 4px;">Kmyn</th><th style="text-align:center;padding:5px 4px;">Kont</th><th style="text-align:center;padding:5px 4px;">M³</th></tr></thead>
+                    <tbody>${liderSatir(ekipB)}</tbody>
+                </table>
+            </div>
+
         </div>
     `;
 }
