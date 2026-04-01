@@ -626,10 +626,10 @@
         .empty-state-text { font-size:13px;font-weight:500; }
 
         /* TOAST */
-        .toast { position:fixed;bottom:24px;left:50%; transform:translateX(-50%) translateY(80px); border-radius:8px; padding:10px 20px;font-size:12px;font-weight:600; z-index:9999;transition:transform 0.25s ease,opacity 0.25s; opacity:0;pointer-events:none;white-space:nowrap; box-shadow:0 2px 8px rgba(0,0,0,0.08); }
-        .toast.show { transform:translateX(-50%) translateY(0);opacity:1; }
-        .toast.success { background:#fff;border:1px solid #BBF7D0;color:#15803d; }
-        .toast.warn    { background:#fff;border:1px solid #FDE68A;color:#92400e; }
+        .toast { position:fixed;top:50%;left:50%; transform:translate(-50%,-50%) scale(0.85); border-radius:12px; padding:14px 28px;font-size:14px;font-weight:700; z-index:99999;transition:transform 0.22s cubic-bezier(0.34,1.56,0.64,1),opacity 0.22s; opacity:0;pointer-events:none;white-space:nowrap; box-shadow:0 8px 32px rgba(0,0,0,0.18); text-align:center; }
+        .toast.show { transform:translate(-50%,-50%) scale(1);opacity:1; }
+        .toast.success { background:#fff;border:2px solid #BBF7D0;color:#15803d; }
+        .toast.warn    { background:#fff;border:2px solid #FDE68A;color:#92400e; }
 
         ::-webkit-scrollbar { width:4px; }
         ::-webkit-scrollbar-track { background:transparent; }
@@ -790,6 +790,26 @@
         .vd-toplam-item { flex:1;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:6px 4px;text-align:center; }
 
         @keyframes pulseRed { 0%,100%{opacity:1} 50%{opacity:0.45} }
+
+        /* YENİ KAYIT FLASH ANİMASYONU */
+        @keyframes yeniKayitFlash {
+            0%   { background: rgba(240,179,35,0.55) !important; box-shadow: inset 0 0 0 2px #F0B323; }
+            20%  { background: rgba(240,179,35,0.15) !important; }
+            40%  { background: rgba(240,179,35,0.50) !important; box-shadow: inset 0 0 0 2px #F0B323; }
+            60%  { background: rgba(240,179,35,0.10) !important; }
+            80%  { background: rgba(240,179,35,0.45) !important; box-shadow: inset 0 0 0 2px #F0B323; }
+            100% { background: rgba(240,179,35,0.18) !important; box-shadow: inset 0 0 0 2px rgba(240,179,35,0.6); }
+        }
+        .yeni-kayit-satir {
+            animation: yeniKayitFlash 1.8s ease forwards !important;
+            position: relative;
+        }
+        .yeni-kayit-satir td:first-child::before {
+            content: '★';
+            color: #F0B323;
+            font-size: 11px;
+            margin-right: 4px;
+        }
         .donem-badge { display:inline-flex;align-items:center;gap:8px;background:rgba(240,179,35,0.12);border:1px solid rgba(240,179,35,0.35);border-radius:100px;padding:5px 14px;font-size:12px;font-weight:700;color:#F0B323;margin-bottom:14px; }
 
         /* ══════════════════════════════════════
@@ -3570,6 +3590,7 @@
             kayitlar.push(yeniKayit);
             if (shipment) shipmentGecmisEkle(shipment);
             if(window._fbSaveKayit) window._fbSaveKayit(kayitlar[kayitlar.length-1]);
+            _lastAddedId = yeniKayit.id;
             formTemizle(); renderTablo(); playSoundKaydet(); showToast('✓  Kayıt başarıyla eklendi','success');
             // Tır'ı seçili getir
             const tirBtn = document.querySelector('#segTip .seg-btn');
@@ -3717,6 +3738,15 @@
             tr.dataset.id = k.id;
             tr.style.cssText = 'cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.08);transition:background 0.1s;background:#1C2B6E;';
             if (duzenleId === k.id) tr.classList.add('selected');
+            if (_lastAddedId !== null && k.id === _lastAddedId) {
+                tr.classList.add('yeni-kayit-satir');
+                // Animasyon bitince sınıfı kaldır, arka planı kalıcı yap
+                tr.addEventListener('animationend', function() {
+                    tr.style.background = 'rgba(240,179,35,0.12)';
+                    tr.style.boxShadow = 'inset 0 0 0 1px rgba(240,179,35,0.35)';
+                    tr.classList.remove('yeni-kayit-satir');
+                }, { once: true });
+            }
 
             tr.innerHTML = `
                 <td style="padding:5px 8px;color:#fff;font-size:11px;">${i+1}</td>
@@ -3836,6 +3866,7 @@
 
     // ── ŞEF SAYFASI ───────────────────────────────────────
     let secilenDonem = 'gun';
+    let _lastAddedId = null; // Son eklenen kaydın ID'si
 
     function sefTarihGoster() {
         const bugun = window.getLocalISOString();
