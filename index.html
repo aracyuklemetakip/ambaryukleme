@@ -669,8 +669,8 @@
             font-weight:700; 
         }
         .sef-sidebar-label { 
-            font-size:10px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; 
-            color:rgba(255,255,255,0.35);
+            font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; 
+            color:#ffffff;
             padding:6px 12px; margin:10px 0 4px;
         }
         .sef-content { padding:16px 20px; overflow-y:auto; height:calc(100vh - 52px); background:#1C2B6E; }
@@ -2059,7 +2059,7 @@
                             oninput="this.value=window.trUpper(this.value);personelModalFiltre(this.value)" autocomplete="off">
                     </div>
                     <!-- Liste -->
-                    <div id="personelModalListe" style="overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:4px;">
+                    <div id="personelModalListe" style="overflow-y:auto;height:320px;min-height:320px;flex-shrink:0;display:flex;flex-direction:column;gap:4px;">
                     </div>
                 </div>
             </div>
@@ -3765,10 +3765,12 @@
     function playSoundKaydet()  { playSound('kaydet'); }
     function playSoundGuncelle() { playSound('guncelle'); }
     function playSoundSil()     { playSound('sil'); }
+    function playSoundHata()    { playSound('hata'); }
 
     function showToast(msg, type='success') {
         const t = document.getElementById('toast');
         t.textContent = msg; t.className=`toast ${type}`; t.classList.add('show');
+        if (type === 'warn') playSoundHata();
         setTimeout(()=>t.classList.remove('show'),2500);
     }
 
