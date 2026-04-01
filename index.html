@@ -1530,47 +1530,93 @@
         </div>
 
         <script>
-        // ── Her seg-group için: tüm butonlar tabindex=-1,
-        //    sadece aktif olan (yoksa ilk) tabindex=0 alır.
+        // ── Her seg-group için tabindex yönetimi:
+        //    Tüm butonlar tabindex=-1, sadece aktif/ilk buton tabindex=0
         function segTabRefresh() {
             document.querySelectorAll('#operatorSayfa .seg-group').forEach(function(grp) {
                 var btns = grp.querySelectorAll('.seg-btn');
                 var aktif = grp.querySelector('.seg-btn.active-blue,.seg-btn.active-yellow,.seg-btn.active-red');
                 btns.forEach(function(b) { b.tabIndex = -1; });
-                (aktif || btns[0]).tabIndex = 0;
+                if (aktif) {
+                    aktif.tabIndex = 0;
+                } else if (btns.length > 0) {
+                    btns[0].tabIndex = 0;
+                }
             });
         }
 
         // ── Keyboard handler ──
+        // Tab  → seg-group IÇINDE bir sonraki butona geçer
+        // Space → butonu seçer + bir sonraki grubun ilk butonuna atlar
         document.addEventListener('keydown', function(e) {
             var btn = e.target;
             if (!btn.classList.contains('seg-btn')) return;
             var grp = btn.closest('.seg-group');
             if (!grp) return;
-            
+
+            var allGrps = Array.from(document.querySelectorAll('#operatorSayfa .seg-group'));
+            var gi = allGrps.indexOf(grp);
+            var btns = Array.from(grp.querySelectorAll('.seg-btn'));
+            var bi = btns.indexOf(btn);
+
             if (e.key === ' ') {
-                // Space: Seç ve bir sonraki gruba atla
+                // Space: seç, sonra bir sonraki grubun ilk butonuna odaklan
                 e.preventDefault();
                 btn.click();
-                
-                // Bir sonraki grubun ilk butonuna odaklan
-                var allGrps = Array.from(document.querySelectorAll('#operatorSayfa .seg-group'));
-                var gi = allGrps.indexOf(grp);
+
                 if (gi < allGrps.length - 1) {
-                    var ng = allGrps[gi + 1];
-                    var nf = ng.querySelector('.seg-btn');
-                    if (nf) nf.focus();
+                    var nextGrp = allGrps[gi + 1];
+                    var nextBtn = nextGrp.querySelector('.seg-btn');
+                    if (nextBtn) {
+                        // Tüm nextGrp butonlarını tabindex=-1 yap, sonra nextBtn'i 0 yap
+                        nextGrp.querySelectorAll('.seg-btn').forEach(function(b) { b.tabIndex = -1; });
+                        nextBtn.tabIndex = 0;
+                        nextBtn.focus();
+                    }
                 } else {
-                    // Eğer son grup ise M3 inputuna odaklan
-                    var m3 = document.getElementById('m3');
-                    if (m3) m3.focus();
+                    // Son gruptaysa M3 inputuna git
+                    var m3El = document.getElementById('m3');
+                    if (m3El) m3El.focus();
                 }
 
-            } else if (e.key === 'Tab') {
-                // Tab: Standart davranış (HTML sırasına göre gezer)
-                // Ancak döngüyü engellemek ve formun akışını sağlamak için özel bir şey yapmamıza gerek yok,
-                // çünkü tabindex=0 verdik. Tarayıcı sırayla gezecektir.
-                // Sadece Shift+Tab ile geri gitmeyi de bozmamalıyız.
+            } else if (e.key === 'Tab' && !e.shiftKey) {
+                // Tab: grup içinde bir sonraki butona geç
+                // Eğer grupta son butondaysak → standart davranış (form devamına geç)
+                if (bi < btns.length - 1) {
+                    e.preventDefault();
+                    // Tüm grubun tabindex'ini güncelle
+                    btns.forEach(function(b) { b.tabIndex = -1; });
+                    var nextInGrp = btns[bi + 1];
+                    nextInGrp.tabIndex = 0;
+                    nextInGrp.focus();
+                }
+                // Son butondaysa: doğal Tab davranışı — sonraki seg-group'a ya da input'a geçer
+
+            } else if (e.key === 'Tab' && e.shiftKey) {
+                // Shift+Tab: grup içinde bir önceki butona dön
+                if (bi > 0) {
+                    e.preventDefault();
+                    btns.forEach(function(b) { b.tabIndex = -1; });
+                    var prevInGrp = btns[bi - 1];
+                    prevInGrp.tabIndex = 0;
+                    prevInGrp.focus();
+                }
+                // İlk butondaysa: doğal Shift+Tab — önceki gruba geçer
+
+            } else if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                // Ok tuşları da grup içinde gezinir
+                e.preventDefault();
+                var nextIdx = (bi + 1) % btns.length;
+                btns.forEach(function(b) { b.tabIndex = -1; });
+                btns[nextIdx].tabIndex = 0;
+                btns[nextIdx].focus();
+
+            } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                e.preventDefault();
+                var prevIdx = (bi - 1 + btns.length) % btns.length;
+                btns.forEach(function(b) { b.tabIndex = -1; });
+                btns[prevIdx].tabIndex = 0;
+                btns[prevIdx].focus();
             }
         });
 
@@ -1595,10 +1641,10 @@
                     if (vg) {
                         var btnA = vg.querySelector('.seg-btn');
                         if (btnA && !btnA.classList.contains('active-blue')) {
-                            btnA.click(); // Seç
+                            btnA.click(); // A'yı seç
                         }
                         if (btnA) {
-                            setTimeout(function() { btnA.focus(); }, 100); // Odakla
+                            setTimeout(function() { btnA.focus(); }, 120); // Odakla
                         }
                     }
                 }
