@@ -2341,6 +2341,16 @@
         return str.replace(/i/g, "İ").replace(/ı/g, "I").toUpperCase();
     };
 
+    window.trFixPDF = function(s) {
+        return (s||'').toString()
+            .replace(/Ç/g,'C').replace(/ç/g,'c')
+            .replace(/Ğ/g,'G').replace(/ğ/g,'g')
+            .replace(/İ/g,'I').replace(/ı/g,'i')
+            .replace(/Ö/g,'O').replace(/ö/g,'o')
+            .replace(/Ş/g,'S').replace(/ş/g,'s')
+            .replace(/Ü/g,'U').replace(/ü/g,'u');
+    };
+
     window.trSort = function(a, b, key) {
         const valA = key ? (a[key] || "") : (a || "");
         const valB = key ? (b[key] || "") : (b || "");
@@ -4365,22 +4375,24 @@
 
         // ── ORTAK BAŞLIK FONKSİYONU (tek satır, font küçülür, asla taşmaz) ──
         function sayfaBaslik(baslik, alt) {
+            baslik = window.trFixPDF(baslik);
+            alt = window.trFixPDF(alt);
             const W = 297;
             doc.setFont('helvetica','bold');
-            let fs = 13;
+            let fs = 12;
             doc.setFontSize(fs);
             while (doc.getTextWidth(baslik) > W - 10 && fs > 5) {
                 fs -= 0.25;
                 doc.setFontSize(fs);
             }
-            const headerH = 22;
+            const headerH = 18;
             doc.setFillColor(...mavi);
             doc.rect(0, 0, W, headerH, 'F');
             doc.setTextColor(255,255,255);
             doc.setFontSize(fs); doc.setFont('helvetica','bold');
-            doc.text(baslik, W/2, 11, {align:'center'});
-            doc.setFontSize(8); doc.setFont('helvetica','normal');
-            doc.text(alt, W/2, 19, {align:'center'});
+            doc.text(baslik, W/2, 8, {align:'center'});
+            doc.setFontSize(7.5); doc.setFont('helvetica','normal');
+            doc.text(alt, W/2, 14, {align:'center'});
             return headerH;
         }
 
@@ -4393,17 +4405,17 @@
                 {lbl:'TOPLAM ARAÇ', val:toplam, renk:[244,114,182]},
                 {lbl:'TOPLAM M3', val:m3, renk:[34,197,94]},
             ];
-            const kw=50, kh=16, gap=2, kx0=10;
+            const kw=48, kh=12, gap=2, kx0=20;
             ozet.forEach((o,i) => {
                 const x = kx0 + i*(kw+gap);
-                doc.setFillColor(245,247,255); doc.roundedRect(x,y,kw,kh,2,2,'F');
-                doc.setDrawColor(...o.renk); doc.setLineWidth(0.6); doc.roundedRect(x,y,kw,kh,2,2,'S');
-                doc.setTextColor(...o.renk); doc.setFontSize(14); doc.setFont('helvetica','bold');
-                doc.text(String(o.val), x+kw/2, y+9, {align:'center'});
-                doc.setTextColor(100,116,139); doc.setFontSize(6); doc.setFont('helvetica','normal');
-                doc.text(o.lbl, x+kw/2, y+14, {align:'center'});
+                doc.setFillColor(245,247,255); doc.roundedRect(x,y,kw,kh,1.5,1.5,'F');
+                doc.setDrawColor(...o.renk); doc.setLineWidth(0.4); doc.roundedRect(x,y,kw,kh,1.5,1.5,'S');
+                doc.setTextColor(...o.renk); doc.setFontSize(11); doc.setFont('helvetica','bold');
+                doc.text(String(o.val), x+kw/2, y+6.5, {align:'center'});
+                doc.setTextColor(100,116,139); doc.setFontSize(5.5); doc.setFont('helvetica','normal');
+                doc.text(window.trFixPDF(o.lbl), x+kw/2, y+10.5, {align:'center'});
             });
-            return y + kh + 6;
+            return y + kh + 4;
         }
 
         if (isYillik || e2Donem === 'ay' || e2Donem === 'aralik') {
@@ -4411,14 +4423,14 @@
             // ÖZET MOD (Yıllık/Aylık/Aralık): Tek tablo, tarih x ekip
             // ════════════════════════════════
             const baslikTip = isYillik ? 'YILLIK' : e2Donem === 'ay' ? 'AYLIK' : 'DÖNEM';
-            const hh1 = sayfaBaslik(`EKİP ${baslikTip} ÖZET`, `${r.donemLabel}${r.vardiya !== 'hepsi' ? ' · ' + r.vardiya : ''}`);
+            const hh1 = sayfaBaslik(`EKIP ${baslikTip} OZET`, `${r.donemLabel}${r.vardiya !== 'hepsi' ? ' · ' + r.vardiya : ''}`);
 
             const genTir = r.ekipler.reduce((s,e)=>s+e.tir,0);
             const genKamyon = r.ekipler.reduce((s,e)=>s+e.kamyon,0);
             const genKonteyner = r.ekipler.reduce((s,e)=>s+e.konteyner,0);
             const genToplam = r.ekipler.reduce((s,e)=>s+e.kayitlar.length,0);
             const genM3 = r.ekipler.reduce((s,e)=>s+e.m3,0);
-            let y = ozetKartlar(hh1 + 4, genTir, genKamyon, genKonteyner, genToplam, genM3.toFixed(1));
+            let y = ozetKartlar(hh1 + 3, genTir, genKamyon, genKonteyner, genToplam, genM3.toFixed(1));
 
             // tarih-ekip bazlı grupla
             const grupMap = {};
@@ -4450,29 +4462,31 @@
                 return b.toplam - a.toplam;
             });
 
-            const kolonAd = isYillik ? 'AY' : 'TARİH';
+            const kolonAd = isYillik ? 'AY' : 'TARIH';
             const toplamAd = isYillik ? 'YILLIK TOPLAM' : 'GENEL TOPLAM';
 
             const body = satirlar.map(r => [
-                r.grupLabel, r.ekipAd,
+                window.trFixPDF(r.grupLabel), window.trFixPDF(r.ekipAd),
                 r.tir||'—', r.kamyon||'—', r.konteyner||'—',
                 r.toplam, r.m3.toFixed(1)
             ]);
-            body.push([toplamAd, '', genTir, genKamyon, genKonteyner, genToplam, genM3.toFixed(1)]);
+            body.push([window.trFixPDF(toplamAd), '', genTir, genKamyon, genKonteyner, genToplam, genM3.toFixed(1)]);
 
             doc.autoTable({
                 startY: y,
-                head: [[kolonAd,'EKİP','TIR','KAMYON','KONTEYNER','TOPLAM','M³']],
+                head: [[kolonAd,'EKIP','TIR','KAMYON','KONTEYNER','TOPLAM','M3']],
                 body,
                 theme: 'grid',
-                headStyles: { fillColor: mavi, textColor:255, fontStyle:'bold', fontSize:8 },
-                bodyStyles: { fontSize:8 },
+                headStyles: { fillColor: mavi, textColor:255, fontStyle:'bold', fontSize:7, cellPadding:1.5 },
+                bodyStyles: { fontSize:6.5, cellPadding:1.2 },
                 columnStyles: {
-                    0: { fontStyle:'bold', cellWidth: isYillik ? 22 : 26 },
-                    1: { cellWidth: 75 },
-                    2: { halign:'center' }, 3: { halign:'center' },
-                    4: { halign:'center' }, 5: { halign:'center', fontStyle:'bold' },
-                    6: { halign:'center' }
+                    0: { fontStyle:'bold', cellWidth: isYillik ? 18 : 22, halign:'center' },
+                    1: { cellWidth: 'auto' },
+                    2: { halign:'center', cellWidth: 12 }, 
+                    3: { halign:'center', cellWidth: 12 },
+                    4: { halign:'center', cellWidth: 12 }, 
+                    5: { halign:'center', cellWidth: 12, fontStyle:'bold' },
+                    6: { halign:'center', cellWidth: 15 }
                 },
                 alternateRowStyles: { fillColor:[245,247,255] },
                 didParseCell: (d) => {
@@ -4491,26 +4505,26 @@
             // ════════════════════════════════
             r.ekipler.forEach((ekip, ei) => {
                 if (ei > 0) doc.addPage();
-                const hh2 = sayfaBaslik(`EKİP RAPORU: ${ekip.ad}`, `${r.donemLabel}${r.vardiya !== 'hepsi' ? ' · ' + r.vardiya : ''}`);
-                let y = ozetKartlar(hh2 + 4, ekip.tir, ekip.kamyon, ekip.konteyner, ekip.kayitlar.length, ekip.m3.toFixed(1));
+                const hh2 = sayfaBaslik(`EKIP RAPORU: ${ekip.ad}`, `${r.donemLabel}${r.vardiya !== 'hepsi' ? ' · ' + r.vardiya : ''}`);
+                let y = ozetKartlar(hh2 + 3, ekip.tir, ekip.kamyon, ekip.konteyner, ekip.kayitlar.length, ekip.m3.toFixed(1));
 
                 doc.autoTable({
                     startY: y,
-                    head: [['#','VARDİYA','TİP','TÜR','M³','SHİPMENT','SAAT','NET','DURUŞLAR','KALİTECİ','AÇIKLAMA']],
+                    head: [['#','VAR.','TIP','TUR','M3','SHIPMENT','SAAT','NET','DURUSLAR','KALITECI','ACIKLAMA']],
                     body: ekip.kayitlar.map((k,i) => [
                         i+1,
                         k.vardiya === 'A Vardiyası' ? 'A' : 'B',
-                        k.aracTipi, k.aracTuru, k.m3,
+                        window.trFixPDF(k.aracTipi), k.aracTuru, k.m3,
                         k.shipment || '—',
                         `${k.baslama} - ${k.bitis}`,
                         k.net,
-                        (k.duruslar||[]).filter(d=>d.sure).map(d=>`${d.sebep}(${d.sure}dk)`).join(', ') || '—',
-                        k.kaliteci || '—',
-                        k.aciklama || '—'
+                        (k.duruslar||[]).filter(d=>d.sure).map(d=>`${window.trFixPDF(d.sebep)}(${d.sure}dk)`).join(', ') || '—',
+                        window.trFixPDF(k.kaliteci) || '—',
+                        window.trFixPDF(k.aciklama) || '—'
                     ]),
                     theme: 'grid',
-                    headStyles: { fillColor: mavi, textColor:255, fontStyle:'bold', fontSize:7 },
-                    bodyStyles: { fontSize:7 },
+                    headStyles: { fillColor: mavi, textColor:255, fontStyle:'bold', fontSize:6.5, cellPadding:1.5 },
+                    bodyStyles: { fontSize:6, cellPadding:1.2 },
                     alternateRowStyles: { fillColor:[245,247,255] },
                     margin: { left:10, right:10 },
                 });
@@ -4653,9 +4667,9 @@
                 </div>
             </div>`;
     }
-    function personelPdfIndir() {
+    async function personelPdfIndir() {
         // Rapor yoksa önce sorgula
-        personelSorgula();
+        await personelSorgula();
         const r = window._personelRapor;
         if (!r) { showToast('⚠️ Dönem ve personel adı giriniz', 'warn'); return; }
         if (typeof window.jspdf === 'undefined') { showToast('⚠️ PDF yükleniyor','warn'); return; }
@@ -4677,17 +4691,17 @@
             {lbl:'TOPLAM ARAÇ',val:r.toplam,renk:[244,114,182]},
             {lbl:'TOPLAM M3',val:r.m3top.toFixed(1),renk:[34,197,94]},
         ];
-        const kw=50, kh=16, gap=2, kx0=10;
+        const kw=48, kh=12, gap=2, kx0=20;
         ozet.forEach((o,i) => {
             const x = kx0+i*(kw+gap);
-            doc.setFillColor(245,247,255); doc.roundedRect(x,y,kw,kh,2,2,'F');
-            doc.setDrawColor(...o.renk); doc.setLineWidth(0.6); doc.roundedRect(x,y,kw,kh,2,2,'S');
-            doc.setTextColor(...o.renk); doc.setFontSize(14); doc.setFont('helvetica','bold');
-            doc.text(String(o.val), x+kw/2, y+9, {align:'center'});
-            doc.setTextColor(100,116,139); doc.setFontSize(6); doc.setFont('helvetica','normal');
-            doc.text(o.lbl, x+kw/2, y+14, {align:'center'});
+            doc.setFillColor(245,247,255); doc.roundedRect(x,y,kw,kh,1.5,1.5,'F');
+            doc.setDrawColor(...o.renk); doc.setLineWidth(0.4); doc.roundedRect(x,y,kw,kh,1.5,1.5,'S');
+            doc.setTextColor(...o.renk); doc.setFontSize(11); doc.setFont('helvetica','bold');
+            doc.text(String(o.val), x+kw/2, y+6.5, {align:'center'});
+            doc.setTextColor(100,116,139); doc.setFontSize(5.5); doc.setFont('helvetica','normal');
+            doc.text(window.trFixPDF(o.lbl), x+kw/2, y+10.5, {align:'center'});
         });
-        y += kh + 6;
+        y += kh + 4;
 
         if (isYillik) {
             // ════════════════════════════════
@@ -4705,7 +4719,7 @@
             });
 
             const ayBody = Object.keys(ayMap).sort((a,b)=>a-b).map(ay => [
-                AYLAR[ay],
+                window.trFixPDF(AYLAR[ay]),
                 ayMap[ay].tir,
                 ayMap[ay].kamyon,
                 ayMap[ay].konteyner,
@@ -4714,15 +4728,15 @@
             ]);
 
             // Yıllık toplam satırı
-            ayBody.push(['YILLIK TOPLAM', r.tir, r.kamyon, r.konteyner, r.toplam, r.m3top.toFixed(1)]);
+            ayBody.push([window.trFixPDF('YILLIK TOPLAM'), r.tir, r.kamyon, r.konteyner, r.toplam, r.m3top.toFixed(1)]);
 
             doc.autoTable({
                 startY: y,
-                head: [['AY','TIR','KAMYON','KONTEYNER','TOPLAM ARAÇ','TOPLAM M³']],
+                head: [['AY','TIR','KAMYON','KONTEYNER','TOPLAM ARAC','TOPLAM M3']],
                 body: ayBody,
                 theme: 'grid',
-                headStyles: { fillColor: mavi, textColor:255, fontStyle:'bold', fontSize:9 },
-                bodyStyles: { fontSize:9, halign:'center' },
+                headStyles: { fillColor: mavi, textColor:255, fontStyle:'bold', fontSize:7.5, cellPadding:1.5 },
+                bodyStyles: { fontSize:7, halign:'center', cellPadding:1.2 },
                 columnStyles: { 0: { halign:'left', fontStyle:'bold' } },
                 alternateRowStyles: { fillColor:[245,247,255] },
                 didParseCell: (d) => {
@@ -4741,24 +4755,24 @@
             // ════════════════════════════════
             doc.autoTable({
                 startY: y,
-                head: [['#','TARİH','VARDİYA','EKİP','TİP','TÜR','M³','SHİPMENT','SAAT','NET','DURUŞLAR','KALİTECİ']],
+                head: [['#','TARIH','VAR.','EKIP','TIP','TUR','M3','SHIPMENT','SAAT','NET','DURUSLAR','KALITECI']],
                 body: r.liste.map((k,i) => {
                     const dt = new Date(k.tarih+'T00:00:00');
                     const tarihStr = `${dt.getDate().toString().padStart(2,'0')}.${(dt.getMonth()+1).toString().padStart(2,'0')}.${dt.getFullYear()}`;
                     return [
                         i+1, tarihStr,
                         k.vardiya==='A Vardiyası'?'A':'B',
-                        k.ekip, k.aracTipi, k.aracTuru, k.m3,
+                        window.trFixPDF(k.ekip), window.trFixPDF(k.aracTipi), k.aracTuru, k.m3,
                         k.shipment||'—',
                         `${k.baslama} - ${k.bitis}`,
                         k.net,
-                        (k.duruslar||[]).filter(d=>d.sure).map(d=>`${d.sebep}(${d.sure}dk)`).join(', ')||'—',
-                        k.kaliteci||'—'
+                        (k.duruslar||[]).filter(d=>d.sure).map(d=>`${window.trFixPDF(d.sebep)}(${d.sure}dk)`).join(', ')||'—',
+                        window.trFixPDF(k.kaliteci)||'—'
                     ];
                 }),
                 theme: 'grid',
-                headStyles: { fillColor: mavi, textColor:255, fontStyle:'bold', fontSize:7 },
-                bodyStyles: { fontSize:7 },
+                headStyles: { fillColor: mavi, textColor:255, fontStyle:'bold', fontSize:6.5, cellPadding:1.5 },
+                bodyStyles: { fontSize:6, cellPadding:1.2 },
                 alternateRowStyles: { fillColor:[245,247,255] },
                 margin: { left:10, right:10 },
             });
@@ -5109,7 +5123,7 @@
     }
 
     function mesaiPdfIndir() {
-        const aylar = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+        const aylar = ['Ocak','Subat','Mart','Nisan','Mayis','Haziran','Temmuz','Agustos','Eylul','Ekim','Kasim','Aralik'];
         let bas, bit, donemLabel;
         if (pdfDonem === 'gun') {
             bas = bit = document.getElementById('mesaiPdfGun').value;
@@ -5198,7 +5212,7 @@
         doc.text('MESAI KARSILASTIRMA RAPORU', pageW/2, 15, {align:'center'});
         doc.setFontSize(10); doc.setFont('helvetica','normal');
         doc.setTextColor(180,200,240);
-        doc.text(donemLabel, pageW/2, 27, {align:'center'});
+        doc.text(window.trFixPDF(donemLabel), pageW/2, 27, {align:'center'});
         y = 46;
 
         const bw = (pageW - M*2 - 6) / 2;  // blok genişliği
@@ -5210,7 +5224,7 @@
             doc.rect(bx, y, bw, lh, 'F');
             doc.setTextColor(...headerTextRgb);
             doc.setFont('helvetica','bold'); doc.setFontSize(9);
-            doc.text(baslik, bx + bw/2, y+7.5, {align:'center'});
+            doc.text(window.trFixPDF(baslik), bx + bw/2, y+7.5, {align:'center'});
             let by = y + lh;
 
             const topGun  = v.normalGun  + v.pazarGun  + v.pazar15Gun;
@@ -5862,9 +5876,9 @@
     }
 
     // ── PDF ──
-    function df6PdfIndir() {
+    async function df6PdfIndir() {
         // Önce sorgula (sadece veri hazırlık — UI'ya yazmaz)
-        df6Sorgula(false);
+        await df6Sorgula(false);
         const r = _df6Rapor;
         if (!r || !r.liste.length) { showToast('⚠️ Filtre seçin ve veri olduğundan emin olun', 'warn'); return; }
         if (typeof window.jspdf === 'undefined') { showToast('⚠️ PDF yükleniyor, tekrar dene', 'warn'); return; }
@@ -5890,18 +5904,17 @@
         const kw = tableW / 5 - 2;
         ozet.forEach((o, i) => {
             const x = MARGIN + i * (kw + 2);
-            doc.setFillColor(245,247,255); doc.roundedRect(x, y, kw, 14, 1.5, 1.5, 'F');
-            doc.setDrawColor(...o.renk); doc.setLineWidth(0.5); doc.roundedRect(x, y, kw, 14, 1.5, 1.5, 'S');
-            doc.setTextColor(...o.renk); doc.setFontSize(13); doc.setFont('helvetica','bold');
-            doc.text(String(o.val), x + kw/2, y + 8, {align:'center'});
-            doc.setTextColor(100,116,139); doc.setFontSize(6); doc.setFont('helvetica','normal');
-            doc.text(o.lbl, x + kw/2, y + 13, {align:'center'});
+            doc.setFillColor(245,247,255); doc.roundedRect(x, y, kw, 12, 1.5, 1.5, 'F');
+            doc.setDrawColor(...o.renk); doc.setLineWidth(0.4); doc.roundedRect(x, y, kw, 12, 1.5, 1.5, 'S');
+            doc.setTextColor(...o.renk); doc.setFontSize(11); doc.setFont('helvetica','bold');
+            doc.text(String(o.val), x + kw/2, y + 7, {align:'center'});
+            doc.setTextColor(100,116,139); doc.setFontSize(5.5); doc.setFont('helvetica','normal');
+            doc.text(window.trFixPDF(o.lbl), x + kw/2, y + 10.5, {align:'center'});
         });
-        y += 18;
+        y += 16;
 
         // ── DETAY TABLO ──
-        const trFixLocal = s => (s||'').replace(/Ç/g,'C').replace(/ç/g,'c').replace(/Ğ/g,'G').replace(/ğ/g,'g').replace(/İ/g,'I').replace(/ı/g,'i').replace(/Ö/g,'O').replace(/ö/g,'o').replace(/Ş/g,'S').replace(/ş/g,'s').replace(/Ü/g,'U').replace(/ü/g,'u');
-        const durusStr = k => (k.duruslar||[]).filter(d=>d.sure).map(d=>trFixLocal(d.sebep)+'('+d.sure+'dk)').join(', ') || '-';
+        const durusStr = k => (k.duruslar||[]).filter(d=>d.sure).map(d=>window.trFixPDF(d.sebep)+'('+d.sure+'dk)').join(', ') || '-';
         const tarihFmt = t => {
             const dt = new Date(t + 'T00:00:00');
             return String(dt.getDate()).padStart(2,'0') + '.' + String(dt.getMonth()+1).padStart(2,'0') + '.' + dt.getFullYear();
@@ -5911,50 +5924,50 @@
         const dataBody = r.liste.map((k, i) => [
             i + 1,
             tarihFmt(k.tarih),
-            trFixLocal(k.aracTipi) || '-',
+            window.trFixPDF(k.aracTipi) || '-',
             k.aracTuru || '-',
             k.m3 != null ? String(k.m3) : '-',
             k.shipment || '-',
             (k.baslama||'') + '-' + (k.bitis||''),
             k.gec ? 'Gecikti' : 'Uygun',
-            trFixLocal(k.kaliteci) || '-',
+            window.trFixPDF(k.kaliteci) || '-',
             durusStr(k),
-            trFixLocal(k.aciklama) || '-'
+            window.trFixPDF(k.aciklama) || '-'
         ]);
 
         doc.autoTable({
             startY: y,
-            head: [['#', 'Tarih', 'Araç Tipi', 'Tür', 'M³', 'Shipment', 'Saat', 'Durum', 'Kaliteci', 'Duruşlar', 'Açıklama']],
+            head: [['#', 'Tarih', 'Tip', 'Tur', 'M3', 'Shipment', 'Saat', 'Durum', 'Kaliteci', 'Duruslar', 'Aciklama']],
             body: dataBody,
             theme: 'grid',
             headStyles: {
                 fillColor: mavi,
                 textColor: 255,
                 fontStyle: 'bold',
-                fontSize: 7.5,
-                cellPadding: { top: 2.5, bottom: 2.5, left: 2, right: 2 },
+                fontSize: 6.5,
+                cellPadding: 1.5,
                 halign: 'center',
             },
             bodyStyles: {
-                fontSize: 7,
-                cellPadding: { top: 2.5, bottom: 2.5, left: 2, right: 2 },
+                fontSize: 6,
+                cellPadding: 1.2,
                 lineColor: [210, 218, 235],
-                lineWidth: 0.15,
+                lineWidth: 0.1,
                 valign: 'middle',
                 overflow: 'linebreak',
             },
             alternateRowStyles: { fillColor: [246, 248, 255] },
             columnStyles: {
-                0: { halign: 'center', cellWidth: 10 },
-                1: { cellWidth: 18, halign: 'center' },
-                2: { cellWidth: 18, halign: 'center' },
-                3: { cellWidth: 12, halign: 'center' },
+                0: { halign: 'center', cellWidth: 8 },
+                1: { cellWidth: 16, halign: 'center' },
+                2: { cellWidth: 15, halign: 'center' },
+                3: { cellWidth: 10, halign: 'center' },
                 4: { cellWidth: 10, halign: 'center' },
-                5: { cellWidth: 22 },
-                6: { cellWidth: 20, halign: 'center' },
-                7: { cellWidth: 14, halign: 'center' },
-                8: { cellWidth: 22 },
-                9: { cellWidth: 55, overflow: 'linebreak' },
+                5: { cellWidth: 20 },
+                6: { cellWidth: 18, halign: 'center' },
+                7: { cellWidth: 12, halign: 'center' },
+                8: { cellWidth: 20 },
+                9: { cellWidth: 50, overflow: 'linebreak' },
                 10: { cellWidth: 'auto', overflow: 'linebreak' },
             },
             didParseCell: (data) => {
@@ -5997,11 +6010,11 @@
                 const lastPage = doc.internal.getNumberOfPages();
                 doc.setPage(lastPage);
                 const finalY = doc.lastAutoTable ? doc.lastAutoTable.finalY : 0;
-                let oy = finalY + 10;
+                let oy = finalY + 8;
                 if (oy > 185) { doc.addPage('a4', 'landscape'); oy = 14; }
 
-                doc.setFontSize(8); doc.setFont('helvetica','bold'); doc.setTextColor(37,99,235);
-                doc.text('AYLIK OZET', MARGIN, oy); oy += 5;
+                doc.setFontSize(7.5); doc.setFont('helvetica','bold'); doc.setTextColor(37,99,235);
+                doc.text('AYLIK OZET', MARGIN, oy); oy += 4;
 
                 // Yanyana grupla (3 sütun halinde)
                 const cols3 = 3;
@@ -6010,24 +6023,24 @@
                     const col = idx % cols3;
                     const row = Math.floor(idx / cols3);
                     const ox = MARGIN + col * cw;
-                    const rowH2 = 9;
+                    const rowH2 = 8;
                     const ry = oy + row * rowH2;
                     // arka plan
                     doc.setFillColor(idx%2===0?245:240, idx%2===0?247:244, 255);
                     doc.rect(ox, ry, cw-2, rowH2-1, 'F');
-                    doc.setDrawColor(210,218,235); doc.setLineWidth(0.15);
+                    doc.setDrawColor(210,218,235); doc.setLineWidth(0.1);
                     doc.rect(ox, ry, cw-2, rowH2-1, 'S');
                     // ay etiketi
-                    doc.setFont('helvetica','bold'); doc.setFontSize(7); doc.setTextColor(30,58,138);
-                    doc.text(a.lbl, ox+2, ry+3.8);
+                    doc.setFont('helvetica','bold'); doc.setFontSize(6.5); doc.setTextColor(30,58,138);
+                    doc.text(window.trFixPDF(a.lbl), ox+2, ry+3.5);
                     // sayılar
                     const parts = [];
                     if(a.tir>0) parts.push(a.tir+' Tir');
                     if(a.kamyon>0) parts.push(a.kamyon+' Kamyon');
                     if(a.konteyner>0) parts.push(a.konteyner+' Konteyner');
                     parts.push('Toplam: '+a.toplam);
-                    doc.setFont('helvetica','normal'); doc.setFontSize(6.5); doc.setTextColor(60,80,120);
-                    doc.text(parts.join('  |  '), ox+2, ry+7);
+                    doc.setFont('helvetica','normal'); doc.setFontSize(5.5); doc.setTextColor(60,80,120);
+                    doc.text(window.trFixPDF(parts.join('  |  ')), ox+2, ry+6.5);
                 });
             }
         }
