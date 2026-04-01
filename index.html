@@ -1429,34 +1429,34 @@
                 <div class="input-group">
                     <div class="input-label">Vardiya</div>
                     <div class="seg-group" id="segVardiya">
-                        <div class="seg-btn" tabindex="-1" onclick="setSeg(this,'vardiya','A Vardiyası')"><span style="font-size:16px;font-weight:700;">A</span></div>
-                        <div class="seg-btn" tabindex="-1" onclick="setSeg(this,'vardiya','B Vardiyası')"><span style="font-size:16px;font-weight:700;">B</span></div>
+                        <div class="seg-btn" tabindex="0" onclick="setSeg(this,'vardiya','A Vardiyası')"><span style="font-size:16px;font-weight:700;">A</span></div>
+                        <div class="seg-btn" tabindex="0" onclick="setSeg(this,'vardiya','B Vardiyası')"><span style="font-size:16px;font-weight:700;">B</span></div>
                     </div>
                 </div>
                 <div class="input-group">
                     <div class="input-label">Araç Tipi</div>
                     <div class="seg-group" id="segTip">
-                        <div class="seg-btn" tabindex="-1" onclick="setSeg(this,'aracTipi','Tır')"><span>🚛</span><span>Tır</span></div>
-                        <div class="seg-btn" tabindex="-1" onclick="setSeg(this,'aracTipi','Kamyon')"><span>🚚</span><span>Kamyon</span></div>
-                        <div class="seg-btn" tabindex="-1" onclick="setSeg(this,'aracTipi','Konteyner')"><span>📦</span><span>Konteyner</span></div>
+                        <div class="seg-btn" tabindex="0" onclick="setSeg(this,'aracTipi','Tır')"><span>🚛</span><span>Tır</span></div>
+                        <div class="seg-btn" tabindex="0" onclick="setSeg(this,'aracTipi','Kamyon')"><span>🚚</span><span>Kamyon</span></div>
+                        <div class="seg-btn" tabindex="0" onclick="setSeg(this,'aracTipi','Konteyner')"><span>📦</span><span>Konteyner</span></div>
                     </div>
                 </div>
                 <div class="input-group">
                     <div class="input-label">Araç Türü</div>
                     <div class="seg-group" id="segTur">
-                        <div class="seg-btn" tabindex="-1" onclick="setSeg(this,'aracTuru','O/E')"><span>O/E</span></div>
-                        <div class="seg-btn" tabindex="-1" onclick="setSeg(this,'aracTuru','Piyasa')"><span>PİYASA</span></div>
+                        <div class="seg-btn" tabindex="0" onclick="setSeg(this,'aracTuru','O/E')"><span>O/E</span></div>
+                        <div class="seg-btn" tabindex="0" onclick="setSeg(this,'aracTuru','Piyasa')"><span>PİYASA</span></div>
                     </div>
                 </div>
                 <div class="input-group">
                     <div class="input-label">Metreküp (M³)</div>
-                    <input type="number" id="m3" class="text-input" tabindex="8" placeholder="0.0" step="0.1" min="0"
+                    <input type="number" id="m3" class="text-input" tabindex="0" placeholder="0.0" step="0.1" min="0"
                         onkeydown="if(event.key==='Enter'){m3AralikKontrol(this);event.preventDefault();}"
                         onblur="m3AralikKontrol(this)">
                 </div>
                 <div class="input-group" style="position:relative;">
                     <div class="input-label">Shipment No</div>
-                    <input type="text" id="shipment_v2" name="shipment_no_unique" class="text-input" tabindex="9" placeholder="Shipment numarası"
+                    <input type="text" id="shipment_v2" name="shipment_no_unique" class="text-input" tabindex="0" placeholder="Shipment numarası"
                         oninput="this.value=this.value.replace(/[^0-9]/g,'');shipmentInput(this)"
                         onkeydown="shipmentKeyDown(event)"
                         onfocus="shipmentOneriGoster(this)"
@@ -1468,7 +1468,7 @@
                 <div class="form-section-title">Ekip & Saat</div>
                 <div class="input-group" style="position:relative;">
                     <div class="input-label">Ekip İsimleri</div>
-                    <input type="text" id="ekip" class="text-input" tabindex="10" placeholder="İsim yazın..."
+                    <input type="text" id="ekip" class="text-input" tabindex="0" placeholder="İsim yazın..."
                         oninput="ekipAutocomplete(this)"
                         onkeydown="ekipKeyDown(event)"
                         autocomplete="off">
@@ -1477,21 +1477,21 @@
                 <div class="input-group">
                     <div class="input-label">Başlama / Bitiş Saati</div>
                     <div class="time-row">
-                        <input type="text" id="baslama" class="text-input" tabindex="11" placeholder="08:00" maxlength="5"
+                        <input type="text" id="baslama" class="text-input" tabindex="0" placeholder="08:00" maxlength="5"
                             oninput="saatInput(this,'bitis')" onkeydown="sadeceSayi(event)">
                         <div class="time-sep">→</div>
-                        <input type="text" id="bitis" class="text-input" tabindex="12" placeholder="10:30" maxlength="5"
+                        <input type="text" id="bitis" class="text-input" tabindex="0" placeholder="10:30" maxlength="5"
                             oninput="saatInput(this,null)" onkeydown="sadeceSayi(event)">
                     </div>
                 </div>
                 <div class="input-group">
                     <div class="input-label">Kaliteci</div>
-                    <input type="text" id="kaliteci" class="text-input" tabindex="13" placeholder="KALİTECİ ADI"
+                    <input type="text" id="kaliteci" class="text-input" tabindex="0" placeholder="KALİTECİ ADI"
                         oninput="this.value=this.value.toUpperCase()" autocomplete="off" spellcheck="false">
                 </div>
                 <div class="input-group" style="position:relative;">
                     <div class="input-label">Forkliftçi</div>
-                    <input type="text" id="forkliftci" class="text-input" tabindex="14" placeholder="Forkliftçi ismi girin..."
+                    <input type="text" id="forkliftci" class="text-input" tabindex="0" placeholder="Forkliftçi ismi girin..."
                         oninput="forkliftciAutocomplete(this)"
                         onkeydown="forkliftciKeyDown(event)"
                         autocomplete="off">
@@ -1523,9 +1523,9 @@
                 </div>
                 <div class="input-group" style="margin-top:10px;">
                     <div class="input-label">Açıklama</div>
-                    <input type="text" id="aciklama" class="text-input" tabindex="15" placeholder="Varsa açıklama...">
+                    <input type="text" id="aciklama" class="text-input" tabindex="0" placeholder="Varsa açıklama...">
                 </div>
-                <button class="btn-submit" id="btnSubmit" tabindex="16" onclick="kaydetVeyaGuncelle()">✓ &nbsp;SİSTEME İŞLE</button>
+                <button class="btn-submit" id="btnSubmit" tabindex="0" onclick="kaydetVeyaGuncelle()">✓ &nbsp;SİSTEME İŞLE</button>
             </div>
         </div>
 
@@ -1547,102 +1547,60 @@
             if (!btn.classList.contains('seg-btn')) return;
             var grp = btn.closest('.seg-group');
             if (!grp) return;
-            var btns = Array.from(grp.querySelectorAll('.seg-btn'));
-            var idx  = btns.indexOf(btn);
-
+            
             if (e.key === ' ') {
                 // Space: Seç ve bir sonraki gruba atla
                 e.preventDefault();
                 btn.click();
                 
-                // Bir sonraki grubun ilk/aktif butonuna odaklan
+                // Bir sonraki grubun ilk butonuna odaklan
                 var allGrps = Array.from(document.querySelectorAll('#operatorSayfa .seg-group'));
                 var gi = allGrps.indexOf(grp);
                 if (gi < allGrps.length - 1) {
                     var ng = allGrps[gi + 1];
-                    var na = ng.querySelector('.seg-btn.active-blue,.seg-btn.active-yellow,.seg-btn.active-red') || ng.querySelector('.seg-btn');
-                    if (na) na.focus();
+                    var nf = ng.querySelector('.seg-btn');
+                    if (nf) nf.focus();
                 } else {
                     // Eğer son grup ise M3 inputuna odaklan
                     var m3 = document.getElementById('m3');
                     if (m3) m3.focus();
                 }
 
-            } else if (e.key === 'Enter') {
-                // Enter: Sadece seç
-                e.preventDefault();
-                btn.click();
-
-            } else if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
-                e.preventDefault();
-                btns[(idx + 1) % btns.length].focus();
-
-            } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
-                e.preventDefault();
-                btns[(idx - 1 + btns.length) % btns.length].focus();
-
             } else if (e.key === 'Tab') {
-                // Tab: Seçim yapmadan bir sonraki gruba geç
-                e.preventDefault();
-                var allGrps = Array.from(document.querySelectorAll('#operatorSayfa .seg-group'));
-                var gi = allGrps.indexOf(grp);
-                
-                if (!e.shiftKey) {
-                    // İleri git: Sıradaki buton (grup içinde) veya sonraki grup
-                    if (idx < btns.length - 1) {
-                        btns[idx + 1].focus();
-                    } else if (gi < allGrps.length - 1) {
-                        var ng = allGrps[gi + 1];
-                        var na = ng.querySelector('.seg-btn.active-blue,.seg-btn.active-yellow,.seg-btn.active-red') || ng.querySelector('.seg-btn');
-                        if (na) na.focus();
-                    } else {
-                        // Son gruptaysa inputlara geç
-                        var m3 = document.getElementById('m3');
-                        if (m3) m3.focus();
-                    }
-                } else {
-                    // Geri git
-                    if (idx > 0) {
-                        btns[idx - 1].focus();
-                    } else if (gi > 0) {
-                        var pg = allGrps[gi - 1];
-                        var pa = pg.querySelector('.seg-btn.active-blue,.seg-btn.active-yellow,.seg-btn.active-red') || pg.querySelector('.seg-btn');
-                        if (pa) pa.focus();
-                    }
-                }
+                // Tab: Standart davranış (HTML sırasına göre gezer)
+                // Ancak döngüyü engellemek ve formun akışını sağlamak için özel bir şey yapmamıza gerek yok,
+                // çünkü tabindex=0 verdik. Tarayıcı sırayla gezecektir.
+                // Sadece Shift+Tab ile geri gitmeyi de bozmamalıyız.
             }
         });
 
-        // ── Submit butonu: Tab ile gelince ince border outline ──
+        // ── Butonlar ve Submit: Focus stili ──
         document.head.insertAdjacentHTML('beforeend',
             '<style>' +
-            '#btnSubmit { outline: none; }' +
-            '#btnSubmit:focus-visible {' +
-            '  outline: 2px solid rgba(240,179,35,0.8);' +
-            '  outline-offset: 3px;' +
-            '  box-shadow: none;' +
+            '.seg-btn:focus-visible, #btnSubmit:focus-visible {' +
+            '  outline: 2px solid #F0B323 !important;' +
+            '  outline-offset: 2px !important;' +
+            '  box-shadow: 0 0 0 4px rgba(240,179,35,0.2) !important;' +
             '}' +
             '</style>'
         );
 
-        // ── Click ile seçim sonrası tabindex'leri güncelle ──
-        document.addEventListener('click', function(e) {
-            if (e.target.closest('#operatorSayfa .seg-btn')) {
-                setTimeout(segTabRefresh, 0);
-            }
-        });
-
-        // ── Operatör sayfası active olunca A'yı otomatik seç (eğer hiç seçili yoksa) ──
+        // ── Operatör sayfası active olunca A'yı otomatik seç ve ODAKLA ──
         (function() {
             var opSayfa = document.getElementById('operatorSayfa');
             if (!opSayfa) return;
             new MutationObserver(function() {
                 if (opSayfa.classList.contains('active')) {
                     var vg = document.getElementById('segVardiya');
-                    if (vg && !vg.querySelector('.seg-btn.active-blue,.seg-btn.active-yellow,.seg-btn.active-red')) {
-                        vg.querySelector('.seg-btn').click();
+                    if (vg) {
+                        var btnA = vg.querySelector('.seg-btn');
+                        if (btnA && !btnA.classList.contains('active-blue')) {
+                            btnA.click(); // Seç
+                        }
+                        if (btnA) {
+                            setTimeout(function() { btnA.focus(); }, 100); // Odakla
+                        }
                     }
-                    segTabRefresh();
                 }
             }).observe(opSayfa, { attributes: true, attributeFilter: ['class'] });
         })();
@@ -3052,20 +3010,11 @@
         }
         if (field === 'aracTipi') {
             el.classList.add('active-blue'); secilenAracTipi = val;
-            // Bir sonraki seg-btn'e veya inputa odaklan
-            const next = document.querySelector('[tabindex="'+(parseInt(el.tabIndex)+1)+'"]');
-            if (next) next.focus();
         } else if (field === 'vardiya') {
             el.classList.add(val === 'A Vardiyası' ? 'active-blue' : 'active-yellow'); secilenVardiya = val;
             _ilkGiris = false;
-            // Bir sonraki seg-btn'e odaklan
-            const next = document.querySelector('[tabindex="'+(parseInt(el.tabIndex)+1)+'"]');
-            if (next) next.focus();
         } else {
             el.classList.add(val === 'O/E' ? 'active-red' : 'active-blue'); secilenAracTuru = val;
-            // Bir sonraki inputa odaklan
-            const next = document.getElementById('m3');
-            if (next) next.focus();
         }
     }
 
