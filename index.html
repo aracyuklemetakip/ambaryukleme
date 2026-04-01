@@ -1235,8 +1235,12 @@
     <div class="splash-text">
         <div class="splash-title">Goodyear Adapazarı Fabrikası</div>
         <div class="splash-sub">Ön Ambar Yükleme Takip Sistemi</div>
-        <div style="font-size:17px;font-weight:600;color:rgba(240,179,35,0.85);margin-top:10px;">Veriler senkronize ediliyor</div>
-        <div style="display:flex;align-items:center;justify-content:center;gap:6px;font-size:14px;font-weight:500;color:rgba(255,255,255,0.55);margin-top:6px;">Buluttan veriler çekiliyor<span style="display:inline-flex;align-items:center;gap:5px;margin-left:4px;"><span class="splash-dot" style="background:rgba(255,255,255,0.5);opacity:0.2;"></span><span class="splash-dot" style="background:rgba(255,255,255,0.5);opacity:0.2;"></span><span class="splash-dot" style="background:rgba(255,255,255,0.5);opacity:0.2;"></span></span></div>
+        <div style="margin-top:22px;width:260px;display:flex;flex-direction:column;align-items:center;gap:8px;">
+            <div style="width:100%;height:4px;background:rgba(255,255,255,0.12);border-radius:100px;overflow:hidden;">
+                <div id="splashProgressBar" style="height:100%;width:0%;background:linear-gradient(90deg,#F0B323,#fde68a);border-radius:100px;transition:width 0.4s ease;box-shadow:0 0 8px rgba(240,179,35,0.6);"></div>
+            </div>
+            <div style="font-size:12px;font-weight:600;color:rgba(240,179,35,0.75);letter-spacing:0.5px;">Veriler senkronize ediliyor...</div>
+        </div>
     </div>
 </div>
 
@@ -2377,12 +2381,24 @@
         el.classList.remove('splash-hiding');
         el.classList.add('splash-visible');
         el.setAttribute('aria-hidden', 'false');
+
+        // Progress bar animasyonu
+        const bar = document.getElementById('splashProgressBar');
+        if (bar) {
+            bar.style.width = '0%';
+            setTimeout(() => { bar.style.width = '35%'; }, 100);
+            setTimeout(() => { bar.style.width = '65%'; }, 1200);
+            setTimeout(() => { bar.style.width = '85%'; }, 2400);
+            setTimeout(() => { bar.style.width = '100%'; }, 3400);
+        }
+
         setTimeout(() => {
             el.classList.add('splash-hiding');
             el.classList.remove('splash-visible');
             el.setAttribute('aria-hidden', 'true');
             setTimeout(() => {
                 el.classList.remove('splash-hiding');
+                if (bar) bar.style.width = '0%';
                 if (typeof onComplete === 'function') onComplete();
             }, 680);
         }, 4000);
