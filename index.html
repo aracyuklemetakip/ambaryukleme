@@ -825,7 +825,6 @@
             align-items: center;
             justify-content: center;
             padding: 40px 28px;
-            padding-bottom: 50vh; /* Logoyu ve yazıları daha yukarı almak için */
             gap: 24px;
             opacity: 0;
             pointer-events: none;
@@ -1235,11 +1234,11 @@
     <div class="splash-text">
         <div class="splash-title">Goodyear Adapazarı Fabrikası</div>
         <div class="splash-sub">Ön Ambar Yükleme Takip Sistemi</div>
-        <div style="margin-top:22px;width:260px;display:flex;flex-direction:column;align-items:center;gap:8px;">
-            <div style="width:100%;height:4px;background:rgba(255,255,255,0.12);border-radius:100px;overflow:hidden;">
+        <div style="margin-top:22px;width:280px;display:flex;flex-direction:column;align-items:center;gap:10px;">
+            <div style="width:100%;height:5px;background:rgba(255,255,255,0.12);border-radius:100px;overflow:hidden;">
                 <div id="splashProgressBar" style="height:100%;width:0%;background:linear-gradient(90deg,#F0B323,#fde68a);border-radius:100px;transition:width 0.4s ease;box-shadow:0 0 8px rgba(240,179,35,0.6);"></div>
             </div>
-            <div style="font-size:12px;font-weight:600;color:rgba(240,179,35,0.75);letter-spacing:0.5px;">Veriler senkronize ediliyor...</div>
+            <div style="font-size:15px;font-weight:700;color:rgba(240,179,35,0.9);letter-spacing:0.5px;">Veriler senkronize ediliyor...</div>
         </div>
     </div>
 </div>
@@ -1426,7 +1425,7 @@
         <div class="topbar">
             <div class="topbar-left">
                 <button class="back-btn" onclick="sessionStorage.removeItem('aktifSayfa');sessionStorage.removeItem('aktifSekme');showSayfa('anaSayfa')">← Geri</button>
-                <span style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#1C2B6E;">OPERATÖR PANELİ</span>
+                <span style="font-size:16px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;color:#1C2B6E;">OPERATÖR PANELİ</span>
             </div>
             <div class="topbar-center" id="dinamikBaslik" style="display:none;">
                 <!-- Başlık artık tablonun üzerinde -->
@@ -1710,7 +1709,7 @@
         <div class="sef-topbar">
             <div style="display:flex;align-items:center;gap:12px;">
                 <button class="back-btn" onclick="sessionStorage.removeItem('aktifSayfa');sessionStorage.removeItem('aktifSekme');showSayfa('anaSayfa')">← Geri</button>
-                <span style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#1C2B6E;">YETKİLİ PANELİ</span>
+                <span style="font-size:16px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;color:#1C2B6E;">YETKİLİ PANELİ</span>
             </div>
             <div style="display:flex;align-items:center;gap:8px;">
                 <div class="tarih-display" id="sefTarihDisplay"></div>
@@ -2359,6 +2358,15 @@
         return str.replace(/i/g, "İ").replace(/ı/g, "I").toUpperCase();
     };
 
+    // Türkçe büyük + normalize (aksan/karakter farkı olmadan arama için)
+    window.trNorm = function(str) {
+        if (!str) return "";
+        return str
+            .replace(/i/g,"İ").replace(/ı/g,"I").toUpperCase()
+            .replace(/İ/g,"I").replace(/Ğ/g,"G").replace(/Ü/g,"U")
+            .replace(/Ş/g,"S").replace(/Ö/g,"O").replace(/Ç/g,"C");
+    };
+
     window.trFixPDF = function(s) {
         return (s||'').toString()
             .replace(/Ç/g,'C').replace(/ç/g,'c')
@@ -2634,9 +2642,9 @@
 
     function personelListeRender() {
         const input = document.getElementById('personelAra');
-        const filtre = window.trUpper(input ? input.value : '');
+        const filtre = window.trNorm(input ? input.value : '');
         const liste = personelListesi.filter(p => 
-            window.trUpper(p.ad).startsWith(filtre) || p.sicil.startsWith(filtre)
+            window.trNorm(p.ad).startsWith(filtre) || p.sicil.startsWith(filtre)
         ).sort((a,b) => window.trSort(a, b, 'ad'));
         const tbody = document.getElementById('personelTableBody');
         const empty = document.getElementById('personelEmptyState');
@@ -2790,9 +2798,9 @@
 
     function personelModalFiltre(aramaStr) {
         const liste = document.getElementById('personelModalListe');
-        const ara = window.trUpper(aramaStr);
+        const ara = window.trNorm(aramaStr);
         const filtreli = personelListesi.filter(p =>
-            window.trUpper(p.ad).startsWith(ara) || window.trUpper(p.sicil).startsWith(ara)
+            window.trNorm(p.ad).startsWith(ara) || p.sicil.startsWith(ara)
         ).sort((a,b) => window.trSort(a, b, 'ad'));
         if (!filtreli.length) {
             liste.innerHTML = '<div style="text-align:center;padding:24px;color:var(--muted);font-size:13px;">Sonuç yok</div>';
@@ -2850,9 +2858,9 @@
         // Eşleşenleri filtrele ve A-Z sırala
         const eslesen = personelListesi.filter(p => {
             if (seciliAdlar.includes(p.ad)) return false; // zaten seçili
-            const adUpper = window.trUpper(p.ad);
-            const sonUpper = window.trUpper(son);
-            return adUpper.startsWith(sonUpper);
+            const adNorm = window.trNorm(p.ad);
+            const sonNorm = window.trNorm(son);
+            return adNorm.startsWith(sonNorm);
         }).sort((a,b) => window.trSort(a, b, 'ad'));
 
         if (eslesen.length === 0) { dd.style.display='none'; _acDropdownIdx=-1; return; }
@@ -2906,7 +2914,7 @@
         const dd = document.getElementById('forkliftciDropdown');
         if (!val.trim()) { dd.style.display='none'; _fkDropdownIdx=-1; return; }
 
-        const eslesen = personelListesi.filter(p => window.trUpper(p.ad).startsWith(val))
+        const eslesen = personelListesi.filter(p => window.trNorm(p.ad).startsWith(window.trNorm(val)))
             .sort((a,b) => window.trSort(a, b, 'ad'));
         if (eslesen.length === 0) { dd.style.display='none'; _fkDropdownIdx=-1; return; }
 
