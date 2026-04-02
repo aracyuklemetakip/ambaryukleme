@@ -2066,6 +2066,22 @@
                     <button id="personelKaydetBtn"></button>
                     <select id="personelSecDropdown"></select>
                 </div>
+
+                <!-- VARDİYA ATAMA LİSTESİ -->
+                <div style="margin-top:20px;">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+                        <div style="font-family:'Inter',sans-serif;font-size:14px;font-weight:700;color:#1C2B6E;text-transform:uppercase;letter-spacing:0.5px;">🕐 Vardiya Atamaları</div>
+                        <div style="display:flex;gap:8px;">
+                            <span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:rgba(37,99,235,0.1);color:#2563eb;border:1px solid rgba(37,99,235,0.25);">🌙 A Vardiyası</span>
+                            <span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:rgba(124,58,237,0.1);color:#7c3aed;border:1px solid rgba(124,58,237,0.25);">🌙 B Vardiyası</span>
+                            <span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:rgba(245,158,11,0.12);color:#d97706;border:1px solid rgba(245,158,11,0.3);">☀️ Gündüz</span>
+                            <span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:rgba(156,163,175,0.12);color:#6B7280;border:1px solid rgba(156,163,175,0.3);">— Atanmadı</span>
+                        </div>
+                    </div>
+                    <div id="vardiyaAtamaListesi" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:8px;">
+                        <!-- JS ile doldurulur -->
+                    </div>
+                </div>
             </div>
 
             <!-- PERSONEL SEÇ MODAL -->
@@ -2684,9 +2700,55 @@
                 </td>
             </tr>`;
         }).join('');
+        vardiyaAtamaRender();
     }
 
     function personelListeFiltre() { personelListeRender(); }
+
+    // ── VARDİYA ATAMA RENDER ──
+    function vardiyaAtamaRender() {
+        const wrap = document.getElementById('vardiyaAtamaListesi');
+        if (!wrap) return;
+        const sirali = personelListesi.slice().sort((a,b) => window.trSort(a, b, 'ad'));
+        if (!sirali.length) { wrap.innerHTML = '<div style="color:#9CA3AF;font-size:13px;padding:16px;">Henüz personel yok.</div>'; return; }
+
+        wrap.innerHTML = sirali.map(p => {
+            const v = p.vardiya || '';
+            const btnStyle = (aktif, renk, bg) => aktif
+                ? `font-size:11px;font-weight:800;padding:4px 10px;border-radius:6px;border:2px solid ${renk};background:${bg};color:${renk};cursor:pointer;transition:all 0.15s;`
+                : `font-size:11px;font-weight:700;padding:4px 10px;border-radius:6px;border:1px solid #E5E7EB;background:#fff;color:#9CA3AF;cursor:pointer;transition:all 0.15s;`;
+            return `
+            <div style="display:flex;align-items:center;justify-content:space-between;background:#fff;border:1px solid #F3F4F6;border-radius:10px;padding:10px 14px;gap:10px;">
+                <div>
+                    <div style="font-size:13px;font-weight:700;color:#1C2B6E;font-family:'Inter',sans-serif;">${p.ad}</div>
+                    <div style="font-size:10px;color:#9CA3AF;font-weight:600;">${p.sicil}</div>
+                </div>
+                <div style="display:flex;gap:5px;flex-shrink:0;">
+                    <button onclick="personelVardiyaGuncelle('${p.sicil}','A')"
+                        style="${btnStyle(v==='A','#2563eb','rgba(37,99,235,0.1)')}">A</button>
+                    <button onclick="personelVardiyaGuncelle('${p.sicil}','B')"
+                        style="${btnStyle(v==='B','#7c3aed','rgba(124,58,237,0.1)')}">B</button>
+                    <button onclick="personelVardiyaGuncelle('${p.sicil}','G')"
+                        style="${btnStyle(v==='G','#d97706','rgba(245,158,11,0.1)')}">☀️</button>
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    async function personelVardiyaGuncelle(sicil, yeniVardiya) {
+        const p = personelListesi.find(x => x.sicil === sicil);
+        if (!p) return;
+        // Toggle: aynı vardiyaya basılırsa sıfırla
+        const atanacak = (p.vardiya === yeniVardiya) ? '' : yeniVardiya;
+        try {
+            const { doc, setDoc, db } = window._fb;
+            await setDoc(doc(db, 'personel', sicil), { ...p, vardiya: atanacak });
+            p.vardiya = atanacak;
+            vardiyaAtamaRender();
+            const label = atanacak === 'A' ? 'A Vardiyası' : atanacak === 'B' ? 'B Vardiyası' : atanacak === 'G' ? 'Gündüz' : 'Atama kaldırıldı';
+            showToast(atanacak ? `✓ ${p.ad} → ${label}` : `${p.ad} ataması kaldırıldı`, atanacak ? 'success' : 'warn');
+        } catch(e) { showToast('Hata: ' + e.message, 'warn'); }
+    }
 
     // ── PERSONEL DÜZENLEME SEÇ ──
     let _personelDuzenleSicil = null;
