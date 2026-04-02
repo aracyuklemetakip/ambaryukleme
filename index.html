@@ -1989,6 +1989,20 @@
 
             <!-- SEKME 5: PERSONEL YÖNETİMİ -->
             <div id="sekme5" class="sekme-icerik">
+
+                <!-- PERSONEL İSTATİSTİK BARI -->
+                <div id="personelStatBar" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;background:#F8FAFF;border:1px solid #E5E7EB;border-radius:10px;padding:10px 16px;margin-bottom:14px;font-family:'Inter',sans-serif;">
+                    <span id="statA" style="font-size:12px;font-weight:700;padding:4px 12px;border-radius:6px;background:#1C2B6E;color:#fff;white-space:nowrap;">A Vardiyası: 0</span>
+                    <span style="color:#D1D5DB;">|</span>
+                    <span id="statB" style="font-size:12px;font-weight:700;padding:4px 12px;border-radius:6px;background:#F0B323;color:#1C2B6E;white-space:nowrap;">B Vardiyası: 0</span>
+                    <span style="color:#D1D5DB;">|</span>
+                    <span id="statG" style="font-size:12px;font-weight:700;padding:4px 12px;border-radius:6px;background:#2563eb;color:#fff;white-space:nowrap;">Gündüz: 0</span>
+                    <span style="color:#D1D5DB;">|</span>
+                    <span id="statK" style="font-size:12px;font-weight:700;padding:4px 12px;border-radius:6px;background:#059669;color:#fff;white-space:nowrap;">Konveyor: 0</span>
+                    <span style="color:#D1D5DB;">|</span>
+                    <span id="statToplam" style="font-size:12px;font-weight:800;padding:4px 12px;border-radius:6px;background:#1C2B6E;color:#F0B323;white-space:nowrap;">Toplam: 0</span>
+                </div>
+
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;">
 
                     <!-- SOL: PERSONEL EKLE -->
@@ -2004,10 +2018,11 @@
                             </div>
                             <div class="filtre-group">
                                 <div class="filtre-label">Vardiya</div>
-                                <div style="display:flex;gap:8px;">
-                                    <button id="vardiyaABtn" onclick="personelVardiyaSec('A')" style="flex:1;padding:9px 6px;border-radius:8px;border:2px solid #E5E7EB;background:#fff;color:#9CA3AF;font-family:'Inter',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all 0.15s;">A VARDİYASI</button>
-                                    <button id="vardiyaBBtn" onclick="personelVardiyaSec('B')" style="flex:1;padding:9px 6px;border-radius:8px;border:2px solid #E5E7EB;background:#fff;color:#9CA3AF;font-family:'Inter',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all 0.15s;">B VARDİYASI</button>
-                                    <button id="vardiyaGBtn" onclick="personelVardiyaSec('G')" style="flex:1;padding:9px 6px;border-radius:8px;border:2px solid #E5E7EB;background:#fff;color:#9CA3AF;font-family:'Inter',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all 0.15s;">GÜNDÜZ</button>
+                                <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                                    <button id="vardiyaABtn" onclick="personelVardiyaSec('A')" style="flex:1;min-width:70px;padding:9px 6px;border-radius:8px;border:2px solid #E5E7EB;background:#fff;color:#9CA3AF;font-family:'Inter',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all 0.15s;">A VARDİYASI</button>
+                                    <button id="vardiyaBBtn" onclick="personelVardiyaSec('B')" style="flex:1;min-width:70px;padding:9px 6px;border-radius:8px;border:2px solid #E5E7EB;background:#fff;color:#9CA3AF;font-family:'Inter',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all 0.15s;">B VARDİYASI</button>
+                                    <button id="vardiyaGBtn" onclick="personelVardiyaSec('G')" style="flex:1;min-width:70px;padding:9px 6px;border-radius:8px;border:2px solid #E5E7EB;background:#fff;color:#9CA3AF;font-family:'Inter',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all 0.15s;">GÜNDÜZ</button>
+                                    <button id="vardiyaKBtn" onclick="personelVardiyaSec('K')" style="flex:1;min-width:70px;padding:9px 6px;border-radius:8px;border:2px solid #E5E7EB;background:#fff;color:#9CA3AF;font-family:'Inter',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all 0.15s;">KONVEYOR</button>
                                 </div>
                             </div>
                             <div class="filtre-group">
@@ -2575,17 +2590,18 @@
 
     function personelVardiyaSec(v) {
         _secilenEkleVardiya = (_secilenEkleVardiya === v) ? '' : v;
-        const btns = { A: 'vardiyaABtn', B: 'vardiyaBBtn', G: 'vardiyaGBtn' };
+        const btns = { A: 'vardiyaABtn', B: 'vardiyaBBtn', G: 'vardiyaGBtn', K: 'vardiyaKBtn' };
         const styles = {
-            A: { on: '#1C2B6E', bg: 'rgba(28,43,110,0.08)', fg: '#1C2B6E' },
-            B: { on: '#d97706', bg: 'rgba(245,158,11,0.08)', fg: '#d97706' },
-            G: { on: '#2563eb', bg: 'rgba(37,99,235,0.08)', fg: '#2563eb' },
+            A: { border: '#1C2B6E', bg: '#1C2B6E', fg: '#fff' },
+            B: { border: '#d97706', bg: 'rgba(245,158,11,0.12)', fg: '#92400e' },
+            G: { border: '#2563eb', bg: 'rgba(37,99,235,0.08)', fg: '#1d4ed8' },
+            K: { border: '#059669', bg: 'rgba(5,150,105,0.08)', fg: '#065f46' },
         };
-        ['A','B','G'].forEach(key => {
+        ['A','B','G','K'].forEach(key => {
             const btn = document.getElementById(btns[key]);
             if (!btn) return;
             if (_secilenEkleVardiya === key) {
-                btn.style.borderColor = styles[key].on;
+                btn.style.borderColor = styles[key].border;
                 btn.style.background = styles[key].bg;
                 btn.style.color = styles[key].fg;
             } else {
@@ -2706,9 +2722,23 @@
             </tr>`;
         }).join('');
         vardiyaAtamaRender();
+        personelStatBarGuncelle();
     }
 
     function personelListeFiltre() { personelListeRender(); }
+
+    function personelStatBarGuncelle() {
+        const a = personelListesi.filter(p => p.vardiya === 'A').length;
+        const b = personelListesi.filter(p => p.vardiya === 'B').length;
+        const g = personelListesi.filter(p => p.vardiya === 'G').length;
+        const k = personelListesi.filter(p => p.vardiya === 'K').length;
+        const t = personelListesi.length;
+        const sa = document.getElementById('statA'); if (sa) sa.textContent = `A Vardiyası: ${a}`;
+        const sb = document.getElementById('statB'); if (sb) sb.textContent = `B Vardiyası: ${b}`;
+        const sg = document.getElementById('statG'); if (sg) sg.textContent = `Gündüz: ${g}`;
+        const sk = document.getElementById('statK'); if (sk) sk.textContent = `Konveyor: ${k}`;
+        const st = document.getElementById('statToplam'); if (st) st.textContent = `Toplam: ${t}`;
+    }
 
     // ── VARDİYA ATAMA RENDER ──
     function vardiyaAtamaRender() {
@@ -2880,13 +2910,10 @@
                 ? `<span style="font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;background:rgba(249,115,22,0.12);color:#ea580c;border:1px solid rgba(249,115,22,0.3);">GEÇİCİ</span>`
                 : `<span style="font-size:10px;font-weight:600;padding:2px 6px;border-radius:4px;background:rgba(37,99,235,0.08);color:#2563eb;border:1px solid rgba(37,99,235,0.2);">KADROLU</span>`;
             const v = p.vardiya || '';
-            const vLabel = v === 'A' ? 'A VARDİYASI' : v === 'B' ? 'B VARDİYASI' : v === 'G' ? 'GÜNDÜZ' : '— VARDİYA';
-            const vStyle = v === 'A'
-                ? 'background:#1C2B6E;color:#fff;border-color:#1C2B6E;'
-                : v === 'B'
-                ? 'background:#F0B323;color:#1C2B6E;border-color:#F0B323;'
-                : v === 'G'
-                ? 'background:#2563eb;color:#fff;border-color:#2563eb;'
+            const selStyle = v === 'A' ? 'background:#1C2B6E;color:#fff;border-color:#1C2B6E;'
+                : v === 'B' ? 'background:#F0B323;color:#1C2B6E;border-color:#F0B323;'
+                : v === 'G' ? 'background:#2563eb;color:#fff;border-color:#2563eb;'
+                : v === 'K' ? 'background:#059669;color:#fff;border-color:#059669;'
                 : 'background:#F9FAFB;color:#9CA3AF;border-color:#E5E7EB;';
             return `
             <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-radius:10px;background:#fff;border:1px solid #E5E7EB;transition:all 0.15s;gap:10px;">
@@ -2894,30 +2921,35 @@
                     <span style="font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:#0F172A;">${p.ad}</span>
                     <span style="font-family:'Inter',sans-serif;font-size:11px;font-weight:600;color:#6B7280;">${p.sicil} &nbsp;${tipBadge}</span>
                 </div>
-                <button onclick="event.stopPropagation();modalVardiyaDegistir('${p.sicil.replace(/'/g,"\\'")}',this)"
-                    style="font-size:10px;font-weight:800;padding:5px 10px;border-radius:6px;border:1.5px solid;cursor:pointer;white-space:nowrap;transition:all 0.15s;${vStyle}">${vLabel}</button>
+                <select onchange="modalVardiyaDegistir('${p.sicil.replace(/'/g,"\\'")}',this)"
+                    style="font-size:11px;font-weight:700;padding:5px 8px;border-radius:6px;border:2px solid;cursor:pointer;transition:all 0.15s;outline:none;${selStyle}">
+                    <option value="" ${v===''?'selected':''} style="background:#fff;color:#374151;">— Vardiya</option>
+                    <option value="A" ${v==='A'?'selected':''} style="background:#fff;color:#374151;">A Vardiyası</option>
+                    <option value="B" ${v==='B'?'selected':''} style="background:#fff;color:#374151;">B Vardiyası</option>
+                    <option value="G" ${v==='G'?'selected':''} style="background:#fff;color:#374151;">Gündüz</option>
+                    <option value="K" ${v==='K'?'selected':''} style="background:#fff;color:#374151;">Konveyor</option>
+                </select>
             </div>`;
         }).join('');
     }
 
-    async function modalVardiyaDegistir(sicil, btn) {
+    async function modalVardiyaDegistir(sicil, sel) {
         const p = personelListesi.find(x => x.sicil === sicil);
         if (!p) return;
-        const sira = ['', 'A', 'B', 'G'];
-        const siradaki = sira[(sira.indexOf(p.vardiya || '') + 1) % sira.length];
+        const yeni = sel.value;
         try {
             const { doc, setDoc, db } = window._fb;
-            await setDoc(doc(db, 'personel', sicil), { ...p, vardiya: siradaki });
-            p.vardiya = siradaki;
-            // Butonu güncelle
-            const vLabel = siradaki === 'A' ? 'A VARDİYASI' : siradaki === 'B' ? 'B VARDİYASI' : siradaki === 'G' ? 'GÜNDÜZ' : '— VARDİYA';
-            const vStyle = siradaki === 'A' ? 'background:#1C2B6E;color:#fff;border-color:#1C2B6E;'
-                : siradaki === 'B' ? 'background:#F0B323;color:#1C2B6E;border-color:#F0B323;'
-                : siradaki === 'G' ? 'background:#2563eb;color:#fff;border-color:#2563eb;'
-                : 'background:#F9FAFB;color:#9CA3AF;border-color:#E5E7EB;';
-            btn.textContent = vLabel;
-            btn.style.cssText = `font-size:10px;font-weight:800;padding:5px 10px;border-radius:6px;border:1.5px solid;cursor:pointer;white-space:nowrap;transition:all 0.15s;${vStyle}`;
-            vardiyaAtamaRender();
+            await setDoc(doc(db, 'personel', sicil), { ...p, vardiya: yeni });
+            p.vardiya = yeni;
+            // Select rengini güncelle
+            const s = sel.style;
+            if (yeni === 'A') { s.background='#1C2B6E'; s.color='#fff'; s.borderColor='#1C2B6E'; }
+            else if (yeni === 'B') { s.background='#F0B323'; s.color='#1C2B6E'; s.borderColor='#F0B323'; }
+            else if (yeni === 'G') { s.background='#2563eb'; s.color='#fff'; s.borderColor='#2563eb'; }
+            else if (yeni === 'K') { s.background='#059669'; s.color='#fff'; s.borderColor='#059669'; }
+            else { s.background='#F9FAFB'; s.color='#9CA3AF'; s.borderColor='#E5E7EB'; }
+            personelStatBarGuncelle();
+            showToast(yeni ? `✓ ${p.ad} → ${sel.options[sel.selectedIndex].text}` : `${p.ad} ataması kaldırıldı`, yeni ? 'success' : 'warn');
         } catch(e) { showToast('Hata: ' + e.message, 'warn'); }
     }
 
