@@ -2089,7 +2089,32 @@
 
                 </div>
 
-                <!-- Gizli sayaç - JS uyumu için -->
+                <!-- PERSONEL LİSTESİ TABLOSU -->
+                <div class="sef-bolum" style="margin-top:16px;">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+                        <div class="sef-bolum-baslik" style="margin:0;">📋 Personel Listesi <span id="personelSayac" style="font-size:12px;font-weight:600;color:#9CA3AF;"></span></div>
+                        <input type="text" id="personelAra" class="filtre-input"
+                            placeholder="🔍  İsim veya sicil ara..."
+                            style="width:220px;font-size:12px;padding:6px 10px;"
+                            oninput="this.value=window.trUpper(this.value);personelListeFiltre()" autocomplete="off">
+                    </div>
+                    <div style="overflow-x:auto;">
+                        <table class="data-table" style="font-size:12px;">
+                            <thead>
+                                <tr>
+                                    <th style="width:36px;">#</th>
+                                    <th>Ad Soyad</th>
+                                    <th>Sicil</th>
+                                    <th>Tip</th>
+                                    <th>İşlem</th>
+                                </tr>
+                            </thead>
+                            <tbody id="personelTableBody"></tbody>
+                        </table>
+                    </div>
+                    <div id="personelEmptyState" style="display:none;text-align:center;padding:30px;color:var(--muted);font-size:13px;">Personel bulunamadı</div>
+                </div>
+
             </div>
 
             <!-- PERSONEL SEÇ MODAL -->
