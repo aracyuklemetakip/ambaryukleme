@@ -2006,16 +2006,16 @@
             <div id="sekme5" class="sekme-icerik">
 
                 <!-- PERSONEL İSTATİSTİK BARI -->
-                <div id="personelStatBar" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;background:#F8FAFF;border:1px solid #E5E7EB;border-radius:10px;padding:10px 16px;margin-bottom:14px;font-family:'Inter',sans-serif;">
-                    <button id="statA" onclick="personelVardiyaFiltrele('A')" style="font-size:12px;font-weight:700;padding:4px 12px;border-radius:6px;background:#E0E7FF;color:#3730a3;border:1px solid #818cf8;white-space:nowrap;cursor:pointer;transition:all 0.15s;font-family:'Inter',sans-serif;">A Vardiyası: 0</button>
-                    <span style="color:#D1D5DB;">|</span>
-                    <button id="statB" onclick="personelVardiyaFiltrele('B')" style="font-size:12px;font-weight:700;padding:4px 12px;border-radius:6px;background:#FFFBEB;color:#92400e;border:1px solid #fcd34d;white-space:nowrap;cursor:pointer;transition:all 0.15s;font-family:'Inter',sans-serif;">B Vardiyası: 0</button>
-                    <span style="color:#D1D5DB;">|</span>
-                    <button id="statG" onclick="personelVardiyaFiltrele('G')" style="font-size:12px;font-weight:700;padding:4px 12px;border-radius:6px;background:#BAE6FD;color:#0c4a6e;border:1px solid #38bdf8;white-space:nowrap;cursor:pointer;transition:all 0.15s;font-family:'Inter',sans-serif;">Gündüz: 0</button>
-                    <span style="color:#D1D5DB;">|</span>
-                    <button id="statK" onclick="personelVardiyaFiltrele('K')" style="font-size:12px;font-weight:700;padding:4px 12px;border-radius:6px;background:#A7F3D0;color:#064e3b;border:1px solid #34d399;white-space:nowrap;cursor:pointer;transition:all 0.15s;font-family:'Inter',sans-serif;">Konveyor: 0</button>
-                    <span style="color:#D1D5DB;">|</span>
-                    <button id="statToplam" onclick="personelVardiyaFiltrele(null)" style="font-size:12px;font-weight:800;padding:4px 12px;border-radius:6px;background:#1C2B6E;color:#F0B323;white-space:nowrap;cursor:pointer;transition:all 0.15s;border:2px solid #1C2B6E;font-family:'Inter',sans-serif;">Toplam: 0</button>
+                <div id="personelStatBar" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:10px;padding:10px 16px;margin-bottom:14px;font-family:'Inter',sans-serif;">
+                    <button id="statA" onclick="personelVardiyaFiltrele('A')" style="font-size:12px;font-weight:700;padding:4px 12px;border-radius:6px;background:rgba(255,255,255,0.08);color:#ffffff;border:1px solid rgba(255,255,255,0.25);white-space:nowrap;cursor:pointer;transition:all 0.15s;font-family:'Inter',sans-serif;">A Vardiyası: 0</button>
+                    <span style="color:rgba(255,255,255,0.2);">|</span>
+                    <button id="statB" onclick="personelVardiyaFiltrele('B')" style="font-size:12px;font-weight:700;padding:4px 12px;border-radius:6px;background:rgba(240,179,35,0.10);color:#F0B323;border:1px solid rgba(240,179,35,0.35);white-space:nowrap;cursor:pointer;transition:all 0.15s;font-family:'Inter',sans-serif;">B Vardiyası: 0</button>
+                    <span style="color:rgba(255,255,255,0.2);">|</span>
+                    <button id="statG" onclick="personelVardiyaFiltrele('G')" style="font-size:12px;font-weight:700;padding:4px 12px;border-radius:6px;background:rgba(56,189,248,0.10);color:#7dd3fc;border:1px solid rgba(56,189,248,0.3);white-space:nowrap;cursor:pointer;transition:all 0.15s;font-family:'Inter',sans-serif;">Gündüz: 0</button>
+                    <span style="color:rgba(255,255,255,0.2);">|</span>
+                    <button id="statK" onclick="personelVardiyaFiltrele('K')" style="font-size:12px;font-weight:700;padding:4px 12px;border-radius:6px;background:rgba(52,211,153,0.10);color:#6ee7b7;border:1px solid rgba(52,211,153,0.3);white-space:nowrap;cursor:pointer;transition:all 0.15s;font-family:'Inter',sans-serif;">Konveyor: 0</button>
+                    <span style="color:rgba(255,255,255,0.2);">|</span>
+                    <button id="statToplam" onclick="personelVardiyaFiltrele(null)" style="font-size:12px;font-weight:800;padding:4px 12px;border-radius:6px;background:#F0B323;color:#1C2B6E;white-space:nowrap;cursor:pointer;transition:all 0.15s;border:2px solid #F0B323;font-family:'Inter',sans-serif;">Toplam: 0</button>
                 </div>
 
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;">
@@ -2756,12 +2756,12 @@
                 : `<span style="font-size:10px;font-weight:600;padding:2px 7px;border-radius:4px;background:rgba(37,99,235,0.08);color:#2563eb;border:1px solid rgba(37,99,235,0.2);">KADROLU</span>`;
             return `
             <tr id="personelRow_${p.sicil}" style="background:${rowBg};border-bottom:1px solid #F3F4F6;">
-                <td style="padding:8px 10px;color:var(--muted);font-size:11px;">${i+1}</td>
-                <td style="padding:8px 10px;color:#2563eb;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;">${p.ad}</td>
-                <td style="padding:8px 10px;color:#2563eb;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;">${p.sicil}</td>
+                <td style="padding:8px 10px;color:rgba(255,255,255,0.5);font-size:11px;">${i+1}</td>
+                <td style="padding:8px 10px;color:#ffffff;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;">${p.ad}</td>
+                <td style="padding:8px 10px;color:rgba(255,255,255,0.6);font-family:'Inter',sans-serif;font-size:12px;font-weight:500;">${p.sicil}</td>
                 <td style="padding:8px 10px;">${tipLabel}</td>
                 <td style="padding:8px 10px;display:flex;gap:6px;align-items:center;">
-                    <button onclick="personelDuzenlemeSec('${p.sicil.replace(/'/g,"\\'")}')" style="background:rgba(37,99,235,0.08);border:1px solid rgba(37,99,235,0.25);color:#2563eb;border-radius:6px;padding:3px 8px;cursor:pointer;font-size:11px;font-weight:700;">✏️ GÜNCELLE</button>
+                    <button onclick="personelDuzenlemeSec('${p.sicil.replace(/'/g,"\\'")}')" style="background:rgba(240,179,35,0.12);border:1px solid rgba(240,179,35,0.35);color:#F0B323;border-radius:6px;padding:3px 8px;cursor:pointer;font-size:11px;font-weight:700;">✏️ GÜNCELLE</button>
                     <button onclick="personelSil('${p.sicil.replace(/'/g,"\\'")}');event.stopPropagation();" style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.25);color:#ef4444;border-radius:6px;padding:3px 8px;cursor:pointer;font-size:11px;font-weight:700;">🗑️ SİL</button>
                 </td>
             </tr>`;
@@ -2789,11 +2789,11 @@
     function personelStatBarAktifGoster() {
         const map = { A:'statA', B:'statB', G:'statG', K:'statK', null:'statToplam' };
         const styles = {
-            statA:      { normal:'background:#E0E7FF;color:#3730a3;border:1px solid #818cf8;', aktif:'background:#3730a3;color:#fff;border:2px solid #3730a3;transform:scale(1.05);' },
-            statB:      { normal:'background:#FFFBEB;color:#92400e;border:1px solid #fcd34d;', aktif:'background:#92400e;color:#fff;border:2px solid #92400e;transform:scale(1.05);' },
-            statG:      { normal:'background:#BAE6FD;color:#0c4a6e;border:1px solid #38bdf8;', aktif:'background:#0c4a6e;color:#fff;border:2px solid #0c4a6e;transform:scale(1.05);' },
-            statK:      { normal:'background:#A7F3D0;color:#064e3b;border:1px solid #34d399;', aktif:'background:#064e3b;color:#fff;border:2px solid #064e3b;transform:scale(1.05);' },
-            statToplam: { normal:'background:#1C2B6E;color:#F0B323;border:2px solid #1C2B6E;', aktif:'background:#F0B323;color:#1C2B6E;border:2px solid #F0B323;transform:scale(1.05);' },
+            statA:      { normal:'background:rgba(255,255,255,0.08);color:#ffffff;border:1px solid rgba(255,255,255,0.25);', aktif:'background:#ffffff;color:#1C2B6E;border:2px solid #ffffff;transform:scale(1.05);font-weight:800;' },
+            statB:      { normal:'background:rgba(240,179,35,0.10);color:#F0B323;border:1px solid rgba(240,179,35,0.35);', aktif:'background:#F0B323;color:#1C2B6E;border:2px solid #F0B323;transform:scale(1.05);font-weight:800;' },
+            statG:      { normal:'background:rgba(56,189,248,0.10);color:#7dd3fc;border:1px solid rgba(56,189,248,0.3);', aktif:'background:#7dd3fc;color:#0c4a6e;border:2px solid #7dd3fc;transform:scale(1.05);font-weight:800;' },
+            statK:      { normal:'background:rgba(52,211,153,0.10);color:#6ee7b7;border:1px solid rgba(52,211,153,0.3);', aktif:'background:#6ee7b7;color:#064e3b;border:2px solid #6ee7b7;transform:scale(1.05);font-weight:800;' },
+            statToplam: { normal:'background:#F0B323;color:#1C2B6E;border:2px solid #F0B323;', aktif:'background:#ffffff;color:#1C2B6E;border:2px solid #ffffff;transform:scale(1.05);font-weight:800;' },
         };
         const aktifId = aktifVardiyaFiltresi ? map[aktifVardiyaFiltresi] : 'statToplam';
         Object.keys(styles).forEach(id => {
@@ -6655,7 +6655,7 @@ async function va7Sorgula() {
     const topTirA = ekipA.reduce((s,e)=>s+e.tir,0), topKamyonA = ekipA.reduce((s,e)=>s+e.kamyon,0), topKonteynerA = ekipA.reduce((s,e)=>s+e.konteyner,0);
     const topTirB = ekipB.reduce((s,e)=>s+e.tir,0), topKamyonB = ekipB.reduce((s,e)=>s+e.kamyon,0), topKonteynerB = ekipB.reduce((s,e)=>s+e.konteyner,0);
 
-    function liderSatir(ekipler) {
+    function liderSatir(ekipler, vardiyaId) {
         if (!ekipler.length) return '<tr><td colspan="6" style="color:var(--muted);text-align:center;padding:20px;">Kayıt yok</td></tr>';
         return ekipler.map((e, i) => {
             const rankBadge = i < 3 
@@ -6673,14 +6673,23 @@ async function va7Sorgula() {
         }).join('');
     }
 
+    function va7Toggle(id) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const isOpen = el.style.display !== 'none';
+        el.style.display = isOpen ? 'none' : '';
+        const arrow = document.getElementById(id + '_arrow');
+        if (arrow) arrow.textContent = isOpen ? '▶' : '▼';
+    }
+
     sonuc.innerHTML = `
         <div class="donem-badge" style="margin-bottom:6px;">📅 ${donem.label} · Toplam ${liste.length} Araç</div>
         <div style="display:flex;flex-direction:column;gap:6px;">
 
             <!-- A VARDİYASI -->
             <div style="background:rgba(37,99,235,0.07);border:1.5px solid rgba(37,99,235,0.25);border-radius:10px;padding:10px 12px;">
-                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;border-bottom:1.5px solid rgba(37,99,235,0.18);padding-bottom:6px;">
-                    <div style="font-family:'Inter',sans-serif;font-size:14px;font-weight:800;color:#60a5fa;letter-spacing:1px;">🔵 A VARDİYASI</div>
+                <div onclick="va7Toggle('va7ListeA')" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;border-bottom:1.5px solid rgba(37,99,235,0.18);padding-bottom:6px;cursor:pointer;user-select:none;">
+                    <div style="font-family:'Inter',sans-serif;font-size:14px;font-weight:800;color:#ffffff;letter-spacing:1px;">🔵 A VARDİYASI <span id="va7ListeA_arrow" style="font-size:11px;opacity:0.6;">▶</span></div>
                     <div style="display:flex;gap:4px;align-items:center;">
                         <span class="stat-pill" style="background:rgba(37,99,235,0.15);color:#93C5FD;font-size:11px;padding:2px 7px;">${topA} Araç</span>
                         <span class="stat-pill" style="background:rgba(34,197,94,0.12);color:#4ade80;font-size:11px;padding:2px 7px;">${m3A.toFixed(1)} M³</span>
@@ -6689,16 +6698,18 @@ async function va7Sorgula() {
                         <span style="font-size:10px;font-weight:800;color:#e2e8f0;background:rgba(226,232,240,0.15);border:1px solid rgba(226,232,240,0.3);padding:2px 7px;border-radius:4px;">📦 ${topKonteynerA}</span>
                     </div>
                 </div>
-                <table class="data-table" style="font-size:11px;margin:0;">
-                    <thead><tr><th style="width:28px;padding:5px 4px;">#</th><th style="padding:5px 4px;">Ekip</th><th style="text-align:center;padding:5px 4px;">Tır</th><th style="text-align:center;padding:5px 4px;">Kmyn</th><th style="text-align:center;padding:5px 4px;">Kont</th><th style="text-align:center;padding:5px 4px;">M³</th></tr></thead>
-                    <tbody>${liderSatir(ekipA)}</tbody>
-                </table>
+                <div id="va7ListeA" style="display:none;">
+                    <table class="data-table" style="font-size:11px;margin:0;">
+                        <thead><tr><th style="width:28px;padding:5px 4px;">#</th><th style="padding:5px 4px;">Ekip</th><th style="text-align:center;padding:5px 4px;">Tır</th><th style="text-align:center;padding:5px 4px;">Kmyn</th><th style="text-align:center;padding:5px 4px;">Kont</th><th style="text-align:center;padding:5px 4px;">M³</th></tr></thead>
+                        <tbody>${liderSatir(ekipA)}</tbody>
+                    </table>
+                </div>
             </div>
 
             <!-- B VARDİYASI -->
             <div style="background:rgba(217,119,6,0.07);border:1.5px solid rgba(217,119,6,0.25);border-radius:10px;padding:10px 12px;">
-                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;border-bottom:1.5px solid rgba(217,119,6,0.18);padding-bottom:6px;">
-                    <div style="font-family:'Inter',sans-serif;font-size:14px;font-weight:800;color:#FCD34D;letter-spacing:1px;">🟡 B VARDİYASI</div>
+                <div onclick="va7Toggle('va7ListeB')" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;border-bottom:1.5px solid rgba(217,119,6,0.18);padding-bottom:6px;cursor:pointer;user-select:none;">
+                    <div style="font-family:'Inter',sans-serif;font-size:14px;font-weight:800;color:#F0B323;letter-spacing:1px;">🟡 B VARDİYASI <span id="va7ListeB_arrow" style="font-size:11px;opacity:0.6;">▶</span></div>
                     <div style="display:flex;gap:4px;align-items:center;">
                         <span class="stat-pill" style="background:rgba(217,119,6,0.15);color:#FCD34D;font-size:11px;padding:2px 7px;">${topB} Araç</span>
                         <span class="stat-pill" style="background:rgba(34,197,94,0.12);color:#4ade80;font-size:11px;padding:2px 7px;">${m3B.toFixed(1)} M³</span>
@@ -6707,10 +6718,12 @@ async function va7Sorgula() {
                         <span style="font-size:10px;font-weight:800;color:#e2e8f0;background:rgba(226,232,240,0.15);border:1px solid rgba(226,232,240,0.3);padding:2px 7px;border-radius:4px;">📦 ${topKonteynerB}</span>
                     </div>
                 </div>
-                <table class="data-table" style="font-size:11px;margin:0;">
-                    <thead><tr><th style="width:28px;padding:5px 4px;">#</th><th style="padding:5px 4px;">Ekip</th><th style="text-align:center;padding:5px 4px;">Tır</th><th style="text-align:center;padding:5px 4px;">Kmyn</th><th style="text-align:center;padding:5px 4px;">Kont</th><th style="text-align:center;padding:5px 4px;">M³</th></tr></thead>
-                    <tbody>${liderSatir(ekipB)}</tbody>
-                </table>
+                <div id="va7ListeB" style="display:none;">
+                    <table class="data-table" style="font-size:11px;margin:0;">
+                        <thead><tr><th style="width:28px;padding:5px 4px;">#</th><th style="padding:5px 4px;">Ekip</th><th style="text-align:center;padding:5px 4px;">Tır</th><th style="text-align:center;padding:5px 4px;">Kmyn</th><th style="text-align:center;padding:5px 4px;">Kont</th><th style="text-align:center;padding:5px 4px;">M³</th></tr></thead>
+                        <tbody>${liderSatir(ekipB)}</tbody>
+                    </table>
+                </div>
             </div>
 
         </div>
