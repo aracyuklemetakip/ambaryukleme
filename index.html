@@ -2007,15 +2007,15 @@
 
                 <!-- PERSONEL İSTATİSTİK BARI -->
                 <div id="personelStatBar" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;background:#F8FAFF;border:1px solid #E5E7EB;border-radius:10px;padding:10px 16px;margin-bottom:14px;font-family:'Inter',sans-serif;">
-                    <span id="statA" style="font-size:12px;font-weight:700;padding:4px 12px;border-radius:6px;background:#E0E7FF;color:#3730a3;border:1px solid #818cf8;white-space:nowrap;">A Vardiyası: 0</span>
+                    <button id="statA" onclick="personelVardiyaFiltrele('A')" style="font-size:12px;font-weight:700;padding:4px 12px;border-radius:6px;background:#E0E7FF;color:#3730a3;border:1px solid #818cf8;white-space:nowrap;cursor:pointer;transition:all 0.15s;font-family:'Inter',sans-serif;">A Vardiyası: 0</button>
                     <span style="color:#D1D5DB;">|</span>
-                    <span id="statB" style="font-size:12px;font-weight:700;padding:4px 12px;border-radius:6px;background:#FFFBEB;color:#92400e;border:1px solid #fcd34d;white-space:nowrap;">B Vardiyası: 0</span>
+                    <button id="statB" onclick="personelVardiyaFiltrele('B')" style="font-size:12px;font-weight:700;padding:4px 12px;border-radius:6px;background:#FFFBEB;color:#92400e;border:1px solid #fcd34d;white-space:nowrap;cursor:pointer;transition:all 0.15s;font-family:'Inter',sans-serif;">B Vardiyası: 0</button>
                     <span style="color:#D1D5DB;">|</span>
-                    <span id="statG" style="font-size:12px;font-weight:700;padding:4px 12px;border-radius:6px;background:#BAE6FD;color:#0c4a6e;border:1px solid #38bdf8;white-space:nowrap;">Gündüz: 0</span>
+                    <button id="statG" onclick="personelVardiyaFiltrele('G')" style="font-size:12px;font-weight:700;padding:4px 12px;border-radius:6px;background:#BAE6FD;color:#0c4a6e;border:1px solid #38bdf8;white-space:nowrap;cursor:pointer;transition:all 0.15s;font-family:'Inter',sans-serif;">Gündüz: 0</button>
                     <span style="color:#D1D5DB;">|</span>
-                    <span id="statK" style="font-size:12px;font-weight:700;padding:4px 12px;border-radius:6px;background:#A7F3D0;color:#064e3b;border:1px solid #34d399;white-space:nowrap;">Konveyor: 0</span>
+                    <button id="statK" onclick="personelVardiyaFiltrele('K')" style="font-size:12px;font-weight:700;padding:4px 12px;border-radius:6px;background:#A7F3D0;color:#064e3b;border:1px solid #34d399;white-space:nowrap;cursor:pointer;transition:all 0.15s;font-family:'Inter',sans-serif;">Konveyor: 0</button>
                     <span style="color:#D1D5DB;">|</span>
-                    <span id="statToplam" style="font-size:12px;font-weight:800;padding:4px 12px;border-radius:6px;background:#1C2B6E;color:#F0B323;white-space:nowrap;">Toplam: 0</span>
+                    <button id="statToplam" onclick="personelVardiyaFiltrele(null)" style="font-size:12px;font-weight:800;padding:4px 12px;border-radius:6px;background:#1C2B6E;color:#F0B323;white-space:nowrap;cursor:pointer;transition:all 0.15s;border:2px solid #1C2B6E;font-family:'Inter',sans-serif;">Toplam: 0</button>
                 </div>
 
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;">
@@ -2514,6 +2514,7 @@
 
     // ── PERSONEL LİSTESİ ──────────────────────────────────
     let personelListesi = [];
+    let aktifVardiyaFiltresi = null;
     let _acDropdownIdx = -1;
 
     async function personelListeYukle() {
@@ -2696,9 +2697,11 @@
     function personelListeRender() {
         const input = document.getElementById('personelAra');
         const filtre = window.trNorm(input ? input.value : '');
-        const liste = personelListesi.filter(p => 
-            window.trNorm(p.ad).startsWith(filtre) || p.sicil.startsWith(filtre)
-        ).sort((a,b) => window.trSort(a, b, 'ad'));
+        const liste = personelListesi.filter(p => {
+            const aramaOk = window.trNorm(p.ad).startsWith(filtre) || p.sicil.startsWith(filtre);
+            const vardiyaOk = !aktifVardiyaFiltresi || p.vardiya === aktifVardiyaFiltresi;
+            return aramaOk && vardiyaOk;
+        }).sort((a,b) => window.trSort(a, b, 'ad'));
         const tbody = document.getElementById('personelTableBody');
         const empty = document.getElementById('personelEmptyState');
         const sayac = document.getElementById('personelSayac');
@@ -2711,7 +2714,9 @@
         }
 
         if (!tbody) return;
-        if (sayac) sayac.textContent = '(' + personelListesi.length + ' kişi)';
+        if (sayac) sayac.textContent = aktifVardiyaFiltresi
+            ? `(${liste.length} / ${personelListesi.length} kişi)`
+            : `(${personelListesi.length} kişi)`;
         if (liste.length === 0) {
             tbody.innerHTML = '';
             if (empty) empty.style.display = 'block';
@@ -2753,6 +2758,36 @@
         const sg = document.getElementById('statG'); if (sg) sg.textContent = `Gündüz: ${g}`;
         const sk = document.getElementById('statK'); if (sk) sk.textContent = `Konveyor: ${k}`;
         const st = document.getElementById('statToplam'); if (st) st.textContent = `Toplam: ${t}`;
+        personelStatBarAktifGoster();
+    }
+
+    function personelStatBarAktifGoster() {
+        const map = { A:'statA', B:'statB', G:'statG', K:'statK', null:'statToplam' };
+        const styles = {
+            statA:      { normal:'background:#E0E7FF;color:#3730a3;border:1px solid #818cf8;', aktif:'background:#3730a3;color:#fff;border:2px solid #3730a3;transform:scale(1.05);' },
+            statB:      { normal:'background:#FFFBEB;color:#92400e;border:1px solid #fcd34d;', aktif:'background:#92400e;color:#fff;border:2px solid #92400e;transform:scale(1.05);' },
+            statG:      { normal:'background:#BAE6FD;color:#0c4a6e;border:1px solid #38bdf8;', aktif:'background:#0c4a6e;color:#fff;border:2px solid #0c4a6e;transform:scale(1.05);' },
+            statK:      { normal:'background:#A7F3D0;color:#064e3b;border:1px solid #34d399;', aktif:'background:#064e3b;color:#fff;border:2px solid #064e3b;transform:scale(1.05);' },
+            statToplam: { normal:'background:#1C2B6E;color:#F0B323;border:2px solid #1C2B6E;', aktif:'background:#F0B323;color:#1C2B6E;border:2px solid #F0B323;transform:scale(1.05);' },
+        };
+        const aktifId = aktifVardiyaFiltresi ? map[aktifVardiyaFiltresi] : 'statToplam';
+        Object.keys(styles).forEach(id => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            const s = styles[id];
+            el.style.cssText = el.style.cssText.replace(/background:[^;]+;|color:[^;]+;|border:[^;]+;|transform:[^;]+;/g, '');
+            const isAktif = id === aktifId;
+            (isAktif ? s.aktif : s.normal).split(';').filter(Boolean).forEach(rule => {
+                const [prop, val] = rule.split(':').map(x=>x.trim());
+                if (prop && val) el.style[prop.replace(/-([a-z])/g, (_,c)=>c.toUpperCase())] = val;
+            });
+        });
+    }
+
+    function personelVardiyaFiltrele(v) {
+        aktifVardiyaFiltresi = (aktifVardiyaFiltresi === v && v !== null) ? null : v;
+        personelStatBarAktifGoster();
+        personelListeRender();
     }
 
     // ── VARDİYA ATAMA RENDER ──
