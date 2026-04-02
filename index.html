@@ -814,11 +814,16 @@
             animation: yeniKayitFlash 1.8s ease forwards !important;
             position: relative;
         }
-        .yeni-kayit-satir td:first-child::before {
+        .yeni-kayit-satir td:first-child::before,
+        .son-kayit-satir td:first-child::before {
             content: '★';
             color: #F0B323;
             font-size: 11px;
             margin-right: 4px;
+        }
+        .son-kayit-satir {
+            background: rgba(240,179,35,0.13) !important;
+            box-shadow: inset 0 0 0 1px rgba(240,179,35,0.35);
         }
         .donem-badge { display:inline-flex;align-items:center;gap:8px;background:rgba(240,179,35,0.12);border:1px solid rgba(240,179,35,0.35);border-radius:100px;padding:5px 14px;font-size:12px;font-weight:700;color:#F0B323;margin-bottom:14px; }
 
@@ -3910,6 +3915,8 @@
         // Düz liste - her kayıt alt alta (addEventListener ile güvenli bağlama)
         const tbody = document.getElementById('tableBody');
         tbody.innerHTML = '';
+        // En son eklenen kayıt: id'ye göre en büyük olan
+        const enSonId = sirali.length ? sirali.reduce((max, k) => k.id > max ? k.id : max, sirali[0].id) : null;
         sirali.forEach((k, i) => {
             const tipBadge = k.aracTipi==='Tır'?'badge-tir':k.aracTipi==='Kamyon'?'badge-kamyon':'badge-konteyner';
             const durum    = k.gec?`<span class="status-gec">${k.gecSure || 'Gecikti'}</span>`:`<span class="status-ok">✓</span>`;
@@ -3920,13 +3927,20 @@
 
             const tr = document.createElement('tr');
             tr.dataset.id = k.id;
-            tr.style.cssText = 'cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.08);transition:background 0.1s;background:#1C2B6E;';
-            if (duzenleId === k.id) tr.classList.add('selected');
+            const isSonKayit = k.id === enSonId;
+            if (duzenleId === k.id) {
+                tr.classList.add('selected');
+                tr.style.cssText = 'cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.08);transition:background 0.1s;background:#1C2B6E;';
+            } else if (isSonKayit) {
+                tr.classList.add('son-kayit-satir');
+                tr.style.cssText = 'cursor:pointer;border-bottom:1px solid rgba(240,179,35,0.4);transition:background 0.1s;';
+            } else {
+                tr.style.cssText = 'cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.08);transition:background 0.1s;background:#1C2B6E;';
+            }
             if (_lastAddedId !== null && k.id === _lastAddedId) {
                 tr.classList.add('yeni-kayit-satir');
-                // Animasyon bitince sınıfı kaldır, arka planı kalıcı yap
                 tr.addEventListener('animationend', function() {
-                    tr.style.background = 'rgba(240,179,35,0.12)';
+                    tr.style.background = 'rgba(240,179,35,0.13)';
                     tr.style.boxShadow = 'inset 0 0 0 1px rgba(240,179,35,0.35)';
                     tr.classList.remove('yeni-kayit-satir');
                 }, { once: true });
