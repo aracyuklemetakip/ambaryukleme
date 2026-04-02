@@ -1426,7 +1426,7 @@
         <div class="topbar">
             <div class="topbar-left">
                 <button class="back-btn" onclick="sessionStorage.removeItem('aktifSayfa');sessionStorage.removeItem('aktifSekme');showSayfa('anaSayfa')">← Geri</button>
-                <span style="font-size:16px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;color:#1C2B6E;">OPERATÖR PANELİ</span>
+                <span style="font-size:20px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;color:#1C2B6E;">OPERATÖR PANELİ</span>
             </div>
             <div class="topbar-center" id="dinamikBaslik" style="display:none;">
                 <!-- Başlık artık tablonun üzerinde -->
@@ -1710,7 +1710,7 @@
         <div class="sef-topbar">
             <div style="display:flex;align-items:center;gap:12px;">
                 <button class="back-btn" onclick="sessionStorage.removeItem('aktifSayfa');sessionStorage.removeItem('aktifSekme');showSayfa('anaSayfa')">← Geri</button>
-                <span style="font-size:16px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;color:#1C2B6E;">YETKİLİ PANELİ</span>
+                <span style="font-size:20px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;color:#1C2B6E;">YETKİLİ PANELİ</span>
             </div>
             <div style="display:flex;align-items:center;gap:8px;">
                 <div class="tarih-display" id="sefTarihDisplay"></div>
@@ -5669,7 +5669,7 @@
         if (!val.trim()) { dd.style.display = 'none'; _df6EkipDropIdx = -1; return; }
 
         const eslesen = personelListesi.filter(p =>
-            window.trUpper(p.ad).startsWith(val) &&
+            window.trNorm(p.ad).includes(window.trNorm(val)) &&
             !df6EkipListesi.includes(p.ad)
         ).sort((a,b) => window.trSort(a, b, 'ad'));
         if (!eslesen.length) { dd.style.display = 'none'; return; }
@@ -5731,7 +5731,7 @@
         const val = window.trUpper(input.value);
         input.value = val;
         if (!val.trim()) { dd.style.display='none'; _df6PerDropIdx=-1; return; }
-        const eslesen = personelListesi.filter(p => window.trUpper(p.ad).startsWith(val))
+        const eslesen = personelListesi.filter(p => window.trNorm(p.ad).includes(window.trNorm(val)))
             .sort((a,b) => window.trSort(a, b, 'ad'));
         if (!eslesen.length) { dd.style.display='none'; return; }
         dd.innerHTML = eslesen.map((p,i) => `
