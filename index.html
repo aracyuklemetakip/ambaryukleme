@@ -2739,9 +2739,21 @@
         }
 
         if (!tbody) return;
-        if (sayac) sayac.textContent = aktifVardiyaFiltresi
-            ? `(${liste.length} / ${personelListesi.length} kişi)`
-            : `(${personelListesi.length} kişi)`;
+
+        // Filtre seçili değilse tabloyu gizle
+        const tableEl = tbody.closest('table');
+        if (!aktifVardiyaFiltresi) {
+            if (tableEl) tableEl.style.display = 'none';
+            if (empty) empty.style.display = 'none';
+            if (sayac) sayac.textContent = '';
+            tbody.innerHTML = '';
+            vardiyaAtamaRender();
+            personelStatBarGuncelle();
+            return;
+        }
+        if (tableEl) tableEl.style.display = '';
+
+        if (sayac) sayac.textContent = `(${liste.length} / ${personelListesi.length} kişi)`;
         if (liste.length === 0) {
             tbody.innerHTML = '';
             if (empty) empty.style.display = 'block';
