@@ -4033,7 +4033,7 @@
                 <td style="padding:5px 8px;"><span class="badge ${tipBadge}">${k.aracTipi}</span></td>
                 <td style="padding:5px 8px;font-size:10px;font-weight:700;color:#fff;">${(k.aracTuru||'').toUpperCase().replace(' SEÇİMİ','')}</td>
                 <td style="padding:5px 8px;color:#fff;font-size:10px;white-space:nowrap;">${k.baslama} - ${k.bitis}</td>
-                <td style="padding:5px 8px;text-align:center;">${k.lastikAdedi ? `<span style="font-size:11px;font-weight:800;color:#F0B323;background:rgba(240,179,35,0.15);border:1px solid rgba(240,179,35,0.35);border-radius:4px;padding:2px 7px;">🔵 ${k.lastikAdedi}</span>` : '<span style="color:rgba(255,255,255,0.25);font-size:11px;">—</span>'}</td>
+                <td style="padding:5px 8px;text-align:center;">${k.lastikAdedi ? `<span style="font-size:11px;font-weight:800;color:#F0B323;background:rgba(240,179,35,0.15);border:1px solid rgba(240,179,35,0.35);border-radius:4px;padding:2px 7px;">${k.lastikAdedi}</span>` : '<span style="color:rgba(255,255,255,0.25);font-size:11px;">—</span>'}</td>
                 <td style="padding:5px 8px;">${durum}</td>`;
 
             // Satır click → form doldur (butonlar hariç)
@@ -4261,6 +4261,7 @@
                 toplam:    v.length,
                 m3:        v.reduce((s,k)=>s+(k.m3||0),0),
                 gec:       v.filter(k=>k.gec).length,
+                lastik:    v.reduce((s,k)=>s+(k.lastikAdedi||0),0),
             };
         }
 
@@ -4299,6 +4300,10 @@
                         <div class="vd-kart-num" style="color:#6ee7b7;font-size:22px;">${fmtM3(s.m3)}</div>
                         <div class="vd-kart-lbl">Toplam M³</div>
                     </div>
+                    <div class="vd-toplam-item">
+                        <div class="vd-kart-num" style="color:#fbbf24;font-size:22px;">${s.lastik || '<span style="color:var(--muted);font-size:18px;">—</span>'}</div>
+                        <div class="vd-kart-lbl">Yük. Lastik</div>
+                    </div>
                 </div>
             </div>`;
         }
@@ -4317,12 +4322,13 @@
                 <div class="vd-baslik">
                     <div class="vd-baslik-text" style="color:rgba(255,255,255,0.9);">Genel Toplam</div>
                 </div>
-                <div class="vd-kartlar" style="grid-template-columns:repeat(5,1fr);">
+                <div class="vd-kartlar" style="grid-template-columns:repeat(6,1fr);">
                     <div class="vd-kart"><div class="vd-kart-num" style="color:#FCD34D;background:rgba(240,179,35,0.2);border-radius:8px;padding:4px 8px;">${sT.tir||'<span style="color:rgba(255,255,255,0.25);font-size:18px;">—</span>'}</div><div class="vd-kart-lbl">Tır</div></div>
                     <div class="vd-kart"><div class="vd-kart-num" style="color:#93C5FD;background:rgba(59,130,246,0.2);border-radius:8px;padding:4px 8px;">${sT.kamyon||'<span style="color:rgba(255,255,255,0.25);font-size:18px;">—</span>'}</div><div class="vd-kart-lbl">Kamyon</div></div>
                     <div class="vd-kart"><div class="vd-kart-num" style="color:#CBD5E1;background:rgba(148,163,184,0.2);border-radius:8px;padding:4px 8px;">${sT.konteyner||'<span style="color:rgba(255,255,255,0.25);font-size:18px;">—</span>'}</div><div class="vd-kart-lbl">Konteyner</div></div>
                     <div class="vd-kart"><div class="vd-kart-num" style="color:#fca5a5;background:rgba(239,68,68,0.2);border-radius:8px;padding:4px 8px;animation:pulseRed 2.5s ease-in-out infinite">${sT.toplam||'<span style="color:rgba(255,255,255,0.25);font-size:18px;animation:none">—</span>'}</div><div class="vd-kart-lbl">Toplam Araç</div></div>
                     <div class="vd-kart"><div class="vd-kart-num" style="color:#6ee7b7;font-size:22px;">${sT.m3>0?sT.m3.toFixed(1):'<span style="color:rgba(255,255,255,0.25);font-size:18px;">—</span>'}</div><div class="vd-kart-lbl">Toplam M³</div></div>
+                    <div class="vd-kart"><div class="vd-kart-num" style="color:#fbbf24;font-size:22px;">${sT.lastik||'<span style="color:rgba(255,255,255,0.25);font-size:18px;">—</span>'}</div><div class="vd-kart-lbl">Yük. Lastik</div></div>
                 </div>
             </div>`;
 
@@ -4535,12 +4541,13 @@
         const sirali = [...liste].sort((a,b) => a.id - b.id);
         sirali.forEach(k => {
             const key = ekipKey(k.ekip);
-            if (!ekipMap[key]) ekipMap[key] = { ad:k.ekip, kayitlar:[], tir:0, kamyon:0, konteyner:0, m3:0 };
+            if (!ekipMap[key]) ekipMap[key] = { ad:k.ekip, kayitlar:[], tir:0, kamyon:0, konteyner:0, m3:0, lastik:0 };
             ekipMap[key].kayitlar.push(k);
             if (k.aracTipi==='Tır') ekipMap[key].tir++;
             else if (k.aracTipi==='Kamyon') ekipMap[key].kamyon++;
             else ekipMap[key].konteyner++;
             ekipMap[key].m3 += (k.m3||0);
+            ekipMap[key].lastik += (k.lastikAdedi||0);
         });
 
         // En çok yükleme yapan ekip önce
@@ -4552,10 +4559,11 @@
             const genTir = ekipler.reduce((s,e)=>s+e.tir,0), genKamyon = ekipler.reduce((s,e)=>s+e.kamyon,0);
             const genKonteyner = ekipler.reduce((s,e)=>s+e.konteyner,0), genToplam = ekipler.reduce((s,e)=>s+e.kayitlar.length,0);
             const genM3 = ekipler.reduce((s,e)=>s+e.m3,0);
+            const genLastik = ekipler.reduce((s,e)=>s+(e.lastik||0),0);
             sonuc.innerHTML = `
                 <div class="donem-badge">📅 ${donem.label}${e2Vardiya !== 'hepsi' ? ' · ' + e2Vardiya : ''} · ${genToplam} araç</div>
                 <div class="sef-bolum"><div style="overflow-x:auto;"><table class="data-table" style="font-size:14px; width:100%; border-collapse:separate; border-spacing:0 8px;">
-                    <thead><tr><th style="padding:12px;color:#fff;">S.No</th><th style="padding:12px;">Ekip</th><th style="color:#F0B323; padding:12px; text-align:center;">Tır</th><th style="color:#93C5FD; padding:12px; text-align:center;">Kamyon</th><th style="color:#e2e8f0; padding:12px; text-align:center;">Konteyner</th><th style="color:#b91c1c; padding:12px; text-align:center;">Toplam</th><th style="color:var(--success); padding:12px; text-align:center;">M³</th></tr></thead>
+                    <thead><tr><th style="padding:12px;color:#fff;">S.No</th><th style="padding:12px;">Ekip</th><th style="color:#F0B323; padding:12px; text-align:center;">Tır</th><th style="color:#93C5FD; padding:12px; text-align:center;">Kamyon</th><th style="color:#e2e8f0; padding:12px; text-align:center;">Konteyner</th><th style="color:#b91c1c; padding:12px; text-align:center;">Toplam</th><th style="color:var(--success); padding:12px; text-align:center;">M³</th><th style="color:#fbbf24; padding:12px; text-align:center;">Lastik</th></tr></thead>
                     <tbody>
                         ${ekipler.map((e,idx)=>`<tr>
                             <td style="padding:12px; color:#fff; font-size:12px; font-weight:700;">${idx+1}</td>
@@ -4565,6 +4573,7 @@
                             <td style="font-weight:700; text-align:center; padding:12px;"><span style="background:rgba(226,232,240,0.25); color:#e2e8f0; border:1px solid rgba(226,232,240,0.4); border-radius:5px; padding:4px 10px;">${e.konteyner||'—'}</span></td>
                             <td style="font-weight:800; text-align:center; padding:12px;"><span style="background:rgba(254,202,202,0.4); color:#f87171; border-radius:5px; padding:4px 10px;">${e.kayitlar.length}</span></td>
                             <td style="color:var(--success); font-weight:700; text-align:center; padding:12px;">${e.m3.toFixed(1)}</td>
+                            <td style="font-weight:800; text-align:center; padding:12px;"><span style="background:rgba(251,191,36,0.15); color:#fbbf24; border:1px solid rgba(251,191,36,0.35); border-radius:5px; padding:4px 10px;">${e.lastik||'—'}</span></td>
                         </tr>`).join('')}
                         <tr style="background:rgba(37,99,235,0.15); border-top:2px solid rgba(37,99,235,0.4);">
                             <td colspan="2" style="font-weight:700; color:#fff; padding:15px;">YILLIK TOPLAM</td>
@@ -4573,6 +4582,7 @@
                             <td style="font-weight:700; color:#e2e8f0; text-align:center; padding:15px;">${genKonteyner}</td>
                             <td style="font-weight:700; color:#f87171; text-align:center; padding:15px;">${genToplam}</td>
                             <td style="font-weight:700; color:var(--success); text-align:center; padding:15px;">${genM3.toFixed(1)}</td>
+                            <td style="font-weight:700; color:#fbbf24; text-align:center; padding:15px;">${genLastik||'—'}</td>
                         </tr>
                     </tbody></table></div></div>`;
         } else if (e2Donem === 'ay' || e2Donem === 'aralik') {
@@ -4580,10 +4590,11 @@
             const genTir = ekipler.reduce((s,e)=>s+e.tir,0), genKamyon = ekipler.reduce((s,e)=>s+e.kamyon,0);
             const genKonteyner = ekipler.reduce((s,e)=>s+e.konteyner,0), genToplam = ekipler.reduce((s,e)=>s+e.kayitlar.length,0);
             const genM3 = ekipler.reduce((s,e)=>s+e.m3,0);
+            const genLastik = ekipler.reduce((s,e)=>s+(e.lastik||0),0);
             sonuc.innerHTML = `
                 <div class="donem-badge">📅 ${donem.label}${e2Vardiya !== 'hepsi' ? ' · ' + e2Vardiya : ''} · ${genToplam} araç</div>
                 <div class="sef-bolum"><div style="overflow-x:auto;"><table class="data-table" style="font-size:14px; width:100%; border-collapse:separate; border-spacing:0 8px;">
-                    <thead><tr><th style="padding:12px;color:#fff;">S.No</th><th style="padding:12px;">Ekip</th><th style="color:#F0B323; padding:12px; text-align:center;">Tır</th><th style="color:#93C5FD; padding:12px; text-align:center;">Kamyon</th><th style="color:#e2e8f0; padding:12px; text-align:center;">Konteyner</th><th style="color:#b91c1c; padding:12px; text-align:center;">Toplam</th><th style="color:var(--success); padding:12px; text-align:center;">M³</th></tr></thead>
+                    <thead><tr><th style="padding:12px;color:#fff;">S.No</th><th style="padding:12px;">Ekip</th><th style="color:#F0B323; padding:12px; text-align:center;">Tır</th><th style="color:#93C5FD; padding:12px; text-align:center;">Kamyon</th><th style="color:#e2e8f0; padding:12px; text-align:center;">Konteyner</th><th style="color:#b91c1c; padding:12px; text-align:center;">Toplam</th><th style="color:var(--success); padding:12px; text-align:center;">M³</th><th style="color:#fbbf24; padding:12px; text-align:center;">Lastik</th></tr></thead>
                     <tbody>
                         ${ekipler.map((e,idx)=>`<tr>
                             <td style="padding:12px; color:#fff; font-size:12px; font-weight:700;">${idx+1}</td>
@@ -4593,6 +4604,7 @@
                             <td style="font-weight:700; text-align:center; padding:12px;"><span style="background:rgba(226,232,240,0.25); color:#e2e8f0; border:1px solid rgba(226,232,240,0.4); border-radius:5px; padding:4px 10px;">${e.konteyner||'—'}</span></td>
                             <td style="font-weight:800; text-align:center; padding:12px;"><span style="background:rgba(254,202,202,0.4); color:#f87171; border-radius:5px; padding:4px 10px;">${e.kayitlar.length}</span></td>
                             <td style="color:var(--success); font-weight:700; text-align:center; padding:12px;">${e.m3.toFixed(1)}</td>
+                            <td style="font-weight:800; text-align:center; padding:12px;"><span style="background:rgba(251,191,36,0.15); color:#fbbf24; border:1px solid rgba(251,191,36,0.35); border-radius:5px; padding:4px 10px;">${e.lastik||'—'}</span></td>
                         </tr>`).join('')}
                         <tr style="background:rgba(37,99,235,0.15); border-top:2px solid rgba(37,99,235,0.4);">
                             <td colspan="2" style="font-weight:700; color:#fff; padding:15px;">GENEL TOPLAM</td>
@@ -4601,6 +4613,7 @@
                             <td style="font-weight:700; color:#e2e8f0; text-align:center; padding:15px;">${genKonteyner}</td>
                             <td style="font-weight:700; color:#f87171; text-align:center; padding:15px;">${genToplam}</td>
                             <td style="font-weight:700; color:var(--success); text-align:center; padding:15px;">${genM3.toFixed(1)}</td>
+                            <td style="font-weight:700; color:#fbbf24; text-align:center; padding:15px;">${genLastik||'—'}</td>
                         </tr>
                     </tbody></table></div></div>`;
         } else {
@@ -4626,7 +4639,7 @@
                                     ${e2Vardiya==='hepsi'?'<th>Vardiya</th>':''}
                                     <th>Tip</th><th>Tür</th>
                                     <th>M³</th><th>Shipment</th><th>Saat</th><th>Net</th>
-                                    <th>Forkliftçi</th><th>Durum</th><th>Duruşlar</th><th>Kaliteci</th><th>Açıklama</th>
+                                    <th>Forkliftçi</th><th>Lastik</th><th>Durum</th><th>Duruşlar</th><th>Kaliteci</th><th>Açıklama</th>
                                 </tr></thead>
                                 <tbody>
                                     ${ekip.kayitlar.map((k,idx) => `
@@ -4640,6 +4653,7 @@
                                             <td style="padding:8px;">${k.baslama}-${k.bitis}</td>
                                             <td style="padding:8px; font-weight:700;">${k.net}</td>
                                             <td style="padding:8px; font-weight:400; font-size:11px;">${k.forkliftci||'—'}</td>
+                                            <td style="padding:8px; text-align:center;">${k.lastikAdedi?`<span style="background:rgba(251,191,36,0.15);color:#fbbf24;border:1px solid rgba(251,191,36,0.35);border-radius:4px;padding:2px 7px;font-weight:800;">${k.lastikAdedi}</span>`:'—'}</td>
                                             <td style="padding:8px;">${k.gec?`<span class="status-gec">${k.gecSure}</span>`:`<span class="status-ok">✓</span>`}</td>
                                             <td style="padding:8px; font-size:10px;">${(k.duruslar||[]).map(d=>`${d.sebep}(${d.sure}dk)`).join(', ') || '—'}</td>
                                             <td style="padding:8px;">${k.kaliteci||'—'}</td>
