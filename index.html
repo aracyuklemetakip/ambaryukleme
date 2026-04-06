@@ -3450,14 +3450,30 @@
     function setSeg(el, field, val) {
         const group = el.closest('.seg-group');
         const isActive = el.classList.contains('active-blue') || el.classList.contains('active-yellow') || el.classList.contains('active-red');
-        group.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active-blue','active-yellow','active-red'));
+        
+        // Gruptaki tüm butonların aktifliğini ve tabindex'ini sıfırla
+        group.querySelectorAll('.seg-btn').forEach(b => {
+            b.classList.remove('active-blue','active-yellow','active-red');
+            b.setAttribute('tabindex', '-1'); // Seçili olmayanlar tab ile geçilsin
+        });
+
         if (isActive) {
-            // Tekrar tıklandı → seçimi kaldır
-            if (field === 'aracTipi') secilenAracTipi = '';
-            else if (field === 'vardiya') { secilenVardiya = ''; _ilkGiris = true; }
-            else secilenAracTuru = '';
+            // Tekrar tıklandı → seçimi kaldır (Vardiya hariç, o hep seçili kalmalı)
+            if (field === 'aracTipi') { secilenAracTipi = ''; }
+            else if (field === 'vardiya') { 
+                // Vardiya seçimini kaldırma, en az biri seçili kalsın
+                el.classList.add(val === 'A Vardiyası' ? 'active-blue' : 'active-yellow');
+                el.setAttribute('tabindex', '0');
+                return;
+            }
+            else { secilenAracTuru = ''; }
+            // Seçim kalkınca ilk butonu tekrar tab-erişilebilir yap
+            group.querySelector('.seg-btn').setAttribute('tabindex', '0');
             return;
         }
+
+        // Yeni seçimi uygula
+        el.setAttribute('tabindex', '0'); // Sadece seçili olan tab-erişilebilir
         if (field === 'aracTipi') {
             el.classList.add('active-blue'); secilenAracTipi = val;
         } else if (field === 'vardiya') {
@@ -3466,33 +3482,43 @@
         } else {
             el.classList.add(val === 'O/E' ? 'active-red' : 'active-blue'); secilenAracTuru = val;
         }
+
+        // Fare ile tıklandığında odağı buraya al ki Tab basınca doğru yerden devam etsin
+        el.focus();
     }
 
     function handleSegKey(e, el, field, val) {
+        // Ok tuşlarıyla grup içinde gezebilsin (A'dan B'ye geçiş gibi)
+        if (e.key === 'ArrowRight' || e.key === 'ArrowLeft' || e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+            e.preventDefault();
+            const btns = Array.from(el.closest('.seg-group').querySelectorAll('.seg-btn'));
+            const idx = btns.indexOf(el);
+            let nextIdx = (e.key === 'ArrowRight' || e.key === 'ArrowDown') ? idx + 1 : idx - 1;
+            if (nextIdx >= btns.length) nextIdx = 0;
+            if (nextIdx < 0) nextIdx = btns.length - 1;
+            btns[nextIdx].focus();
+            return;
+        }
+
         if (e.key === ' ' || e.key === 'Enter') {
             e.preventDefault();
             
-            // Zaten aktifse tekrar tıklayıp deselect yapmasın, seçim sabit kalsın
-            const isActive = el.classList.contains('active-blue') || el.classList.contains('active-yellow') || el.classList.contains('active-red');
-            if (!isActive) {
-                setSeg(el, field, val);
-            }
+            // Seçimi yap (Vardiya değişimi vs.)
+            setSeg(el, field, val);
             
-            // Seçim yapıldıktan sonra bir sonraki input-group'u bul
+            // Seçim yapıldıktan sonra direkt bir sonraki input-group'a odaklan
             const currentGroup = el.closest('.input-group');
             let nextGroup = currentGroup.nextElementSibling;
             
-            // Sıradaki geçerli input-group'u bulana kadar ilerle (başlıkları vs. atla)
             while (nextGroup) {
                 if (nextGroup.classList.contains('input-group')) {
-                    // İçindeki ilk odaklanabilir elemanı bul (buton, input vs.)
                     const nextInput = nextGroup.querySelector('.seg-btn, input, select, textarea');
                     if (nextInput) {
                         nextInput.focus();
-                        if (nextInput.tagName === 'INPUT' && nextInput.type !== 'checkbox' && nextInput.type !== 'radio') {
-                            nextInput.select();
+                        if (nextInput.tagName === 'INPUT' && nextInput.type !== 'number' && nextInput.type !== 'text') {
+                            // select text if applicable
                         }
-                        return; // Bulunca çık
+                        return;
                     }
                 }
                 nextGroup = nextGroup.nextElementSibling;
