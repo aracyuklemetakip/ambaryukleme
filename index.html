@@ -506,12 +506,15 @@
         .edit-cancel:hover { color:#ef4444; }
 
         .form-section-title {
-            font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase;
-            color:#ffffff;
-            padding:10px 0 6px 0;
-            margin-bottom:4px; margin-top:14px;
-            border-bottom:2px solid rgba(255,255,255,0.18);
-            display:block; width:100%;
+            font-size:11px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase;
+            color:#1C2B6E;
+            padding:5px 12px;
+            margin-bottom:8px; margin-top:16px;
+            display:inline-block;
+            background:#F0B323;
+            border-radius:6px;
+            width:100%;
+            box-sizing:border-box;
         }
         .form-section-title:first-of-type { margin-top:0; }
 
@@ -1506,8 +1509,7 @@
                 </div>
                 <div class="input-group">
                     <div class="input-label">Yüklenen Lastik Adedi</div>
-                    <input type="number" id="lastikAdedi" class="text-input" tabindex="0" placeholder="0" min="0" step="1"
-                        oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                    <input type="number" id="lastikAdedi" class="text-input" tabindex="0" placeholder="0" min="0" step="1" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
                 </div>
 
                 <div class="form-section-title">Ekip & Saat</div>
@@ -1529,10 +1531,14 @@
                             oninput="saatInput(this,null)" onkeydown="sadeceSayi(event)">
                     </div>
                 </div>
-                <div class="input-group">
+                <div class="input-group" style="position:relative;">
                     <div class="input-label">Kaliteci</div>
                     <input type="text" id="kaliteci" class="text-input" tabindex="0" placeholder="KALİTECİ ADI"
-                        oninput="this.value=this.value.toUpperCase()" autocomplete="off" spellcheck="false">
+                        oninput="this.value=this.value.toUpperCase();kaliteciAutocomplete(this)"
+                        onkeydown="kaliteciKeyDown(event)"
+                        onblur="setTimeout(()=>{const d=document.getElementById('kaliteciDropdown');if(d)d.style.display='none';},200)"
+                        autocomplete="off" spellcheck="false">
+                    <div id="kaliteciDropdown" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:500;background:#fff;border:1px solid #E5E7EB;border-radius:8px;margin-top:4px;box-shadow:0 8px 32px rgba(163,177,198,0.55);overflow:hidden;"></div>
                 </div>
                 <div class="input-group" style="position:relative;">
                     <div class="input-label">Forkliftçi</div>
@@ -4657,7 +4663,7 @@
                                             <td style="padding:8px;">${k.baslama}-${k.bitis}</td>
                                             <td style="padding:8px; font-weight:700;">${k.net}</td>
                                             <td style="padding:8px; font-weight:400; font-size:11px;">${k.forkliftci||'—'}</td>
-                                            <td style="padding:8px; text-align:center;">${k.lastikAdedi?`<span style="background:rgba(251,191,36,0.15);color:#fbbf24;border:1px solid rgba(251,191,36,0.35);border-radius:4px;padding:2px 7px;font-weight:800;">${k.lastikAdedi}</span>`:'—'}</td>
+                                            <td style="padding:8px; text-align:center;">${k.lastikAdedi?`<span style="background:rgba(251,191,36,0.15);color:#fbbf24;border:1px solid rgba(251,191,36,0.35);border-radius:4px;padding:2px 7px;font-weight:800;">${k.lastikAdedi}</span>`:"—"}</td>
                                             <td style="padding:8px;">${k.gec?`<span class="status-gec">${k.gecSure}</span>`:`<span class="status-ok">✓</span>`}</td>
                                             <td style="padding:8px; font-size:10px;">${(k.duruslar||[]).map(d=>`${d.sebep}(${d.sure}dk)`).join(', ') || '—'}</td>
                                             <td style="padding:8px;">${k.kaliteci||'—'}</td>
@@ -6062,8 +6068,9 @@
             const konteyner = liste.filter(k=>k.aracTipi==='Konteyner').length;
             const toplam = liste.length;
             const m3top = liste.reduce((s,k)=>s+(k.m3||0),0);
+            const lastikTop = liste.reduce((s,k)=>s+(k.lastikAdedi||0),0);
 
-            _df6Rapor = { tur:'ekip', baslik: df6EkipListesi.join(', '), liste, donemLabel: donem.label, tir, kamyon, konteyner, toplam, m3top };
+            _df6Rapor = { tur:'ekip', baslik: df6EkipListesi.join(', '), liste, donemLabel: donem.label, tir, kamyon, konteyner, toplam, m3top, lastikTop };
             if (showUI) document.getElementById('df6PdfBtn').style.display = 'block';
 
             if (showUI) {
@@ -6133,8 +6140,9 @@
             const konteyner = liste.filter(k=>k.aracTipi==='Konteyner').length;
             const toplam = liste.length;
             const m3top = liste.reduce((s,k)=>s+(k.m3||0),0);
+            const lastikTop = liste.reduce((s,k)=>s+(k.lastikAdedi||0),0);
 
-            _df6Rapor = { tur:'personel', baslik: tamIsim, sicilNo, liste, donemLabel: donem.label, tir, kamyon, konteyner, toplam, m3top };
+            _df6Rapor = { tur:'personel', baslik: tamIsim, sicilNo, liste, donemLabel: donem.label, tir, kamyon, konteyner, toplam, m3top, lastikTop };
             if (showUI) document.getElementById('df6PdfBtn').style.display = 'block';
 
             if (showUI) {
