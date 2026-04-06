@@ -3471,23 +3471,28 @@
     function handleSegKey(e, el, field, val) {
         if (e.key === ' ' || e.key === 'Enter') {
             e.preventDefault();
-            // Tıklama işlevini çalıştır
-            setSeg(el, field, val);
             
-            // Seçim yapıldıktan sonra sıradaki input-group'a odaklan
+            // Zaten aktifse tekrar tıklayıp deselect yapmasın, seçim sabit kalsın
+            const isActive = el.classList.contains('active-blue') || el.classList.contains('active-yellow') || el.classList.contains('active-red');
+            if (!isActive) {
+                setSeg(el, field, val);
+            }
+            
+            // Seçim yapıldıktan sonra bir sonraki input-group'u bul
             const currentGroup = el.closest('.input-group');
             let nextGroup = currentGroup.nextElementSibling;
             
-            // Bir sonraki geçerli input-group'u bulana kadar ilerle
+            // Sıradaki geçerli input-group'u bulana kadar ilerle (başlıkları vs. atla)
             while (nextGroup) {
                 if (nextGroup.classList.contains('input-group')) {
+                    // İçindeki ilk odaklanabilir elemanı bul (buton, input vs.)
                     const nextInput = nextGroup.querySelector('.seg-btn, input, select, textarea');
                     if (nextInput) {
                         nextInput.focus();
                         if (nextInput.tagName === 'INPUT' && nextInput.type !== 'checkbox' && nextInput.type !== 'radio') {
                             nextInput.select();
                         }
-                        break;
+                        return; // Bulunca çık
                     }
                 }
                 nextGroup = nextGroup.nextElementSibling;
