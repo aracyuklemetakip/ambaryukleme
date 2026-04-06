@@ -944,20 +944,21 @@
         }
         .btn-primary-full:hover { background:#EAB308; }
         .btn-submit {
-            background: linear-gradient(135deg,#16a34a,#15803d) !important;
-            border: 2px solid #166534 !important;
-            box-shadow: 0 4px 14px rgba(22,163,74,0.4) !important;
+            background: linear-gradient(135deg,#d97706,#b45309) !important;
+            border: 2px solid #92400e !important;
+            box-shadow: 0 4px 14px rgba(180,83,9,0.45) !important;
             letter-spacing: 1px;
+            color: #fff !important;
         }
         .btn-submit:hover {
-            background: linear-gradient(135deg,#15803d,#166534) !important;
-            box-shadow: 0 6px 20px rgba(22,163,74,0.55) !important;
+            background: linear-gradient(135deg,#b45309,#92400e) !important;
+            box-shadow: 0 6px 20px rgba(180,83,9,0.6) !important;
             transform: translateY(-1px);
         }
         .btn-submit.update-mode {
-            background: linear-gradient(135deg,#d97706,#b45309) !important;
-            border-color: #92400e !important;
-            box-shadow: 0 4px 14px rgba(217,119,6,0.4) !important;
+            background: linear-gradient(135deg,#1d4ed8,#1e40af) !important;
+            border-color: #1e3a8a !important;
+            box-shadow: 0 4px 14px rgba(29,78,216,0.4) !important;
         }
         .vardiya-badge { font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px; }
         .vardiya-a { color:#93C5FD;background:rgba(147,197,253,0.15);border:1px solid rgba(147,197,253,0.3); }
@@ -1551,6 +1552,7 @@
                     <div class="input-label">Kaliteci</div>
                     <input type="text" id="kaliteci" class="text-input" tabindex="0" placeholder="KALİTECİ ADI"
                         oninput="this.value=this.value.toUpperCase();kaliteciAutocomplete(this)"
+                        onfocus="kaliteciAutocomplete(this)"
                         onkeydown="kaliteciKeyDown(event)"
                         onblur="setTimeout(()=>{const d=document.getElementById('kaliteciDropdown');if(d)d.style.display='none';},200)"
                         autocomplete="off" spellcheck="false">
@@ -1592,7 +1594,7 @@
                     <div class="input-label">Açıklama</div>
                     <input type="text" id="aciklama" class="text-input" tabindex="0" placeholder="Varsa açıklama...">
                 </div>
-                <button class="btn-submit" id="btnSubmit" tabindex="0" onclick="kaydetVeyaGuncelle()" style="background:linear-gradient(135deg,#16a34a,#15803d);border:2px solid #166534;box-shadow:0 4px 14px rgba(22,163,74,0.4);letter-spacing:1px;">✓ &nbsp;SİSTEME İŞLE</button>
+                <button class="btn-submit" id="btnSubmit" tabindex="0" onclick="kaydetVeyaGuncelle()">✓ &nbsp;SİSTEME İŞLE</button>
             </div>
         </div>
 
@@ -1766,13 +1768,13 @@
 
         <!-- SIDEBAR NAV -->
         <div class="sef-sidebar">
-            <div class="sef-sidebar-label" style="background:rgba(240,179,35,0.18);border-left:3px solid #F0B323;color:#F0B323;border-radius:0 6px 6px 0;margin:4px 8px 4px 0;padding:5px 12px;">Analiz</div>
+            <div class="sef-sidebar-label" style="background:#F0B323;color:#1C2B6E;border-radius:4px;margin:8px 8px 4px 8px;padding:5px 10px;font-size:11px;font-weight:800;letter-spacing:1.5px;">Analiz</div>
             <div class="sef-sidebar-item" onclick="sekmeAc(this,'sekme1')" data-sekme="sekme1">📦 Araç Özet</div>
             <div class="sef-sidebar-item" onclick="sekmeAc(this,'sekme2')" data-sekme="sekme2">👥 Ekip Analizi</div>
             <div class="sef-sidebar-item" onclick="sekmeAc(this,'sekme7')" data-sekme="sekme7">🏆 Vardiya Analizi</div>
             <div class="sef-sidebar-item" onclick="sekmeAc(this,'sekme6')" data-sekme="sekme6">🔍 Detaylı Filtre</div>
             <div class="sef-sidebar-item" onclick="sekmeAc(this,'sekme8')" data-sekme="sekme8">🛑 Hata Raporları</div>
-            <div class="sef-sidebar-label" style="background:rgba(240,179,35,0.18);border-left:3px solid #F0B323;color:#F0B323;border-radius:0 6px 6px 0;margin:4px 8px 4px 0;padding:5px 12px;">Yönetim</div>
+            <div class="sef-sidebar-label" style="background:#F0B323;color:#1C2B6E;border-radius:4px;margin:8px 8px 4px 8px;padding:5px 10px;font-size:11px;font-weight:800;letter-spacing:1.5px;">Yönetim</div>
             <div class="sef-sidebar-item" onclick="sekmeAc(this,'sekme5')" data-sekme="sekme5">🧑‍💼 Personel</div>
             <div class="sef-sidebar-item" onclick="sekmeAc(this,'sekme4')" data-sekme="sekme4">⏱️ Mesai Takip</div>
         </div>
@@ -3237,36 +3239,31 @@
     }
 
     // ── KALİTECİ AUTOCOMPLETE ──────────────────────────────
+    const KALİTECİ_LİSTESİ = ['EMRe ALıcı', 'FATİH YUMRU', 'SEÇKİN ERDEM'];
+    // Normalize edilmiş sabit liste
+    const KALİTECİLER = ['EMRE ALICI', 'FATIH YUMRU', 'SECKIN ERDEM'];
     let _klDropdownIdx = -1;
 
     function kaliteciAutocomplete(input) {
         const val = window.trNorm(input.value);
         const dd = document.getElementById('kaliteciDropdown');
-        if (!val.trim()) { dd.style.display='none'; _klDropdownIdx=-1; return; }
-
-        const eslesen = personelListesi.filter(p => window.trNorm(p.ad).startsWith(val))
-            .sort((a,b) => window.trSort(a, b, 'ad'));
+        const eslesen = val.trim()
+            ? KALİTECİLER.filter(ad => window.trNorm(ad).startsWith(val))
+            : KALİTECİLER;
         if (eslesen.length === 0) { dd.style.display='none'; _klDropdownIdx=-1; return; }
-
-        const adSayisi = {};
-        personelListesi.forEach(p => { adSayisi[p.ad] = (adSayisi[p.ad]||0)+1; });
-
-        dd.innerHTML = eslesen.map((p, i) => {
-            const goster = adSayisi[p.ad] > 1 ? `${p.ad} <span style="color:#6B7280;font-size:11px;">· ${p.sicil}</span>` : p.ad;
-            return `<div class="ac-item" data-idx="${i}" data-ad="${p.ad}"
-                onclick="kaliteciSec('${p.ad.replace(/'/g,"\\'")}')"
+        dd.innerHTML = eslesen.map((ad, i) => `
+            <div class="ac-item" data-idx="${i}" data-ad="${ad}"
+                onclick="kaliteciSec('${ad}')"
                 onmouseenter="klHover(${i})"
-                style="padding:10px 14px;cursor:pointer;font-size:13px;font-weight:700;border-bottom:1px solid #F3F4F6;transition:background 0.1s;color:#0F172A;">
-                ${goster}
-            </div>`;
-        }).join('');
+                style="padding:10px 14px;cursor:pointer;font-size:13px;font-weight:700;border-bottom:1px solid #F3F4F6;color:#0F172A;">
+                ${ad}
+            </div>`).join('');
         dd.style.display = 'block';
         _klDropdownIdx = -1;
     }
 
     function kaliteciSec(ad) {
-        const input = document.getElementById('kaliteci');
-        input.value = ad;
+        document.getElementById('kaliteci').value = ad;
         document.getElementById('kaliteciDropdown').style.display = 'none';
         _klDropdownIdx = -1;
     }
