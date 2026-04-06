@@ -1770,7 +1770,7 @@
         <div class="sef-sidebar">
             <div class="sef-sidebar-label" style="background:#F0B323;color:#1C2B6E;border-radius:4px;margin:8px 8px 4px 8px;padding:5px 10px;font-size:11px;font-weight:800;letter-spacing:1.5px;">Analiz</div>
             <div class="sef-sidebar-item" onclick="sekmeAc(this,'sekme1')" data-sekme="sekme1">📦 Araç Özet</div>
-            <div class="sef-sidebar-item" onclick="sekmeAc(this,'sekme2')" data-sekme="sekme2">👥 Ekip Analizi</div>
+            <div class="sef-sidebar-item" onclick="sekmeAc(this,'sekme2')" data-sekme="sekme2">🫂 Ekip Analizi</div>
             <div class="sef-sidebar-item" onclick="sekmeAc(this,'sekme7')" data-sekme="sekme7">🏆 Vardiya Analizi</div>
             <div class="sef-sidebar-item" onclick="sekmeAc(this,'sekme6')" data-sekme="sekme6">🔍 Detaylı Filtre</div>
             <div class="sef-sidebar-item" onclick="sekmeAc(this,'sekme8')" data-sekme="sekme8">🛑 Hata Raporları</div>
@@ -2177,8 +2177,8 @@
                         <div class="sef-bolum" style="margin-bottom:0;">
                             <div class="sef-bolum-baslik">🔍 Filtre Türü</div>
                             <div class="filtre-seg" id="df6TurSeg" style="flex-direction:column;gap:6px;">
-                                <div class="filtre-seg-btn aktif" onclick="df6TurSec(this,'ekip')">👥 Ekip Filtreleme</div>
-                                <div class="filtre-seg-btn" onclick="df6TurSec(this,'personel')">👤 Personel Filtreleme</div>
+                                <div class="filtre-seg-btn aktif" onclick="df6TurSec(this,'ekip')">🫂 Ekip Filtreleme</div>
+                                <div class="filtre-seg-btn" onclick="df6TurSec(this,'personel')">🧑‍🔧 Personel Filtreleme</div>
                             </div>
                         </div>
 
@@ -2199,7 +2199,7 @@
 
                         <!-- PERSONEL GİRİŞİ -->
                         <div class="sef-bolum" id="df6PersonelBlok" style="margin-bottom:0;display:none;">
-                            <div class="sef-bolum-baslik">👤 Personel Adı</div>
+                            <div class="sef-bolum-baslik">🪪 Personel Adı</div>
                             <div style="position:relative;">
                                 <input type="text" id="df6PersonelInput" class="filtre-input" style="width:100%;text-transform:uppercase;"
                                     placeholder="İsim yazın..."
@@ -3243,23 +3243,42 @@
     // Normalize edilmiş sabit liste
     const KALİTECİLER = ['EMRE ALICI', 'FATIH YUMRU', 'SECKIN ERDEM'];
     let _klDropdownIdx = -1;
+    let _klManuelEklenenler = [];
 
     function kaliteciAutocomplete(input) {
         const val = window.trNorm(input.value);
+        const rawVal = input.value.trim().toUpperCase();
         const dd = document.getElementById('kaliteciDropdown');
+        const tumListe = [...KALİTECİLER, ..._klManuelEklenenler];
         const eslesen = val.trim()
-            ? KALİTECİLER.filter(ad => window.trNorm(ad).startsWith(val))
-            : KALİTECİLER;
-        if (eslesen.length === 0) { dd.style.display='none'; _klDropdownIdx=-1; return; }
-        dd.innerHTML = eslesen.map((ad, i) => `
+            ? tumListe.filter(ad => window.trNorm(ad).includes(val))
+            : tumListe;
+        let html = eslesen.map((ad, i) => `
             <div class="ac-item" data-idx="${i}" data-ad="${ad}"
                 onclick="kaliteciSec('${ad}')"
                 onmouseenter="klHover(${i})"
-                style="padding:10px 14px;cursor:pointer;font-size:13px;font-weight:700;border-bottom:1px solid #F3F4F6;color:#0F172A;">
+                style="padding:10px 14px;cursor:pointer;font-size:13px;font-weight:700;border-bottom:1px solid #F3F4F6;color:#0F172A;display:flex;align-items:center;gap:6px;">
                 ${ad}
             </div>`).join('');
+        // Manuel ekle seçeneği: yazılan değer listede yoksa göster
+        const yazilan = rawVal;
+        const listede = tumListe.some(ad => ad === yazilan);
+        if (yazilan && !listede) {
+            html += `<div class="ac-item-manuel"
+                onclick="klManuelEkleVeSec('${yazilan}')"
+                style="padding:10px 14px;cursor:pointer;font-size:12px;font-weight:700;background:#EFF6FF;color:#1C2B6E;border-top:2px solid #DBEAFE;display:flex;align-items:center;gap:6px;">
+                ➕ "<span style="color:#2563EB">${yazilan}</span>" olarak ekle
+            </div>`;
+        }
+        if (!html) { dd.style.display='none'; _klDropdownIdx=-1; return; }
+        dd.innerHTML = html;
         dd.style.display = 'block';
         _klDropdownIdx = -1;
+    }
+
+    function klManuelEkleVeSec(ad) {
+        if (!_klManuelEklenenler.includes(ad)) _klManuelEklenenler.push(ad);
+        kaliteciSec(ad);
     }
 
     function kaliteciSec(ad) {
