@@ -1629,16 +1629,18 @@
             var bi = btns.indexOf(btn);
 
             if (e.key === ' ') {
-                // Space: seç, sonra bir sonraki grubun ilk butonuna odaklan
+                // Space: seç, sonra bir sonraki grubun aktif (ya da ilk) butonuna odaklan
                 e.preventDefault();
                 btn.click();
+                segTabRefresh();
 
                 if (gi < allGrps.length - 1) {
                     var nextGrp = allGrps[gi + 1];
-                    var nextBtn = nextGrp.querySelector('.seg-btn');
+                    var nextBtns = Array.from(nextGrp.querySelectorAll('.seg-btn'));
+                    var nextAktif = nextGrp.querySelector('.seg-btn.active-blue,.seg-btn.active-yellow,.seg-btn.active-red');
+                    var nextBtn = nextAktif || nextBtns[0];
                     if (nextBtn) {
-                        // Tüm nextGrp butonlarını tabindex=-1 yap, sonra nextBtn'i 0 yap
-                        nextGrp.querySelectorAll('.seg-btn').forEach(function(b) { b.tabIndex = -1; });
+                        nextBtns.forEach(function(b) { b.tabIndex = -1; });
                         nextBtn.tabIndex = 0;
                         nextBtn.focus();
                     }
