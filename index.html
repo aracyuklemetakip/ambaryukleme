@@ -943,6 +943,22 @@
             cursor:pointer;transition:all 0.15s;
         }
         .btn-primary-full:hover { background:#EAB308; }
+        .btn-submit {
+            background: linear-gradient(135deg,#16a34a,#15803d) !important;
+            border: 2px solid #166534 !important;
+            box-shadow: 0 4px 14px rgba(22,163,74,0.4) !important;
+            letter-spacing: 1px;
+        }
+        .btn-submit:hover {
+            background: linear-gradient(135deg,#15803d,#166534) !important;
+            box-shadow: 0 6px 20px rgba(22,163,74,0.55) !important;
+            transform: translateY(-1px);
+        }
+        .btn-submit.update-mode {
+            background: linear-gradient(135deg,#d97706,#b45309) !important;
+            border-color: #92400e !important;
+            box-shadow: 0 4px 14px rgba(217,119,6,0.4) !important;
+        }
         .vardiya-badge { font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px; }
         .vardiya-a { color:#93C5FD;background:rgba(147,197,253,0.15);border:1px solid rgba(147,197,253,0.3); }
         .vardiya-b { color:#FDE68A;background:rgba(253,230,138,0.15);border:1px solid rgba(253,230,138,0.3); }
@@ -1576,7 +1592,7 @@
                     <div class="input-label">Açıklama</div>
                     <input type="text" id="aciklama" class="text-input" tabindex="0" placeholder="Varsa açıklama...">
                 </div>
-                <button class="btn-submit" id="btnSubmit" tabindex="0" onclick="kaydetVeyaGuncelle()">✓ &nbsp;SİSTEME İŞLE</button>
+                <button class="btn-submit" id="btnSubmit" tabindex="0" onclick="kaydetVeyaGuncelle()" style="background:linear-gradient(135deg,#16a34a,#15803d);border:2px solid #166534;box-shadow:0 4px 14px rgba(22,163,74,0.4);letter-spacing:1px;">✓ &nbsp;SİSTEME İŞLE</button>
             </div>
         </div>
 
@@ -1750,13 +1766,13 @@
 
         <!-- SIDEBAR NAV -->
         <div class="sef-sidebar">
-            <div class="sef-sidebar-label">Analiz</div>
+            <div class="sef-sidebar-label" style="background:rgba(240,179,35,0.18);border-left:3px solid #F0B323;color:#F0B323;border-radius:0 6px 6px 0;margin:4px 8px 4px 0;padding:5px 12px;">Analiz</div>
             <div class="sef-sidebar-item" onclick="sekmeAc(this,'sekme1')" data-sekme="sekme1">📦 Araç Özet</div>
             <div class="sef-sidebar-item" onclick="sekmeAc(this,'sekme2')" data-sekme="sekme2">👥 Ekip Analizi</div>
             <div class="sef-sidebar-item" onclick="sekmeAc(this,'sekme7')" data-sekme="sekme7">🏆 Vardiya Analizi</div>
             <div class="sef-sidebar-item" onclick="sekmeAc(this,'sekme6')" data-sekme="sekme6">🔍 Detaylı Filtre</div>
             <div class="sef-sidebar-item" onclick="sekmeAc(this,'sekme8')" data-sekme="sekme8">🛑 Hata Raporları</div>
-            <div class="sef-sidebar-label">Yönetim</div>
+            <div class="sef-sidebar-label" style="background:rgba(240,179,35,0.18);border-left:3px solid #F0B323;color:#F0B323;border-radius:0 6px 6px 0;margin:4px 8px 4px 0;padding:5px 12px;">Yönetim</div>
             <div class="sef-sidebar-item" onclick="sekmeAc(this,'sekme5')" data-sekme="sekme5">🧑‍💼 Personel</div>
             <div class="sef-sidebar-item" onclick="sekmeAc(this,'sekme4')" data-sekme="sekme4">⏱️ Mesai Takip</div>
         </div>
@@ -3219,6 +3235,75 @@
             dd.style.display = 'none'; _fkDropdownIdx = -1;
         }
     }
+
+    // ── KALİTECİ AUTOCOMPLETE ──────────────────────────────
+    let _klDropdownIdx = -1;
+
+    function kaliteciAutocomplete(input) {
+        const val = window.trNorm(input.value);
+        const dd = document.getElementById('kaliteciDropdown');
+        if (!val.trim()) { dd.style.display='none'; _klDropdownIdx=-1; return; }
+
+        const eslesen = personelListesi.filter(p => window.trNorm(p.ad).startsWith(val))
+            .sort((a,b) => window.trSort(a, b, 'ad'));
+        if (eslesen.length === 0) { dd.style.display='none'; _klDropdownIdx=-1; return; }
+
+        const adSayisi = {};
+        personelListesi.forEach(p => { adSayisi[p.ad] = (adSayisi[p.ad]||0)+1; });
+
+        dd.innerHTML = eslesen.map((p, i) => {
+            const goster = adSayisi[p.ad] > 1 ? `${p.ad} <span style="color:#6B7280;font-size:11px;">· ${p.sicil}</span>` : p.ad;
+            return `<div class="ac-item" data-idx="${i}" data-ad="${p.ad}"
+                onclick="kaliteciSec('${p.ad.replace(/'/g,"\\'")}')"
+                onmouseenter="klHover(${i})"
+                style="padding:10px 14px;cursor:pointer;font-size:13px;font-weight:700;border-bottom:1px solid #F3F4F6;transition:background 0.1s;color:#0F172A;">
+                ${goster}
+            </div>`;
+        }).join('');
+        dd.style.display = 'block';
+        _klDropdownIdx = -1;
+    }
+
+    function kaliteciSec(ad) {
+        const input = document.getElementById('kaliteci');
+        input.value = ad;
+        document.getElementById('kaliteciDropdown').style.display = 'none';
+        _klDropdownIdx = -1;
+    }
+
+    function klHover(idx) {
+        _klDropdownIdx = idx;
+        document.querySelectorAll('#kaliteciDropdown .ac-item').forEach((el, i) => {
+            el.style.background = i === idx ? '#EFF6FF' : '';
+            el.style.color = i === idx ? '#1C2B6E' : '';
+        });
+    }
+
+    function kaliteciKeyDown(e) {
+        const dd = document.getElementById('kaliteciDropdown');
+        if (dd.style.display === 'none') return;
+        const items = dd.querySelectorAll('.ac-item');
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            _klDropdownIdx = Math.min(_klDropdownIdx + 1, items.length - 1);
+            items.forEach((el,i) => { el.style.background = i===_klDropdownIdx?'#EFF6FF':''; el.style.color = i===_klDropdownIdx?'#1C2B6E':''; });
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            _klDropdownIdx = Math.max(_klDropdownIdx - 1, 0);
+            items.forEach((el,i) => { el.style.background = i===_klDropdownIdx?'#EFF6FF':''; el.style.color = i===_klDropdownIdx?'#1C2B6E':''; });
+        } else if (e.key === 'Enter' && _klDropdownIdx >= 0) {
+            e.preventDefault();
+            const sec = items[_klDropdownIdx]?.getAttribute('data-ad');
+            if (sec) kaliteciSec(sec);
+        } else if (e.key === 'Escape') {
+            dd.style.display = 'none'; _klDropdownIdx = -1;
+        }
+    }
+
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('#kaliteci') && !e.target.closest('#kaliteciDropdown'))
+            document.getElementById('kaliteciDropdown').style.display = 'none';
+    });
 
     // ── PERSONEL ANALİZ AUTOCOMPLETE ────────────────────
     let _e3DropIdx = -1;
@@ -6662,9 +6747,10 @@ async function va7Sorgula() {
         const map = {};
         filtreListe.forEach(k => {
             const key = ekipKey(k.ekip);
-            if (!map[key]) map[key] = { ad: k.ekip, arac: 0, m3: 0, tir: 0, kamyon: 0, konteyner: 0 };
+            if (!map[key]) map[key] = { ad: k.ekip, arac: 0, m3: 0, tir: 0, kamyon: 0, konteyner: 0, lastik: 0 };
             map[key].arac++;
             map[key].m3 += (k.m3 || 0);
+            map[key].lastik += (k.lastikAdedi || 0);
             if (k.aracTipi === 'Tır') map[key].tir++;
             else if (k.aracTipi === 'Kamyon') map[key].kamyon++;
             else map[key].konteyner++;
@@ -6684,6 +6770,8 @@ async function va7Sorgula() {
 
     const topTirA = ekipA.reduce((s,e)=>s+e.tir,0), topKamyonA = ekipA.reduce((s,e)=>s+e.kamyon,0), topKonteynerA = ekipA.reduce((s,e)=>s+e.konteyner,0);
     const topTirB = ekipB.reduce((s,e)=>s+e.tir,0), topKamyonB = ekipB.reduce((s,e)=>s+e.kamyon,0), topKonteynerB = ekipB.reduce((s,e)=>s+e.konteyner,0);
+    const topLastikA = listeA.reduce((s,k)=>s+(k.lastikAdedi||0),0);
+    const topLastikB = listeB.reduce((s,k)=>s+(k.lastikAdedi||0),0);
 
     function liderSatir(ekipler, vardiyaId) {
         if (!ekipler.length) return '<tr><td colspan="6" style="color:var(--muted);text-align:center;padding:20px;">Kayıt yok</td></tr>';
@@ -6699,6 +6787,7 @@ async function va7Sorgula() {
                 <td style="font-weight:800;text-align:center;padding:8px 4px;"><span style="background:rgba(147,197,253,0.4);color:#93C5FD;border-radius:4px;padding:1px 6px;">${e.kamyon || '—'}</span></td>
                 <td style="font-weight:800;text-align:center;padding:8px 4px;"><span style="background:rgba(226,232,240,0.25);color:#e2e8f0;border:1px solid rgba(226,232,240,0.4);border-radius:4px;padding:1px 6px;">${e.konteyner || '—'}</span></td>
                 <td style="color:var(--success);font-weight:700;text-align:center;padding:8px 4px;">${e.m3.toFixed(1)}</td>
+                <td style="font-weight:800;text-align:center;padding:8px 4px;"><span style="background:rgba(251,191,36,0.2);color:#fbbf24;border-radius:4px;padding:1px 6px;">${e.lastik || '—'}</span></td>
             </tr>`;
         }).join('');
     }
@@ -6726,11 +6815,12 @@ async function va7Sorgula() {
                         <span style="font-size:10px;font-weight:800;color:#F0B323;background:rgba(240,179,35,0.2);padding:2px 7px;border-radius:4px;">🚛 ${topTirA}</span>
                         <span style="font-size:10px;font-weight:800;color:#93C5FD;background:rgba(147,197,253,0.3);padding:2px 7px;border-radius:4px;">🚚 ${topKamyonA}</span>
                         <span style="font-size:10px;font-weight:800;color:#e2e8f0;background:rgba(226,232,240,0.15);border:1px solid rgba(226,232,240,0.3);padding:2px 7px;border-radius:4px;">📦 ${topKonteynerA}</span>
+                        ${topLastikA > 0 ? `<span style="font-size:10px;font-weight:800;color:#fbbf24;background:rgba(251,191,36,0.2);border:1px solid rgba(251,191,36,0.4);padding:2px 7px;border-radius:4px;">🔢 ${topLastikA}</span>` : ''}
                     </div>
                 </div>
                 <div id="va7ListeA" style="display:none;">
                     <table class="data-table" style="font-size:11px;margin:0;">
-                        <thead><tr><th style="width:28px;padding:5px 4px;">#</th><th style="padding:5px 4px;">Ekip</th><th style="text-align:center;padding:5px 4px;">Tır</th><th style="text-align:center;padding:5px 4px;">Kmyn</th><th style="text-align:center;padding:5px 4px;">Kont</th><th style="text-align:center;padding:5px 4px;">M³</th></tr></thead>
+                        <thead><tr><th style="width:28px;padding:5px 4px;">#</th><th style="padding:5px 4px;">Ekip</th><th style="text-align:center;padding:5px 4px;">Tır</th><th style="text-align:center;padding:5px 4px;">Kmyn</th><th style="text-align:center;padding:5px 4px;">Kont</th><th style="text-align:center;padding:5px 4px;">M³</th><th style="text-align:center;padding:5px 4px;">🔢 Lastik</th></tr></thead>
                         <tbody>${liderSatir(ekipA)}</tbody>
                     </table>
                 </div>
@@ -6746,11 +6836,12 @@ async function va7Sorgula() {
                         <span style="font-size:10px;font-weight:800;color:#F0B323;background:rgba(240,179,35,0.2);padding:2px 7px;border-radius:4px;">🚛 ${topTirB}</span>
                         <span style="font-size:10px;font-weight:800;color:#93C5FD;background:rgba(147,197,253,0.3);padding:2px 7px;border-radius:4px;">🚚 ${topKamyonB}</span>
                         <span style="font-size:10px;font-weight:800;color:#e2e8f0;background:rgba(226,232,240,0.15);border:1px solid rgba(226,232,240,0.3);padding:2px 7px;border-radius:4px;">📦 ${topKonteynerB}</span>
+                        ${topLastikB > 0 ? `<span style="font-size:10px;font-weight:800;color:#fbbf24;background:rgba(251,191,36,0.2);border:1px solid rgba(251,191,36,0.4);padding:2px 7px;border-radius:4px;">🔢 ${topLastikB}</span>` : ''}
                     </div>
                 </div>
                 <div id="va7ListeB" style="display:none;">
                     <table class="data-table" style="font-size:11px;margin:0;">
-                        <thead><tr><th style="width:28px;padding:5px 4px;">#</th><th style="padding:5px 4px;">Ekip</th><th style="text-align:center;padding:5px 4px;">Tır</th><th style="text-align:center;padding:5px 4px;">Kmyn</th><th style="text-align:center;padding:5px 4px;">Kont</th><th style="text-align:center;padding:5px 4px;">M³</th></tr></thead>
+                        <thead><tr><th style="width:28px;padding:5px 4px;">#</th><th style="padding:5px 4px;">Ekip</th><th style="text-align:center;padding:5px 4px;">Tır</th><th style="text-align:center;padding:5px 4px;">Kmyn</th><th style="text-align:center;padding:5px 4px;">Kont</th><th style="text-align:center;padding:5px 4px;">M³</th><th style="text-align:center;padding:5px 4px;">🔢 Lastik</th></tr></thead>
                         <tbody>${liderSatir(ekipB)}</tbody>
                     </table>
                 </div>
