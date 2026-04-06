@@ -1504,11 +1504,6 @@
                         autocomplete="off" spellcheck="false" data-lpignore="true">
                     <div id="shipmentDropdown" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:500;background:#fff;border:1px solid #E5E7EB;border-radius:8px;margin-top:4px;max-height:220px;overflow-y:auto;box-shadow:0 8px 32px rgba(163,177,198,0.55);"></div>
                 </div>
-                <div class="input-group">
-                    <div class="input-label">Yüklenen Lastik Adedi</div>
-                    <input type="number" id="lastikAdedi" class="text-input" tabindex="0" placeholder="0" min="0" step="1"
-                        oninput="this.value=this.value.replace(/[^0-9]/g,'')">
-                </div>
 
                 <div class="form-section-title">Ekip & Saat</div>
                 <div class="input-group" style="position:relative;">
@@ -1709,7 +1704,7 @@
             <div id="yuklemeListesiBaslik" style="display:none;"><div id="yuklemeListesiTarihText"></div></div>
 
             <table class="data-table">
-                <thead><tr><th>S.No</th><th>Vardiya</th><th>Ekip</th><th>Forkliftçi</th><th>Araç</th><th>Tür</th><th>Saat</th><th>Lastik</th><th>Durum</th><th></th></tr></thead>
+                <thead><tr><th>S.No</th><th>Vardiya</th><th>Ekip</th><th>Forkliftçi</th><th>Araç</th><th>Tür</th><th>Saat</th><th>Durum</th><th></th></tr></thead>
                 <tbody id="tableBody"></tbody>
             </table>
             <div class="empty-state" id="emptyState">
@@ -2729,7 +2724,7 @@
         const filtre = window.trNorm(input ? input.value : '');
         const liste = personelListesi.filter(p => {
             const aramaOk = window.trNorm(p.ad).startsWith(filtre) || p.sicil.startsWith(filtre);
-            const vardiyaOk = !aktifVardiyaFiltresi || p.vardiya === aktifVardiyaFiltresi;
+            const vardiyaOk = !aktifVardiyaFiltresi || aktifVardiyaFiltresi === 'hepsi' || p.vardiya === aktifVardiyaFiltresi;
             return aramaOk && vardiyaOk;
         }).sort((a,b) => window.trSort(a, b, 'ad'));
         const tbody = document.getElementById('personelTableBody');
@@ -2812,7 +2807,9 @@
             statK:      { normal:'background:rgba(52,211,153,0.10);color:#6ee7b7;border:1px solid rgba(52,211,153,0.3);', aktif:'background:#6ee7b7;color:#064e3b;border:2px solid #6ee7b7;transform:scale(1.05);font-weight:800;' },
             statToplam: { normal:'background:#F0B323;color:#1C2B6E;border:2px solid #F0B323;', aktif:'background:#ffffff;color:#1C2B6E;border:2px solid #ffffff;transform:scale(1.05);font-weight:800;' },
         };
-        const aktifId = aktifVardiyaFiltresi ? map[aktifVardiyaFiltresi] : 'statToplam';
+        const aktifId = (aktifVardiyaFiltresi === 'hepsi' || aktifVardiyaFiltresi === null) 
+            ? (aktifVardiyaFiltresi === 'hepsi' ? 'statToplam' : null)
+            : (aktifVardiyaFiltresi ? map[aktifVardiyaFiltresi] : null);
         Object.keys(styles).forEach(id => {
             const el = document.getElementById(id);
             if (!el) return;
@@ -2827,7 +2824,11 @@
     }
 
     function personelVardiyaFiltrele(v) {
-        aktifVardiyaFiltresi = (aktifVardiyaFiltresi === v && v !== null) ? null : v;
+        if (v === null) {
+            aktifVardiyaFiltresi = (aktifVardiyaFiltresi === 'hepsi') ? null : 'hepsi';
+        } else {
+            aktifVardiyaFiltresi = (aktifVardiyaFiltresi === v) ? null : v;
+        }
         personelStatBarAktifGoster();
         personelListeRender();
     }
@@ -3563,7 +3564,6 @@
             setSegByVal('segTur', k.aracTuru, 'active-yellow'); secilenAracTuru = k.aracTuru;
             document.getElementById('m3').value          = k.m3 || '';
             document.getElementById('shipment_v2').value = k.shipment || '';
-            const laEl = document.getElementById('lastikAdedi'); if (laEl) laEl.value = k.lastikAdedi || '';
             document.getElementById('ekip').value        = k.ekip || '';
             document.getElementById('baslama').value     = k.baslama || '';
             document.getElementById('bitis').value       = k.bitis || '';
@@ -3826,7 +3826,6 @@
         const forkliftci = document.getElementById('forkliftci').value.trim();
         const aciklama = document.getElementById('aciklama').value.trim();
         const eksikFazla = (document.getElementById('eksikFazla')?.value||'').trim();
-        const lastikAdedi = parseInt(document.getElementById('lastikAdedi')?.value) || 0;
 
         if (!m3 || !ekip || !baslama || !bitis) { showToast('⚠️  M³, Ekip ve Saat zorunlu!','warn'); return; }
         if (!secilenVardiya) { showToast('⚠️  Vardiya seçiniz!','warn'); return; }
@@ -3848,13 +3847,13 @@
 
         if (duzenleId !== null) {
             const idx = kayitlar.findIndex(k=>k.id===duzenleId);
-            if (idx !== -1) kayitlar[idx] = {...kayitlar[idx], vardiya:secilenVardiya, aracTipi:secilenAracTipi, aracTuru:secilenAracTuru, m3:parseFloat(m3), shipment, ekip, baslama, bitis, kaliteci, forkliftci, aciklama, eksikFazla, lastikAdedi, lastikler:[...lastikler], duruslar:[...duruslar], brut:sure.brut, net:sure.net, gec:sure.gec, fark:sure.fark, gecSure:sure.gecSure};
+            if (idx !== -1) kayitlar[idx] = {...kayitlar[idx], vardiya:secilenVardiya, aracTipi:secilenAracTipi, aracTuru:secilenAracTuru, m3:parseFloat(m3), shipment, ekip, baslama, bitis, kaliteci, forkliftci, aciklama, eksikFazla, lastikler:[...lastikler], duruslar:[...duruslar], brut:sure.brut, net:sure.net, gec:sure.gec, fark:sure.fark, gecSure:sure.gecSure};
             const updated = kayitlar.find(k=>k.id===duzenleId);
             if(window._fbSaveKayit) window._fbSaveKayit(updated);
             selectedRecord = null;
             iptalDuzenle(); renderTablo(); playSoundGuncelle(); showToast('✓  Kayıt güncellendi','success');
         } else {
-            const yeniKayit = { id:Date.now(), tarih:kayitTarih, vardiya:secilenVardiya, aracTipi:secilenAracTipi, aracTuru:secilenAracTuru, m3:parseFloat(m3), shipment, ekip, baslama, bitis, kaliteci, forkliftci, aciklama, eksikFazla, lastikAdedi, lastikler:[...lastikler], duruslar:[...duruslar], brut:sure.brut, net:sure.net, gec:sure.gec, fark:sure.fark, gecSure:sure.gecSure };
+            const yeniKayit = { id:Date.now(), tarih:kayitTarih, vardiya:secilenVardiya, aracTipi:secilenAracTipi, aracTuru:secilenAracTuru, m3:parseFloat(m3), shipment, ekip, baslama, bitis, kaliteci, forkliftci, aciklama, eksikFazla, lastikler:[...lastikler], duruslar:[...duruslar], brut:sure.brut, net:sure.net, gec:sure.gec, fark:sure.fark, gecSure:sure.gecSure };
             kayitlar.push(yeniKayit);
             if (shipment) shipmentGecmisEkle(shipment);
             if(window._fbSaveKayit) window._fbSaveKayit(kayitlar[kayitlar.length-1]);
@@ -3867,7 +3866,7 @@
     }
 
     function formTemizle() {
-        ['m3','shipment_v2','ekip','kaliteci','forkliftci','aciklama','baslama','bitis','eksikFazla','lastikAdedi'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+        ['m3','shipment_v2','ekip','kaliteci','forkliftci','aciklama','baslama','bitis','eksikFazla'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
         // Sabit duruş inputlarını temizle
         ['durus_Temizlik','durus_Etiket','durus_Cay','durus_Yemek','durus_Diger'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
         duruslar=[]; renderDuruslar();
@@ -4033,7 +4032,6 @@
                 <td style="padding:5px 8px;"><span class="badge ${tipBadge}">${k.aracTipi}</span></td>
                 <td style="padding:5px 8px;font-size:10px;font-weight:700;color:#fff;">${(k.aracTuru||'').toUpperCase().replace(' SEÇİMİ','')}</td>
                 <td style="padding:5px 8px;color:#fff;font-size:10px;white-space:nowrap;">${k.baslama} - ${k.bitis}</td>
-                <td style="padding:5px 8px;text-align:center;">${k.lastikAdedi ? `<span style="font-size:11px;font-weight:800;color:#F0B323;background:rgba(240,179,35,0.15);border:1px solid rgba(240,179,35,0.35);border-radius:4px;padding:2px 7px;">${k.lastikAdedi}</span>` : '<span style="color:rgba(255,255,255,0.25);font-size:11px;">—</span>'}</td>
                 <td style="padding:5px 8px;">${durum}</td>`;
 
             // Satır click → form doldur (butonlar hariç)
@@ -4261,7 +4259,6 @@
                 toplam:    v.length,
                 m3:        v.reduce((s,k)=>s+(k.m3||0),0),
                 gec:       v.filter(k=>k.gec).length,
-                lastik:    v.reduce((s,k)=>s+(k.lastikAdedi||0),0),
             };
         }
 
@@ -4300,10 +4297,6 @@
                         <div class="vd-kart-num" style="color:#6ee7b7;font-size:22px;">${fmtM3(s.m3)}</div>
                         <div class="vd-kart-lbl">Toplam M³</div>
                     </div>
-                    <div class="vd-toplam-item">
-                        <div class="vd-kart-num" style="color:#fbbf24;font-size:22px;">${s.lastik || '<span style="color:var(--muted);font-size:18px;">—</span>'}</div>
-                        <div class="vd-kart-lbl">Yük. Lastik</div>
-                    </div>
                 </div>
             </div>`;
         }
@@ -4322,13 +4315,12 @@
                 <div class="vd-baslik">
                     <div class="vd-baslik-text" style="color:rgba(255,255,255,0.9);">Genel Toplam</div>
                 </div>
-                <div class="vd-kartlar" style="grid-template-columns:repeat(6,1fr);">
+                <div class="vd-kartlar" style="grid-template-columns:repeat(5,1fr);">
                     <div class="vd-kart"><div class="vd-kart-num" style="color:#FCD34D;background:rgba(240,179,35,0.2);border-radius:8px;padding:4px 8px;">${sT.tir||'<span style="color:rgba(255,255,255,0.25);font-size:18px;">—</span>'}</div><div class="vd-kart-lbl">Tır</div></div>
                     <div class="vd-kart"><div class="vd-kart-num" style="color:#93C5FD;background:rgba(59,130,246,0.2);border-radius:8px;padding:4px 8px;">${sT.kamyon||'<span style="color:rgba(255,255,255,0.25);font-size:18px;">—</span>'}</div><div class="vd-kart-lbl">Kamyon</div></div>
                     <div class="vd-kart"><div class="vd-kart-num" style="color:#CBD5E1;background:rgba(148,163,184,0.2);border-radius:8px;padding:4px 8px;">${sT.konteyner||'<span style="color:rgba(255,255,255,0.25);font-size:18px;">—</span>'}</div><div class="vd-kart-lbl">Konteyner</div></div>
                     <div class="vd-kart"><div class="vd-kart-num" style="color:#fca5a5;background:rgba(239,68,68,0.2);border-radius:8px;padding:4px 8px;animation:pulseRed 2.5s ease-in-out infinite">${sT.toplam||'<span style="color:rgba(255,255,255,0.25);font-size:18px;animation:none">—</span>'}</div><div class="vd-kart-lbl">Toplam Araç</div></div>
                     <div class="vd-kart"><div class="vd-kart-num" style="color:#6ee7b7;font-size:22px;">${sT.m3>0?sT.m3.toFixed(1):'<span style="color:rgba(255,255,255,0.25);font-size:18px;">—</span>'}</div><div class="vd-kart-lbl">Toplam M³</div></div>
-                    <div class="vd-kart"><div class="vd-kart-num" style="color:#fbbf24;font-size:22px;">${sT.lastik||'<span style="color:rgba(255,255,255,0.25);font-size:18px;">—</span>'}</div><div class="vd-kart-lbl">Yük. Lastik</div></div>
                 </div>
             </div>`;
 
@@ -4541,13 +4533,12 @@
         const sirali = [...liste].sort((a,b) => a.id - b.id);
         sirali.forEach(k => {
             const key = ekipKey(k.ekip);
-            if (!ekipMap[key]) ekipMap[key] = { ad:k.ekip, kayitlar:[], tir:0, kamyon:0, konteyner:0, m3:0, lastik:0 };
+            if (!ekipMap[key]) ekipMap[key] = { ad:k.ekip, kayitlar:[], tir:0, kamyon:0, konteyner:0, m3:0 };
             ekipMap[key].kayitlar.push(k);
             if (k.aracTipi==='Tır') ekipMap[key].tir++;
             else if (k.aracTipi==='Kamyon') ekipMap[key].kamyon++;
             else ekipMap[key].konteyner++;
             ekipMap[key].m3 += (k.m3||0);
-            ekipMap[key].lastik += (k.lastikAdedi||0);
         });
 
         // En çok yükleme yapan ekip önce
@@ -4555,34 +4546,47 @@
         window._ekipRapor = { ekipler, donemLabel: donem.label, vardiya: e2Vardiya, liste };
 
         if (e2Donem === 'yil') {
-            // ══ YILLIK: Ekip bazlı toplam (tüm yıl birleşik, ay göstermeden) ══
+            // ══ YILLIK: ay bazlı tablo ══
+            const AYLAR = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+            const grupMap = {};
+            sirali.forEach(k => {
+                const dt = new Date(k.tarih + 'T00:00:00');
+                const ek = ekipKey(k.ekip);
+                const ay = dt.getMonth();
+                const key = `${ay}_${ek}`;
+                if (!grupMap[key]) grupMap[key] = { grupLabel: AYLAR[ay], grupSira: ay, ekipAd: k.ekip, tir:0, kamyon:0, konteyner:0, m3:0, toplam:0 };
+                if (k.aracTipi==='Tır') grupMap[key].tir++;
+                else if (k.aracTipi==='Kamyon') grupMap[key].kamyon++;
+                else grupMap[key].konteyner++;
+                grupMap[key].m3 += (k.m3||0);
+                grupMap[key].toplam++;
+            });
+            const satirlar = Object.values(grupMap).sort((a,b) => a.grupSira !== b.grupSira ? a.grupSira - b.grupSira : b.toplam - a.toplam);
             const genTir = ekipler.reduce((s,e)=>s+e.tir,0), genKamyon = ekipler.reduce((s,e)=>s+e.kamyon,0);
             const genKonteyner = ekipler.reduce((s,e)=>s+e.konteyner,0), genToplam = ekipler.reduce((s,e)=>s+e.kayitlar.length,0);
             const genM3 = ekipler.reduce((s,e)=>s+e.m3,0);
-            const genLastik = ekipler.reduce((s,e)=>s+(e.lastik||0),0);
             sonuc.innerHTML = `
                 <div class="donem-badge">📅 ${donem.label}${e2Vardiya !== 'hepsi' ? ' · ' + e2Vardiya : ''} · ${genToplam} araç</div>
                 <div class="sef-bolum"><div style="overflow-x:auto;"><table class="data-table" style="font-size:14px; width:100%; border-collapse:separate; border-spacing:0 8px;">
-                    <thead><tr><th style="padding:12px;color:#fff;">S.No</th><th style="padding:12px;">Ekip</th><th style="color:#F0B323; padding:12px; text-align:center;">Tır</th><th style="color:#93C5FD; padding:12px; text-align:center;">Kamyon</th><th style="color:#e2e8f0; padding:12px; text-align:center;">Konteyner</th><th style="color:#b91c1c; padding:12px; text-align:center;">Toplam</th><th style="color:var(--success); padding:12px; text-align:center;">M³</th><th style="color:#fbbf24; padding:12px; text-align:center;">Lastik</th></tr></thead>
+                    <thead><tr><th style="padding:12px;color:#fff;">S.No</th><th style="padding:12px;color:#fff;">Ay</th><th style="padding:12px;">Ekip</th><th style="color:#F0B323; padding:12px; text-align:center;">Tır</th><th style="color:#93C5FD; padding:12px; text-align:center;">Kamyon</th><th style="color:#e2e8f0; padding:12px; text-align:center;">Konteyner</th><th style="color:#b91c1c; padding:12px; text-align:center;">Toplam</th><th style="color:var(--success); padding:12px; text-align:center;">M³</th></tr></thead>
                     <tbody>
-                        ${ekipler.map((e,idx)=>`<tr>
+                        ${satirlar.map((r,idx)=>`<tr>
                             <td style="padding:12px; color:#fff; font-size:12px; font-weight:700;">${idx+1}</td>
-                            <td style="font-weight:400; font-size:13px; padding:12px;">${ekipKisaGoster(e.ad)}</td>
-                            <td style="font-weight:700; text-align:center; padding:12px;"><span style="background:rgba(240,179,35,0.25); color:#F0B323; border-radius:5px; padding:4px 10px;">${e.tir||'—'}</span></td>
-                            <td style="font-weight:700; text-align:center; padding:12px;"><span style="background:rgba(147,197,253,0.4); color:#93C5FD; border-radius:5px; padding:4px 10px;">${e.kamyon||'—'}</span></td>
-                            <td style="font-weight:700; text-align:center; padding:12px;"><span style="background:rgba(226,232,240,0.25); color:#e2e8f0; border:1px solid rgba(226,232,240,0.4); border-radius:5px; padding:4px 10px;">${e.konteyner||'—'}</span></td>
-                            <td style="font-weight:800; text-align:center; padding:12px;"><span style="background:rgba(254,202,202,0.4); color:#f87171; border-radius:5px; padding:4px 10px;">${e.kayitlar.length}</span></td>
-                            <td style="color:var(--success); font-weight:700; text-align:center; padding:12px;">${e.m3.toFixed(1)}</td>
-                            <td style="font-weight:800; text-align:center; padding:12px;"><span style="background:rgba(251,191,36,0.15); color:#fbbf24; border:1px solid rgba(251,191,36,0.35); border-radius:5px; padding:4px 10px;">${e.lastik||'—'}</span></td>
+                            <td style="font-weight:700; color:#fff; padding:12px;">${r.grupLabel}</td>
+                            <td style="font-weight:400; font-size:13px; padding:12px;">${ekipKisaGoster(r.ekipAd)}</td>
+                            <td style="font-weight:700; text-align:center; padding:12px;"><span style="background:rgba(240,179,35,0.25); color:#F0B323; border-radius:5px; padding:4px 10px;">${r.tir||'—'}</span></td>
+                            <td style="font-weight:700; text-align:center; padding:12px;"><span style="background:rgba(147,197,253,0.4); color:#93C5FD; border-radius:5px; padding:4px 10px;">${r.kamyon||'—'}</span></td>
+                            <td style="font-weight:700; text-align:center; padding:12px;"><span style="background:rgba(226,232,240,0.25); color:#e2e8f0; border:1px solid rgba(226,232,240,0.4); border-radius:5px; padding:4px 10px;">${r.konteyner||'—'}</span></td>
+                            <td style="font-weight:800; text-align:center; padding:12px;"><span style="background:rgba(254,202,202,0.4); color:#f87171; border-radius:5px; padding:4px 10px;">${r.toplam}</span></td>
+                            <td style="color:var(--success); font-weight:700; text-align:center; padding:12px;">${r.m3.toFixed(1)}</td>
                         </tr>`).join('')}
                         <tr style="background:rgba(37,99,235,0.15); border-top:2px solid rgba(37,99,235,0.4);">
-                            <td colspan="2" style="font-weight:700; color:#fff; padding:15px;">YILLIK TOPLAM</td>
+                            <td colspan="3" style="font-weight:700; color:#fff; padding:15px;">YILLIK TOPLAM</td>
                             <td style="font-weight:700; color:#F0B323; text-align:center; padding:15px;">${genTir}</td>
                             <td style="font-weight:700; color:#93C5FD; text-align:center; padding:15px;">${genKamyon}</td>
                             <td style="font-weight:700; color:#e2e8f0; text-align:center; padding:15px;">${genKonteyner}</td>
                             <td style="font-weight:700; color:#f87171; text-align:center; padding:15px;">${genToplam}</td>
                             <td style="font-weight:700; color:var(--success); text-align:center; padding:15px;">${genM3.toFixed(1)}</td>
-                            <td style="font-weight:700; color:#fbbf24; text-align:center; padding:15px;">${genLastik||'—'}</td>
                         </tr>
                     </tbody></table></div></div>`;
         } else if (e2Donem === 'ay' || e2Donem === 'aralik') {
@@ -4590,11 +4594,10 @@
             const genTir = ekipler.reduce((s,e)=>s+e.tir,0), genKamyon = ekipler.reduce((s,e)=>s+e.kamyon,0);
             const genKonteyner = ekipler.reduce((s,e)=>s+e.konteyner,0), genToplam = ekipler.reduce((s,e)=>s+e.kayitlar.length,0);
             const genM3 = ekipler.reduce((s,e)=>s+e.m3,0);
-            const genLastik = ekipler.reduce((s,e)=>s+(e.lastik||0),0);
             sonuc.innerHTML = `
                 <div class="donem-badge">📅 ${donem.label}${e2Vardiya !== 'hepsi' ? ' · ' + e2Vardiya : ''} · ${genToplam} araç</div>
                 <div class="sef-bolum"><div style="overflow-x:auto;"><table class="data-table" style="font-size:14px; width:100%; border-collapse:separate; border-spacing:0 8px;">
-                    <thead><tr><th style="padding:12px;color:#fff;">S.No</th><th style="padding:12px;">Ekip</th><th style="color:#F0B323; padding:12px; text-align:center;">Tır</th><th style="color:#93C5FD; padding:12px; text-align:center;">Kamyon</th><th style="color:#e2e8f0; padding:12px; text-align:center;">Konteyner</th><th style="color:#b91c1c; padding:12px; text-align:center;">Toplam</th><th style="color:var(--success); padding:12px; text-align:center;">M³</th><th style="color:#fbbf24; padding:12px; text-align:center;">Lastik</th></tr></thead>
+                    <thead><tr><th style="padding:12px;color:#fff;">S.No</th><th style="padding:12px;">Ekip</th><th style="color:#F0B323; padding:12px; text-align:center;">Tır</th><th style="color:#93C5FD; padding:12px; text-align:center;">Kamyon</th><th style="color:#e2e8f0; padding:12px; text-align:center;">Konteyner</th><th style="color:#b91c1c; padding:12px; text-align:center;">Toplam</th><th style="color:var(--success); padding:12px; text-align:center;">M³</th></tr></thead>
                     <tbody>
                         ${ekipler.map((e,idx)=>`<tr>
                             <td style="padding:12px; color:#fff; font-size:12px; font-weight:700;">${idx+1}</td>
@@ -4604,7 +4607,6 @@
                             <td style="font-weight:700; text-align:center; padding:12px;"><span style="background:rgba(226,232,240,0.25); color:#e2e8f0; border:1px solid rgba(226,232,240,0.4); border-radius:5px; padding:4px 10px;">${e.konteyner||'—'}</span></td>
                             <td style="font-weight:800; text-align:center; padding:12px;"><span style="background:rgba(254,202,202,0.4); color:#f87171; border-radius:5px; padding:4px 10px;">${e.kayitlar.length}</span></td>
                             <td style="color:var(--success); font-weight:700; text-align:center; padding:12px;">${e.m3.toFixed(1)}</td>
-                            <td style="font-weight:800; text-align:center; padding:12px;"><span style="background:rgba(251,191,36,0.15); color:#fbbf24; border:1px solid rgba(251,191,36,0.35); border-radius:5px; padding:4px 10px;">${e.lastik||'—'}</span></td>
                         </tr>`).join('')}
                         <tr style="background:rgba(37,99,235,0.15); border-top:2px solid rgba(37,99,235,0.4);">
                             <td colspan="2" style="font-weight:700; color:#fff; padding:15px;">GENEL TOPLAM</td>
@@ -4613,7 +4615,6 @@
                             <td style="font-weight:700; color:#e2e8f0; text-align:center; padding:15px;">${genKonteyner}</td>
                             <td style="font-weight:700; color:#f87171; text-align:center; padding:15px;">${genToplam}</td>
                             <td style="font-weight:700; color:var(--success); text-align:center; padding:15px;">${genM3.toFixed(1)}</td>
-                            <td style="font-weight:700; color:#fbbf24; text-align:center; padding:15px;">${genLastik||'—'}</td>
                         </tr>
                     </tbody></table></div></div>`;
         } else {
@@ -4639,7 +4640,7 @@
                                     ${e2Vardiya==='hepsi'?'<th>Vardiya</th>':''}
                                     <th>Tip</th><th>Tür</th>
                                     <th>M³</th><th>Shipment</th><th>Saat</th><th>Net</th>
-                                    <th>Forkliftçi</th><th>Lastik</th><th>Durum</th><th>Duruşlar</th><th>Kaliteci</th><th>Açıklama</th>
+                                    <th>Forkliftçi</th><th>Durum</th><th>Duruşlar</th><th>Kaliteci</th><th>Açıklama</th>
                                 </tr></thead>
                                 <tbody>
                                     ${ekip.kayitlar.map((k,idx) => `
@@ -4653,7 +4654,6 @@
                                             <td style="padding:8px;">${k.baslama}-${k.bitis}</td>
                                             <td style="padding:8px; font-weight:700;">${k.net}</td>
                                             <td style="padding:8px; font-weight:400; font-size:11px;">${k.forkliftci||'—'}</td>
-                                            <td style="padding:8px; text-align:center;">${k.lastikAdedi?`<span style="background:rgba(251,191,36,0.15);color:#fbbf24;border:1px solid rgba(251,191,36,0.35);border-radius:4px;padding:2px 7px;font-weight:800;">${k.lastikAdedi}</span>`:'—'}</td>
                                             <td style="padding:8px;">${k.gec?`<span class="status-gec">${k.gecSure}</span>`:`<span class="status-ok">✓</span>`}</td>
                                             <td style="padding:8px; font-size:10px;">${(k.duruslar||[]).map(d=>`${d.sebep}(${d.sure}dk)`).join(', ') || '—'}</td>
                                             <td style="padding:8px;">${k.kaliteci||'—'}</td>
