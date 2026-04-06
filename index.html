@@ -1489,23 +1489,23 @@
                 <div class="input-group">
                     <div class="input-label">Vardiya</div>
                     <div class="seg-group" id="segVardiya">
-                        <div class="seg-btn" tabindex="0" onclick="setSeg(this,'vardiya','A Vardiyası')"><span style="font-size:16px;font-weight:700;">A</span></div>
-                        <div class="seg-btn" tabindex="0" onclick="setSeg(this,'vardiya','B Vardiyası')"><span style="font-size:16px;font-weight:700;">B</span></div>
+                        <div class="seg-btn" tabindex="0" onclick="setSeg(this,'vardiya','A Vardiyası')" onkeydown="handleSegKey(event, this, 'vardiya', 'A Vardiyası')"><span style="font-size:16px;font-weight:700;">A</span></div>
+                        <div class="seg-btn" tabindex="0" onclick="setSeg(this,'vardiya','B Vardiyası')" onkeydown="handleSegKey(event, this, 'vardiya', 'B Vardiyası')"><span style="font-size:16px;font-weight:700;">B</span></div>
                     </div>
                 </div>
                 <div class="input-group">
                     <div class="input-label">Araç Tipi</div>
                     <div class="seg-group" id="segTip">
-                        <div class="seg-btn" tabindex="0" onclick="setSeg(this,'aracTipi','Tır')"><span>🚛</span><span>Tır</span></div>
-                        <div class="seg-btn" tabindex="0" onclick="setSeg(this,'aracTipi','Kamyon')"><span>🚚</span><span>Kamyon</span></div>
-                        <div class="seg-btn" tabindex="0" onclick="setSeg(this,'aracTipi','Konteyner')"><span>📦</span><span>Konteyner</span></div>
+                        <div class="seg-btn" tabindex="0" onclick="setSeg(this,'aracTipi','Tır')" onkeydown="handleSegKey(event, this, 'aracTipi', 'Tır')"><span>🚛</span><span>Tır</span></div>
+                        <div class="seg-btn" tabindex="0" onclick="setSeg(this,'aracTipi','Kamyon')" onkeydown="handleSegKey(event, this, 'aracTipi', 'Kamyon')"><span>🚚</span><span>Kamyon</span></div>
+                        <div class="seg-btn" tabindex="0" onclick="setSeg(this,'aracTipi','Konteyner')" onkeydown="handleSegKey(event, this, 'aracTipi', 'Konteyner')"><span>📦</span><span>Konteyner</span></div>
                     </div>
                 </div>
                 <div class="input-group">
                     <div class="input-label">Araç Türü</div>
                     <div class="seg-group" id="segTur">
-                        <div class="seg-btn" tabindex="0" onclick="setSeg(this,'aracTuru','O/E')"><span>O/E</span></div>
-                        <div class="seg-btn" tabindex="0" onclick="setSeg(this,'aracTuru','Piyasa')"><span>PİYASA</span></div>
+                        <div class="seg-btn" tabindex="0" onclick="setSeg(this,'aracTuru','O/E')" onkeydown="handleSegKey(event, this, 'aracTuru', 'O/E')"><span>O/E</span></div>
+                        <div class="seg-btn" tabindex="0" onclick="setSeg(this,'aracTuru','Piyasa')" onkeydown="handleSegKey(event, this, 'aracTuru', 'Piyasa')"><span>PİYASA</span></div>
                     </div>
                 </div>
                 <div class="input-group">
@@ -3465,6 +3465,33 @@
             _ilkGiris = false;
         } else {
             el.classList.add(val === 'O/E' ? 'active-red' : 'active-blue'); secilenAracTuru = val;
+        }
+    }
+
+    function handleSegKey(e, el, field, val) {
+        if (e.key === ' ' || e.key === 'Enter') {
+            e.preventDefault();
+            // Tıklama işlevini çalıştır
+            setSeg(el, field, val);
+            
+            // Seçim yapıldıktan sonra sıradaki input-group'a odaklan
+            const currentGroup = el.closest('.input-group');
+            let nextGroup = currentGroup.nextElementSibling;
+            
+            // Bir sonraki geçerli input-group'u bulana kadar ilerle
+            while (nextGroup) {
+                if (nextGroup.classList.contains('input-group')) {
+                    const nextInput = nextGroup.querySelector('.seg-btn, input, select, textarea');
+                    if (nextInput) {
+                        nextInput.focus();
+                        if (nextInput.tagName === 'INPUT' && nextInput.type !== 'checkbox' && nextInput.type !== 'radio') {
+                            nextInput.select();
+                        }
+                        break;
+                    }
+                }
+                nextGroup = nextGroup.nextElementSibling;
+            }
         }
     }
 
