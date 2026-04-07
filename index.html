@@ -1772,24 +1772,24 @@
         <div class="sef-sidebar">
             <div class="sef-sidebar-label" style="background:#F0B323;color:#1C2B6E;border-radius:4px;margin:8px 8px 4px 8px;padding:5px 10px;font-size:11px;font-weight:800;letter-spacing:1.5px;">Analiz</div>
             <div class="sef-sidebar-item" onclick="sekmeAc(this,'sekme1')" data-sekme="sekme1">📦 Araç Özet</div>
-            <div class="sef-sidebar-item" onclick="sekmeAc(this,'sekme2')" data-sekme="sekme2">🫂 Ekip Analizi</div>
-            <div class="sef-sidebar-item" onclick="sekmeAc(this,'sekme7')" data-sekme="sekme7">🏆 Vardiya Analizi</div>
+            <div class="sef-sidebar-item" onclick="sekmeAc(this,'sekme2')" data-sekme="sekme2">📊 Ekip Analizi</div>
+            <div class="sef-sidebar-item" onclick="sekmeAc(this,'sekme7')" data-sekme="sekme7">🛗 Vardiya Analizi</div>
             <div class="sef-sidebar-item" onclick="sekmeAc(this,'sekme6')" data-sekme="sekme6">🔍 Detaylı Filtre</div>
-            <div class="sef-sidebar-item" onclick="sekmeAc(this,'sekme8')" data-sekme="sekme8">🛑 Hata Raporları</div>
+            <div class="sef-sidebar-item" onclick="sekmeAc(this,'sekme8')" data-sekme="sekme8">❌ Hata Raporları</div>
             <div class="sef-sidebar-label" style="background:#F0B323;color:#1C2B6E;border-radius:4px;margin:8px 8px 4px 8px;padding:5px 10px;font-size:11px;font-weight:800;letter-spacing:1.5px;">Yönetim</div>
-            <div class="sef-sidebar-item" onclick="sekmeAc(this,'sekme5')" data-sekme="sekme5">🧑‍💼 Personel</div>
+            <div class="sef-sidebar-item" onclick="sekmeAc(this,'sekme5')" data-sekme="sekme5">🪪 Personel</div>
             <div class="sef-sidebar-item" onclick="sekmeAc(this,'sekme4')" data-sekme="sekme4">⏱️ Mesai Takip</div>
         </div>
 
         <!-- HIDDEN SEKMELER (JS compat) -->
         <div class="sef-sekmeler" style="display:none;">
             <div class="sef-sekme" onclick="sekmeAc(this,'sekme1')">📦 Toplam Yüklenen Araç Sayısı Özet</div>
-            <div class="sef-sekme" onclick="sekmeAc(this,'sekme2')">👥 Ekip Analizi</div>
+            <div class="sef-sekme" onclick="sekmeAc(this,'sekme2')">📊 Ekip Analizi</div>
             <div class="sef-sekme" onclick="sekmeAc(this,'sekme4')">⏱️ Mesai Takip</div>
             <div class="sef-sekme" onclick="sekmeAc(this,'sekme5')">🧑‍💼 Personel Yönetimi</div>
             <div class="sef-sekme" onclick="sekmeAc(this,'sekme6')">🔍 Detaylı Filtrele</div>
-            <div class="sef-sekme" onclick="sekmeAc(this,'sekme7')">🏆 Vardiya Analizi</div>
-            <div class="sef-sekme" onclick="sekmeAc(this,'sekme8')">🛑 Hata Raporları</div>
+            <div class="sef-sekme" onclick="sekmeAc(this,'sekme7')">🛗Vardiya Analizi</div>
+            <div class="sef-sekme" onclick="sekmeAc(this,'sekme8')">❌ Hata Raporları</div>
         </div>
 
         <div class="sef-content">
@@ -2179,14 +2179,14 @@
                         <div class="sef-bolum" style="margin-bottom:0;">
                             <div class="sef-bolum-baslik">🔍 Filtre Türü</div>
                             <div class="filtre-seg" id="df6TurSeg" style="flex-direction:column;gap:6px;">
-                                <div class="filtre-seg-btn aktif" onclick="df6TurSec(this,'ekip')">🫂 Ekip Filtreleme</div>
+                                <div class="filtre-seg-btn aktif" onclick="df6TurSec(this,'ekip')">🛗 Ekip Filtreleme</div>
                                 <div class="filtre-seg-btn" onclick="df6TurSec(this,'personel')">🧑‍🔧 Personel Filtreleme</div>
                             </div>
                         </div>
 
                         <!-- EKİP GİRİŞİ -->
                         <div class="sef-bolum" id="df6EkipBlok" style="margin-bottom:0;">
-                            <div class="sef-bolum-baslik">👥 Ekip İsimleri</div>
+                            <div class="sef-bolum-baslik">🛗 Ekip İsimleri</div>
                             <div style="font-size:10px;color:var(--muted);margin-bottom:8px;">Virgülle ayırarak birden fazla isim girin</div>
                             <div style="position:relative;">
                                 <input type="text" id="df6EkipInput" class="filtre-input" style="width:100%;"
@@ -2290,7 +2290,7 @@
                 </div>
                 <div id="va7Sonuc">
                     <div class="sef-bos">
-                        <div class="sef-bos-icon">🏆</div>
+                        <div class="sef-bos-icon">🛗</div>
                         <div class="sef-bos-text">Dönem seç, vardiya karşılaştırması görüntülensin</div>
                     </div>
                 </div>
@@ -2397,7 +2397,7 @@
                     <div>
                         <div class="sef-bolum">
                             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-                                <div class="sef-bolum-baslik" style="margin:0;">🛑 Hata Kayıtları</div>
+                                <div class="sef-bolum-baslik" style="margin:0;">❌ Hata Kayıtları</div>
                                 <span id="hrKayitSayac" style="background:rgba(26,86,219,0.1);border:1px solid rgba(26,86,219,0.25);border-radius:100px;padding:2px 10px;font-size:11px;font-weight:800;color:#1a56db;">0 kayıt</span>
                             </div>
                             <div style="overflow-x:auto;">
