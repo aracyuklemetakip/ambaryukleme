@@ -943,23 +943,56 @@
             cursor:pointer;transition:all 0.15s;
         }
         .btn-primary-full:hover { background:#EAB308; }
+        @keyframes pulseRing {
+            0%   { transform: scale(1);   opacity: 0.55; }
+            70%  { transform: scale(1.55); opacity: 0; }
+            100% { transform: scale(1.55); opacity: 0; }
+        }
         .btn-submit {
-            background: linear-gradient(135deg,#d97706,#b45309) !important;
-            border: 2px solid #92400e !important;
-            box-shadow: 0 4px 14px rgba(180,83,9,0.45) !important;
+            position: relative !important;
+            background: #F59E0B !important;
+            border: none !important;
+            border-radius: 10px !important;
+            box-shadow: 0 0 0 8px rgba(245,158,11,0.22), 0 0 0 16px rgba(245,158,11,0.10) !important;
             letter-spacing: 1px;
-            color: #fff !important;
+            color: #1C2B6E !important;
+            overflow: visible !important;
+            transition: all 0.2s !important;
+        }
+        .btn-submit::before,
+        .btn-submit::after {
+            content: '';
+            position: absolute;
+            inset: -6px;
+            border-radius: 14px;
+            background: transparent;
+            border: 2px solid rgba(245,158,11,0.45);
+            animation: pulseRing 2s ease-out infinite;
+            pointer-events: none;
+        }
+        .btn-submit::after {
+            inset: -12px;
+            border-radius: 18px;
+            border-color: rgba(245,158,11,0.22);
+            animation-delay: 0.6s;
         }
         .btn-submit:hover {
-            background: linear-gradient(135deg,#b45309,#92400e) !important;
-            box-shadow: 0 6px 20px rgba(180,83,9,0.6) !important;
-            transform: translateY(-1px);
+            background: #FBBF24 !important;
+            box-shadow: 0 0 0 10px rgba(245,158,11,0.28), 0 0 0 20px rgba(245,158,11,0.12) !important;
+            transform: translateY(-1px) !important;
+        }
+        .btn-submit:active {
+            background: #D97706 !important;
+            transform: translateY(0) !important;
         }
         .btn-submit.update-mode {
             background: linear-gradient(135deg,#1d4ed8,#1e40af) !important;
-            border-color: #1e3a8a !important;
-            box-shadow: 0 4px 14px rgba(29,78,216,0.4) !important;
+            border: none !important;
+            box-shadow: 0 0 0 8px rgba(29,78,216,0.20), 0 0 0 16px rgba(29,78,216,0.08) !important;
+            color: #fff !important;
         }
+        .btn-submit.update-mode::before { border-color: rgba(29,78,216,0.4); }
+        .btn-submit.update-mode::after  { border-color: rgba(29,78,216,0.2); }
         .vardiya-badge { font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px; }
         .vardiya-a { color:#93C5FD;background:rgba(147,197,253,0.15);border:1px solid rgba(147,197,253,0.3); }
         .vardiya-b { color:#FDE68A;background:rgba(253,230,138,0.15);border:1px solid rgba(253,230,138,0.3); }
