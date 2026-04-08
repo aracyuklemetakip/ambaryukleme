@@ -7916,20 +7916,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 tr.onmouseover = () => tr.style.background = 'rgba(255,255,255,0.03)';
                 tr.onmouseout  = () => tr.style.background = '';
 
-                const renkOpsiyon = `
-                    <option value="">— Renk Seç —</option>
-                    <option value="S" ${mevcutRenk==='S'?'selected':''}>⬛ Siyah</option>
-                    <option value="Y" ${mevcutRenk==='Y'?'selected':''}>🟩 Yeşil</option>
-                    <option value="M" ${mevcutRenk==='M'?'selected':''}>🟦 Mavi</option>
-                    <option value="G" ${mevcutRenk==='G'?'selected':''}>⬜ Gri</option>
-                `;
-
                 const durumId = `eldDurum_${p.sicil}`;
                 const renkId  = `eldRenk_${p.sicil}`;
                 const adetId  = `eldAdet_${p.sicil}`;
 
                 // Satır renk tonu — kayıt varsa hafif highlight
-                const trBg = kayit ? `background:${ELDIVEN_RENK_BG[mevcutRenk]||'rgba(240,179,35,0.05)'};` : '';
                 if (kayit) tr.style.background = ELDIVEN_RENK_BG[mevcutRenk] || 'rgba(240,179,35,0.05)';
 
                 tr.innerHTML = `
@@ -7938,22 +7929,47 @@ document.addEventListener('DOMContentLoaded', function() {
                     <td style="padding:8px 10px;text-align:center;color:rgba(255,255,255,0.4);font-size:11px;border-right:1px solid rgba(255,255,255,0.06);">${p.sicil || ''}</td>
                     <td style="padding:6px 10px;border-right:1px solid rgba(255,255,255,0.06);">
                         <select id="${renkId}"
-                            style="width:100%;padding:6px 8px;border-radius:8px;border:1.5px solid ${mevcutRenk ? ELDIVEN_RENK_CLR[mevcutRenk]+'60' : 'rgba(255,255,255,0.15)'};background:rgba(255,255,255,0.07);color:#fff;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer;outline:none;appearance:none;-webkit-appearance:none;text-align:center;"
-                            onchange="eldivenSatirKaydet('${p.sicil}','${(p.ad||'').replace(/'/g,"\\'")}')">
-                            ${renkOpsiyon}
+                            style="width:100%;padding:6px 8px;border-radius:8px;border:1.5px solid ${mevcutRenk ? ELDIVEN_RENK_CLR[mevcutRenk]+'60' : 'rgba(255,255,255,0.15)'};background:rgba(255,255,255,0.07);color:#fff;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer;outline:none;appearance:none;-webkit-appearance:none;text-align:center;">
+                            <option value="">— Renk Seç —</option>
+                            <option value="S" ${mevcutRenk==='S'?'selected':''}>⬛ Siyah</option>
+                            <option value="Y" ${mevcutRenk==='Y'?'selected':''}>🟩 Yeşil</option>
+                            <option value="M" ${mevcutRenk==='M'?'selected':''}>🟦 Mavi</option>
+                            <option value="G" ${mevcutRenk==='G'?'selected':''}>⬜ Gri</option>
                         </select>
                     </td>
                     <td style="padding:6px 10px;border-right:1px solid rgba(255,255,255,0.06);">
                         <input id="${adetId}" type="number" min="0" max="999" value="${mevcutAdet}"
                             placeholder="0"
-                            style="width:100%;padding:6px 8px;border-radius:8px;border:1.5px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.07);color:#fff;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;text-align:center;outline:none;box-sizing:border-box;"
-                            onblur="eldivenSatirKaydet('${p.sicil}','${(p.ad||'').replace(/'/g,"\\'")}'"+")"
-                            onkeydown="if(event.key==='Enter'){this.blur();}">
+                            style="width:100%;padding:6px 8px;border-radius:8px;border:1.5px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.07);color:#fff;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;text-align:center;outline:none;box-sizing:border-box;">
                     </td>
                     <td style="padding:6px 10px;text-align:center;">
                         <span id="${durumId}" style="font-size:18px;" title="${kayit ? `${kayit.adet} adet ${kayit.renk}` : 'Girilmedi'}">${kayit ? '✅' : '○'}</span>
                     </td>
                 `;
+
+                // Event listener'ları JS ile ekle (inline onchange'deki ses sorununu önler)
+                const sicilRef = p.sicil;
+                const adRef    = (p.ad || '');
+                setTimeout(() => {
+                    const renkElRef = document.getElementById(renkId);
+                    const adetElRef = document.getElementById(adetId);
+                    if (renkElRef) {
+                        renkElRef.addEventListener('change', function() {
+                            eldivenSatirKaydet(sicilRef, adRef);
+                        });
+                    }
+                    if (adetElRef) {
+                        adetElRef.addEventListener('blur', function() {
+                            eldivenSatirKaydet(sicilRef, adRef);
+                        });
+                        adetElRef.addEventListener('keydown', function(e) {
+                            if (e.key === 'Enter') {
+                                e.preventDefault();
+                                eldivenSatirKaydet(sicilRef, adRef);
+                            }
+                        });
+                    }
+                }, 0);
 
                 tbody.appendChild(tr);
             });
@@ -7964,7 +7980,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
-    // ── OTOMATİK KAYDET (renk değişince veya adet blur'da) ──
+    // ── OTOMATİK KAYDET (renk değişince veya adet blur/enter'da) ──
     window.eldivenSatirKaydet = async function(sicil, ad) {
         const yil = window._eldivenAktifYil;
         const ay  = window._eldivenAktifAy;
@@ -7991,14 +8007,13 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        const adet = parseInt(adetVal);
+        // Adet girilmemişse 0 kabul et
+        const adetSon = adetVal === '' ? '0' : adetVal;
+        const adet = parseInt(adetSon);
         if (isNaN(adet) || adet < 0) {
             showToast('⚠️ Geçerli bir adet girin', 'warn');
             return;
         }
-
-        // Adet girilmemişse kaydetme
-        if (adetVal === '' || adetVal === undefined) return;
 
         _eldivenKayitSuruyor.add(lockKey);
         if (durumEl) { durumEl.textContent = '⏳'; durumEl.title = 'Kaydediliyor...'; }
@@ -8016,6 +8031,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Lokal map güncelle
             _eldivenKayitMap[lockKey] = { renk: renkTam, adet, docId };
+
+            // Adet inputunu güncelle (0 yazıldıysa göster)
+            adetEl.value = String(adet);
 
             // UI güncelle
             if (durumEl) { durumEl.textContent = '✅'; durumEl.title = `${adet} adet ${renkTam}`; }
@@ -8051,14 +8069,23 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
+    function trUpper(s) {
+        return (s || '').replace(/ı/g,'I').replace(/i/g,'İ').toLocaleUpperCase('tr-TR');
+    }
+    function trNormalize(s) {
+        return trUpper(s)
+            .replace(/İ/g,'I').replace(/Ğ/g,'G').replace(/Ü/g,'U')
+            .replace(/Ş/g,'S').replace(/Ö/g,'O').replace(/Ç/g,'C');
+    }
     window.eldivenListeFiltre = function() {
-        const q = (document.getElementById('eldivenAraInput')?.value || '').toUpperCase().trim();
+        const raw = (document.getElementById('eldivenAraInput')?.value || '').trim();
+        const q = trNormalize(raw);
         const tbody = document.getElementById('eldivenExcelBody');
         if (!tbody) return;
         const satirlar = tbody.querySelectorAll('tr[data-sicil]');
         satirlar.forEach(tr => {
-            const ad    = (tr.dataset.ad    || '').toUpperCase();
-            const sicil = (tr.dataset.sicil || '').toUpperCase();
+            const ad    = trNormalize(tr.dataset.ad    || '');
+            const sicil = trNormalize(tr.dataset.sicil || '');
             tr.style.display = (!q || ad.includes(q) || sicil.includes(q)) ? '' : 'none';
         });
     };
@@ -8091,48 +8118,83 @@ document.addEventListener('DOMContentLoaded', function() {
         const liste = (window._eldivenTamListe || []).slice();
         if (!liste.length) { showToast('Personel listesi boş', 'warn'); return; }
 
-        const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+        // Boş PDF: yatay (landscape) — Normal PDF: dikey (portrait)
+        const yon = bos ? 'landscape' : 'portrait';
+        const doc = new jsPDF({ orientation: yon, unit: 'mm', format: 'a4' });
+
+        // Sayfa boyutları
+        const pageW = yon === 'landscape' ? 297 : 210;
+        const pageH = yon === 'landscape' ? 210 : 297;
 
         // Başlık
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(13);
-        doc.text(baslik, 105, 14, { align: 'center' });
+        doc.text(baslik, pageW / 2, 14, { align: 'center' });
 
         doc.setFontSize(9);
         doc.setFont('helvetica', 'normal');
-        doc.text(trFix(`Tarih: ${gun} ${AYLAR[ay]} ${yil}   |   Toplam: ${liste.length} kisi`), 105, 20, { align: 'center' });
+        doc.text(trFix(`Tarih: ${gun} ${AYLAR[ay]} ${yil}   |   Toplam: ${liste.length} kisi`), pageW / 2, 20, { align: 'center' });
 
-        // Tablo
+        // Sütun genişlikleri — boş PDF landscape, normal portrait
+        let colWidths;
+        if (bos) {
+            // Landscape: daha geniş imza sütunu
+            const usable = pageW - 28; // 14mm margin her taraf
+            colWidths = {
+                0: { halign: 'center', cellWidth: 12 },
+                1: { halign: 'left',   cellWidth: 80 },
+                2: { halign: 'center', cellWidth: 30 },
+                3: { halign: 'center', cellWidth: 50 },  // imza alanı
+                4: { halign: 'center', cellWidth: 50 }   // imza alanı
+            };
+        } else {
+            colWidths = {
+                0: { halign: 'center', cellWidth: 12 },
+                1: { halign: 'left',   cellWidth: 72 },
+                2: { halign: 'center', cellWidth: 25 },
+                3: { halign: 'center', cellWidth: 40 },
+                4: { halign: 'center', cellWidth: 18 },
+                5: { halign: 'center', cellWidth: 18 }
+            };
+        }
+
+        // Tablo satırları
+        const head = bos
+            ? [['S.No', 'Ad Soyad', 'Sicil', 'Eldiven Rengi', 'Imza']]
+            : [['S.No', 'Ad Soyad', 'Sicil', 'Eldiven Rengi', 'Adet', 'Durum']];
+
         const satirlar = liste.map((p, i) => {
             if (bos) {
                 return [
                     String(i + 1),
                     trFix(p.ad || ''),
                     p.sicil || '',
-                    '',   // eldiven rengi boş
-                    ''    // adet boş
+                    '',
+                    ''
                 ];
             } else {
                 const key   = `${p.sicil}_${yil}_${ay}`;
                 const kayit = _eldivenKayitMap[key] || {};
+                const durum = kayit.renk ? '✓ Verildi' : 'Bekliyor';
                 return [
                     String(i + 1),
                     trFix(p.ad || ''),
                     p.sicil || '',
-                    trFix(kayit.renk || ''),
-                    kayit.adet !== undefined ? String(kayit.adet) : ''
+                    trFix(kayit.renk || '—'),
+                    kayit.adet !== undefined ? String(kayit.adet) : '—',
+                    durum
                 ];
             }
         });
 
         doc.autoTable({
             startY: 25,
-            head: [['S.No', 'Ad Soyad', 'Sicil', 'Eldiven Rengi', 'Adet']],
+            head: head,
             body: satirlar,
             styles: {
                 font: 'helvetica',
-                fontSize: 8,
-                cellPadding: 2.5,
+                fontSize: bos ? 7.5 : 8,
+                cellPadding: bos ? 1.5 : 2,
                 overflow: 'linebreak',
                 lineColor: [200, 200, 200],
                 lineWidth: 0.2
@@ -8141,28 +8203,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 fillColor: [28, 43, 110],
                 textColor: [240, 179, 35],
                 fontStyle: 'bold',
-                fontSize: 8.5,
+                fontSize: bos ? 8 : 8.5,
                 halign: 'center'
             },
-            columnStyles: {
-                0: { halign: 'center', cellWidth: 12 },
-                1: { halign: 'left',   cellWidth: 70 },
-                2: { halign: 'center', cellWidth: 25 },
-                3: { halign: 'center', cellWidth: 35 },
-                4: { halign: 'center', cellWidth: 18 }
-            },
+            columnStyles: colWidths,
             alternateRowStyles: { fillColor: [245, 247, 252] },
             margin: { top: 25, left: 14, right: 14 },
-            pageBreak: 'avoid',
-            // Tek sayfaya sığdır
+            tableWidth: 'wrap',
+            // Tek sayfaya sığdır — sayfa kırılmasını engelle
+            pageBreak: 'auto',
+            rowPageBreak: 'avoid',
             didDrawPage: function(data) {
                 // Alt imza satırı — yalnızca son sayfada
                 const pageCount = doc.internal.getNumberOfPages();
                 if (data.pageNumber === pageCount) {
-                    const y = data.cursor.y + 12;
+                    const y = data.cursor.y + 10;
                     doc.setFontSize(8);
                     doc.text('Hazirlayan: ___________________', 20, y);
-                    doc.text('Onaylayan: ___________________', 120, y);
+                    doc.text('Onaylayan: ___________________', pageW - 90, y);
                 }
             }
         });
