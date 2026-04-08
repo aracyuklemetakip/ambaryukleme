@@ -2682,7 +2682,7 @@
     const STANDART = { 'Tır':150, 'Kamyon':90, 'Konteyner':120 };
 
     // ── PERSONEL LİSTESİ ──────────────────────────────────
-    let personelListesi = [];
+    window.personelListesi = [];
     let aktifVardiyaFiltresi = null;
     let _acDropdownIdx = -1;
 
@@ -2690,10 +2690,10 @@
         try {
             const { collection, getDocs, db } = window._fb;
             const snap = await getDocs(collection(db, 'personel'));
-            personelListesi = snap.docs.map(d => d.data()).sort((a,b) => window.trSort(a, b, 'ad'));
+            window.personelListesi = snap.docs.map(d => d.data()).sort((a,b) => window.trSort(a, b, 'ad'));
         } catch(e) {
             // Firestore henüz boşsa sabit listeyle başla
-            personelListesi = BASLANGIC_PERSONEL.slice().sort((a,b) => window.trSort(a, b, 'ad'));
+            window.personelListesi = BASLANGIC_PERSONEL.slice().sort((a,b) => window.trSort(a, b, 'ad'));
         }
         personelListeRender();
     }
@@ -2759,12 +2759,12 @@
                 for (const p of BASLANGIC_PERSONEL) {
                     await setDoc(doc(db, 'personel', p.sicil), p);
                 }
-                personelListesi = BASLANGIC_PERSONEL.slice().sort((a,b) => window.trSort(a, b, 'ad'));
+                window.personelListesi = BASLANGIC_PERSONEL.slice().sort((a,b) => window.trSort(a, b, 'ad'));
             } else {
-                personelListesi = snap.docs.map(d => d.data()).sort((a,b) => window.trSort(a, b, 'ad'));
+                window.personelListesi = snap.docs.map(d => d.data()).sort((a,b) => window.trSort(a, b, 'ad'));
             }
         } catch(e) {
-            personelListesi = BASLANGIC_PERSONEL.slice();
+            window.personelListesi = BASLANGIC_PERSONEL.slice();
         }
         personelListeRender();
     }
@@ -2856,7 +2856,7 @@
             try {
                 const { doc, deleteDoc, db } = window._fb;
                 await deleteDoc(doc(db, 'personel', sicil));
-                personelListesi = personelListesi.filter(x => x.sicil !== sicil);
+                window.personelListesi = window.personelListesi.filter(x => x.sicil !== sicil);
                 personelListeRender();
                 playSoundSil(); showToast('🗑️ Personel silindi', 'warn');
             } catch(e) { showToast('Hata: ' + e.message, 'warn'); }
@@ -3071,7 +3071,7 @@
             try {
                 const { doc, deleteDoc, db } = window._fb;
                 await deleteDoc(doc(db, 'personel', sicil));
-                personelListesi = personelListesi.filter(x => x.sicil !== sicil);
+                window.personelListesi = window.personelListesi.filter(x => x.sicil !== sicil);
                 personelGuncelleSifirla();
                 personelListeRender();
                 playSoundSil(); showToast('🗑️ Personel silindi', 'warn');
