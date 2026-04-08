@@ -2069,6 +2069,23 @@
             <!-- SEKME 5: PERSONEL YÖNETİMİ -->
             <div id="sekme5" class="sekme-icerik">
 
+                <!-- ── PERSONEL SEKME BAŞLIKLARI ── -->
+                <div style="display:flex;gap:0;margin-bottom:18px;border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,0.15);">
+                    <button id="ps5TabPersonel" onclick="ps5TabAc('personel')"
+                        style="flex:1;padding:11px 16px;border:none;background:#F0B323;color:#1C2B6E;font-family:'Inter',sans-serif;font-size:13px;font-weight:800;cursor:pointer;letter-spacing:0.5px;transition:all 0.15s;">
+                        👤 Personel Ekle / Düzenle
+                    </button>
+                    <button id="ps5TabEldiven" onclick="ps5TabAc('eldiven')"
+                        style="flex:1;padding:11px 16px;border:none;background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.6);font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:0.5px;transition:all 0.15s;border-left:1px solid rgba(255,255,255,0.15);">
+                        🧤 Eldiven Dağıtım
+                    </button>
+                </div>
+
+                <!-- ══════════════════════════════════
+                     PANEL 1: PERSONEL EKLE / DÜZENLE
+                ══════════════════════════════════ -->
+                <div id="ps5PanelPersonel">
+
                 <!-- PERSONEL İSTATİSTİK BARI -->
                 <div id="personelStatBar" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:10px;padding:10px 16px;margin-bottom:14px;font-family:'Inter',sans-serif;">
                     <button id="statA" onclick="personelVardiyaFiltrele('A')" style="font-size:12px;font-weight:700;padding:4px 12px;border-radius:6px;background:rgba(255,255,255,0.08);color:#ffffff;border:1px solid rgba(255,255,255,0.25);white-space:nowrap;cursor:pointer;transition:all 0.15s;font-family:'Inter',sans-serif;">A Vardiyası: 0</button>
@@ -2179,6 +2196,111 @@
                     <div id="personelEmptyState" style="display:none;text-align:center;padding:30px;color:var(--muted);font-size:13px;">Personel bulunamadı</div>
                 </div>
 
+                </div><!-- /ps5PanelPersonel -->
+
+                <!-- ══════════════════════════════════
+                     PANEL 2: ELDİVEN DAĞITIM
+                ══════════════════════════════════ -->
+                <div id="ps5PanelEldiven" style="display:none;">
+
+                    <!-- FİLTRE BARI -->
+                    <div class="sef-bolum" style="margin-bottom:16px;">
+                        <div class="sef-bolum-baslik">🧤 Eldiven Dağıtım Kaydı</div>
+                        <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;align-items:end;">
+
+                            <!-- YIL -->
+                            <div class="filtre-group" style="margin:0;">
+                                <div class="filtre-label">Yıl</div>
+                                <select id="eldivenYil" class="filtre-input" style="width:100%;background:#F9FAFB;" onchange="eldivenAyListesiGuncelle()">
+                                </select>
+                            </div>
+
+                            <!-- AY -->
+                            <div class="filtre-group" style="margin:0;">
+                                <div class="filtre-label">Ay</div>
+                                <select id="eldivenAy" class="filtre-input" style="width:100%;background:#F9FAFB;">
+                                    <option value="1">Ocak</option>
+                                    <option value="2">Şubat</option>
+                                    <option value="3">Mart</option>
+                                    <option value="4">Nisan</option>
+                                    <option value="5">Mayıs</option>
+                                    <option value="6">Haziran</option>
+                                    <option value="7">Temmuz</option>
+                                    <option value="8">Ağustos</option>
+                                    <option value="9">Eylül</option>
+                                    <option value="10">Ekim</option>
+                                    <option value="11">Kasım</option>
+                                    <option value="12">Aralık</option>
+                                </select>
+                            </div>
+
+                            <!-- ELDİVEN RENGİ -->
+                            <div class="filtre-group" style="margin:0;">
+                                <div class="filtre-label">Eldiven Rengi</div>
+                                <select id="eldivenRenk" class="filtre-input" style="width:100%;background:#F9FAFB;">
+                                    <option value="Siyah">⬛ Siyah</option>
+                                    <option value="Yeşil">🟩 Yeşil</option>
+                                    <option value="Mavi">🟦 Mavi</option>
+                                    <option value="Gri">⬜ Gri</option>
+                                </select>
+                            </div>
+
+                            <!-- YÜKLE BUTONU -->
+                            <button onclick="eldivenListeYukle()" style="padding:9px 18px;border-radius:8px;border:none;background:#F0B323;color:#1C2B6E;font-family:'Inter',sans-serif;font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap;height:38px;">
+                                🔍 Listele
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- PERSONEL TABLO (kayıt girişi) -->
+                    <div class="sef-bolum">
+                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+                            <div class="sef-bolum-baslik" style="margin:0;">📋 Personel Listesi
+                                <span id="eldivenDonemLabel" style="font-size:12px;font-weight:600;color:#9CA3AF;margin-left:6px;"></span>
+                            </div>
+                            <button onclick="eldivenTumunuKaydet()" style="padding:8px 18px;border-radius:8px;border:none;background:#16a34a;color:#fff;font-family:'Inter',sans-serif;font-size:12px;font-weight:700;cursor:pointer;">
+                                💾 Tümünü Kaydet
+                            </button>
+                        </div>
+                        <div style="overflow-x:auto;">
+                            <table class="data-table" style="font-size:12px;">
+                                <thead>
+                                    <tr>
+                                        <th style="width:36px;">#</th>
+                                        <th>Ad Soyad</th>
+                                        <th>Sicil</th>
+                                        <th style="width:110px;text-align:center;">Adet</th>
+                                        <th style="width:80px;text-align:center;">Kaydet</th>
+                                        <th style="width:80px;text-align:center;">Geçmiş</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="eldivenTableBody">
+                                    <tr><td colspan="6" style="text-align:center;padding:30px;color:rgba(255,255,255,0.4);">Yıl, ay ve renk seçip "Listele" butonuna basın</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div><!-- /ps5PanelEldiven -->
+
+            </div>
+
+            <!-- ELDİVEN GEÇMİŞ MODAL -->
+            <div id="eldivenGecmisModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(15,23,42,0.6);align-items:center;justify-content:center;">
+                <div style="background:#fff;border-radius:14px;padding:0;width:560px;max-width:94vw;max-height:82vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,0.4);overflow:hidden;">
+                    <!-- Modal Header -->
+                    <div style="background:#1C2B6E;padding:18px 22px;display:flex;align-items:center;justify-content:space-between;">
+                        <div>
+                            <div style="font-family:'Inter',sans-serif;font-size:16px;font-weight:800;color:#F0B323;letter-spacing:0.5px;">🧤 Eldiven Dağıtım Geçmişi</div>
+                            <div id="eldivenGecmisAd" style="font-family:'Inter',sans-serif;font-size:13px;font-weight:500;color:rgba(255,255,255,0.7);margin-top:3px;"></div>
+                        </div>
+                        <button onclick="eldivenGecmisKapat()" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;font-size:18px;cursor:pointer;line-height:1;padding:6px 10px;border-radius:8px;">✕</button>
+                    </div>
+                    <!-- Modal Body -->
+                    <div style="overflow-y:auto;flex:1;padding:18px 22px;">
+                        <div id="eldivenGecmisIcerik"></div>
+                    </div>
+                </div>
             </div>
 
             <!-- PERSONEL SEÇ MODAL -->
@@ -7709,6 +7831,273 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     // ── END HATA RAPORLARI ────────────────────────────────────
+
+    // ══════════════════════════════════════════════════════════
+    // PERSONEL SEKME 5 — TAB SİSTEMİ
+    // ══════════════════════════════════════════════════════════
+    window.ps5TabAc = function(tab) {
+        const panelPersonel = document.getElementById('ps5PanelPersonel');
+        const panelEldiven  = document.getElementById('ps5PanelEldiven');
+        const btnPersonel   = document.getElementById('ps5TabPersonel');
+        const btnEldiven    = document.getElementById('ps5TabEldiven');
+        if (tab === 'personel') {
+            panelPersonel.style.display = 'block';
+            panelEldiven.style.display  = 'none';
+            btnPersonel.style.background = '#F0B323';
+            btnPersonel.style.color      = '#1C2B6E';
+            btnEldiven.style.background  = 'rgba(255,255,255,0.07)';
+            btnEldiven.style.color       = 'rgba(255,255,255,0.6)';
+        } else {
+            panelPersonel.style.display = 'none';
+            panelEldiven.style.display  = 'block';
+            btnPersonel.style.background = 'rgba(255,255,255,0.07)';
+            btnPersonel.style.color      = 'rgba(255,255,255,0.6)';
+            btnEldiven.style.background  = '#F0B323';
+            btnEldiven.style.color       = '#1C2B6E';
+            eldivenYilDoldur();
+        }
+    };
+
+    // ── Yıl select'ini doldur (2023'ten bu yıla kadar) ──
+    window.eldivenYilDoldur = function() {
+        const sel = document.getElementById('eldivenYil');
+        if (!sel || sel.options.length > 1) return; // zaten doldurulmuş
+        const buYil = new Date().getFullYear();
+        sel.innerHTML = '';
+        for (let y = buYil; y >= 2023; y--) {
+            const opt = document.createElement('option');
+            opt.value = y;
+            opt.textContent = y;
+            sel.appendChild(opt);
+        }
+        // Güncel ayı da seç
+        const buAy = new Date().getMonth() + 1;
+        const ayEl = document.getElementById('eldivenAy');
+        if (ayEl) ayEl.value = buAy;
+    };
+
+    window.eldivenAyListesiGuncelle = function() { /* yıl değişince ay ayarlanabilir */ };
+
+    // ── Personel listesini yükle ve tabloya bas ──
+    window.eldivenListeYukle = async function() {
+        const yil   = document.getElementById('eldivenYil')?.value;
+        const ay    = document.getElementById('eldivenAy')?.value;
+        const renk  = document.getElementById('eldivenRenk')?.value;
+        const tbody = document.getElementById('eldivenTableBody');
+        const label = document.getElementById('eldivenDonemLabel');
+
+        if (!yil || !ay || !renk) { showToast('⚠️ Yıl, ay ve renk seçin', 'warn'); return; }
+
+        const AYLAR = ['','Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+        if (label) label.textContent = `— ${yil} / ${AYLAR[parseInt(ay)]} / ${renk}`;
+
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:rgba(255,255,255,0.4);">⏳ Yükleniyor...</td></tr>';
+
+        try {
+            const { collection, getDocs, query, where, db } = window._fb;
+
+            // Bu dönem + renk için mevcut kayıtları çek
+            const q = query(
+                collection(db, 'eldiven_dagitim'),
+                where('yil',  '==', parseInt(yil)),
+                where('ay',   '==', parseInt(ay)),
+                where('renk', '==', renk)
+            );
+            const snap = await getDocs(q);
+            const mevcutMap = {};
+            snap.docs.forEach(d => {
+                const data = d.data();
+                mevcutMap[data.sicil] = data.adet;
+            });
+
+            // Personel listesini A'dan Z'ye sırala
+            const liste = (window.personelListesi || []).slice().sort((a, b) => {
+                return (a.ad || '').localeCompare(b.ad || '', 'tr');
+            });
+
+            if (!liste.length) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:rgba(255,255,255,0.4);">Personel bulunamadı</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = '';
+            liste.forEach((p, i) => {
+                const mevcutAdet = mevcutMap[p.sicil] ?? '';
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="text-align:center;color:rgba(255,255,255,0.5);">${i + 1}</td>
+                    <td style="font-weight:600;color:#fff;">${p.ad || ''}</td>
+                    <td style="color:rgba(255,255,255,0.6);">${p.sicil || ''}</td>
+                    <td style="text-align:center;">
+                        <input type="number" min="0" max="999"
+                            id="eldivenAdet_${p.sicil}"
+                            value="${mevcutAdet}"
+                            style="width:80px;padding:5px 8px;border-radius:6px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.1);color:#fff;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;text-align:center;outline:none;"
+                            onfocus="this.style.borderColor='#F0B323'"
+                            onblur="this.style.borderColor='rgba(255,255,255,0.2)'">
+                    </td>
+                    <td style="text-align:center;">
+                        <button onclick="eldivenTekKaydet('${p.sicil}','${(p.ad||'').replace(/'/g,"\\'")}','${yil}','${ay}','${renk}')"
+                            style="padding:5px 12px;border-radius:6px;border:none;background:#F0B323;color:#1C2B6E;font-family:'Inter',sans-serif;font-size:11px;font-weight:800;cursor:pointer;">
+                            💾
+                        </button>
+                    </td>
+                    <td style="text-align:center;">
+                        <button onclick="eldivenGecmisAc('${p.sicil}','${(p.ad||'').replace(/'/g,"\\'")}')"
+                            style="padding:5px 12px;border-radius:6px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.7);font-family:'Inter',sans-serif;font-size:11px;font-weight:700;cursor:pointer;">
+                            📋
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+        } catch(e) {
+            console.error('Eldiven yükleme hatası:', e);
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:#ef4444;">Hata oluştu</td></tr>';
+        }
+    };
+
+    // ── Tek personel kaydet ──
+    window.eldivenTekKaydet = async function(sicil, ad, yil, ay, renk) {
+        const adetEl = document.getElementById(`eldivenAdet_${sicil}`);
+        if (!adetEl) return;
+        const adet = parseInt(adetEl.value);
+        if (isNaN(adet) || adet < 0) { showToast('⚠️ Geçerli bir adet girin', 'warn'); return; }
+
+        try {
+            const { doc, setDoc, db } = window._fb;
+            const docId = `${sicil}_${yil}_${String(ay).padStart(2,'0')}_${renk}`;
+            await setDoc(doc(db, 'eldiven_dagitim', docId), {
+                sicil, ad, yil: parseInt(yil), ay: parseInt(ay), renk, adet,
+                guncelleme: new Date().toISOString()
+            });
+            showToast(`✅ ${ad} — ${adet} adet kaydedildi`, 'success');
+        } catch(e) {
+            console.error('Eldiven kayıt hatası:', e);
+            showToast('⚠️ Kayıt başarısız', 'warn');
+        }
+    };
+
+    // ── Tüm personeli kaydet ──
+    window.eldivenTumunuKaydet = async function() {
+        const yil  = document.getElementById('eldivenYil')?.value;
+        const ay   = document.getElementById('eldivenAy')?.value;
+        const renk = document.getElementById('eldivenRenk')?.value;
+        if (!yil || !ay || !renk) { showToast('⚠️ Önce "Listele" yapın', 'warn'); return; }
+
+        const liste = (window.personelListesi || []);
+        if (!liste.length) { showToast('⚠️ Personel listesi boş', 'warn'); return; }
+
+        let kaydedilen = 0;
+        try {
+            const { doc, setDoc, db } = window._fb;
+            for (const p of liste) {
+                const adetEl = document.getElementById(`eldivenAdet_${p.sicil}`);
+                if (!adetEl) continue;
+                const adet = parseInt(adetEl.value);
+                if (isNaN(adet) || adet < 0) continue;
+                const docId = `${p.sicil}_${yil}_${String(ay).padStart(2,'0')}_${renk}`;
+                await setDoc(doc(db, 'eldiven_dagitim', docId), {
+                    sicil: p.sicil, ad: p.ad, yil: parseInt(yil), ay: parseInt(ay),
+                    renk, adet, guncelleme: new Date().toISOString()
+                });
+                kaydedilen++;
+            }
+            showToast(`✅ ${kaydedilen} kayıt başarıyla kaydedildi`, 'success');
+        } catch(e) {
+            console.error('Toplu kayıt hatası:', e);
+            showToast('⚠️ Bazı kayıtlar başarısız oldu', 'warn');
+        }
+    };
+
+    // ── Geçmiş modal aç ──
+    window.eldivenGecmisAc = async function(sicil, ad) {
+        const modal   = document.getElementById('eldivenGecmisModal');
+        const adEl    = document.getElementById('eldivenGecmisAd');
+        const icerik  = document.getElementById('eldivenGecmisIcerik');
+
+        modal.style.display  = 'flex';
+        if (adEl) adEl.textContent = ad + ' — ' + sicil;
+        icerik.innerHTML = '<div style="text-align:center;padding:30px;color:#9CA3AF;">⏳ Yükleniyor...</div>';
+
+        try {
+            const { collection, getDocs, query, where, orderBy, db } = window._fb;
+            const q = query(
+                collection(db, 'eldiven_dagitim'),
+                where('sicil', '==', sicil),
+                orderBy('yil', 'desc'),
+                orderBy('ay',  'desc')
+            );
+            const snap = await getDocs(q);
+            const kayitlar = snap.docs.map(d => d.data());
+
+            if (!kayitlar.length) {
+                icerik.innerHTML = '<div style="text-align:center;padding:30px;color:#9CA3AF;font-family:Inter,sans-serif;">Bu personele ait eldiven kaydı bulunamadı.</div>';
+                return;
+            }
+
+            // Yıllara göre grupla
+            const yilMap = {};
+            kayitlar.forEach(k => {
+                if (!yilMap[k.yil]) yilMap[k.yil] = [];
+                yilMap[k.yil].push(k);
+            });
+
+            const AYLAR = ['','Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+            const RENK_EMOJI = { 'Siyah':'⬛','Yeşil':'🟩','Mavi':'🟦','Gri':'⬜' };
+
+            let html = '';
+            Object.keys(yilMap).sort((a,b)=>b-a).forEach(yil => {
+                html += `
+                <div style="margin-bottom:18px;">
+                    <div style="font-family:'Inter',sans-serif;font-size:14px;font-weight:800;color:#1C2B6E;
+                        background:#F0B323;padding:7px 14px;border-radius:8px;margin-bottom:10px;letter-spacing:0.5px;">
+                        📅 ${yil} Yılı
+                    </div>
+                    <table style="width:100%;border-collapse:collapse;font-family:'Inter',sans-serif;font-size:13px;">
+                        <thead>
+                            <tr style="background:#f3f4f6;">
+                                <th style="padding:8px 12px;text-align:left;font-weight:700;color:#374151;border-bottom:2px solid #E5E7EB;">Ay</th>
+                                <th style="padding:8px 12px;text-align:left;font-weight:700;color:#374151;border-bottom:2px solid #E5E7EB;">Renk</th>
+                                <th style="padding:8px 12px;text-align:center;font-weight:700;color:#374151;border-bottom:2px solid #E5E7EB;">Adet</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+
+                yilMap[yil].sort((a,b) => b.ay - a.ay).forEach((k, idx) => {
+                    const bg = idx % 2 === 0 ? '#fff' : '#f9fafb';
+                    html += `
+                            <tr style="background:${bg};">
+                                <td style="padding:8px 12px;color:#0F172A;font-weight:600;border-bottom:1px solid #F3F4F6;">${AYLAR[k.ay] || k.ay}</td>
+                                <td style="padding:8px 12px;color:#374151;border-bottom:1px solid #F3F4F6;">${RENK_EMOJI[k.renk] || ''} ${k.renk}</td>
+                                <td style="padding:8px 12px;text-align:center;font-weight:800;color:#1C2B6E;font-size:15px;border-bottom:1px solid #F3F4F6;">${k.adet}</td>
+                            </tr>`;
+                });
+
+                html += `</tbody></table></div>`;
+            });
+
+            icerik.innerHTML = html;
+
+        } catch(e) {
+            console.error('Geçmiş yükleme hatası:', e);
+            icerik.innerHTML = '<div style="text-align:center;padding:30px;color:#ef4444;font-family:Inter,sans-serif;">Veriler yüklenirken hata oluştu.</div>';
+        }
+    };
+
+    window.eldivenGecmisKapat = function() {
+        const modal = document.getElementById('eldivenGecmisModal');
+        if (modal) modal.style.display = 'none';
+    };
+
+    // Modal dışına tıklayınca kapat
+    document.addEventListener('click', function(e) {
+        const modal = document.getElementById('eldivenGecmisModal');
+        if (modal && e.target === modal) eldivenGecmisKapat();
+    });
+
+    // ── END ELDİVEN DAĞITIM ──────────────────────────────────
 
 </script>
 
