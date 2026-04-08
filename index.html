@@ -2072,19 +2072,24 @@
                 <!-- ── PERSONEL SEKME BAŞLIKLARI ── -->
                 <div style="display:flex;gap:0;margin-bottom:18px;border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,0.15);">
                     <button id="ps5TabPersonel" onclick="ps5TabAc('personel')"
-                        style="flex:1;padding:11px 16px;border:none;background:#F0B323;color:#1C2B6E;font-family:'Inter',sans-serif;font-size:13px;font-weight:800;cursor:pointer;letter-spacing:0.5px;transition:all 0.15s;">
-                        👤 Personel Ekle / Düzenle
+                        style="flex:1;padding:9px 12px;border:none;background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.6);font-family:'Inter',sans-serif;font-size:12px;font-weight:800;cursor:pointer;letter-spacing:0.5px;transition:all 0.15s;">
+                        👤 Personel
                     </button>
                     <button id="ps5TabEldiven" onclick="ps5TabAc('eldiven')"
-                        style="flex:1;padding:11px 16px;border:none;background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.6);font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:0.5px;transition:all 0.15s;border-left:1px solid rgba(255,255,255,0.15);">
-                        🧤 Eldiven Dağıtım
+                        style="flex:1;padding:9px 12px;border:none;background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.6);font-family:'Inter',sans-serif;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:0.5px;transition:all 0.15s;border-left:1px solid rgba(255,255,255,0.15);">
+                        🧤 Eldiven
                     </button>
+                </div>
+                <!-- Karşılama mesajı — sekme seçilmeden gösterilir -->
+                <div id="ps5Karsilama" style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;color:rgba(255,255,255,0.35);font-family:'Inter',sans-serif;text-align:center;gap:14px;">
+                    <div style="font-size:40px;">📂</div>
+                    <div style="font-size:15px;font-weight:600;letter-spacing:0.5px;">İncelemek istediğiniz sekmeye tıklayın</div>
                 </div>
 
                 <!-- ══════════════════════════════════
                      PANEL 1: PERSONEL EKLE / DÜZENLE
                 ══════════════════════════════════ -->
-                <div id="ps5PanelPersonel">
+                <div id="ps5PanelPersonel" style="display:none;">
 
                 <!-- PERSONEL İSTATİSTİK BARI -->
                 <div id="personelStatBar" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:10px;padding:10px 16px;margin-bottom:14px;font-family:'Inter',sans-serif;">
@@ -2203,35 +2208,26 @@
                 ══════════════════════════════════ -->
                 <div id="ps5PanelEldiven" style="display:none;">
 
-                    <!-- BAŞLIK + YIL + AY SEÇİCİ -->
-                    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px;">
+                    <!-- BAŞLIK + TARİH + BUTONLAR -->
+                    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:16px;">
                         <div>
                             <div id="eldivenTabloBaslik" style="font-family:'Inter',sans-serif;font-size:18px;font-weight:800;color:#F0B323;letter-spacing:0.5px;">🧤 Eldiven Dağıtım Tablosu</div>
                             <div style="font-family:'Inter',sans-serif;font-size:12px;color:rgba(255,255,255,0.5);margin-top:3px;">Renk seçin ve adet girin — otomatik kaydedilir</div>
                         </div>
-                        <div style="display:flex;align-items:center;gap:10px;">
-                            <select id="eldivenYil" onchange="eldivenYilAyDegisti()"
-                                style="padding:8px 14px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.1);color:#fff;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;outline:none;">
-                            </select>
-                            <select id="eldivenAySec" onchange="eldivenYilAyDegisti()"
-                                style="padding:8px 14px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.1);color:#fff;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;outline:none;">
-                                <option value="1">Ocak</option>
-                                <option value="2">Şubat</option>
-                                <option value="3">Mart</option>
-                                <option value="4">Nisan</option>
-                                <option value="5">Mayıs</option>
-                                <option value="6">Haziran</option>
-                                <option value="7">Temmuz</option>
-                                <option value="8">Ağustos</option>
-                                <option value="9">Eylül</option>
-                                <option value="10">Ekim</option>
-                                <option value="11">Kasım</option>
-                                <option value="12">Aralık</option>
-                            </select>
+                        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                            <input type="date" id="eldivenTarih" onchange="eldivenTarihDegisti()"
+                                style="padding:7px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.1);color:#fff;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;outline:none;color-scheme:dark;">
+                            <button onclick="eldivenPersonelAra()" style="padding:7px 14px;border-radius:8px;border:none;background:rgba(255,255,255,0.12);color:#fff;font-family:'Inter',sans-serif;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;">🔍 Personel Ara</button>
+                            <button onclick="eldivenPdfIndir(false)" style="padding:7px 14px;border-radius:8px;border:none;background:#F0B323;color:#1C2B6E;font-family:'Inter',sans-serif;font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap;">📄 PDF İndir</button>
+                            <button onclick="eldivenPdfIndir(true)" style="padding:7px 14px;border-radius:8px;border:none;background:rgba(255,255,255,0.12);color:#fff;font-family:'Inter',sans-serif;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;">📋 Boş PDF</button>
                         </div>
                     </div>
-
-                    <!-- PERSONEL TABLOSU -->
+                    <!-- PERSONEL ARA INPUT (açılır) -->
+                    <div id="eldivenAraBox" style="display:none;margin-bottom:10px;">
+                        <input type="text" id="eldivenAraInput" placeholder="🔍  Ad veya sicil ara..."
+                            oninput="eldivenListeFiltre()"
+                            style="width:100%;box-sizing:border-box;padding:8px 14px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.08);color:#fff;font-family:'Inter',sans-serif;font-size:13px;outline:none;">
+                    </div>
                     <div class="sef-bolum" style="padding:0;overflow:hidden;">
                         <div style="overflow-x:auto;max-height:calc(100vh - 300px);overflow-y:auto;">
                             <table id="eldivenExcelTablo" style="width:100%;border-collapse:collapse;font-family:'Inter',sans-serif;font-size:13px;">
@@ -7801,6 +7797,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const panelEldiven  = document.getElementById('ps5PanelEldiven');
         const btnPersonel   = document.getElementById('ps5TabPersonel');
         const btnEldiven    = document.getElementById('ps5TabEldiven');
+        const karsilama     = document.getElementById('ps5Karsilama');
+        if (karsilama) karsilama.style.display = 'none';
         if (tab === 'personel') {
             panelPersonel.style.display = 'block';
             panelEldiven.style.display  = 'none';
@@ -7835,34 +7833,43 @@ document.addEventListener('DOMContentLoaded', function() {
     let _eldivenKayitSuruyor = new Set();
 
     window.eldivenIlkYukle = function() {
-        const selYil = document.getElementById('eldivenYil');
-        if (!selYil) return;
-        if (selYil.options.length === 0) {
-            const buYil = new Date().getFullYear();
-            for (let y = buYil; y >= 2023; y--) {
-                const opt = document.createElement('option');
-                opt.value = y; opt.textContent = y;
-                selYil.appendChild(opt);
-            }
+        const tarihEl = document.getElementById('eldivenTarih');
+        if (!tarihEl) return;
+        if (!tarihEl.value) {
+            const now = new Date();
+            const yy = now.getFullYear();
+            const mm = String(now.getMonth()+1).padStart(2,'0');
+            const dd = String(now.getDate()).padStart(2,'0');
+            tarihEl.value = `${yy}-${mm}-${dd}`;
         }
-        // Mevcut ayı otomatik seç
-        const selAy = document.getElementById('eldivenAySec');
-        if (selAy) selAy.value = String(new Date().getMonth() + 1);
-
         eldivenTabloYukle();
     };
 
-    window.eldivenYilAyDegisti = function() {
+    window.eldivenTarihDegisti = function() {
         eldivenTabloYukle();
     };
+
+    // Eski uyumluluk
+    window.eldivenYilAyDegisti = function() { eldivenTabloYukle(); };
 
     window.eldivenTabloYukle = async function() {
-        const yil = parseInt(document.getElementById('eldivenYil')?.value);
-        const ay  = parseInt(document.getElementById('eldivenAySec')?.value);
+        const tarihEl = document.getElementById('eldivenTarih');
+        if (!tarihEl || !tarihEl.value) return;
+        const parcalar = tarihEl.value.split('-');
+        const yil = parseInt(parcalar[0]);
+        const ay  = parseInt(parcalar[1]);
+        const gun = parseInt(parcalar[2]);
         if (!yil || !ay) return;
 
+        // Aktif tarih bilgisini global olarak sakla (PDF ve arama için)
+        window._eldivenAktifYil = yil;
+        window._eldivenAktifAy  = ay;
+        window._eldivenAktifGun = gun;
+
+        // Başlık güncelle — tarih formatı: "15 Mart 2025"
+        const tarihStr = `${gun} ${AYLAR[ay]} ${yil}`;
         const panelBaslik = document.getElementById('eldivenTabloBaslik');
-        if (panelBaslik) panelBaslik.textContent = `🧤 ${yil} — ${AYLAR[ay]} Eldiven Dağıtım`;
+        if (panelBaslik) panelBaslik.textContent = `🧤 ${tarihStr} — Eldiven Dağıtım`;
 
         const tbody = document.getElementById('eldivenExcelBody');
         tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:30px;color:rgba(255,255,255,0.4);">⏳ Yükleniyor...</td></tr>`;
@@ -7870,10 +7877,11 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             const { collection, getDocs, query, where, db } = window._fb;
 
-            // O yıl+ay'a ait kayıtları çek
+            // O tarih'e ait kayıtları çek
             const q = query(collection(db, 'eldiven_dagitim'),
                 where('yil', '==', yil),
-                where('ay', '==', ay)
+                where('ay', '==', ay),
+                where('gun', '==', gun)
             );
             const snap = await getDocs(q);
             _eldivenKayitMap = {};
@@ -7894,6 +7902,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             tbody.innerHTML = '';
+            window._eldivenTamListe = liste; // arama filtresi için sakla
             liste.forEach((p, i) => {
                 const key = `${p.sicil}_${yil}_${ay}`;
                 const kayit = _eldivenKayitMap[key];
@@ -7901,6 +7910,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 const mevcutAdet = kayit ? kayit.adet : '';
 
                 const tr = document.createElement('tr');
+                tr.dataset.sicil = (p.sicil || '').toUpperCase();
+                tr.dataset.ad    = (p.ad    || '').toUpperCase();
                 tr.style.cssText = `border-bottom:1px solid rgba(255,255,255,0.07);transition:background 0.12s;`;
                 tr.onmouseover = () => tr.style.background = 'rgba(255,255,255,0.03)';
                 tr.onmouseout  = () => tr.style.background = '';
@@ -7928,7 +7939,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <td style="padding:6px 10px;border-right:1px solid rgba(255,255,255,0.06);">
                         <select id="${renkId}"
                             style="width:100%;padding:6px 8px;border-radius:8px;border:1.5px solid ${mevcutRenk ? ELDIVEN_RENK_CLR[mevcutRenk]+'60' : 'rgba(255,255,255,0.15)'};background:rgba(255,255,255,0.07);color:#fff;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer;outline:none;appearance:none;-webkit-appearance:none;text-align:center;"
-                            onchange="eldivenSatirKaydet('${p.sicil}','${(p.ad||'').replace(/'/g,"\\'")}',${yil},${ay})">
+                            onchange="eldivenSatirKaydet('${p.sicil}','${(p.ad||'').replace(/'/g,"\\'")}')">
                             ${renkOpsiyon}
                         </select>
                     </td>
@@ -7936,7 +7947,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <input id="${adetId}" type="number" min="0" max="999" value="${mevcutAdet}"
                             placeholder="0"
                             style="width:100%;padding:6px 8px;border-radius:8px;border:1.5px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.07);color:#fff;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;text-align:center;outline:none;box-sizing:border-box;"
-                            onblur="eldivenSatirKaydet('${p.sicil}','${(p.ad||'').replace(/'/g,"\\'")}',${yil},${ay})"
+                            onblur="eldivenSatirKaydet('${p.sicil}','${(p.ad||'').replace(/'/g,"\\'")}'"+")"
                             onkeydown="if(event.key==='Enter'){this.blur();}">
                     </td>
                     <td style="padding:6px 10px;text-align:center;">
@@ -7954,7 +7965,10 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     // ── OTOMATİK KAYDET (renk değişince veya adet blur'da) ──
-    window.eldivenSatirKaydet = async function(sicil, ad, yil, ay) {
+    window.eldivenSatirKaydet = async function(sicil, ad) {
+        const yil = window._eldivenAktifYil;
+        const ay  = window._eldivenAktifAy;
+        if (!yil || !ay) return;
         const lockKey = `${sicil}_${yil}_${ay}`;
         if (_eldivenKayitSuruyor.has(lockKey)) return;
 
@@ -7990,12 +8004,13 @@ document.addEventListener('DOMContentLoaded', function() {
         if (durumEl) { durumEl.textContent = '⏳'; durumEl.title = 'Kaydediliyor...'; }
 
         const renkTam = ELDIVEN_RENK_AD[renkKod];
-        const docId   = `${sicil}_${yil}_${String(ay).padStart(2,'0')}`;
+        const gun2    = window._eldivenAktifGun || 1;
+        const docId   = `${sicil}_${yil}_${String(ay).padStart(2,'0')}_${String(gun2).padStart(2,'0')}`;
 
         try {
             const { doc, setDoc, db } = window._fb;
             await setDoc(doc(db, 'eldiven_dagitim', docId), {
-                sicil, ad, yil, ay, renk: renkTam, adet,
+                sicil, ad, yil, ay, gun: gun2, renk: renkTam, adet,
                 guncelleme: new Date().toISOString()
             });
 
@@ -8021,6 +8036,141 @@ document.addEventListener('DOMContentLoaded', function() {
         } finally {
             _eldivenKayitSuruyor.delete(lockKey);
         }
+    };
+
+    // ── PERSONEL ARA (toggle) ──────────────────────────────────
+    window.eldivenPersonelAra = function() {
+        const box = document.getElementById('eldivenAraBox');
+        if (!box) return;
+        const acik = box.style.display !== 'none';
+        box.style.display = acik ? 'none' : 'block';
+        if (!acik) {
+            const inp = document.getElementById('eldivenAraInput');
+            if (inp) { inp.value = ''; inp.focus(); }
+            eldivenListeFiltre();
+        }
+    };
+
+    window.eldivenListeFiltre = function() {
+        const q = (document.getElementById('eldivenAraInput')?.value || '').toUpperCase().trim();
+        const tbody = document.getElementById('eldivenExcelBody');
+        if (!tbody) return;
+        const satirlar = tbody.querySelectorAll('tr[data-sicil]');
+        satirlar.forEach(tr => {
+            const ad    = (tr.dataset.ad    || '').toUpperCase();
+            const sicil = (tr.dataset.sicil || '').toUpperCase();
+            tr.style.display = (!q || ad.includes(q) || sicil.includes(q)) ? '' : 'none';
+        });
+    };
+
+    // ── PDF İNDİR ────────────────────────────────────────────────
+    // trFix: Türkçe karakter dönüşümü (latin-1 uyumlu)
+    function trFix(s) {
+        if (!s) return '';
+        return String(s)
+            .replace(/Ğ/g,'G').replace(/ğ/g,'g')
+            .replace(/Ü/g,'U').replace(/ü/g,'u')
+            .replace(/Ş/g,'S').replace(/ş/g,'s')
+            .replace(/İ/g,'I').replace(/ı/g,'i')
+            .replace(/Ö/g,'O').replace(/ö/g,'o')
+            .replace(/Ç/g,'C').replace(/ç/g,'c');
+    }
+
+    window.eldivenPdfIndir = function(bos) {
+        const { jsPDF } = window.jspdf;
+        if (!jsPDF) { alert('jsPDF yüklenemedi'); return; }
+
+        const yil = window._eldivenAktifYil;
+        const ay  = window._eldivenAktifAy;
+        const gun = window._eldivenAktifGun;
+        if (!yil || !ay || !gun) { showToast('Önce tarih seçin', 'warn'); return; }
+
+        const tarihStr = trFix(`${gun} ${AYLAR[ay]} ${yil}`);
+        const baslik   = trFix(`ELDIVEN DAGITIM LISTESI — ${tarihStr}`);
+
+        const liste = (window._eldivenTamListe || []).slice();
+        if (!liste.length) { showToast('Personel listesi boş', 'warn'); return; }
+
+        const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+        // Başlık
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(13);
+        doc.text(baslik, 105, 14, { align: 'center' });
+
+        doc.setFontSize(9);
+        doc.setFont('helvetica', 'normal');
+        doc.text(trFix(`Tarih: ${gun} ${AYLAR[ay]} ${yil}   |   Toplam: ${liste.length} kisi`), 105, 20, { align: 'center' });
+
+        // Tablo
+        const satirlar = liste.map((p, i) => {
+            if (bos) {
+                return [
+                    String(i + 1),
+                    trFix(p.ad || ''),
+                    p.sicil || '',
+                    '',   // eldiven rengi boş
+                    ''    // adet boş
+                ];
+            } else {
+                const key   = `${p.sicil}_${yil}_${ay}`;
+                const kayit = _eldivenKayitMap[key] || {};
+                return [
+                    String(i + 1),
+                    trFix(p.ad || ''),
+                    p.sicil || '',
+                    trFix(kayit.renk || ''),
+                    kayit.adet !== undefined ? String(kayit.adet) : ''
+                ];
+            }
+        });
+
+        doc.autoTable({
+            startY: 25,
+            head: [['S.No', 'Ad Soyad', 'Sicil', 'Eldiven Rengi', 'Adet']],
+            body: satirlar,
+            styles: {
+                font: 'helvetica',
+                fontSize: 8,
+                cellPadding: 2.5,
+                overflow: 'linebreak',
+                lineColor: [200, 200, 200],
+                lineWidth: 0.2
+            },
+            headStyles: {
+                fillColor: [28, 43, 110],
+                textColor: [240, 179, 35],
+                fontStyle: 'bold',
+                fontSize: 8.5,
+                halign: 'center'
+            },
+            columnStyles: {
+                0: { halign: 'center', cellWidth: 12 },
+                1: { halign: 'left',   cellWidth: 70 },
+                2: { halign: 'center', cellWidth: 25 },
+                3: { halign: 'center', cellWidth: 35 },
+                4: { halign: 'center', cellWidth: 18 }
+            },
+            alternateRowStyles: { fillColor: [245, 247, 252] },
+            margin: { top: 25, left: 14, right: 14 },
+            pageBreak: 'avoid',
+            // Tek sayfaya sığdır
+            didDrawPage: function(data) {
+                // Alt imza satırı — yalnızca son sayfada
+                const pageCount = doc.internal.getNumberOfPages();
+                if (data.pageNumber === pageCount) {
+                    const y = data.cursor.y + 12;
+                    doc.setFontSize(8);
+                    doc.text('Hazirlayan: ___________________', 20, y);
+                    doc.text('Onaylayan: ___________________', 120, y);
+                }
+            }
+        });
+
+        const dosyaAdi = bos
+            ? trFix(`bos_eldiven_${gun}_${AYLAR[ay]}_${yil}.pdf`)
+            : trFix(`eldiven_dagitim_${gun}_${AYLAR[ay]}_${yil}.pdf`);
+        doc.save(dosyaAdi);
     };
 
     // ── END ELDİVEN DAĞITIM ──────────────────────────────────
