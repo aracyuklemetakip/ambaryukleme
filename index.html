@@ -8006,7 +8006,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 renkBtn.style.borderColor = val ? (RENK_CLR_REF[val] + '80') : 'rgba(255,255,255,0.18)';
                                 renkBtn.style.background  = val ? (RENK_BG_REF[val] || 'rgba(255,255,255,0.06)') : 'rgba(255,255,255,0.06)';
                                 renkDrop.style.display = 'none';
-                                eldivenSatirKaydet(sicilRef, adRef);
+                                eldivenSatirKaydet(sicilRef, adRef, 'renk');
                             });
                         });
                     }
@@ -8018,12 +8018,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     if (adetElRef) {
                         adetElRef.addEventListener('blur', function() {
-                            eldivenSatirKaydet(sicilRef, adRef);
+                            eldivenSatirKaydet(sicilRef, adRef, 'adet');
                         });
                         adetElRef.addEventListener('keydown', function(e) {
                             if (e.key === 'Enter') {
                                 e.preventDefault();
-                                eldivenSatirKaydet(sicilRef, adRef);
+                                eldivenSatirKaydet(sicilRef, adRef, 'adet');
                             }
                         });
                     }
@@ -8039,7 +8039,9 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     // ── OTOMATİK KAYDET (renk değişince veya adet blur/enter'da) ──
-    window.eldivenSatirKaydet = async function(sicil, ad) {
+    // tetikleyen: 'renk' → sadece kaydet, ses çalma
+    //             'adet' → kaydet + ses çal (yeni kayıt veya güncelleme)
+    window.eldivenSatirKaydet = async function(sicil, ad, tetikleyen) {
         const yil = window._eldivenAktifYil;
         const ay  = window._eldivenAktifAy;
         if (!yil || !ay) return;
@@ -8057,13 +8059,21 @@ document.addEventListener('DOMContentLoaded', function() {
         // İkisi de boşsa → kaydetme
         if (!renkKod && !adetVal) return;
 
-        // Renk seçilmemişse uyar
+        // Renk tetiklediyse: sadece renk seçilmiş, adet boşsa → sessizce bekle (kaydetme)
+        if (tetikleyen === 'renk') {
+            if (!adetVal) return; // Adet girilmemiş, henüz kaydetme
+        }
+
+        // Renk seçilmemişse uyar (adet tetikledi ama renk boş)
         if (!renkKod) {
             showToast('⚠️ Önce eldiven rengini seçin', 'warn');
             const renkBtn = document.getElementById(`eldRenk_${sicil}_btn`);
             if (renkBtn) { renkBtn.style.borderColor = '#ef4444'; setTimeout(() => renkBtn.style.borderColor = 'rgba(255,255,255,0.18)', 2000); }
             return;
         }
+
+        // Adet tetiklemesinde adet boşsa → kaydetme
+        if (tetikleyen === 'adet' && !adetVal) return;
 
         // Adet girilmemişse 0 kabul et (ama gösterme)
         const adetSon = adetVal === '' ? '0' : adetVal;
@@ -8108,11 +8118,13 @@ document.addEventListener('DOMContentLoaded', function() {
             const tr = renkEl.closest('tr');
             if (tr) tr.style.background = ELDIVEN_RENK_BG[renkKod] || 'rgba(240,179,35,0.05)';
 
-            // Ses çal
-            if (isGuncelleme) {
-                playSoundGuncelle();
-            } else {
-                playSoundKaydet();
+            // Ses çal — SADECE adet Enter/blur ile tetiklendiyse
+            if (tetikleyen === 'adet') {
+                if (isGuncelleme) {
+                    playSoundGuncelle();
+                } else {
+                    playSoundKaydet();
+                }
             }
 
             showToast(`✅ ${ad} — ${AYLAR[ay]}: ${adet} adet ${renkTam} kaydedildi`, 'success');
