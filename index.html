@@ -2203,22 +2203,26 @@
                 ══════════════════════════════════ -->
                 <div id="ps5PanelEldiven" style="display:none;">
 
-                    <!-- BAŞLIK + YIL SEÇİMİ -->
+                    <!-- BAŞLIK + YIL + EKLE -->
                     <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px;">
                         <div>
                             <div id="eldivenTabloBaslik" style="font-family:'Inter',sans-serif;font-size:18px;font-weight:800;color:#F0B323;letter-spacing:0.5px;">🧤 Eldiven Dağıtım Tablosu</div>
-                            <div style="font-family:'Inter',sans-serif;font-size:12px;color:rgba(255,255,255,0.5);margin-top:3px;">Hücreye tıklayarak adet ve renk girin</div>
+                            <div style="font-family:'Inter',sans-serif;font-size:12px;color:rgba(255,255,255,0.5);margin-top:3px;">Personel listesinden seçerek eldiven girişi yapın</div>
                         </div>
                         <div style="display:flex;align-items:center;gap:10px;">
                             <select id="eldivenYil" onchange="eldivenTabloYukle()"
                                 style="padding:8px 14px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.1);color:#fff;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;outline:none;">
                             </select>
+                            <button onclick="eldivenPersonelListesiAc()"
+                                style="padding:9px 18px;border-radius:8px;border:none;background:#F0B323;color:#1C2B6E;font-family:'Inter',sans-serif;font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap;">
+                                ➕ Eldiven Gir
+                            </button>
                         </div>
                     </div>
 
                     <!-- EXCEL TARZI TABLO -->
                     <div class="sef-bolum" style="padding:0;overflow:hidden;">
-                        <div style="overflow-x:auto;max-height:calc(100vh - 280px);overflow-y:auto;">
+                        <div style="overflow-x:auto;max-height:calc(100vh - 300px);overflow-y:auto;">
                             <table id="eldivenExcelTablo" style="width:100%;border-collapse:collapse;font-family:'Inter',sans-serif;font-size:12px;min-width:900px;">
                                 <thead id="eldivenExcelHead">
                                     <tr>
@@ -2255,6 +2259,53 @@
                     </div>
 
                 </div><!-- /ps5PanelEldiven -->
+
+                <!-- ── ELDİVEN PERSONEL LİSTESİ MODAL ── -->
+                <div id="eldivenPersonelModal" style="display:none;position:fixed;inset:0;z-index:9998;background:rgba(8,12,30,0.85);align-items:center;justify-content:center;backdrop-filter:blur(6px);">
+                    <div style="background:#0F172A;border:1px solid rgba(255,255,255,0.1);border-radius:20px;width:460px;max-width:95vw;max-height:82vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 32px 80px rgba(0,0,0,0.7);animation:popIn 0.2s cubic-bezier(0.22,1,0.36,1);">
+                        <div style="padding:18px 22px 14px;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
+                            <div>
+                                <div style="font-family:'Inter',sans-serif;font-size:10px;font-weight:700;color:rgba(240,179,35,0.6);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;">🧤 Eldiven Dağıtım</div>
+                                <div style="font-family:'Inter',sans-serif;font-size:15px;font-weight:800;color:#fff;">Personel Seç</div>
+                                <div id="eldivenPLYilLabel" style="font-family:'Inter',sans-serif;font-size:11px;color:rgba(255,255,255,0.35);margin-top:3px;"></div>
+                            </div>
+                            <button onclick="eldivenPersonelListesiKapat()"
+                                style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.5);font-size:16px;cursor:pointer;padding:5px 9px;border-radius:8px;"
+                                onmouseover="this.style.background='rgba(255,255,255,0.14)';this.style.color='#fff'"
+                                onmouseout="this.style.background='rgba(255,255,255,0.07)';this.style.color='rgba(255,255,255,0.5)'">✕</button>
+                        </div>
+                        <div style="padding:12px 22px;border-bottom:1px solid rgba(255,255,255,0.06);flex-shrink:0;">
+                            <input type="text" id="eldivenPLAra" placeholder="🔍  İsim ara..."
+                                style="width:100%;padding:9px 14px;border-radius:9px;border:1.5px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.06);color:#fff;font-family:'Inter',sans-serif;font-size:13px;outline:none;box-sizing:border-box;"
+                                onfocus="this.style.borderColor='rgba(240,179,35,0.5)'"
+                                onblur="this.style.borderColor='rgba(255,255,255,0.12)'"
+                                oninput="this.value=window.trUpper(this.value);eldivenPLFiltre(this.value)"
+                                autocomplete="off">
+                        </div>
+                        <div id="eldivenPLListe" style="overflow-y:auto;flex:1;padding:8px 12px;display:flex;flex-direction:column;gap:2px;"></div>
+                    </div>
+                </div>
+
+                <!-- ── ELDİVEN AY SEÇİMİ MODAL ── -->
+                <div id="eldivenAyModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(8,12,30,0.85);align-items:center;justify-content:center;backdrop-filter:blur(6px);">
+                    <div style="background:#0F172A;border:1px solid rgba(255,255,255,0.1);border-radius:20px;width:400px;max-width:95vw;overflow:hidden;box-shadow:0 32px 80px rgba(0,0,0,0.7);animation:popIn 0.2s cubic-bezier(0.22,1,0.36,1);">
+                        <div style="padding:18px 22px 14px;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:space-between;">
+                            <div>
+                                <div style="font-family:'Inter',sans-serif;font-size:10px;font-weight:700;color:rgba(240,179,35,0.6);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;">🧤 Eldiven Dağıtım</div>
+                                <div id="eldivenAyKisi" style="font-family:'Inter',sans-serif;font-size:15px;font-weight:800;color:#fff;"></div>
+                                <div id="eldivenAyYil" style="font-family:'Inter',sans-serif;font-size:11px;color:rgba(255,255,255,0.35);margin-top:3px;"></div>
+                            </div>
+                            <button onclick="eldivenAyModalKapat()"
+                                style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.5);font-size:16px;cursor:pointer;padding:5px 9px;border-radius:8px;"
+                                onmouseover="this.style.background='rgba(255,255,255,0.14)';this.style.color='#fff'"
+                                onmouseout="this.style.background='rgba(255,255,255,0.07)';this.style.color='rgba(255,255,255,0.5)'">✕</button>
+                        </div>
+                        <div style="padding:16px 22px 22px;">
+                            <div style="font-family:'Inter',sans-serif;font-size:10px;font-weight:700;color:rgba(255,255,255,0.35);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px;">Hangi Ay?</div>
+                            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;" id="eldivenAyGrid"></div>
+                        </div>
+                    </div>
+                </div>
 
             </div>
 
@@ -7907,6 +7958,96 @@ document.addEventListener('DOMContentLoaded', function() {
     // ══════════════════════════════════════════════════════════
     // ELDİVEN DAĞITIM — EXCEL TABLO SİSTEMİ
     // ══════════════════════════════════════════════════════════
+
+    // ── PERSONEL LİSTESİ MODAL ──
+    window.eldivenPersonelListesiAc = function() {
+        const yil = parseInt(document.getElementById('eldivenYil')?.value) || new Date().getFullYear();
+        const lbl = document.getElementById('eldivenPLYilLabel');
+        if (lbl) lbl.textContent = `${yil} Yılı`;
+        document.getElementById('eldivenPLAra').value = '';
+        eldivenPLRender('');
+        const modal = document.getElementById('eldivenPersonelModal');
+        modal.style.display = 'flex';
+        setTimeout(() => document.getElementById('eldivenPLAra').focus(), 80);
+    };
+
+    window.eldivenPersonelListesiKapat = function() {
+        document.getElementById('eldivenPersonelModal').style.display = 'none';
+    };
+
+    window.eldivenPLFiltre = function(aramaMetni) {
+        eldivenPLRender(aramaMetni);
+    };
+
+    function eldivenPLRender(ara) {
+        const liste = (window.personelListesi || []).slice().sort((a, b) =>
+            (a.ad || '').localeCompare(b.ad || '', 'tr')
+        );
+        const norm = window.trNorm(ara || '');
+        const filtre = norm ? liste.filter(p => window.trNorm(p.ad || '').includes(norm)) : liste;
+
+        const container = document.getElementById('eldivenPLListe');
+        if (!filtre.length) {
+            container.innerHTML = `<div style="text-align:center;padding:30px;color:rgba(255,255,255,0.3);font-family:'Inter',sans-serif;font-size:13px;">Personel bulunamadı</div>`;
+            return;
+        }
+        container.innerHTML = filtre.map((p, i) => {
+            const sicilHtml = p.sicil ? `<span style="font-size:11px;color:rgba(255,255,255,0.3);font-weight:500;">${p.sicil}</span>` : '';
+            return `<div onclick="eldivenPersonelSec('${p.sicil}','${(p.ad||'').replace(/'/g,"\\'")}');eldivenPersonelListesiKapat();"
+                style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-radius:10px;cursor:pointer;transition:background 0.12s;border:1px solid transparent;"
+                onmouseover="this.style.background='rgba(240,179,35,0.08)';this.style.borderColor='rgba(240,179,35,0.15)'"
+                onmouseout="this.style.background='';this.style.borderColor='transparent'">
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <div style="width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,0.07);display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;font-size:11px;font-weight:800;color:rgba(255,255,255,0.4);">${i+1}</div>
+                    <span style="font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:#fff;">${p.ad || ''}</span>
+                </div>
+                ${sicilHtml}
+            </div>`;
+        }).join('');
+    }
+
+    // ── AY SEÇİMİ MODAL ──
+    window.eldivenPersonelSec = function(sicil, ad) {
+        _eldivenAktif.sicil = sicil;
+        _eldivenAktif.ad = ad;
+        const yil = parseInt(document.getElementById('eldivenYil')?.value) || new Date().getFullYear();
+        _eldivenAktif.yil = yil;
+
+        document.getElementById('eldivenAyKisi').textContent = ad;
+        document.getElementById('eldivenAyYil').textContent = `${yil} Yılı — Ay Seç`;
+
+        const AYLAR_KISA = ['Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'];
+        const AYLAR_TAM  = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+        const grid = document.getElementById('eldivenAyGrid');
+        grid.innerHTML = AYLAR_KISA.map((k, idx) => {
+            const ayNo = idx + 1;
+            const kayit = _eldivenKayitMap[`${sicil}_${ayNo}`];
+            const hasBg = kayit ? 'rgba(240,179,35,0.12)' : 'rgba(255,255,255,0.04)';
+            const hasBorder = kayit ? 'rgba(240,179,35,0.35)' : 'rgba(255,255,255,0.1)';
+            const hasColor = kayit ? '#F0B323' : 'rgba(255,255,255,0.6)';
+            const badge = kayit ? `<div style="font-size:9px;font-weight:800;margin-top:2px;color:${hasColor};opacity:0.8;">${kayit.adet}${kayit.renk?kayit.renk[0]:''}</div>` : '';
+            return `<button onclick="eldivenAyModalKapat();eldivenHucreAc('${sicil}','${ad.replace(/'/g,"\\'")}',${yil},${ayNo})"
+                style="padding:10px 6px;border-radius:10px;border:1.5px solid ${hasBorder};background:${hasBg};font-family:'Inter',sans-serif;font-size:12px;font-weight:700;color:${hasColor};cursor:pointer;transition:all 0.15s;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;"
+                onmouseover="this.style.background='rgba(240,179,35,0.18)';this.style.borderColor='rgba(240,179,35,0.5)';this.style.color='#F0B323'"
+                onmouseout="this.style.background='${hasBg}';this.style.borderColor='${hasBorder}';this.style.color='${hasColor}'">
+                ${k}${badge}
+            </button>`;
+        }).join('');
+
+        document.getElementById('eldivenAyModal').style.display = 'flex';
+    };
+
+    window.eldivenAyModalKapat = function() {
+        document.getElementById('eldivenAyModal').style.display = 'none';
+    };
+
+    // Modal dışına tıklayınca kapat
+    document.getElementById('eldivenPersonelModal').addEventListener('click', function(e) {
+        if (e.target === this) eldivenPersonelListesiKapat();
+    });
+    document.getElementById('eldivenAyModal').addEventListener('click', function(e) {
+        if (e.target === this) eldivenAyModalKapat();
+    });
 
     // Renk kısa kodu → tam ad
     const ELDIVEN_RENK_AD  = { S:'Siyah', Y:'Yeşil', M:'Mavi', G:'Gri' };
