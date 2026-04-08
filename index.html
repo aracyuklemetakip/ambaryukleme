@@ -7923,23 +7923,38 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Satır renk tonu — kayıt varsa hafif highlight
                 if (kayit) tr.style.background = ELDIVEN_RENK_BG[mevcutRenk] || 'rgba(240,179,35,0.05)';
 
+                const renkOptions = [
+                    { val: '', label: '— Renk Seç —', clr: 'rgba(255,255,255,0.4)', bg: 'transparent' },
+                    { val: 'S', label: '⬛ Siyah', clr: '#94a3b8', bg: 'rgba(148,163,184,0.18)' },
+                    { val: 'Y', label: '🟩 Yeşil', clr: '#4ade80', bg: 'rgba(74,222,128,0.18)' },
+                    { val: 'M', label: '🟦 Mavi',  clr: '#60a5fa', bg: 'rgba(96,165,250,0.18)' },
+                    { val: 'G', label: '⬜ Gri',   clr: '#cbd5e1', bg: 'rgba(203,213,225,0.15)' },
+                ];
+                const secilenOpt = renkOptions.find(o => o.val === mevcutRenk) || renkOptions[0];
+                const adetGoster = (mevcutAdet !== '' && mevcutAdet !== undefined && mevcutAdet !== 0) ? mevcutAdet : '';
                 tr.innerHTML = `
                     <td style="padding:8px 10px;text-align:center;color:rgba(255,255,255,0.3);font-size:11px;font-weight:700;border-right:1px solid rgba(255,255,255,0.06);">${i+1}</td>
                     <td style="padding:8px 14px;color:#F0B323;font-weight:700;font-size:13px;border-right:1px solid rgba(255,255,255,0.06);white-space:nowrap;">${p.ad || ''}</td>
                     <td style="padding:8px 10px;text-align:center;color:rgba(255,255,255,0.4);font-size:11px;border-right:1px solid rgba(255,255,255,0.06);">${p.sicil || ''}</td>
-                    <td style="padding:6px 10px;border-right:1px solid rgba(255,255,255,0.06);">
-                        <select id="${renkId}"
-                            style="width:100%;padding:6px 8px;border-radius:8px;border:1.5px solid ${mevcutRenk ? ELDIVEN_RENK_CLR[mevcutRenk]+'60' : 'rgba(255,255,255,0.15)'};background:rgba(255,255,255,0.07);color:#fff;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer;outline:none;appearance:none;-webkit-appearance:none;text-align:center;">
-                            <option value="">— Renk Seç —</option>
-                            <option value="S" ${mevcutRenk==='S'?'selected':''}>⬛ Siyah</option>
-                            <option value="Y" ${mevcutRenk==='Y'?'selected':''}>🟩 Yeşil</option>
-                            <option value="M" ${mevcutRenk==='M'?'selected':''}>🟦 Mavi</option>
-                            <option value="G" ${mevcutRenk==='G'?'selected':''}>⬜ Gri</option>
-                        </select>
+                    <td style="padding:6px 10px;border-right:1px solid rgba(255,255,255,0.06);position:relative;">
+                        <div id="${renkId}_wrap" style="position:relative;cursor:pointer;user-select:none;">
+                            <div id="${renkId}_btn" style="display:flex;align-items:center;justify-content:space-between;padding:6px 10px;border-radius:8px;border:1.5px solid ${mevcutRenk ? ELDIVEN_RENK_CLR[mevcutRenk]+'80' : 'rgba(255,255,255,0.18)'};background:${mevcutRenk ? ELDIVEN_RENK_BG[mevcutRenk] : 'rgba(255,255,255,0.06)'};color:${secilenOpt.clr};font-family:'Inter',sans-serif;font-size:12px;font-weight:700;min-width:120px;">
+                                <span id="${renkId}_label">${secilenOpt.label}</span>
+                                <span style="font-size:10px;opacity:0.6;margin-left:6px;">▾</span>
+                            </div>
+                            <div id="${renkId}_drop" style="display:none;position:absolute;top:calc(100% + 4px);left:0;right:0;z-index:999;background:#1e2d5e;border:1px solid rgba(255,255,255,0.18);border-radius:10px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,0.5);min-width:130px;">
+                                ${renkOptions.filter(o=>o.val!=='').map(o=>`
+                                <div data-val="${o.val}" style="display:flex;align-items:center;gap:8px;padding:8px 12px;cursor:pointer;color:${o.clr};font-size:12px;font-weight:700;font-family:'Inter',sans-serif;transition:background 0.1s;"
+                                    onmouseover="this.style.background='${o.bg}'" onmouseout="this.style.background='transparent'">
+                                    ${o.label}
+                                </div>`).join('')}
+                            </div>
+                        </div>
+                        <input type="hidden" id="${renkId}" value="${mevcutRenk}">
                     </td>
                     <td style="padding:6px 10px;border-right:1px solid rgba(255,255,255,0.06);">
-                        <input id="${adetId}" type="number" min="0" max="999" value="${mevcutAdet}"
-                            placeholder="0"
+                        <input id="${adetId}" type="number" min="0" max="999" value="${adetGoster}"
+                            placeholder=""
                             style="width:100%;padding:6px 8px;border-radius:8px;border:1.5px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.07);color:#fff;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;text-align:center;outline:none;box-sizing:border-box;">
                     </td>
                     <td style="padding:6px 10px;text-align:center;">
@@ -7947,17 +7962,60 @@ document.addEventListener('DOMContentLoaded', function() {
                     </td>
                 `;
 
-                // Event listener'ları JS ile ekle (inline onchange'deki ses sorununu önler)
+                // Event listener'ları JS ile ekle
                 const sicilRef = p.sicil;
                 const adRef    = (p.ad || '');
+                const RENK_CLR_REF = ELDIVEN_RENK_CLR;
+                const RENK_BG_REF  = ELDIVEN_RENK_BG;
+                const RENK_OPTIONS = [
+                    { val: '', label: '— Renk Seç —', clr: 'rgba(255,255,255,0.4)' },
+                    { val: 'S', label: '⬛ Siyah', clr: '#94a3b8', bg: 'rgba(148,163,184,0.18)' },
+                    { val: 'Y', label: '🟩 Yeşil', clr: '#4ade80', bg: 'rgba(74,222,128,0.18)' },
+                    { val: 'M', label: '🟦 Mavi',  clr: '#60a5fa', bg: 'rgba(96,165,250,0.18)' },
+                    { val: 'G', label: '⬜ Gri',   clr: '#cbd5e1', bg: 'rgba(203,213,225,0.15)' },
+                ];
                 setTimeout(() => {
-                    const renkElRef = document.getElementById(renkId);
-                    const adetElRef = document.getElementById(adetId);
-                    if (renkElRef) {
-                        renkElRef.addEventListener('change', function() {
-                            eldivenSatirKaydet(sicilRef, adRef);
+                    const renkHidden = document.getElementById(renkId);
+                    const renkBtn    = document.getElementById(renkId + '_btn');
+                    const renkLabel  = document.getElementById(renkId + '_label');
+                    const renkDrop   = document.getElementById(renkId + '_drop');
+                    const adetElRef  = document.getElementById(adetId);
+
+                    // Dropdown aç/kapat
+                    if (renkBtn) {
+                        renkBtn.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                            // Diğer tüm açık dropdownları kapat
+                            document.querySelectorAll('[id$="_drop"]').forEach(d => {
+                                if (d !== renkDrop) d.style.display = 'none';
+                            });
+                            renkDrop.style.display = renkDrop.style.display === 'none' ? 'block' : 'none';
                         });
                     }
+
+                    // Seçenek tıklama
+                    if (renkDrop) {
+                        renkDrop.querySelectorAll('[data-val]').forEach(item => {
+                            item.addEventListener('click', function(e) {
+                                e.stopPropagation();
+                                const val = this.dataset.val;
+                                const opt = RENK_OPTIONS.find(o => o.val === val);
+                                renkHidden.value = val;
+                                renkLabel.textContent = opt ? opt.label : '— Renk Seç —';
+                                renkBtn.style.color = opt ? opt.clr : 'rgba(255,255,255,0.4)';
+                                renkBtn.style.borderColor = val ? (RENK_CLR_REF[val] + '80') : 'rgba(255,255,255,0.18)';
+                                renkBtn.style.background  = val ? (RENK_BG_REF[val] || 'rgba(255,255,255,0.06)') : 'rgba(255,255,255,0.06)';
+                                renkDrop.style.display = 'none';
+                                eldivenSatirKaydet(sicilRef, adRef);
+                            });
+                        });
+                    }
+
+                    // Dışarı tıklanınca kapat
+                    document.addEventListener('click', function() {
+                        if (renkDrop) renkDrop.style.display = 'none';
+                    }, { capture: false });
+
                     if (adetElRef) {
                         adetElRef.addEventListener('blur', function() {
                             eldivenSatirKaydet(sicilRef, adRef);
@@ -7988,8 +8046,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const lockKey = `${sicil}_${yil}_${ay}`;
         if (_eldivenKayitSuruyor.has(lockKey)) return;
 
-        const renkEl = document.getElementById(`eldRenk_${sicil}`);
-        const adetEl = document.getElementById(`eldAdet_${sicil}`);
+        const renkEl  = document.getElementById(`eldRenk_${sicil}`);   // hidden input
+        const adetEl  = document.getElementById(`eldAdet_${sicil}`);
         const durumEl = document.getElementById(`eldDurum_${sicil}`);
         if (!renkEl || !adetEl) return;
 
@@ -8002,18 +8060,22 @@ document.addEventListener('DOMContentLoaded', function() {
         // Renk seçilmemişse uyar
         if (!renkKod) {
             showToast('⚠️ Önce eldiven rengini seçin', 'warn');
-            renkEl.style.borderColor = '#ef4444';
-            setTimeout(() => renkEl.style.borderColor = 'rgba(255,255,255,0.15)', 2000);
+            const renkBtn = document.getElementById(`eldRenk_${sicil}_btn`);
+            if (renkBtn) { renkBtn.style.borderColor = '#ef4444'; setTimeout(() => renkBtn.style.borderColor = 'rgba(255,255,255,0.18)', 2000); }
             return;
         }
 
-        // Adet girilmemişse 0 kabul et
+        // Adet girilmemişse 0 kabul et (ama gösterme)
         const adetSon = adetVal === '' ? '0' : adetVal;
         const adet = parseInt(adetSon);
         if (isNaN(adet) || adet < 0) {
             showToast('⚠️ Geçerli bir adet girin', 'warn');
             return;
         }
+
+        // Önceki kayıt var mı?
+        const mevcutKayit = _eldivenKayitMap[lockKey];
+        const isGuncelleme = !!mevcutKayit;
 
         _eldivenKayitSuruyor.add(lockKey);
         if (durumEl) { durumEl.textContent = '⏳'; durumEl.title = 'Kaydediliyor...'; }
@@ -8032,18 +8094,26 @@ document.addEventListener('DOMContentLoaded', function() {
             // Lokal map güncelle
             _eldivenKayitMap[lockKey] = { renk: renkTam, adet, docId };
 
-            // Adet inputunu güncelle (0 yazıldıysa göster)
-            adetEl.value = String(adet);
+            // Adet inputunu güncelle — 0 ise boş göster
+            adetEl.value = adet > 0 ? String(adet) : '';
 
             // UI güncelle
             if (durumEl) { durumEl.textContent = '✅'; durumEl.title = `${adet} adet ${renkTam}`; }
-            renkEl.style.borderColor = ELDIVEN_RENK_CLR[renkKod] + '80';
+            const renkBtn2 = document.getElementById(`eldRenk_${sicil}_btn`);
+            if (renkBtn2) { renkBtn2.style.borderColor = ELDIVEN_RENK_CLR[renkKod] + '80'; }
             adetEl.style.borderColor = 'rgba(74,222,128,0.5)';
             setTimeout(() => { adetEl.style.borderColor = 'rgba(255,255,255,0.15)'; }, 1500);
 
             // Satır arka planını güncelle
             const tr = renkEl.closest('tr');
             if (tr) tr.style.background = ELDIVEN_RENK_BG[renkKod] || 'rgba(240,179,35,0.05)';
+
+            // Ses çal
+            if (isGuncelleme) {
+                playSoundGuncelle();
+            } else {
+                playSoundKaydet();
+            }
 
             showToast(`✅ ${ad} — ${AYLAR[ay]}: ${adet} adet ${renkTam} kaydedildi`, 'success');
 
@@ -8118,49 +8188,46 @@ document.addEventListener('DOMContentLoaded', function() {
         const liste = (window._eldivenTamListe || []).slice();
         if (!liste.length) { showToast('Personel listesi boş', 'warn'); return; }
 
-        // Boş PDF: yatay (landscape) — Normal PDF: dikey (portrait)
-        const yon = bos ? 'landscape' : 'portrait';
-        const doc = new jsPDF({ orientation: yon, unit: 'mm', format: 'a4' });
-
-        // Sayfa boyutları
-        const pageW = yon === 'landscape' ? 297 : 210;
-        const pageH = yon === 'landscape' ? 210 : 297;
+        // Her zaman dikey (portrait) A4
+        const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+        const pageW = 210;
+        const pageH = 297;
 
         // Başlık
         doc.setFont('helvetica', 'bold');
-        doc.setFontSize(13);
-        doc.text(baslik, pageW / 2, 14, { align: 'center' });
+        doc.setFontSize(11);
+        doc.text(baslik, pageW / 2, 12, { align: 'center' });
 
-        doc.setFontSize(9);
+        doc.setFontSize(8);
         doc.setFont('helvetica', 'normal');
-        doc.text(trFix(`Tarih: ${gun} ${AYLAR[ay]} ${yil}   |   Toplam: ${liste.length} kisi`), pageW / 2, 20, { align: 'center' });
+        doc.text(trFix(`Tarih: ${gun} ${AYLAR[ay]} ${yil}   |   Toplam: ${liste.length} kisi`), pageW / 2, 18, { align: 'center' });
 
-        // Sütun genişlikleri — boş PDF landscape, normal portrait
+        // Sütun genişlikleri
         let colWidths;
         if (bos) {
-            // Landscape: daha geniş imza sütunu
-            const usable = pageW - 28; // 14mm margin her taraf
+            // Boş PDF portrait: Rengi + Adet + İmza sütunları
             colWidths = {
-                0: { halign: 'center', cellWidth: 12 },
-                1: { halign: 'left',   cellWidth: 80 },
-                2: { halign: 'center', cellWidth: 30 },
-                3: { halign: 'center', cellWidth: 50 },  // imza alanı
-                4: { halign: 'center', cellWidth: 50 }   // imza alanı
+                0: { halign: 'center', cellWidth: 10 },
+                1: { halign: 'left',   cellWidth: 65 },
+                2: { halign: 'center', cellWidth: 22 },
+                3: { halign: 'center', cellWidth: 30 },
+                4: { halign: 'center', cellWidth: 18 },
+                5: { halign: 'center', cellWidth: 37 }
             };
         } else {
             colWidths = {
-                0: { halign: 'center', cellWidth: 12 },
+                0: { halign: 'center', cellWidth: 10 },
                 1: { halign: 'left',   cellWidth: 72 },
-                2: { halign: 'center', cellWidth: 25 },
-                3: { halign: 'center', cellWidth: 40 },
-                4: { halign: 'center', cellWidth: 18 },
-                5: { halign: 'center', cellWidth: 18 }
+                2: { halign: 'center', cellWidth: 22 },
+                3: { halign: 'center', cellWidth: 38 },
+                4: { halign: 'center', cellWidth: 16 },
+                5: { halign: 'center', cellWidth: 16 }
             };
         }
 
         // Tablo satırları
         const head = bos
-            ? [['S.No', 'Ad Soyad', 'Sicil', 'Eldiven Rengi', 'Imza']]
+            ? [['S.No', 'Ad Soyad', 'Sicil', 'Eldiven Rengi', 'Adet', 'Imza']]
             : [['S.No', 'Ad Soyad', 'Sicil', 'Eldiven Rengi', 'Adet', 'Durum']];
 
         const satirlar = liste.map((p, i) => {
@@ -8170,12 +8237,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     trFix(p.ad || ''),
                     p.sicil || '',
                     '',
+                    '',
                     ''
                 ];
             } else {
                 const key   = `${p.sicil}_${yil}_${ay}`;
                 const kayit = _eldivenKayitMap[key] || {};
-                const durum = kayit.renk ? '✓ Verildi' : 'Bekliyor';
+                const durum = kayit.renk ? 'Aldi' : 'Bekliyor';
                 return [
                     String(i + 1),
                     trFix(p.ad || ''),
@@ -8187,14 +8255,17 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
+        // Boş PDF için satır yüksekliğini küçült ki tek sayfaya sığsın
+        const rowH = bos ? Math.max(5, Math.floor((pageH - 30) / (liste.length + 1))) : undefined;
+
         doc.autoTable({
-            startY: 25,
+            startY: 22,
             head: head,
             body: satirlar,
             styles: {
                 font: 'helvetica',
-                fontSize: bos ? 7.5 : 8,
-                cellPadding: bos ? 1.5 : 2,
+                fontSize: bos ? Math.max(6, Math.min(7.5, Math.floor(160 / liste.length))) : 8,
+                cellPadding: bos ? Math.max(0.8, Math.min(1.5, Math.floor(80 / liste.length))) : 2,
                 overflow: 'linebreak',
                 lineColor: [200, 200, 200],
                 lineWidth: 0.2
@@ -8203,26 +8274,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 fillColor: [28, 43, 110],
                 textColor: [240, 179, 35],
                 fontStyle: 'bold',
-                fontSize: bos ? 8 : 8.5,
+                fontSize: bos ? 7.5 : 8.5,
                 halign: 'center'
             },
             columnStyles: colWidths,
             alternateRowStyles: { fillColor: [245, 247, 252] },
-            margin: { top: 25, left: 14, right: 14 },
-            tableWidth: 'wrap',
-            // Tek sayfaya sığdır — sayfa kırılmasını engelle
-            pageBreak: 'auto',
-            rowPageBreak: 'avoid',
-            didDrawPage: function(data) {
-                // Alt imza satırı — yalnızca son sayfada
-                const pageCount = doc.internal.getNumberOfPages();
-                if (data.pageNumber === pageCount) {
-                    const y = data.cursor.y + 10;
-                    doc.setFontSize(8);
-                    doc.text('Hazirlayan: ___________________', 20, y);
-                    doc.text('Onaylayan: ___________________', pageW - 90, y);
-                }
-            }
+            margin: { top: 22, left: 10, right: 10 },
+            tableWidth: 'auto',
+            pageBreak: bos ? 'avoid' : 'auto',
+            rowPageBreak: 'avoid'
         });
 
         const dosyaAdi = bos
