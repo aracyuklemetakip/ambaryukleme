@@ -2213,10 +2213,6 @@
                             <select id="eldivenYil" onchange="eldivenTabloYukle()"
                                 style="padding:8px 14px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.1);color:#fff;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;outline:none;">
                             </select>
-                            <button onclick="eldivenPersonelListesiAc()"
-                                style="padding:9px 18px;border-radius:8px;border:none;background:#F0B323;color:#1C2B6E;font-family:'Inter',sans-serif;font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap;">
-                                ➕ Eldiven Gir
-                            </button>
                         </div>
                     </div>
 
@@ -7952,6 +7948,7 @@ document.addEventListener('DOMContentLoaded', function() {
             btnEldiven.style.background  = '#F0B323';
             btnEldiven.style.color       = '#1C2B6E';
             eldivenIlkYukle();
+            setTimeout(() => eldivenPersonelListesiAc(), 150);
         }
     };
 
