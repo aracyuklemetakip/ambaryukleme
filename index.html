@@ -9055,7 +9055,17 @@ document.addEventListener('DOMContentLoaded', function() {
             const basVal = document.getElementById('izinBasTarih').value;
             if (basVal) {
                 const fark = Math.round((new Date(iso) - new Date(basVal)) / (1000*60*60*24)) + 1;
-                if (fark > 0) document.getElementById('izinGunSayisi').value = fark;
+                if (fark > 0) {
+                    document.getElementById('izinGunSayisi').value = fark;
+                    // Kalan izin kartını anında güncelle
+                    const toplam = parseInt(document.getElementById('izinKartToplam').textContent) || 0;
+                    const izinData = (window._izinMap || {})[_izinAktifPersonel?.sicil] || {};
+                    const mevcutKullanilan = (izinData.kayitlar||[]).reduce((s,k)=>s+(parseInt(k.gun)||0),0);
+                    const yeniKalan = toplam - mevcutKullanilan - fark;
+                    const kalanEl = document.getElementById('izinKartKalan');
+                    kalanEl.textContent = yeniKalan;
+                    kalanEl.style.color = yeniKalan < 0 ? '#f97316' : yeniKalan === 0 ? '#9ca3af' : '#22c55e';
+                }
             }
         }
     };
