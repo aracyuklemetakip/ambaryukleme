@@ -8545,7 +8545,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const izin = izinMap[p.sicil] || {};
             const toplam = izin.toplamIzin || 0;
             const kayitlar = izin.kayitlar || [];
-            const kullanilan = izin.kullanilanIzin !== undefined ? parseInt(izin.kullanilanIzin) : (izin.kayitlar||[]).reduce((s,k)=>s+(parseInt(k.gun)||0),0);
+            const kayitlardan = (izin.kayitlar||[]).reduce((s,k)=>s+(parseInt(k.gun)||0),0); const manuelKullanilan = parseInt(izin.kullanilanIzin) || 0; const kullanilan = manuelKullanilan + kayitlardan;
             const kalan = toplam - kullanilan;
             return `<tr onclick="izinDetayAc('${p.sicil}','${(p.ad||'').replace(/'/g,"\\'")}',${toplam})" style="cursor:pointer;transition:background 0.15s;" onmouseenter="this.style.background='rgba(240,179,35,0.1)'" onmouseleave="this.style.background=''">
                 <td style="padding:10px 12px;text-align:center;color:rgba(255,255,255,0.5);font-size:11px;">${i+1}</td>
@@ -8586,10 +8586,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function izinDetayGuncelle(izinData) {
         const toplam = parseInt(izinData.toplamIzin) || 0;
-        // Kayıtlar varsa toplamdan hesapla; yoksa manual değeri göster
+        // Manuel kullanilan + kayitlardan gelen toplam
         const kayitlar = izinData.kayitlar || [];
-        const kullanilanHesap = kayitlar.reduce((s, k) => s + (parseInt(k.gun)||0), 0);
-        const kullanilan = kullanilanHesap > 0 ? kullanilanHesap : (parseInt(izinData.kullanilanIzin) || 0);
+        const kayitlardan = kayitlar.reduce((s, k) => s + (parseInt(k.gun)||0), 0);
+        const manuelKullanilan = parseInt(izinData.kullanilanIzin) || 0;
+        const kullanilan = manuelKullanilan + kayitlardan;
         const kalan = toplam - kullanilan;
 
         document.getElementById('izinKartToplam').textContent = toplam;
