@@ -2377,6 +2377,7 @@
                                             <th style="padding:9px 12px;text-align:center;color:#F0B323;font-weight:700;width:36px;">#</th>
                                             <th style="padding:9px 12px;text-align:left;color:#F0B323;font-weight:700;">Başlangıç</th>
                                             <th style="padding:9px 12px;text-align:left;color:#F0B323;font-weight:700;">Bitiş</th>
+                                            <th style="padding:9px 12px;text-align:left;color:#22c55e;font-weight:700;">İş Başı</th>
                                             <th style="padding:9px 12px;text-align:center;color:#F0B323;font-weight:700;">Gün</th>
                                             <th style="padding:9px 12px;text-align:center;color:#F0B323;font-weight:700;width:50px;"></th>
                                         </tr>
@@ -8544,6 +8545,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <td style="padding:8px 12px;text-align:center;color:rgba(255,255,255,0.4);">${i+1}</td>
                 <td style="padding:8px 12px;color:#fff;">${k.bas||'—'}</td>
                 <td style="padding:8px 12px;color:#fff;">${k.bit||'—'}</td>
+                <td style="padding:8px 12px;color:#22c55e;font-weight:700;">${k.isBasi||'—'}</td>
                 <td style="padding:8px 12px;text-align:center;font-weight:800;color:#F0B323;">${k.gun||0} gün</td>
                 <td style="padding:8px 12px;text-align:center;">
                     <button onclick="izinKayitSil(${i})" style="padding:3px 8px;border-radius:5px;border:1px solid rgba(239,68,68,0.4);background:rgba(239,68,68,0.1);color:#ef4444;font-size:11px;cursor:pointer;">🗑️</button>
@@ -8646,11 +8648,16 @@ document.addEventListener('DOMContentLoaded', function() {
         if (isNaN(gun) || gun < 1) { msg('⚠️ Geçerli gün sayısı girin!', false); return; }
         if (!_izinAktifPersonel) return;
 
-        // Tarih formatlama (DD.MM.YYYY)
         function formatTr(iso) {
             if (!iso) return '';
             const [y,m,d] = iso.split('-');
             return `${d}.${m}.${y}`;
+        }
+        // İş başı = bitiş + 1 gün
+        function isBasiHesapla(bitIso) {
+            const d = new Date(bitIso + 'T00:00:00');
+            d.setDate(d.getDate() + 1);
+            return formatTr(d.toISOString().split('T')[0]);
         }
 
         try {
@@ -8658,13 +8665,14 @@ document.addEventListener('DOMContentLoaded', function() {
             const ref = doc(db, 'personelIzin', _izinAktifPersonel.sicil);
             const snap = await getDoc(ref);
             const mevcut = snap.exists() ? snap.data() : { sicil: _izinAktifPersonel.sicil, ad: _izinAktifPersonel.ad, toplamIzin: 0 };
-            const kayitlar = [...(mevcut.kayitlar || []), { bas: formatTr(bas), bit: formatTr(bit), gun, id: Date.now() }];
-            const yeni = { ...mevcut, kayitlar };
+            const kayitlar = [...(mevcut.kayitlar || []), { bas: formatTr(bas), bit: formatTr(bit), isBasi: isBasiHesapla(bit), gun, id: Date.now() }];
+            // kullanilanIzin otomatik hesapla
+            const kullanilanIzin = kayitlar.reduce((s, k) => s + (parseInt(k.gun)||0), 0);
+            const yeni = { ...mevcut, kayitlar, kullanilanIzin };
             await setDoc(ref, yeni);
             window._izinMap = window._izinMap || {};
             window._izinMap[_izinAktifPersonel.sicil] = yeni;
             izinDetayGuncelle(yeni);
-            // Formu temizle
             document.getElementById('izinBasTarih').value = '';
             document.getElementById('izinBitTarih').value = '';
             document.getElementById('izinBasTarihGoster').value = '';
@@ -8686,13 +8694,16 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!snap.exists()) return;
             const mevcut = snap.data();
             const kayitlar = (mevcut.kayitlar || []).filter((_, i) => i !== idx);
-            const yeni = { ...mevcut, kayitlar };
+            // kullanilanIzin otomatik güncelle
+            const kullanilanIzin = kayitlar.reduce((s, k) => s + (parseInt(k.gun)||0), 0);
+            const yeni = { ...mevcut, kayitlar, kullanilanIzin };
             await setDoc(ref, yeni);
             window._izinMap[_izinAktifPersonel.sicil] = yeni;
             izinDetayGuncelle(yeni);
             showToast('🗑️ Kayıt silindi', 'warn');
         } catch(e) { showToast('⚠️ Silme hatası', 'warn'); }
     };
+
 
     // ── İzin Takvim ──────────────────────────────────────────
     window.izinTakvimAc = function(tip) {
@@ -8711,9 +8722,14 @@ document.addEventListener('DOMContentLoaded', function() {
         izinTakvimRender(tip);
         wrap.style.display = 'block';
         setTimeout(() => {
-            document.addEventListener('click', function _dis(e) {
-                if (!wrap.contains(e.target)) { wrap.style.display = 'none'; document.removeEventListener('click', _dis); }
-            });
+            function _disTikla(e) {
+                const inputId = tip === 'bas' ? 'izinBasTarihGoster' : 'izinBitTarihGoster';
+                if (!wrap.contains(e.target) && e.target.id !== inputId) {
+                    wrap.style.display = 'none';
+                    document.removeEventListener('click', _disTikla);
+                }
+            }
+            document.addEventListener('click', _disTikla);
         }, 10);
     };
 
@@ -8735,16 +8751,23 @@ document.addEventListener('DOMContentLoaded', function() {
             const iso = `${yil}-${String(ay+1).padStart(2,'0')}-${String(g).padStart(2,'0')}`;
             const isBugun = g === bugun.getDate() && ay === bugun.getMonth() && yil === bugun.getFullYear();
             const isSecili = iso === seciliIso;
-            gunCells += `<div onclick="izinTakvimGunSec('${iso}','${tip}')" style="cursor:pointer;text-align:center;padding:4px 2px;border-radius:5px;font-size:12px;font-weight:${isSecili?'800':'500'};background:${isSecili?'#F0B323':isBugun?'rgba(240,179,35,0.2)':'transparent'};color:${isSecili?'#1C2B6E':isBugun?'#F0B323':'#fff'};transition:background 0.1s;" onmouseenter="if(!${isSecili})this.style.background='rgba(255,255,255,0.1)'" onmouseleave="if(!${isSecili})this.style.background='transparent'">${g}</div>`;
+            const bg = isSecili ? '#F0B323' : isBugun ? 'rgba(240,179,35,0.25)' : 'transparent';
+            const clr = isSecili ? '#1C2B6E' : isBugun ? '#F0B323' : '#fff';
+            gunCells += `<div onclick="event.stopPropagation();izinTakvimGunSec('${iso}','${tip}')"
+                style="cursor:pointer;text-align:center;padding:5px 2px;border-radius:5px;font-size:12px;font-weight:${isSecili?'800':'500'};background:${bg};color:${clr};transition:background 0.1s;"
+                onmouseenter="this.style.background='${isSecili?'#F0B323':'rgba(255,255,255,0.15)'}'"
+                onmouseleave="this.style.background='${bg}'">${g}</div>`;
         }
 
-        wrap.innerHTML = `<div style="background:#1e3a8a;border:1px solid rgba(255,255,255,0.2);border-radius:10px;padding:12px;width:240px;box-shadow:0 8px 24px rgba(0,0,0,0.4);">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-                <button onclick="izinTakvimNav(-1,'${tip}')" style="background:none;border:none;color:#fff;font-size:16px;cursor:pointer;padding:2px 6px;">‹</button>
-                <div style="font-size:13px;font-weight:700;color:#F0B323;">${aylar[ay]} ${yil}</div>
-                <button onclick="izinTakvimNav(1,'${tip}')" style="background:none;border:none;color:#fff;font-size:16px;cursor:pointer;padding:2px 6px;">›</button>
+        wrap.innerHTML = `<div onclick="event.stopPropagation()" style="background:#1e3a8a;border:1px solid rgba(255,255,255,0.25);border-radius:10px;padding:12px;width:252px;box-shadow:0 8px 28px rgba(0,0,0,0.5);">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+                <button onclick="event.stopPropagation();izinTakvimNav(-1,'${tip}')"
+                    style="background:rgba(255,255,255,0.1);border:none;color:#fff;font-size:18px;cursor:pointer;padding:3px 10px;border-radius:6px;line-height:1;">‹</button>
+                <div style="font-size:13px;font-weight:800;color:#F0B323;">${aylar[ay]} ${yil}</div>
+                <button onclick="event.stopPropagation();izinTakvimNav(1,'${tip}')"
+                    style="background:rgba(255,255,255,0.1);border:none;color:#fff;font-size:18px;cursor:pointer;padding:3px 10px;border-radius:6px;line-height:1;">›</button>
             </div>
-            <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:4px;">
+            <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:6px;">
                 ${gunler.map(g=>`<div style="text-align:center;font-size:10px;font-weight:700;color:rgba(255,255,255,0.4);padding:2px;">${g}</div>`).join('')}
             </div>
             <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;">${gunCells}</div>
@@ -8765,15 +8788,13 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('izinBasTarih').value = iso;
             document.getElementById('izinBasTarihGoster').value = gorsel;
             document.getElementById('izinBasTakvimWrap').style.display = 'none';
-            // Bitiş tarihi yoksa aç
             if (!document.getElementById('izinBitTarih').value) {
-                setTimeout(() => izinTakvimAc('bit'), 100);
+                setTimeout(() => izinTakvimAc('bit'), 150);
             }
         } else {
             document.getElementById('izinBitTarih').value = iso;
             document.getElementById('izinBitTarihGoster').value = gorsel;
             document.getElementById('izinBitTakvimWrap').style.display = 'none';
-            // Gün sayısını otomatik hesapla
             const basVal = document.getElementById('izinBasTarih').value;
             if (basVal) {
                 const fark = Math.round((new Date(iso) - new Date(basVal)) / (1000*60*60*24)) + 1;
