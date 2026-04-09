@@ -2358,9 +2358,9 @@
                                     <div id="izinBitTakvimWrap" style="display:none;position:absolute;z-index:600;margin-top:2px;"></div>
                                 </div>
                                 <div style="display:flex;flex-direction:column;gap:4px;">
-                                    <div style="font-size:11px;color:rgba(255,255,255,0.6);">Gün Sayısı</div>
-                                    <input type="number" id="izinGunSayisi" min="1" placeholder="Gün"
-                                        style="width:80px;padding:8px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.08);color:#fff;font-family:'Inter',sans-serif;font-size:14px;font-weight:700;outline:none;">
+                                    <div style="font-size:11px;color:rgba(255,255,255,0.6);">Gün Sayısı <span style="opacity:.5;">(otomatik)</span></div>
+                                    <input type="number" id="izinGunSayisi" min="1" placeholder="Gün" readonly
+                                        style="width:80px;padding:8px 12px;border-radius:8px;border:1px solid rgba(240,179,35,0.3);background:rgba(240,179,35,0.06);color:#F0B323;font-family:'Inter',sans-serif;font-size:14px;font-weight:700;outline:none;cursor:not-allowed;">
                                 </div>
                                 <button onclick="izinKayitEkle()" style="padding:9px 18px;border-radius:8px;border:none;background:#22c55e;color:#fff;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;">➕ Ekle</button>
                             </div>
@@ -8597,6 +8597,19 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('izinKartKalan').textContent = kalan;
         document.getElementById('izinKartKalan').style.color = kalan < 0 ? '#f97316' : kalan === 0 ? '#9ca3af' : '#22c55e';
         document.getElementById('izinKullanilanKaydetWrap').style.display = 'none';
+        // Kayıt varsa kullanılan kutusu donuk olur, yoksa düzenlenebilir
+        const kullanilanInput = document.getElementById('izinKartKullanilan');
+        if (kayitlar.length > 0) {
+            kullanilanInput.readOnly = true;
+            kullanilanInput.style.opacity = '0.6';
+            kullanilanInput.style.cursor = 'not-allowed';
+            kullanilanInput.title = 'İzin kaydı olduğu için otomatik hesaplanır';
+        } else {
+            kullanilanInput.readOnly = false;
+            kullanilanInput.style.opacity = '1';
+            kullanilanInput.style.cursor = 'text';
+            kullanilanInput.title = '';
+        }
 
         const tbody = document.getElementById('izinKayitlarBody');
         if (!kayitlar.length) {
@@ -8626,8 +8639,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Kullanılan izin input'u değişince kalan anında güncelle
     window.izinKullanilanDegisti = function() {
+        const kullanilanInput = document.getElementById('izinKartKullanilan');
+        if (kullanilanInput.readOnly) return; // Kayıt varsa dokunma
         const toplam = parseInt(document.getElementById('izinKartToplam').textContent) || 0;
-        const kullanilan = parseInt(document.getElementById('izinKartKullanilan').value) || 0;
+        const kullanilan = parseInt(kullanilanInput.value) || 0;
         const kalan = toplam - kullanilan;
         const kalanEl = document.getElementById('izinKartKalan');
         kalanEl.textContent = kalan;
