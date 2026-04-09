@@ -2307,15 +2307,22 @@
                                 <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:4px;">gün</div>
                             </div>
                             <div style="background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);border-radius:12px;padding:16px;text-align:center;">
-                                <div style="font-size:11px;font-weight:700;color:rgba(239,68,68,0.8);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">KULLANILAN</div>
-                                <div id="izinKartKullanilan" style="font-size:32px;font-weight:900;color:#ef4444;">0</div>
-                                <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:4px;">gün</div>
+                                <div style="font-size:11px;font-weight:700;color:rgba(239,68,68,0.8);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">KULLANILAN</div>
+                                <input type="number" id="izinKartKullanilan" min="0" max="365"
+                                    oninput="izinKullanilanDegisti()"
+                                    style="width:80px;font-size:28px;font-weight:900;color:#ef4444;background:transparent;border:none;border-bottom:2px solid rgba(239,68,68,0.5);text-align:center;outline:none;font-family:'Inter',sans-serif;padding:0 0 2px 0;">
+                                <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:6px;">gün — düzenle</div>
                             </div>
                             <div style="background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.3);border-radius:12px;padding:16px;text-align:center;">
                                 <div style="font-size:11px;font-weight:700;color:rgba(34,197,94,0.8);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">KALAN İZİN</div>
                                 <div id="izinKartKalan" style="font-size:32px;font-weight:900;color:#22c55e;">0</div>
-                                <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:4px;">gün</div>
+                                <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:4px;">gün — otomatik</div>
                             </div>
+                        </div>
+                        <!-- KULLANILAN İZİN KAYDET BUTONU -->
+                        <div id="izinKullanilanKaydetWrap" style="display:none;text-align:center;margin-top:-10px;margin-bottom:16px;">
+                            <button onclick="izinKullanilanKaydet()" style="padding:8px 24px;border-radius:8px;border:none;background:#ef4444;color:#fff;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">💾 Kullanılan İzni Kaydet</button>
+                            <div id="izinKullanilanMsg" style="display:none;margin-top:6px;font-size:12px;font-weight:700;padding:6px 12px;border-radius:7px;display:inline-block;"></div>
                         </div>
 
                         <!-- TOPLAM İZİN GÜNCELLE -->
@@ -8476,7 +8483,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const izin = izinMap[p.sicil] || {};
             const toplam = izin.toplamIzin || 0;
             const kayitlar = izin.kayitlar || [];
-            const kullanilan = kayitlar.reduce((s, k) => s + (parseInt(k.gun)||0), 0);
+            const kullanilan = izin.kullanilanIzin !== undefined ? parseInt(izin.kullanilanIzin) : (izin.kayitlar||[]).reduce((s,k)=>s+(parseInt(k.gun)||0),0);
             const kalan = toplam - kullanilan;
             return `<tr onclick="izinDetayAc('${p.sicil}','${(p.ad||'').replace(/'/g,"\\'")}',${toplam})" style="cursor:pointer;transition:background 0.15s;" onmouseenter="this.style.background='rgba(240,179,35,0.1)'" onmouseleave="this.style.background=''">
                 <td style="padding:10px 12px;text-align:center;color:rgba(255,255,255,0.5);font-size:11px;">${i+1}</td>
@@ -8517,15 +8524,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function izinDetayGuncelle(izinData) {
         const toplam = parseInt(izinData.toplamIzin) || 0;
-        const kayitlar = izinData.kayitlar || [];
-        const kullanilan = kayitlar.reduce((s, k) => s + (parseInt(k.gun)||0), 0);
+        const kullanilan = parseInt(izinData.kullanilanIzin) || 0;
         const kalan = toplam - kullanilan;
 
         document.getElementById('izinKartToplam').textContent = toplam;
-        document.getElementById('izinKartKullanilan').textContent = kullanilan;
+        document.getElementById('izinKartKullanilan').value = kullanilan || '';
         document.getElementById('izinKartKalan').textContent = kalan;
+        document.getElementById('izinKartKalan').style.color = kalan < 0 ? '#f97316' : kalan === 0 ? '#9ca3af' : '#22c55e';
+        document.getElementById('izinKullanilanKaydetWrap').style.display = 'none';
 
         const tbody = document.getElementById('izinKayitlarBody');
+        const kayitlar = izinData.kayitlar || [];
         if (!kayitlar.length) {
             tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:20px;color:rgba(255,255,255,0.35);font-size:13px;">Henüz izin kaydı yok</td></tr>`;
             return;
@@ -8542,6 +8551,44 @@ document.addEventListener('DOMContentLoaded', function() {
             </tr>
         `).join('');
     }
+
+    // Kullanılan izin input'u değişince kalan anında güncelle
+    window.izinKullanilanDegisti = function() {
+        const toplam = parseInt(document.getElementById('izinKartToplam').textContent) || 0;
+        const kullanilan = parseInt(document.getElementById('izinKartKullanilan').value) || 0;
+        const kalan = toplam - kullanilan;
+        const kalanEl = document.getElementById('izinKartKalan');
+        kalanEl.textContent = kalan;
+        kalanEl.style.color = kalan < 0 ? '#f97316' : kalan === 0 ? '#9ca3af' : '#22c55e';
+        document.getElementById('izinKullanilanKaydetWrap').style.display = 'block';
+    };
+
+    // Kullanılan izni Firebase'e kaydet
+    window.izinKullanilanKaydet = async function() {
+        const msgEl = document.getElementById('izinKullanilanMsg');
+        const val = parseInt(document.getElementById('izinKartKullanilan').value);
+        if (!_izinAktifPersonel) return;
+        if (isNaN(val) || val < 0) {
+            msgEl.textContent = '⚠️ Geçerli sayı girin!';
+            msgEl.style.cssText = 'display:inline-block;color:#ef4444;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);padding:6px 12px;border-radius:7px;font-size:12px;font-weight:700;margin-top:6px;';
+            return;
+        }
+        try {
+            const { doc, setDoc, getDoc, db } = window._fb;
+            const ref = doc(db, 'personelIzin', _izinAktifPersonel.sicil);
+            const snap = await getDoc(ref);
+            const mevcut = snap.exists() ? snap.data() : { sicil: _izinAktifPersonel.sicil, ad: _izinAktifPersonel.ad, toplamIzin: 0 };
+            const yeni = { ...mevcut, kullanilanIzin: val };
+            await setDoc(ref, yeni);
+            window._izinMap = window._izinMap || {};
+            window._izinMap[_izinAktifPersonel.sicil] = yeni;
+            izinDetayGuncelle(yeni);
+            showToast('✓ Kullanılan izin kaydedildi', 'success');
+        } catch(e) {
+            msgEl.textContent = '⚠️ Hata: ' + e.message;
+            msgEl.style.cssText = 'display:inline-block;color:#ef4444;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);padding:6px 12px;border-radius:7px;font-size:12px;font-weight:700;margin-top:6px;';
+        }
+    };
 
     // ── Detay kapat ───────────────────────────────────────────
     window.izinDetayKapat = function() {
