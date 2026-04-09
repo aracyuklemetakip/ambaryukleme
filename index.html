@@ -9039,35 +9039,23 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     window.izinTakvimGunSec = function(iso, tip) {
-        const [y,m,d] = iso.split('-');
+        const [y,m,d] = iso.split("-");
         const gorsel = `${d}.${m}.${y}`;
-        if (tip === 'bas') {
-            document.getElementById('izinBasTarih').value = iso;
-            document.getElementById('izinBasTarihGoster').value = gorsel;
-            document.getElementById('izinBasTakvimWrap').style.display = 'none';
-            if (!document.getElementById('izinBitTarih').value) {
-                setTimeout(() => izinTakvimAc('bit'), 150);
+        if (tip === "bas") {
+            document.getElementById("izinBasTarih").value = iso;
+            document.getElementById("izinBasTarihGoster").value = gorsel;
+            document.getElementById("izinBasTakvimWrap").style.display = "none";
+            if (!document.getElementById("izinBitTarih").value) {
+                setTimeout(() => izinTakvimAc("bit"), 150);
             }
         } else {
-            document.getElementById('izinBitTarih').value = iso;
-            document.getElementById('izinBitTarihGoster').value = gorsel;
-            document.getElementById('izinBitTakvimWrap').style.display = 'none';
-            const basVal = document.getElementById('izinBasTarih').value;
-            if (basVal) {
-                const fark = Math.round((new Date(iso) - new Date(basVal)) / (1000*60*60*24)) + 1;
-                if (fark > 0) {
-                    document.getElementById('izinGunSayisi').value = fark;
-                    // Kalan izin kartını anında güncelle
-                    const toplam = parseInt(document.getElementById('izinKartToplam').textContent) || 0;
-                    const izinData = (window._izinMap || {})[_izinAktifPersonel?.sicil] || {};
-                    const mevcutKullanilan = (izinData.kayitlar||[]).reduce((s,k)=>s+(parseInt(k.gun)||0),0);
-                    const yeniKalan = toplam - mevcutKullanilan - fark;
-                    const kalanEl = document.getElementById('izinKartKalan');
-                    kalanEl.textContent = yeniKalan;
-                    kalanEl.style.color = yeniKalan < 0 ? '#f97316' : yeniKalan === 0 ? '#9ca3af' : '#22c55e';
-                }
-            }
+            document.getElementById("izinBitTarih").value = iso;
+            document.getElementById("izinBitTarihGoster").value = gorsel;
+            document.getElementById("izinBitTakvimWrap").style.display = "none";
         }
+        // Gun sayisi kutusuna her zaman guncel kalan izni yaz
+        const kalan = parseInt(document.getElementById("izinKartKalan").textContent) || 0;
+        document.getElementById("izinGunSayisi").value = kalan > 0 ? kalan : 0;
     };
 
 </script>
