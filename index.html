@@ -173,6 +173,14 @@
       // ── Firestore: başlangıç yükle (sadece mesai + personel; ambar_kayitlar sayfa bazlı çekilir) ──
       window._fbLoadData = async function() {
         const { collection, getDocs, db } = window._fb;
+        // Yetkili şifreyi cache'le (offline fallback için)
+        try {
+            const { doc: _doc, getDoc: _getDoc } = window._fb;
+            const _snap = await _getDoc(_doc(db, 'config', 'yetkili'));
+            if (_snap.exists() && _snap.data().sifre) {
+                localStorage.setItem('_ys', _snap.data().sifre);
+            }
+        } catch(e) { /* sessiz geç */ }
         try {
           // Mesai verisini yükle (az veri, tümü çekilebilir)
           const snap2 = await getDocs(collection(db, 'mesaiDB'));
@@ -1322,7 +1330,7 @@
         <input type="password" id="sifreInput" placeholder="••••••"
             style="width:100%;padding:10px 14px;border-radius:8px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.07);color:#fff;font-family:'Inter',sans-serif;font-size:18px;font-weight:700;letter-spacing:6px;text-align:center;outline:none;margin-bottom:8px;transition:border-color 0.15s;"
             onkeydown="if(event.key==='Enter')sifreKontrol()"
-            oninput="document.getElementById('sifreHata').style.display='none'; if(this.value.length===4) sifreKontrol();"
+            oninput="document.getElementById('sifreHata').style.display='none';"
             onfocus="this.style.borderColor='rgba(240,179,35,0.7)'"
             onblur="this.style.borderColor='rgba(255,255,255,0.15)'">
         <div id="sifreHata" style="display:none;color:#f87171;font-size:11px;font-weight:700;letter-spacing:1px;margin-bottom:10px;">YANLIŞ ŞİFRE</div>
@@ -6845,14 +6853,21 @@
 
 // ── Yetkili Şifre Modal ──
 function sifreModalAc() {
-    document.getElementById('sifreInput').value = '';
-    document.getElementById('sifreHata').style.display = 'none';
+    window._sifreKontrolAktif = false;
+    const inp = document.getElementById('sifreInput');
+    inp.value = '';
+    inp.style.borderColor = 'rgba(255,255,255,0.15)';
+    inp.style.background  = 'rgba(255,255,255,0.07)';
+    const hataEl = document.getElementById('sifreHata');
+    hataEl.style.display = 'none';
+    hataEl.textContent = 'YANLIŞ ŞİFRE';
     document.getElementById('sifreYukleniyor').style.display = 'none';
     document.getElementById('sifreModal').classList.add('show');
-    setTimeout(() => document.getElementById('sifreInput').focus(), 100);
+    setTimeout(() => inp.focus(), 120);
 }
 
 function sifreModalKapat() {
+    window._sifreKontrolAktif = false;
     document.getElementById('sifreModal').classList.remove('show');
 }
 
@@ -6860,35 +6875,66 @@ async function sifreKontrol() {
     const girilen = document.getElementById('sifreInput').value.trim();
     if (!girilen) return;
 
+    // Çift tetiklenmeyi önle
+    if (window._sifreKontrolAktif) return;
+    window._sifreKontrolAktif = true;
+
     const hataEl = document.getElementById('sifreHata');
     const yukEl  = document.getElementById('sifreYukleniyor');
     hataEl.style.display = 'none';
+    hataEl.textContent = 'YANLIŞ ŞİFRE';
     yukEl.style.display = 'block';
+
+    function _sifreYanlis() {
+        window._sifreKontrolAktif = false;
+        yukEl.style.display = 'none';
+        hataEl.style.display = 'block';
+        const inp = document.getElementById('sifreInput');
+        inp.value = '';
+        inp.style.borderColor = 'rgba(239,68,68,0.6)';
+        inp.style.background  = 'rgba(239,68,68,0.05)';
+        setTimeout(() => {
+            inp.style.borderColor = 'rgba(251,191,36,0.3)';
+            inp.style.background  = 'rgba(251,191,36,0.05)';
+            inp.focus();
+        }, 1200);
+    }
+
+    function _sifreDogruGiris() {
+        window._sifreKontrolAktif = false;
+        sifreModalKapat();
+        showSplash(function(){ showSayfa('sefSayfa'); });
+    }
 
     try {
         const { doc, getDoc, db } = window._fb;
         const snap = await getDoc(doc(db, 'config', 'yetkili'));
         yukEl.style.display = 'none';
         if (snap.exists() && snap.data().sifre === girilen) {
-            sifreModalKapat();
-            showSplash(function(){ showSayfa('sefSayfa'); });
+            _sifreDogruGiris();
         } else {
-            hataEl.style.display = 'block';
-            const inp = document.getElementById('sifreInput');
-            inp.value = '';
-            inp.style.borderColor = 'rgba(239,68,68,0.6)';
-            inp.style.background  = 'rgba(239,68,68,0.05)';
-            setTimeout(() => {
-                inp.style.borderColor = 'rgba(251,191,36,0.3)';
-                inp.style.background  = 'rgba(251,191,36,0.05)';
-                inp.focus();
-            }, 1200);
+            _sifreYanlis();
         }
     } catch(e) {
+        // Firestore erişilemiyorsa fallback: localStorage'da kayıtlı şifre
+        console.warn('Firestore erişim hatası, fallback deneniyor:', e);
         yukEl.style.display = 'none';
-        hataEl.textContent = 'BAĞLANTI HATASI';
-        hataEl.style.display = 'block';
-        console.error(e);
+        try {
+            const fbSifre = localStorage.getItem('_ys');
+            if (fbSifre && fbSifre === girilen) {
+                _sifreDogruGiris();
+            } else if (!fbSifre) {
+                hataEl.textContent = 'BAĞLANTI HATASI';
+                hataEl.style.display = 'block';
+                window._sifreKontrolAktif = false;
+            } else {
+                _sifreYanlis();
+            }
+        } catch(e2) {
+            hataEl.textContent = 'BAĞLANTI HATASI';
+            hataEl.style.display = 'block';
+            window._sifreKontrolAktif = false;
+        }
     }
 }
 
