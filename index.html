@@ -8595,27 +8595,18 @@ document.addEventListener('DOMContentLoaded', function() {
         } catch(e) {}
 
         tbody.innerHTML = liste.map((p, i) => {
-            const ozet = izinMap[p.sicil] || { toplam: 0, oncekiKullanim: 0 };
-            const kayitlar = izinKayitMap[p.sicil] || [];
-            const kayitToplamGun = kayitlar.reduce((s, k) => s + (k.gunSayisi || 0), 0);
-            const toplam = ozet.toplam || 0;
-            const oncekiKullanim = ozet.oncekiKullanim || 0;
-            const kalan = toplam - oncekiKullanim - kayitToplamGun;
-            // Son kaydı bul (en son basTarih'e göre)
-            const sonKayit = kayitlar.sort((a, b) => (b.basTarih || '').localeCompare(a.basTarih || ''))[0];
-            return '<tr style="border-bottom:1px solid rgba(255,255,255,0.07);cursor:pointer;transition:background 0.15s;"'
+            return '<tr style="border-bottom:1px solid rgba(255,255,255,0.07);cursor:default;transition:background 0.15s;"'
                 + ' onmouseover="this.style.background=\'rgba(240,179,35,0.06)\'"'
-                + ' onmouseout="this.style.background=\'\'"'
-                + ' onclick="izinDetayAc(\'' + p.sicil + '\')">'
+                + ' onmouseout="this.style.background=\'\'">'
                 + '<td style="padding:10px 14px;text-align:center;color:rgba(255,255,255,0.4);font-size:11px;">' + (i+1) + '</td>'
                 + '<td style="padding:10px 14px;color:#fff;font-weight:600;font-size:13px;">' + (p.ad || '') + '</td>'
                 + '<td style="padding:10px 10px;text-align:center;color:rgba(255,255,255,0.5);font-size:12px;">' + (p.sicil || '') + '</td>'
-                + '<td style="padding:10px 10px;text-align:center;color:#60a5fa;font-weight:700;">' + toplam + '</td>'
-                + '<td style="padding:10px 10px;text-align:center;color:#ef4444;font-weight:700;">' + (oncekiKullanim + kayitToplamGun) + '</td>'
-                + '<td style="padding:10px 10px;text-align:center;color:' + (kalan >= 0 ? '#22c55e' : '#ef4444') + ';font-weight:700;">' + kalan + '</td>'
-                + '<td style="padding:10px 10px;text-align:center;color:#F0B323;font-size:12px;">' + (sonKayit ? isoToGosterList(sonKayit.basTarih) : '—') + '</td>'
-                + '<td style="padding:10px 10px;text-align:center;color:#F0B323;font-size:12px;">' + (sonKayit ? isoToGosterList(sonKayit.bitTarih) : '—') + '</td>'
-                + '<td style="padding:10px 10px;text-align:center;color:#22c55e;font-size:12px;">' + (sonKayit ? isoToGosterList(sonKayit.isBasiTarih) : '—') + '</td>'
+                + '<td style="padding:10px 10px;text-align:center;color:#60a5fa;font-weight:700;">—</td>'
+                + '<td style="padding:10px 10px;text-align:center;color:#ef4444;font-weight:700;">—</td>'
+                + '<td style="padding:10px 10px;text-align:center;color:#22c55e;font-weight:700;">—</td>'
+                + '<td style="padding:10px 10px;text-align:center;color:#F0B323;font-size:12px;">—</td>'
+                + '<td style="padding:10px 10px;text-align:center;color:#F0B323;font-size:12px;">—</td>'
+                + '<td style="padding:10px 10px;text-align:center;color:#22c55e;font-size:12px;">—</td>'
                 + '</tr>';
         }).join('');
 
