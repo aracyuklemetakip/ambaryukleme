@@ -2285,11 +2285,14 @@
                                         <tr style="background:#F0B323;">
                                             <th style="padding:10px 14px;text-align:center;color:#1C2B6E;font-weight:800;font-size:11px;width:36px;">#</th>
                                             <th style="padding:10px 14px;text-align:left;color:#1C2B6E;font-weight:800;font-size:11px;">AD SOYAD</th>
-                                            <th style="padding:10px 10px;text-align:center;color:#1C2B6E;font-weight:800;font-size:11px;width:90px;">SİCİL</th>
+                                            <th style="padding:10px 10px;text-align:center;color:#1C2B6E;font-weight:800;font-size:11px;width:80px;">SİCİL</th>
+                                            <th style="padding:10px 10px;text-align:center;color:#1C2B6E;font-weight:800;font-size:11px;width:80px;">TOPLAM</th>
+                                            <th style="padding:10px 10px;text-align:center;color:#1C2B6E;font-weight:800;font-size:11px;width:90px;">KULLANILAN</th>
+                                            <th style="padding:10px 10px;text-align:center;color:#1C2B6E;font-weight:800;font-size:11px;width:70px;">KALAN</th>
                                         </tr>
                                     </thead>
                                     <tbody id="izinPersonelBody">
-                                        <tr><td colspan="3" style="text-align:center;padding:30px;color:rgba(255,255,255,0.4);font-size:13px;">⏳ Yükleniyor...</td></tr>
+                                        <tr><td colspan="6" style="text-align:center;padding:30px;color:rgba(255,255,255,0.4);font-size:13px;">⏳ Yükleniyor...</td></tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -8514,25 +8517,47 @@ document.addEventListener('DOMContentLoaded', function() {
     window.izinListeYukle = async function() {
         const tbody = document.getElementById('izinPersonelBody');
         if (!tbody) return;
-        tbody.innerHTML = `<tr><td colspan="3" style="text-align:center;padding:30px;color:rgba(255,255,255,0.4);font-size:13px;">⏳ Yükleniyor...</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:30px;color:rgba(255,255,255,0.4);font-size:13px;">⏳ Yükleniyor...</td></tr>`;
 
         const liste = (window.personelListesi || []).slice().sort((a, b) =>
             (a.ad || '').localeCompare(b.ad || '', 'tr')
         );
 
         if (!liste.length) {
-            tbody.innerHTML = `<tr><td colspan="3" style="text-align:center;padding:30px;color:rgba(255,255,255,0.4);font-size:13px;">Personel bulunamadı</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:30px;color:rgba(255,255,255,0.4);font-size:13px;">Personel bulunamadı</td></tr>`;
             return;
         }
 
+        // Firestore'dan tüm personelin izin özetini çek
+        let izinMap = {};
+        try {
+            const { collection, getDocs, db } = window._fb;
+            const snap = await getDocs(collection(db, 'personel_izin_ozet'));
+            snap.forEach(d => { izinMap[d.id] = d.data(); });
+        } catch(e) { console.warn('İzin özet çekme hatası:', e); }
+
         tbody.innerHTML = liste.map((p, i) => {
+            const oz = izinMap[p.sicil];
+            const toplam    = oz ? (oz.toplam    ?? null) : null;
+            const kullanilan = oz ? (oz.kullanilan ?? null) : null;
+            const kalan = (toplam !== null && kullanilan !== null) ? (toplam - kullanilan) : null;
+
+            const fmt = (v) => v === null ? '<span style="color:rgba(255,255,255,0.25);">-</span>' : v;
+            const kalanRenk = kalan === null ? 'rgba(255,255,255,0.25)' : kalan < 0 ? '#ef4444' : '#22c55e';
+            const kalanStr = kalan === null
+                ? '<span style="color:rgba(255,255,255,0.25);">-</span>'
+                : `<span style="color:${kalanRenk};font-weight:800;">${kalan}</span>`;
+
             return '<tr style="border-bottom:1px solid rgba(255,255,255,0.07);cursor:pointer;transition:background 0.15s;"'
-                + ' onmouseover="this.style.background=\'rgba(240,179,35,0.06)\'"'
-                + ' onmouseout="this.style.background=\'\'"'
-                + ' onclick="izinDetayAc(\'' + p.sicil + '\')">'
-                + '<td style="padding:10px 14px;text-align:center;color:rgba(255,255,255,0.4);font-size:11px;">' + (i+1) + '</td>'
+                + ' onmouseover="this.style.background='rgba(240,179,35,0.06)'"'
+                + ' onmouseout="this.style.background=''"'
+                + ' onclick="izinDetayAc('' + p.sicil + '')">'
+                + '<td style="padding:10px 14px;text-align:center;color:rgba(255,255,255,0.3);font-size:11px;">' + (i+1) + '</td>'
                 + '<td style="padding:10px 14px;color:#fff;font-weight:600;font-size:13px;">' + (p.ad || '') + '</td>'
-                + '<td style="padding:10px 10px;text-align:center;color:rgba(255,255,255,0.5);font-size:12px;">' + (p.sicil || '') + '</td>'
+                + '<td style="padding:10px 10px;text-align:center;color:rgba(255,255,255,0.5);font-size:12px;font-family:monospace;">' + (p.sicil || '') + '</td>'
+                + '<td style="padding:10px 10px;text-align:center;color:#60a5fa;font-weight:700;font-size:13px;">' + fmt(toplam) + '</td>'
+                + '<td style="padding:10px 10px;text-align:center;color:#f87171;font-weight:700;font-size:13px;">' + fmt(kullanilan) + '</td>'
+                + '<td style="padding:10px 10px;text-align:center;font-size:13px;">' + kalanStr + '</td>'
                 + '</tr>';
         }).join('');
 
@@ -8542,9 +8567,7 @@ document.addEventListener('DOMContentLoaded', function() {
             araInput._izinBound = true;
             araInput.addEventListener('input', izinListeFiltre);
         }
-    };
-
-    // ── Arama filtresi ──
+    } // ── Arama filtresi ──
     window.izinListeFiltre = function() {
         const val = (document.getElementById('izinAraInput')?.value || '').toUpperCase().trim();
         const satirlar = document.querySelectorAll('#izinPersonelBody tr');
@@ -8633,6 +8656,8 @@ document.addEventListener('DOMContentLoaded', function() {
         } catch(e) { console.error("Kaydetme hatası:", e); }
 
         izinHesaplaKalan();
+        // Listeyi de güncelle (kalan sütun güncellensin)
+        if (typeof izinListeYukle === 'function') izinListeYukle();
     };
 
     window.izinHesaplaKalan = function() {
