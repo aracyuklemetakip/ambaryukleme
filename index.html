@@ -2278,14 +2278,17 @@
                                         <tr style="background:#F0B323;">
                                             <th style="padding:10px 14px;text-align:center;color:#1C2B6E;font-weight:800;font-size:11px;width:36px;">#</th>
                                             <th style="padding:10px 14px;text-align:left;color:#1C2B6E;font-weight:800;font-size:11px;">AD SOYAD</th>
-                                            <th style="padding:10px 12px;text-align:center;color:#1C2B6E;font-weight:800;font-size:11px;width:100px;">SİCİL</th>
-                                            <th style="padding:10px 12px;text-align:center;color:#1C2B6E;font-weight:800;font-size:11px;width:110px;">TOPLAM İZİN</th>
-                                            <th style="padding:10px 12px;text-align:center;color:#1C2B6E;font-weight:800;font-size:11px;width:110px;">KULLANI LAN</th>
-                                            <th style="padding:10px 12px;text-align:center;color:#1C2B6E;font-weight:800;font-size:11px;width:110px;">KALAN İZİN</th>
+                                            <th style="padding:10px 10px;text-align:center;color:#1C2B6E;font-weight:800;font-size:11px;width:90px;">SİCİL</th>
+                                            <th style="padding:10px 10px;text-align:center;color:#1C2B6E;font-weight:800;font-size:11px;width:110px;">YILLIK İZİN HAKEDİŞ</th>
+                                            <th style="padding:10px 10px;text-align:center;color:#1C2B6E;font-weight:800;font-size:11px;width:120px;">ÖNCEDEN KULLANILAN</th>
+                                            <th style="padding:10px 10px;text-align:center;color:#1C2B6E;font-weight:800;font-size:11px;width:90px;">KALAN İZİN</th>
+                                            <th style="padding:10px 10px;text-align:center;color:#1C2B6E;font-weight:800;font-size:11px;width:100px;">BAŞLANGIÇ</th>
+                                            <th style="padding:10px 10px;text-align:center;color:#1C2B6E;font-weight:800;font-size:11px;width:100px;">BİTİŞ</th>
+                                            <th style="padding:10px 10px;text-align:center;color:#1C2B6E;font-weight:800;font-size:11px;width:100px;">İŞ BAŞI</th>
                                         </tr>
                                     </thead>
                                     <tbody id="izinPersonelBody">
-                                        <tr><td colspan="6" style="text-align:center;padding:30px;color:rgba(255,255,255,0.4);font-size:13px;">⏳ Yükleniyor...</td></tr>
+                                        <tr><td colspan="9" style="text-align:center;padding:30px;color:rgba(255,255,255,0.4);font-size:13px;">⏳ Yükleniyor...</td></tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -2300,19 +2303,19 @@
                             <div id="izinDetayBaslik" style="font-family:'Inter',sans-serif;font-size:18px;font-weight:800;color:#F0B323;"></div>
                         </div>
 
-                        <!-- 3 KUTU: TOPLAM / ÖNCE KULLANI LAN / KALAN -->
+                        <!-- 3 KUTU: YILLIK İZİN HAKEDİŞ / ÖNCEDEN KULLANILAN YILLIK İZİN / KALAN -->
                         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px;">
-                            <!-- KUTU 1: TOPLAM İZİN (girişli) -->
+                            <!-- KUTU 1: YILLIK İZİN HAKEDİŞ (girişli) -->
                             <div style="background:rgba(96,165,250,0.10);border:1.5px solid rgba(96,165,250,0.35);border-radius:14px;padding:18px 16px;display:flex;flex-direction:column;gap:8px;">
-                                <div style="font-size:10px;font-weight:800;color:rgba(96,165,250,0.85);letter-spacing:1.2px;text-transform:uppercase;">TOPLAM İZİN</div>
+                                <div style="font-size:10px;font-weight:800;color:rgba(96,165,250,0.85);letter-spacing:1.2px;text-transform:uppercase;">YILLIK İZİN HAKEDİŞ</div>
                                 <input type="number" id="izinToplamInput" min="0" max="365" placeholder="Gün..."
                                     oninput="izinDetayKartHesapla()"
                                     style="width:100%;padding:8px 10px;border-radius:9px;border:1.5px solid rgba(96,165,250,0.4);background:rgba(96,165,250,0.08);color:#60a5fa;font-family:'Inter',sans-serif;font-size:26px;font-weight:900;outline:none;text-align:center;box-sizing:border-box;">
                                 <div style="font-size:11px;color:rgba(255,255,255,0.4);text-align:center;">gün</div>
                             </div>
-                            <!-- KUTU 2: ÖNCE KULLANI LAN (manuel) -->
+                            <!-- KUTU 2: ÖNCEDEN KULLANILAN YILLIK İZİN (manuel) -->
                             <div style="background:rgba(239,68,68,0.10);border:1.5px solid rgba(239,68,68,0.35);border-radius:14px;padding:18px 16px;display:flex;flex-direction:column;gap:8px;">
-                                <div style="font-size:10px;font-weight:800;color:rgba(239,68,68,0.85);letter-spacing:1.2px;text-transform:uppercase;">ÖNCE KULLANI LAN</div>
+                                <div style="font-size:10px;font-weight:800;color:rgba(239,68,68,0.85);letter-spacing:1.2px;text-transform:uppercase;">ÖNCEDEN KULLANILAN YILLIK İZİN</div>
                                 <input type="number" id="izinOncekiKullanimi" min="0" max="365" placeholder="0"
                                     oninput="izinDetayKartHesapla()"
                                     style="width:100%;padding:8px 10px;border-radius:9px;border:1.5px solid rgba(239,68,68,0.4);background:rgba(239,68,68,0.08);color:#ef4444;font-family:'Inter',sans-serif;font-size:26px;font-weight:900;outline:none;text-align:center;box-sizing:border-box;">
@@ -8552,14 +8555,14 @@ document.addEventListener('DOMContentLoaded', function() {
     window.izinListeYukle = async function() {
         const tbody = document.getElementById('izinPersonelBody');
         if (!tbody) return;
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:30px;color:rgba(255,255,255,0.4);font-size:13px;">⏳ Yükleniyor...</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:30px;color:rgba(255,255,255,0.4);font-size:13px;">⏳ Yükleniyor...</td></tr>`;
 
         const liste = (window.personelListesi || []).slice().sort((a, b) =>
             (a.ad || '').localeCompare(b.ad || '', 'tr')
         );
 
         if (!liste.length) {
-            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:30px;color:rgba(255,255,255,0.4);font-size:13px;">Personel bulunamadı</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:30px;color:rgba(255,255,255,0.4);font-size:13px;">Personel bulunamadı</td></tr>`;
             return;
         }
 
@@ -8571,20 +8574,42 @@ document.addEventListener('DOMContentLoaded', function() {
             snap.docs.forEach(d => { izinMap[d.id] = d.data(); });
         } catch(e) {}
 
+        // Son izin kayıtlarını da çek
+        let izinKayitMap = {};
+        try {
+            const { collection, getDocs, db } = window._fb;
+            const kayitSnap = await getDocs(collection(db, 'personel_izin_kayit'));
+            kayitSnap.docs.forEach(d => {
+                const data = d.data();
+                const sicil = data.sicil;
+                if (!izinKayitMap[sicil]) izinKayitMap[sicil] = [];
+                izinKayitMap[sicil].push(data);
+            });
+        } catch(e) {}
+
         tbody.innerHTML = liste.map((p, i) => {
-            const ozet = izinMap[p.sicil] || { toplam: 0, kullanilan: 0 };
-            const kalan = (ozet.toplam || 0) - (ozet.kullanilan || 0);
-            return `<tr style="border-bottom:1px solid rgba(255,255,255,0.07);cursor:pointer;transition:background 0.15s;"
-                onmouseover="this.style.background='rgba(240,179,35,0.06)'"
-                onmouseout="this.style.background=''"
-                onclick="izinDetayAc('${p.sicil}')">
-                <td style="padding:10px 14px;text-align:center;color:rgba(255,255,255,0.4);font-size:11px;">${i+1}</td>
-                <td style="padding:10px 14px;color:#fff;font-weight:600;font-size:13px;">${p.ad || ''}</td>
-                <td style="padding:10px 12px;text-align:center;color:rgba(255,255,255,0.5);font-size:12px;">${p.sicil || ''}</td>
-                <td style="padding:10px 12px;text-align:center;color:#60a5fa;font-weight:700;">${ozet.toplam || 0}</td>
-                <td style="padding:10px 12px;text-align:center;color:#ef4444;font-weight:700;">${ozet.kullanilan || 0}</td>
-                <td style="padding:10px 12px;text-align:center;color:${kalan > 0 ? '#22c55e' : '#ef4444'};font-weight:700;">${kalan}</td>
-            </tr>`;
+            const ozet = izinMap[p.sicil] || { toplam: 0, oncekiKullanim: 0 };
+            const kayitlar = izinKayitMap[p.sicil] || [];
+            const kayitToplamGun = kayitlar.reduce((s, k) => s + (k.gunSayisi || 0), 0);
+            const toplam = ozet.toplam || 0;
+            const oncekiKullanim = ozet.oncekiKullanim || 0;
+            const kalan = toplam - oncekiKullanim - kayitToplamGun;
+            // Son kaydı bul (en son basTarih'e göre)
+            const sonKayit = kayitlar.sort((a, b) => (b.basTarih || '').localeCompare(a.basTarih || ''))[0];
+            return '<tr style="border-bottom:1px solid rgba(255,255,255,0.07);cursor:pointer;transition:background 0.15s;"'
+                + ' onmouseover="this.style.background=\'rgba(240,179,35,0.06)\'"'
+                + ' onmouseout="this.style.background=\'\'"'
+                + ' onclick="izinDetayAc(\'' + p.sicil + '\')">'
+                + '<td style="padding:10px 14px;text-align:center;color:rgba(255,255,255,0.4);font-size:11px;">' + (i+1) + '</td>'
+                + '<td style="padding:10px 14px;color:#fff;font-weight:600;font-size:13px;">' + (p.ad || '') + '</td>'
+                + '<td style="padding:10px 10px;text-align:center;color:rgba(255,255,255,0.5);font-size:12px;">' + (p.sicil || '') + '</td>'
+                + '<td style="padding:10px 10px;text-align:center;color:#60a5fa;font-weight:700;">' + toplam + '</td>'
+                + '<td style="padding:10px 10px;text-align:center;color:#ef4444;font-weight:700;">' + (oncekiKullanim + kayitToplamGun) + '</td>'
+                + '<td style="padding:10px 10px;text-align:center;color:' + (kalan >= 0 ? '#22c55e' : '#ef4444') + ';font-weight:700;">' + kalan + '</td>'
+                + '<td style="padding:10px 10px;text-align:center;color:#F0B323;font-size:12px;">' + (sonKayit ? isoToGosterList(sonKayit.basTarih) : '—') + '</td>'
+                + '<td style="padding:10px 10px;text-align:center;color:#F0B323;font-size:12px;">' + (sonKayit ? isoToGosterList(sonKayit.bitTarih) : '—') + '</td>'
+                + '<td style="padding:10px 10px;text-align:center;color:#22c55e;font-size:12px;">' + (sonKayit ? isoToGosterList(sonKayit.isBasiTarih) : '—') + '</td>'
+                + '</tr>';
         }).join('');
 
         // Arama input'u bağla
@@ -8703,6 +8728,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (p.length !== 3) return t;
         return p[2] + '.' + p[1] + '.' + p[0];
     }
+    function isoToGosterList(t) { return isoToGoster(t); }
 
     // Pazar hariç iş günü sayısı
     function izinIsGunuHesapla(basStr, bitStr) {
