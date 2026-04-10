@@ -2331,10 +2331,11 @@
                             <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
                                 <div style="display:flex;flex-direction:column;gap:4px;">
                                     <div style="font-size:11px;color:rgba(255,255,255,0.6);">Toplam İzin Günü</div>
-                                    <input type="number" id="izinToplamInput" min="0" max="365" placeholder="Örn: 20"
-                                        style="width:120px;padding:8px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.08);color:#fff;font-family:'Inter',sans-serif;font-size:14px;font-weight:700;outline:none;">
+                                    <input type="number" id="izinToplamInput" min="0" max="365" placeholder="Örn: 20" disabled
+                                        style="width:120px;padding:8px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.5);font-family:'Inter',sans-serif;font-size:14px;font-weight:700;outline:none;cursor:not-allowed;opacity:0.7;">
                                 </div>
-                                <button onclick="izinToplamGuncelle()" style="margin-top:18px;padding:9px 18px;border-radius:8px;border:none;background:#F0B323;color:#1C2B6E;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">💾 Kaydet</button>
+                                <button id="izinToplamKaydetBtn" onclick="izinToplamGuncelle()" style="display:none;margin-top:18px;padding:9px 18px;border-radius:8px;border:none;background:#F0B323;color:#1C2B6E;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">💾 Kaydet</button>
+                                <button id="izinToplamDuzenleBtn" onclick="izinToplamDuzenleAc()" style="margin-top:18px;padding:9px 18px;border-radius:8px;border:1px solid rgba(240,179,35,0.4);background:rgba(240,179,35,0.1);color:#F0B323;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">✏️ Düzenle</button>
                                 <div id="izinToplamMsg" style="display:none;margin-top:18px;font-size:12px;font-weight:700;padding:7px 12px;border-radius:7px;"></div>
                             </div>
                         </div>
@@ -2342,7 +2343,7 @@
                         <!-- İZİN KAYDI EKLE -->
                         <div class="sef-bolum" style="margin-bottom:16px;">
                             <div class="sef-bolum-baslik">➕ İzin Kaydı Ekle</div>
-                            <div style="display:grid;grid-template-columns:1fr 1fr auto auto;gap:10px;align-items:end;">
+                            <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;align-items:end;">
                                 <div style="display:flex;flex-direction:column;gap:4px;">
                                     <div style="font-size:11px;color:rgba(255,255,255,0.6);">Başlangıç Tarihi</div>
                                     <input type="text" id="izinBasTarihGoster" placeholder="Tarih seç..." readonly onclick="izinTakvimAc('bas')"
@@ -2358,10 +2359,12 @@
                                     <div id="izinBitTakvimWrap" style="display:none;position:absolute;z-index:600;margin-top:2px;"></div>
                                 </div>
                                 <div style="display:flex;flex-direction:column;gap:4px;">
-                                    <div style="font-size:11px;color:rgba(255,255,255,0.6);">Gün Sayısı <span style="opacity:.5;">(otomatik)</span></div>
-                                    <input type="number" id="izinGunSayisi" min="1" placeholder="Gün" readonly
-                                        style="width:80px;padding:8px 12px;border-radius:8px;border:1px solid rgba(240,179,35,0.3);background:rgba(240,179,35,0.06);color:#F0B323;font-family:'Inter',sans-serif;font-size:14px;font-weight:700;outline:none;cursor:not-allowed;">
+                                    <div style="font-size:11px;color:rgba(34,197,94,0.8);">İş Başı Tarihi <span style="opacity:.5;">(otomatik)</span></div>
+                                    <input type="text" id="izinIsBasiTarihGoster" placeholder="Bitiş seçince dolar" readonly
+                                        style="width:100%;padding:8px 12px;border-radius:8px;border:1px solid rgba(34,197,94,0.3);background:rgba(34,197,94,0.06);color:#22c55e;font-family:'Inter',sans-serif;font-size:13px;outline:none;cursor:default;">
+                                    <input type="hidden" id="izinIsBasiTarih">
                                 </div>
+                                <input type="hidden" id="izinGunSayisi">
                                 <button onclick="izinKayitEkle()" style="padding:9px 18px;border-radius:8px;border:none;background:#22c55e;color:#fff;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;">➕ Ekle</button>
                             </div>
                             <div id="izinEkleMsg" style="display:none;margin-top:8px;font-size:12px;font-weight:700;padding:7px 12px;border-radius:7px;"></div>
@@ -8611,7 +8614,16 @@ document.addEventListener('DOMContentLoaded', function() {
         const kulEl = document.getElementById('izinKartKullanilan');
         kulEl.value = ozet.kullanilan || 0;
         document.getElementById('izinKartKalan').textContent = (ozet.toplam || 0) - (ozet.kullanilan || 0);
-        document.getElementById('izinToplamInput').value = ozet.toplam || 0;
+        const toplamInp = document.getElementById('izinToplamInput');
+        toplamInp.value = ozet.toplam || 0;
+        // Her zaman kilitli başlat
+        toplamInp.disabled = true;
+        toplamInp.style.background = 'rgba(255,255,255,0.04)';
+        toplamInp.style.color = 'rgba(255,255,255,0.5)';
+        toplamInp.style.cursor = 'not-allowed';
+        toplamInp.style.opacity = '0.7';
+        document.getElementById('izinToplamKaydetBtn').style.display = 'none';
+        document.getElementById('izinToplamDuzenleBtn').style.display = '';
 
         kulEl.oninput = window.izinKullanilanDegisti;
 
@@ -8664,8 +8676,29 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('izinKartToplam').textContent = toplam;
             const kul = parseInt(document.getElementById('izinKartKullanilan').value) || 0;
             document.getElementById('izinKartKalan').textContent = toplam - kul;
+            // Kilitle
+            const inp = document.getElementById('izinToplamInput');
+            inp.disabled = true;
+            inp.style.background = 'rgba(255,255,255,0.04)';
+            inp.style.color = 'rgba(255,255,255,0.5)';
+            inp.style.cursor = 'not-allowed';
+            inp.style.opacity = '0.7';
+            document.getElementById('izinToplamKaydetBtn').style.display = 'none';
+            document.getElementById('izinToplamDuzenleBtn').style.display = '';
             showToast('✅ Toplam izin güncellendi', 'success');
         } catch(e) { showToast('⚠️ Hata: ' + e.message, 'warn'); }
+    };
+
+    window.izinToplamDuzenleAc = function() {
+        const inp = document.getElementById('izinToplamInput');
+        inp.disabled = false;
+        inp.style.background = 'rgba(255,255,255,0.08)';
+        inp.style.color = '#fff';
+        inp.style.cursor = '';
+        inp.style.opacity = '1';
+        document.getElementById('izinToplamKaydetBtn').style.display = '';
+        document.getElementById('izinToplamDuzenleBtn').style.display = 'none';
+        inp.focus();
     };
 
     // ── İzin kayıtlarını yükle ve tabloyu doldur ──
@@ -8722,6 +8755,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const bas = document.getElementById('izinBasTarih')?.value;
         const bit = document.getElementById('izinBitTarih')?.value;
         const gun = parseInt(document.getElementById('izinGunSayisi')?.value) || 0;
+        const isBasi = document.getElementById('izinIsBasiTarih')?.value || '';
         if (!bas || !bit) { showToast('⚠️ Başlangıç ve bitiş tarihi seçin', 'warn'); return; }
         if (gun <= 0) { showToast('⚠️ Geçerli tarih aralığı seçin', 'warn'); return; }
         try {
@@ -8731,7 +8765,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 sicil: _izinAktifPersonel.sicil,
                 ad: _izinAktifPersonel.ad,
                 basTarih: bas, bitTarih: bit, gunSayisi: gun,
-                isBasiTarih: '', olusturma: new Date().toISOString()
+                isBasiTarih: isBasi, olusturma: new Date().toISOString()
             });
             showToast('✅ İzin kaydı eklendi', 'success');
             // Temizle
@@ -8740,6 +8774,8 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('izinBasTarihGoster').value = '';
             document.getElementById('izinBitTarihGoster').value = '';
             document.getElementById('izinGunSayisi').value = '';
+            document.getElementById('izinIsBasiTarih').value = '';
+            document.getElementById('izinIsBasiTarihGoster').value = '';
             await izinKayitlarYukle(_izinAktifPersonel.sicil);
         } catch(e) { showToast('⚠️ Hata: ' + e.message, 'warn'); }
     };
@@ -8832,12 +8868,24 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('izinBitTarih').value = tarih;
             document.getElementById('izinBitTarihGoster').value = tarih;
         }
-        // Gün sayısını hesapla
+        // Gün sayısını hesapla (hidden)
         const bas = document.getElementById('izinBasTarih')?.value;
         const bit = document.getElementById('izinBitTarih')?.value;
         if (bas && bit && bas <= bit) {
             const diff = Math.round((new Date(bit) - new Date(bas)) / 86400000) + 1;
             document.getElementById('izinGunSayisi').value = diff;
+            // İş başı tarihi = bitiş + 1 gün
+            const isBasiD = new Date(bit + 'T00:00:00');
+            isBasiD.setDate(isBasiD.getDate() + 1);
+            const isBasiStr = isBasiD.toISOString().slice(0, 10);
+            const isBasiEl = document.getElementById('izinIsBasiTarihGoster');
+            if (isBasiEl) isBasiEl.value = isBasiStr;
+            const isBasiHidEl = document.getElementById('izinIsBasiTarih');
+            if (isBasiHidEl) isBasiHidEl.value = isBasiStr;
+            // Kalan güncelle
+            const toplam = parseInt(document.getElementById('izinKartToplam')?.textContent) || 0;
+            const mevcutKul = _izinKayitlar ? _izinKayitlar.reduce((s, k) => s + (k.gunSayisi || 0), 0) : 0;
+            document.getElementById('izinKartKalan').textContent = toplam - mevcutKul - diff;
         }
     };
 
@@ -8885,6 +8933,13 @@ document.addEventListener('DOMContentLoaded', function() {
         if (bas && bit && bas <= bit) {
             const diff = Math.round((new Date(bit) - new Date(bas)) / 86400000) + 1;
             document.getElementById('guncelleGunSayisi').value = diff;
+            // Bitiş seçildiyse iş başı otomatik = bitiş + 1
+            if (_izinGuncelleTip === 'bit') {
+                const isBasiD = new Date(bit + 'T00:00:00');
+                isBasiD.setDate(isBasiD.getDate() + 1);
+                const isBasiStr = isBasiD.toISOString().slice(0, 10);
+                document.getElementById('guncelleIsBasiTarih').value = isBasiStr;
+            }
         }
     };
 
