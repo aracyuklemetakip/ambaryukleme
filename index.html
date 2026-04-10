@@ -2307,22 +2307,15 @@
                                 <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:4px;">gün</div>
                             </div>
                             <div style="background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);border-radius:12px;padding:16px;text-align:center;">
-                                <div style="font-size:11px;font-weight:700;color:rgba(239,68,68,0.8);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">KULLANILAN</div>
-                                <input type="number" id="izinKartKullanilan" min="0" max="365"
-                                    
-                                    style="width:80px;font-size:28px;font-weight:900;color:#ef4444;background:transparent;border:none;border-bottom:2px solid rgba(239,68,68,0.5);text-align:center;outline:none;font-family:'Inter',sans-serif;padding:0 0 2px 0;">
-                                <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:6px;">gün — düzenle</div>
+                                <div style="font-size:11px;font-weight:700;color:rgba(239,68,68,0.8);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">KULLANILAN</div>
+                                <div id="izinKartKullanilan" style="font-size:32px;font-weight:900;color:#ef4444;">0</div>
+                                <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:4px;">gün — otomatik</div>
                             </div>
                             <div style="background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.3);border-radius:12px;padding:16px;text-align:center;">
                                 <div style="font-size:11px;font-weight:700;color:rgba(34,197,94,0.8);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">KALAN İZİN</div>
                                 <div id="izinKartKalan" style="font-size:32px;font-weight:900;color:#22c55e;">0</div>
                                 <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:4px;">gün — otomatik</div>
                             </div>
-                        </div>
-                        <!-- KULLANILAN İZİN KAYDET BUTONU -->
-                        <div id="izinKullanilanKaydetWrap" style="display:none;text-align:center;margin-top:-10px;margin-bottom:16px;">
-                            <button onclick="izinKullanilanKaydet()" style="padding:8px 24px;border-radius:8px;border:none;background:#ef4444;color:#fff;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">💾 Kullanılan İzni Kaydet</button>
-                            <div id="izinKullanilanMsg" style="display:none;margin-top:6px;font-size:12px;font-weight:700;padding:6px 12px;border-radius:7px;display:inline-block;"></div>
                         </div>
 
                         <!-- TOPLAM İZİN GÜNCELLE -->
@@ -8602,21 +8595,17 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('izinDetayView').style.display = 'block';
         document.getElementById('izinDetayBaslik').textContent = '🏖️ ' + p.ad;
 
-        // Özet verisini yükle
-        let ozet = { toplam: 0, kullanilan: 0 };
+        // Sadece toplam izni yükle
+        let toplamIzin = 0;
         try {
             const { doc, getDoc, db } = window._fb;
             const snap = await getDoc(doc(db, 'personel_izin_ozet', sicil));
-            if (snap.exists()) ozet = snap.data();
+            if (snap.exists()) toplamIzin = snap.data().toplam || 0;
         } catch(e) {}
 
-        document.getElementById('izinKartToplam').textContent = ozet.toplam || 0;
-        const kulEl = document.getElementById('izinKartKullanilan');
-        kulEl.value = ozet.kullanilan || 0;
-        document.getElementById('izinKartKalan').textContent = (ozet.toplam || 0) - (ozet.kullanilan || 0);
+        document.getElementById('izinKartToplam').textContent = toplamIzin;
         const toplamInp = document.getElementById('izinToplamInput');
-        toplamInp.value = ozet.toplam || 0;
-        // Her zaman kilitli başlat
+        toplamInp.value = toplamIzin;
         toplamInp.disabled = true;
         toplamInp.style.background = 'rgba(255,255,255,0.04)';
         toplamInp.style.color = 'rgba(255,255,255,0.5)';
@@ -8625,9 +8614,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('izinToplamKaydetBtn').style.display = 'none';
         document.getElementById('izinToplamDuzenleBtn').style.display = '';
 
-        kulEl.oninput = window.izinKullanilanDegisti;
-
-        // İzin kayıtlarını yükle
+        // İzin kayıtlarını yükle — kartlar oradan hesaplanacak
         await izinKayitlarYukle(sicil);
     };
 
@@ -8635,32 +8622,6 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('izinDetayView').style.display = 'none';
         document.getElementById('izinListeView').style.display = 'block';
         izinListeYukle();
-    };
-
-    // ── Kullanılan değişince kalan güncelle ──
-    window.izinKullanilanDegisti = function() {
-        const toplam = parseInt(document.getElementById('izinKartToplam').textContent) || 0;
-        const kul = parseInt(document.getElementById('izinKartKullanilan').value) || 0;
-        document.getElementById('izinKartKalan').textContent = toplam - kul;
-        const wrap = document.getElementById('izinKullanilanKaydetWrap');
-        if (wrap) wrap.style.display = 'block';
-    };
-
-    window.izinKullanilanKaydet = async function() {
-        if (!_izinAktifPersonel) return;
-        const kul = parseInt(document.getElementById('izinKartKullanilan').value) || 0;
-        const toplam = parseInt(document.getElementById('izinKartToplam').textContent) || 0;
-        try {
-            const { doc, setDoc, getDoc, db } = window._fb;
-            const ref = doc(db, 'personel_izin_ozet', _izinAktifPersonel.sicil);
-            const snap = await getDoc(ref);
-            const mevcut = snap.exists() ? snap.data() : {};
-            await setDoc(ref, { ...mevcut, kullanilan: kul, toplam: toplam });
-            document.getElementById('izinKartKalan').textContent = toplam - kul;
-            const wrap = document.getElementById('izinKullanilanKaydetWrap');
-            if (wrap) wrap.style.display = 'none';
-            showToast('✅ Kullanılan izin kaydedildi', 'success');
-        } catch(e) { showToast('⚠️ Kayıt hatası: ' + e.message, 'warn'); }
     };
 
     window.izinToplamGuncelle = async function() {
@@ -8674,9 +8635,10 @@ document.addEventListener('DOMContentLoaded', function() {
             const mevcut = snap.exists() ? snap.data() : {};
             await setDoc(ref, { ...mevcut, toplam: toplam });
             document.getElementById('izinKartToplam').textContent = toplam;
-            const kul = parseInt(document.getElementById('izinKartKullanilan').value) || 0;
-            document.getElementById('izinKartKalan').textContent = toplam - kul;
-            // Kilitle
+            // Kartları yeniden hesapla
+            const kullanilan = _izinKayitlar ? _izinKayitlar.reduce((s, k) => s + (k.gunSayisi || 0), 0) : 0;
+            document.getElementById('izinKartKullanilan').textContent = kullanilan;
+            document.getElementById('izinKartKalan').textContent = toplam - kullanilan;
             const inp = document.getElementById('izinToplamInput');
             inp.disabled = true;
             inp.style.background = 'rgba(255,255,255,0.04)';
@@ -8723,14 +8685,45 @@ document.addEventListener('DOMContentLoaded', function() {
         izinKayitlarRender();
     }
 
+    // YYYY-MM-DD → GG.AA.YYYY
+    function isoToGoster(t) {
+        if (!t) return '—';
+        const p = t.split('-');
+        if (p.length !== 3) return t;
+        return p[2] + '.' + p[1] + '.' + p[0];
+    }
+
+    // Pazar hariç iş günü sayısı
+    function izinIsGunuHesapla(basStr, bitStr) {
+        const bas = new Date(basStr + 'T00:00:00');
+        const bit = new Date(bitStr + 'T00:00:00');
+        let sayi = 0;
+        const d = new Date(bas);
+        while (d <= bit) {
+            if (d.getDay() !== 0) sayi++;
+            d.setDate(d.getDate() + 1);
+        }
+        return sayi;
+    }
+
+    function izinKartlarGuncelle() {
+        const toplam = parseInt(document.getElementById('izinKartToplam')?.textContent) || 0;
+        const kullanilan = _izinKayitlar ? _izinKayitlar.reduce((s, k) => s + (k.gunSayisi || 0), 0) : 0;
+        document.getElementById('izinKartKullanilan').textContent = kullanilan;
+        document.getElementById('izinKartKalan').textContent = toplam - kullanilan;
+    }
+
     function izinKayitlarRender() {
         const tbody = document.getElementById('izinKayitlarBody');
         if (!tbody) return;
+        // Kartları her zaman güncelle
+        izinKartlarGuncelle();
         if (!_izinKayitlar.length) {
             tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:20px;color:rgba(255,255,255,0.35);font-size:13px;">Henüz izin kaydı yok</td></tr>`;
             return;
         }
-        let kalanSayac = parseInt(document.getElementById('izinKartToplam')?.textContent) || 0;
+        const toplam = parseInt(document.getElementById('izinKartToplam')?.textContent) || 0;
+        let kalanSayac = toplam;
         tbody.innerHTML = _izinKayitlar.map((k, i) => {
             kalanSayac -= (k.gunSayisi || 0);
             const renk = kalanSayac >= 0 ? '#22c55e' : '#ef4444';
@@ -8738,7 +8731,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <td style="padding:8px 12px;text-align:center;color:rgba(255,255,255,0.4);font-size:11px;">${i+1}</td>
                 <td style="padding:8px 12px;color:#fff;font-size:12px;">${isoToGoster(k.basTarih)}</td>
                 <td style="padding:8px 12px;color:#fff;font-size:12px;">${isoToGoster(k.bitTarih)}</td>
-                <td style="padding:8px 12px;color:#22c55e;font-size:12px;">${k.isBasiTarih ? isoToGoster(k.isBasiTarih) : '—'}</td>
+                <td style="padding:8px 12px;color:#22c55e;font-size:12px;">${isoToGoster(k.isBasiTarih)}</td>
                 <td style="padding:8px 12px;text-align:center;color:#F0B323;font-weight:700;">${k.gunSayisi || 0}</td>
                 <td style="padding:8px 12px;text-align:center;color:${renk};font-weight:700;">${kalanSayac}</td>
                 <td style="padding:8px 12px;text-align:center;">
@@ -8802,7 +8795,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (_izinAktifPersonel) await izinKayitlarYukle(_izinAktifPersonel.sicil);
     };
 
-    // ── Güncelleme modal ──
     window.izinKayitGuncelleAc = function(id) {
         const k = _izinKayitlar.find(x => x._id === id);
         if (!k) return;
@@ -8812,8 +8804,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('guncelleBitTarih').value = k.bitTarih || '';
         document.getElementById('guncelleBitTarihGoster').value = isoToGoster(k.bitTarih);
         document.getElementById('guncelleIsBasiTarih').value = k.isBasiTarih || '';
-        const g = k.gunSayisi || 0;
-        document.getElementById('guncelleGunSayisi').value = g;
+        document.getElementById('guncelleGunSayisi').value = k.gunSayisi || 0;
         document.getElementById('izinGuncelleModal').style.display = 'flex';
     };
     window.izinGuncelleKapat = function() {
@@ -8859,26 +8850,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const wrap = document.getElementById(wrapId);
         if (wrap) _izinTakvimRender(wrap, _izinTkv, _izinTakvimTip, 'izinTakvimGunSec', 'izinTakvimNav');
     };
-    // Pazar hariç iş günü sayısı hesapla
-    function izinIsGunuHesapla(basStr, bitStr) {
-        const bas = new Date(basStr + 'T00:00:00');
-        const bit = new Date(bitStr + 'T00:00:00');
-        let sayi = 0;
-        const d = new Date(bas);
-        while (d <= bit) {
-            if (d.getDay() !== 0) sayi++; // 0 = Pazar
-            d.setDate(d.getDate() + 1);
-        }
-        return sayi;
-    }
-
-    // YYYY-MM-DD → GG.AA.YYYY
-    function isoToGoster(tarih) {
-        if (!tarih) return '';
-        const [y, m, g] = tarih.split('-');
-        return `${g}.${m}.${y}`;
-    }
-
     window.izinTakvimGunSec = function(tarih) {
         document.querySelectorAll('#izinBasTakvimWrap,#izinBitTakvimWrap').forEach(w => { w.style.display='none'; w.innerHTML=''; });
         if (_izinTakvimTip === 'bas') {
@@ -8888,23 +8859,21 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('izinBitTarih').value = tarih;
             document.getElementById('izinBitTarihGoster').value = isoToGoster(tarih);
         }
-        const bas = document.getElementById('izinBasTarih')?.value;
-        const bit = document.getElementById('izinBitTarih')?.value;
+        const bas = document.getElementById('izinBasTarih').value;
+        const bit = document.getElementById('izinBitTarih').value;
         if (bas && bit && bas <= bit) {
-            const diff = izinIsGunuHesapla(bas, bit);
-            document.getElementById('izinGunSayisi').value = diff;
+            const gun = izinIsGunuHesapla(bas, bit);
+            document.getElementById('izinGunSayisi').value = gun;
             // İş başı = bitiş + 1 gün
             const isBasiD = new Date(bit + 'T00:00:00');
             isBasiD.setDate(isBasiD.getDate() + 1);
-            const isBasiStr = isBasiD.toISOString().slice(0, 10);
-            const isBasiEl = document.getElementById('izinIsBasiTarihGoster');
-            if (isBasiEl) isBasiEl.value = isoToGoster(isBasiStr);
-            const isBasiHidEl = document.getElementById('izinIsBasiTarih');
-            if (isBasiHidEl) isBasiHidEl.value = isBasiStr;
-            // Kalan güncelle: toplam - (kayıtlardaki mevcut) - yeni seçilen
-            const toplam = parseInt(document.getElementById('izinKartToplam')?.textContent) || 0;
+            const isBasiISO = isBasiD.toISOString().slice(0, 10);
+            document.getElementById('izinIsBasiTarih').value = isBasiISO;
+            document.getElementById('izinIsBasiTarihGoster').value = isoToGoster(isBasiISO);
+            // Kalan preview: toplam - kayıtlardaki mevcut - yeni seçilen
+            const toplam = parseInt(document.getElementById('izinKartToplam').textContent) || 0;
             const mevcutKul = _izinKayitlar ? _izinKayitlar.reduce((s, k) => s + (k.gunSayisi || 0), 0) : 0;
-            document.getElementById('izinKartKalan').textContent = toplam - mevcutKul - diff;
+            document.getElementById('izinKartKalan').textContent = toplam - mevcutKul - gun;
         }
     };
 
@@ -8946,23 +8915,18 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             document.getElementById('guncelleBitTarih').value = tarih;
             document.getElementById('guncelleBitTarihGoster').value = isoToGoster(tarih);
+            // Bitiş seçilince iş başı otomatik = bitiş + 1
+            const isBasiD = new Date(tarih + 'T00:00:00');
+            isBasiD.setDate(isBasiD.getDate() + 1);
+            document.getElementById('guncelleIsBasiTarih').value = isBasiD.toISOString().slice(0, 10);
         }
-        const bas = document.getElementById('guncelleBasTarih')?.value;
-        const bit = document.getElementById('guncelleBitTarih')?.value;
+        const bas = document.getElementById('guncelleBasTarih').value;
+        const bit = document.getElementById('guncelleBitTarih').value;
         if (bas && bit && bas <= bit) {
-            const diff = izinIsGunuHesapla(bas, bit);
-            document.getElementById('guncelleGunSayisi').value = diff;
-            // Bitiş seçildiyse iş başı otomatik = bitiş + 1
-            if (_izinGuncelleTip === 'bit') {
-                const isBasiD = new Date(bit + 'T00:00:00');
-                isBasiD.setDate(isBasiD.getDate() + 1);
-                const isBasiStr = isBasiD.toISOString().slice(0, 10);
-                document.getElementById('guncelleIsBasiTarih').value = isBasiStr;
-            }
+            document.getElementById('guncelleGunSayisi').value = izinIsGunuHesapla(bas, bit);
         }
     };
 
-    // ── Mini takvim render yardımcısı ──
     function _izinTakvimRender(wrap, tkv, tip, gunSecFn, navFn) {
         const AY_AD = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
         const GUN_AD = ['Pt','Sa','Ça','Pe','Cu','Ct','Pz'];
@@ -8970,25 +8934,24 @@ document.addEventListener('DOMContentLoaded', function() {
         const ilkGun = new Date(yil, ay, 1).getDay();
         const ilkPt = (ilkGun === 0 ? 6 : ilkGun - 1);
         const sonGun = new Date(yil, ay+1, 0).getDate();
-        let html = `<div style="background:#0f1e5a;border:1px solid rgba(240,179,35,0.3);border-radius:12px;padding:14px;min-width:240px;box-shadow:0 8px 32px rgba(0,0,0,0.6);">
+        let html = `<div style="background:#0f1e5a;border:1px solid rgba(240,179,35,0.35);border-radius:12px;padding:14px;min-width:242px;box-shadow:0 8px 32px rgba(0,0,0,0.6);z-index:700;">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-                <button onclick="${navFn}(-1)" style="background:rgba(240,179,35,0.15);border:1px solid rgba(240,179,35,0.3);color:#F0B323;font-size:16px;cursor:pointer;padding:2px 8px;border-radius:6px;">‹</button>
-                <span style="color:#F0B323;font-weight:800;font-size:13px;letter-spacing:0.5px;">${AY_AD[ay]} ${yil}</span>
-                <button onclick="${navFn}(1)" style="background:rgba(240,179,35,0.15);border:1px solid rgba(240,179,35,0.3);color:#F0B323;font-size:16px;cursor:pointer;padding:2px 8px;border-radius:6px;">›</button>
+                <button onclick="${navFn}(-1)" style="background:rgba(240,179,35,0.15);border:1px solid rgba(240,179,35,0.3);color:#F0B323;font-size:16px;cursor:pointer;padding:2px 9px;border-radius:6px;line-height:1.4;">‹</button>
+                <span style="color:#F0B323;font-weight:800;font-size:13px;">${AY_AD[ay]} ${yil}</span>
+                <button onclick="${navFn}(1)" style="background:rgba(240,179,35,0.15);border:1px solid rgba(240,179,35,0.3);color:#F0B323;font-size:16px;cursor:pointer;padding:2px 9px;border-radius:6px;line-height:1.4;">›</button>
             </div>
-            <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:6px;">
-                ${GUN_AD.map((g, i) => `<div style="text-align:center;font-size:10px;font-weight:700;color:${i===6?'rgba(239,68,68,0.5)':'rgba(255,255,255,0.45)'};padding:2px;">${g}</div>`).join('')}
+            <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:5px;">
+                ${GUN_AD.map((g,i) => `<div style="text-align:center;font-size:10px;font-weight:700;color:${i===6?'rgba(239,68,68,0.45)':'rgba(255,255,255,0.4)'};padding:2px;">${g}</div>`).join('')}
             </div>
             <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;">`;
         for (let i = 0; i < ilkPt; i++) html += `<div></div>`;
         for (let g = 1; g <= sonGun; g++) {
             const tarih = `${yil}-${String(ay+1).padStart(2,'0')}-${String(g).padStart(2,'0')}`;
-            const haftaGunu = new Date(tarih + 'T00:00:00').getDay(); // 0=Pazar
-            if (haftaGunu === 0) {
-                // Pazar — pasif, tıklanamaz
-                html += `<div style="text-align:center;font-size:11px;font-weight:600;color:rgba(239,68,68,0.35);background:rgba(239,68,68,0.05);border-radius:4px;padding:4px 2px;cursor:default;">${g}</div>`;
+            const gun = new Date(tarih + 'T00:00:00').getDay();
+            if (gun === 0) {
+                html += `<div style="text-align:center;font-size:11px;color:rgba(239,68,68,0.3);padding:5px 2px;cursor:default;">${g}</div>`;
             } else {
-                html += `<button onclick="${gunSecFn}('${tarih}')" style="text-align:center;font-size:11px;font-weight:600;color:#fff;background:rgba(255,255,255,0.07);border:none;border-radius:4px;padding:4px 2px;cursor:pointer;transition:background 0.1s;" onmouseover="this.style.background='rgba(240,179,35,0.35)'" onmouseout="this.style.background='rgba(255,255,255,0.07)'">${g}</button>`;
+                html += `<button onclick="${gunSecFn}('${tarih}')" style="text-align:center;font-size:11px;font-weight:600;color:#fff;background:rgba(255,255,255,0.08);border:none;border-radius:4px;padding:5px 2px;cursor:pointer;" onmouseover="this.style.background='rgba(240,179,35,0.4)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">${g}</button>`;
             }
         }
         html += `</div></div>`;
