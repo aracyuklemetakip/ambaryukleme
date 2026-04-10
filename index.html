@@ -2294,72 +2294,103 @@
 
                     <!-- İZİN DETAY SAYFASI (personele tıklandığında açılır) -->
                     <div id="izinDetayView" style="display:none;">
-                        <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;">
+                        <!-- BAŞLIK + GERİ -->
+                        <div style="display:flex;align-items:center;gap:12px;margin-bottom:22px;">
                             <button onclick="izinDetayKapat()" style="padding:7px 14px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.08);color:#fff;font-family:'Inter',sans-serif;font-size:12px;font-weight:700;cursor:pointer;">← Geri</button>
                             <div id="izinDetayBaslik" style="font-family:'Inter',sans-serif;font-size:18px;font-weight:800;color:#F0B323;"></div>
                         </div>
 
-                        <!-- İZİN ÖZET KARTLAR -->
-                        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;">
-                            <div style="background:rgba(96,165,250,0.12);border:1px solid rgba(96,165,250,0.3);border-radius:12px;padding:16px;text-align:center;">
-                                <div style="font-size:11px;font-weight:700;color:rgba(96,165,250,0.8);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">TOPLAM İZİN</div>
-                                <div id="izinKartToplam" style="font-size:32px;font-weight:900;color:#60a5fa;">0</div>
-                                <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:4px;">gün</div>
+                        <!-- 3 KUTU: TOPLAM / ÖNCE KULLANILAN / KALAN -->
+                        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px;">
+
+                            <!-- KUTU 1: TOPLAM İZİN (girişli) -->
+                            <div style="background:rgba(96,165,250,0.10);border:1.5px solid rgba(96,165,250,0.35);border-radius:14px;padding:18px 16px;display:flex;flex-direction:column;gap:8px;">
+                                <div style="font-size:10px;font-weight:800;color:rgba(96,165,250,0.85);letter-spacing:1.2px;text-transform:uppercase;">TOPLAM İZİN</div>
+                                <input type="number" id="izinToplamInput" min="0" max="365" placeholder="Gün sayısı..."
+                                    oninput="izinDetayKartHesapla()"
+                                    style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid rgba(96,165,250,0.4);background:rgba(96,165,250,0.08);color:#60a5fa;font-family:'Inter',sans-serif;font-size:22px;font-weight:900;outline:none;text-align:center;box-sizing:border-box;">
+                                <div style="font-size:11px;color:rgba(255,255,255,0.4);text-align:center;">gün</div>
+                                <!-- Gizli input lar — eski kod uyumluluğu için -->
+                                <button id="izinToplamKaydetBtn" onclick="izinToplamGuncelle()" style="display:none;"></button>
+                                <button id="izinToplamDuzenleBtn" style="display:none;"></button>
+                                <div id="izinToplamMsg" style="display:none;"></div>
                             </div>
-                            <div style="background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);border-radius:12px;padding:16px;text-align:center;">
-                                <div style="font-size:11px;font-weight:700;color:rgba(239,68,68,0.8);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">KULLANILAN</div>
-                                <div id="izinKartKullanilan" style="font-size:32px;font-weight:900;color:#ef4444;">0</div>
-                                <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:4px;">gün — otomatik</div>
+
+                            <!-- KUTU 2: ÖNCE KULLANI LAN (manuel giriş) -->
+                            <div style="background:rgba(239,68,68,0.10);border:1.5px solid rgba(239,68,68,0.35);border-radius:14px;padding:18px 16px;display:flex;flex-direction:column;gap:8px;">
+                                <div style="font-size:10px;font-weight:800;color:rgba(239,68,68,0.85);letter-spacing:1.2px;text-transform:uppercase;">ÖNCE KULLANILAN</div>
+                                <input type="number" id="izinOncekiKullanimi" min="0" max="365" placeholder="0"
+                                    oninput="izinDetayKartHesapla()"
+                                    style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid rgba(239,68,68,0.4);background:rgba(239,68,68,0.08);color:#ef4444;font-family:'Inter',sans-serif;font-size:22px;font-weight:900;outline:none;text-align:center;box-sizing:border-box;">
+                                <div style="font-size:11px;color:rgba(255,255,255,0.4);text-align:center;">gün — manuel</div>
+                                <!-- Gizli uyumluluk -->
+                                <div id="izinKartKullanilan" style="display:none;">0</div>
                             </div>
-                            <div style="background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.3);border-radius:12px;padding:16px;text-align:center;">
-                                <div style="font-size:11px;font-weight:700;color:rgba(34,197,94,0.8);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">KALAN İZİN</div>
-                                <div id="izinKartKalan" style="font-size:32px;font-weight:900;color:#22c55e;">0</div>
-                                <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:4px;">gün — otomatik</div>
+
+                            <!-- KUTU 3: KALAN İZİN (otomatik) -->
+                            <div style="background:rgba(34,197,94,0.10);border:1.5px solid rgba(34,197,94,0.35);border-radius:14px;padding:18px 16px;display:flex;flex-direction:column;gap:8px;align-items:center;justify-content:center;">
+                                <div style="font-size:10px;font-weight:800;color:rgba(34,197,94,0.85);letter-spacing:1.2px;text-transform:uppercase;">KALAN İZİN</div>
+                                <div id="izinKartKalan" style="font-size:38px;font-weight:900;color:#22c55e;line-height:1;">—</div>
+                                <div style="font-size:11px;color:rgba(255,255,255,0.4);">gün — otomatik</div>
                             </div>
                         </div>
+                        <!-- Gizli uyumluluk -->
+                        <div id="izinKartToplam" style="display:none;">0</div>
 
-                        <!-- TOPLAM İZİN GÜNCELLE -->
+                        <!-- TAKVİM: TARİH SEÇİMİ -->
                         <div class="sef-bolum" style="margin-bottom:16px;">
-                            <div class="sef-bolum-baslik">⚙️ Toplam İzin Günü Ayarla</div>
-                            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-                                <div style="display:flex;flex-direction:column;gap:4px;">
-                                    <div style="font-size:11px;color:rgba(255,255,255,0.6);">Toplam İzin Günü</div>
-                                    <input type="number" id="izinToplamInput" min="0" max="365" placeholder="Örn: 20" disabled
-                                        style="width:120px;padding:8px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.5);font-family:'Inter',sans-serif;font-size:14px;font-weight:700;outline:none;cursor:not-allowed;opacity:0.7;">
-                                </div>
-                                <button id="izinToplamKaydetBtn" onclick="izinToplamGuncelle()" style="display:none;margin-top:18px;padding:9px 18px;border-radius:8px;border:none;background:#F0B323;color:#1C2B6E;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">💾 Kaydet</button>
-                                <button id="izinToplamDuzenleBtn" onclick="izinToplamDuzenleAc()" style="margin-top:18px;padding:9px 18px;border-radius:8px;border:1px solid rgba(240,179,35,0.4);background:rgba(240,179,35,0.1);color:#F0B323;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">✏️ Düzenle</button>
-                                <div id="izinToplamMsg" style="display:none;margin-top:18px;font-size:12px;font-weight:700;padding:7px 12px;border-radius:7px;"></div>
-                            </div>
-                        </div>
+                            <div class="sef-bolum-baslik">📅 İzin Tarihi Seç</div>
+                            <div style="font-size:11px;color:rgba(255,255,255,0.45);margin-bottom:12px;">Pazarlar otomatik olarak hesaba katılmaz. Başlangıç ve bitiş tarihini takvimden seçin.</div>
 
-                        <!-- İZİN KAYDI EKLE -->
-                        <div class="sef-bolum" style="margin-bottom:16px;">
-                            <div class="sef-bolum-baslik">➕ İzin Kaydı Ekle</div>
-                            <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;align-items:end;">
-                                <div style="display:flex;flex-direction:column;gap:4px;">
-                                    <div style="font-size:11px;color:rgba(255,255,255,0.6);">Başlangıç Tarihi</div>
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:14px;">
+                                <!-- Başlangıç -->
+                                <div style="display:flex;flex-direction:column;gap:5px;position:relative;">
+                                    <div style="font-size:11px;font-weight:700;color:rgba(240,179,35,0.85);">📌 Başlangıç Tarihi</div>
                                     <input type="text" id="izinBasTarihGoster" placeholder="Tarih seç..." readonly onclick="izinTakvimAc('bas')"
-                                        style="width:100%;padding:8px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.08);color:#fff;font-family:'Inter',sans-serif;font-size:13px;cursor:pointer;outline:none;">
+                                        style="width:100%;padding:10px 14px;border-radius:9px;border:1.5px solid rgba(240,179,35,0.35);background:rgba(240,179,35,0.06);color:#F0B323;font-family:'Inter',sans-serif;font-size:14px;font-weight:700;cursor:pointer;outline:none;box-sizing:border-box;">
                                     <input type="hidden" id="izinBasTarih">
-                                    <div id="izinBasTakvimWrap" style="display:none;position:absolute;z-index:600;margin-top:2px;"></div>
+                                    <div id="izinBasTakvimWrap" style="display:none;position:absolute;z-index:600;top:calc(100% + 4px);left:0;"></div>
                                 </div>
-                                <div style="display:flex;flex-direction:column;gap:4px;">
-                                    <div style="font-size:11px;color:rgba(255,255,255,0.6);">Bitiş Tarihi</div>
+                                <!-- Bitiş -->
+                                <div style="display:flex;flex-direction:column;gap:5px;position:relative;">
+                                    <div style="font-size:11px;font-weight:700;color:rgba(240,179,35,0.85);">🏁 Bitiş Tarihi</div>
                                     <input type="text" id="izinBitTarihGoster" placeholder="Tarih seç..." readonly onclick="izinTakvimAc('bit')"
-                                        style="width:100%;padding:8px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.08);color:#fff;font-family:'Inter',sans-serif;font-size:13px;cursor:pointer;outline:none;">
+                                        style="width:100%;padding:10px 14px;border-radius:9px;border:1.5px solid rgba(240,179,35,0.35);background:rgba(240,179,35,0.06);color:#F0B323;font-family:'Inter',sans-serif;font-size:14px;font-weight:700;cursor:pointer;outline:none;box-sizing:border-box;">
                                     <input type="hidden" id="izinBitTarih">
-                                    <div id="izinBitTakvimWrap" style="display:none;position:absolute;z-index:600;margin-top:2px;"></div>
+                                    <div id="izinBitTakvimWrap" style="display:none;position:absolute;z-index:600;top:calc(100% + 4px);left:0;"></div>
                                 </div>
-                                <div style="display:flex;flex-direction:column;gap:4px;">
-                                    <div style="font-size:11px;color:rgba(34,197,94,0.8);">İş Başı Tarihi <span style="opacity:.5;">(otomatik)</span></div>
-                                    <input type="text" id="izinIsBasiTarihGoster" placeholder="Bitiş seçince dolar" readonly
-                                        style="width:100%;padding:8px 12px;border-radius:8px;border:1px solid rgba(34,197,94,0.3);background:rgba(34,197,94,0.06);color:#22c55e;font-family:'Inter',sans-serif;font-size:13px;outline:none;cursor:default;">
-                                    <input type="hidden" id="izinIsBasiTarih">
-                                </div>
-                                <input type="hidden" id="izinGunSayisi">
-                                <button onclick="izinKayitEkle()" style="padding:9px 18px;border-radius:8px;border:none;background:#22c55e;color:#fff;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;">➕ Ekle</button>
                             </div>
+
+                            <!-- ÖZET BİLGİ (tarihler seçilince görünür) -->
+                            <div id="izinOzetPanel" style="display:none;background:rgba(15,30,90,0.5);border:1px solid rgba(240,179,35,0.2);border-radius:12px;padding:16px 20px;margin-bottom:14px;">
+                                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+                                    <div style="display:flex;flex-direction:column;gap:4px;">
+                                        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.45);letter-spacing:1px;text-transform:uppercase;">İzin Başlangıç</div>
+                                        <div id="izinOzetBas" style="font-size:15px;font-weight:800;color:#F0B323;font-family:'Inter',sans-serif;">—</div>
+                                    </div>
+                                    <div style="display:flex;flex-direction:column;gap:4px;">
+                                        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.45);letter-spacing:1px;text-transform:uppercase;">Bitiş Tarihi</div>
+                                        <div id="izinOzetBit" style="font-size:15px;font-weight:800;color:#F0B323;font-family:'Inter',sans-serif;">—</div>
+                                    </div>
+                                    <div style="display:flex;flex-direction:column;gap:4px;">
+                                        <div style="font-size:10px;font-weight:700;color:rgba(34,197,94,0.7);letter-spacing:1px;text-transform:uppercase;">İş Başı Tarihi</div>
+                                        <div id="izinOzetIsBasi" style="font-size:15px;font-weight:800;color:#22c55e;font-family:'Inter',sans-serif;">—</div>
+                                    </div>
+                                </div>
+                                <div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;gap:10px;">
+                                    <span style="font-size:12px;color:rgba(255,255,255,0.5);">Seçilen gün sayısı (Pazar hariç):</span>
+                                    <span id="izinOzetGun" style="font-size:16px;font-weight:900;color:#F0B323;">0</span>
+                                    <span style="font-size:12px;color:rgba(255,255,255,0.4);">gün</span>
+                                </div>
+                            </div>
+                            <input type="hidden" id="izinGunSayisi">
+                            <input type="hidden" id="izinIsBasiTarih">
+                            <input type="text" id="izinIsBasiTarihGoster" style="display:none;">
+
+                            <button onclick="izinKayitEkle()" style="width:100%;padding:12px;border-radius:9px;border:none;background:#22c55e;color:#fff;font-family:'Inter',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.15s;letter-spacing:0.3px;"
+                                onmouseover="this.style.background='#16a34a'" onmouseout="this.style.background='#22c55e'">
+                                ➕ İzin Kaydını Kaydet
+                            </button>
                             <div id="izinEkleMsg" style="display:none;margin-top:8px;font-size:12px;font-weight:700;padding:7px 12px;border-radius:7px;"></div>
                         </div>
 
@@ -2380,7 +2411,7 @@
                                         </tr>
                                     </thead>
                                     <tbody id="izinKayitlarBody">
-                                        <tr><td colspan="5" style="text-align:center;padding:20px;color:rgba(255,255,255,0.35);font-size:13px;">Henüz izin kaydı yok</td></tr>
+                                        <tr><td colspan="7" style="text-align:center;padding:20px;color:rgba(255,255,255,0.35);font-size:13px;">Henüz izin kaydı yok</td></tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -8595,27 +8626,49 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('izinDetayView').style.display = 'block';
         document.getElementById('izinDetayBaslik').textContent = '🏖️ ' + p.ad;
 
-        // Sadece toplam izni yükle
+        // Toplam izin ve onceki kullanimi yukle
         let toplamIzin = 0;
+        let oncekiKullanim = 0;
         try {
             const { doc, getDoc, db } = window._fb;
             const snap = await getDoc(doc(db, 'personel_izin_ozet', sicil));
-            if (snap.exists()) toplamIzin = snap.data().toplam || 0;
+            if (snap.exists()) {
+                toplamIzin = snap.data().toplam || 0;
+                oncekiKullanim = snap.data().oncekiKullanim || 0;
+            }
         } catch(e) {}
 
-        document.getElementById('izinKartToplam').textContent = toplamIzin;
-        const toplamInp = document.getElementById('izinToplamInput');
-        toplamInp.value = toplamIzin;
-        toplamInp.disabled = true;
-        toplamInp.style.background = 'rgba(255,255,255,0.04)';
-        toplamInp.style.color = 'rgba(255,255,255,0.5)';
-        toplamInp.style.cursor = 'not-allowed';
-        toplamInp.style.opacity = '0.7';
-        document.getElementById('izinToplamKaydetBtn').style.display = 'none';
-        document.getElementById('izinToplamDuzenleBtn').style.display = '';
+        document.getElementById('izinToplamInput').value = toplamIzin || '';
+        document.getElementById('izinOncekiKullanimi').value = oncekiKullanim || '';
 
-        // İzin kayıtlarını yükle — kartlar oradan hesaplanacak
+        // Tarihleri sifirla
+        document.getElementById('izinBasTarih').value = '';
+        document.getElementById('izinBitTarih').value = '';
+        document.getElementById('izinBasTarihGoster').value = '';
+        document.getElementById('izinBitTarihGoster').value = '';
+        document.getElementById('izinGunSayisi').value = '';
+        document.getElementById('izinIsBasiTarih').value = '';
+        document.getElementById('izinOzetPanel').style.display = 'none';
+
+        izinDetayKartHesapla();
         await izinKayitlarYukle(sicil);
+    };
+
+    // ── Kart hesaplama ──
+    window.izinDetayKartHesapla = function() {
+        const toplam = parseInt(document.getElementById('izinToplamInput').value) || 0;
+        const onceki = parseInt(document.getElementById('izinOncekiKullanimi').value) || 0;
+        const secilenGun = parseInt(document.getElementById('izinGunSayisi').value) || 0;
+        const kalan = toplam - onceki - secilenGun;
+        const kalanEl = document.getElementById('izinKartKalan');
+        if (kalanEl) {
+            kalanEl.textContent = toplam > 0 ? String(kalan) : '—';
+            kalanEl.style.color = kalan < 0 ? '#ef4444' : '#22c55e';
+        }
+        const kartToplam = document.getElementById('izinKartToplam');
+        if (kartToplam) kartToplam.textContent = String(toplam);
+        const kartKul = document.getElementById('izinKartKullanilan');
+        if (kartKul) kartKul.textContent = String(onceki + secilenGun);
     };
 
     window.izinDetayKapat = function() {
@@ -8626,41 +8679,21 @@ document.addEventListener('DOMContentLoaded', function() {
 
     window.izinToplamGuncelle = async function() {
         if (!_izinAktifPersonel) return;
-        const toplam = parseInt(document.getElementById('izinToplamInput').value);
-        if (isNaN(toplam) || toplam < 0) { showToast('⚠️ Geçerli bir sayı girin', 'warn'); return; }
+        const toplam = parseInt(document.getElementById('izinToplamInput').value) || 0;
+        const onceki = parseInt(document.getElementById('izinOncekiKullanimi').value) || 0;
         try {
             const { doc, setDoc, getDoc, db } = window._fb;
             const ref = doc(db, 'personel_izin_ozet', _izinAktifPersonel.sicil);
             const snap = await getDoc(ref);
             const mevcut = snap.exists() ? snap.data() : {};
-            await setDoc(ref, { ...mevcut, toplam: toplam });
-            document.getElementById('izinKartToplam').textContent = toplam;
-            // Kartları yeniden hesapla
-            const kullanilan = _izinKayitlar ? _izinKayitlar.reduce((s, k) => s + (k.gunSayisi || 0), 0) : 0;
-            document.getElementById('izinKartKullanilan').textContent = kullanilan;
-            document.getElementById('izinKartKalan').textContent = toplam - kullanilan;
-            const inp = document.getElementById('izinToplamInput');
-            inp.disabled = true;
-            inp.style.background = 'rgba(255,255,255,0.04)';
-            inp.style.color = 'rgba(255,255,255,0.5)';
-            inp.style.cursor = 'not-allowed';
-            inp.style.opacity = '0.7';
-            document.getElementById('izinToplamKaydetBtn').style.display = 'none';
-            document.getElementById('izinToplamDuzenleBtn').style.display = '';
-            showToast('✅ Toplam izin güncellendi', 'success');
+            await setDoc(ref, { ...mevcut, toplam: toplam, oncekiKullanim: onceki });
+            izinDetayKartHesapla();
+            showToast('✅ İzin bilgileri güncellendi', 'success');
         } catch(e) { showToast('⚠️ Hata: ' + e.message, 'warn'); }
     };
 
     window.izinToplamDuzenleAc = function() {
-        const inp = document.getElementById('izinToplamInput');
-        inp.disabled = false;
-        inp.style.background = 'rgba(255,255,255,0.08)';
-        inp.style.color = '#fff';
-        inp.style.cursor = '';
-        inp.style.opacity = '1';
-        document.getElementById('izinToplamKaydetBtn').style.display = '';
-        document.getElementById('izinToplamDuzenleBtn').style.display = 'none';
-        inp.focus();
+        // No-op — artık inputlar zaten aktif
     };
 
     // ── İzin kayıtlarını yükle ve tabloyu doldur ──
@@ -8749,10 +8782,12 @@ document.addEventListener('DOMContentLoaded', function() {
         const bit = document.getElementById('izinBitTarih')?.value;
         const gun = parseInt(document.getElementById('izinGunSayisi')?.value) || 0;
         const isBasi = document.getElementById('izinIsBasiTarih')?.value || '';
+        const toplam = parseInt(document.getElementById('izinToplamInput')?.value) || 0;
+        const onceki = parseInt(document.getElementById('izinOncekiKullanimi')?.value) || 0;
         if (!bas || !bit) { showToast('⚠️ Başlangıç ve bitiş tarihi seçin', 'warn'); return; }
         if (gun <= 0) { showToast('⚠️ Geçerli tarih aralığı seçin', 'warn'); return; }
         try {
-            const { collection, doc, setDoc, db } = window._fb;
+            const { collection, doc, setDoc, getDoc, db } = window._fb;
             const id = _izinAktifPersonel.sicil + '_' + bas + '_' + Date.now();
             await setDoc(doc(db, 'personel_izin_kayit', id), {
                 sicil: _izinAktifPersonel.sicil,
@@ -8760,15 +8795,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 basTarih: bas, bitTarih: bit, gunSayisi: gun,
                 isBasiTarih: isBasi, olusturma: new Date().toISOString()
             });
+            // Toplam ve önceki kullanımı da kaydet
+            const ref = doc(db, 'personel_izin_ozet', _izinAktifPersonel.sicil);
+            const snap = await getDoc(ref);
+            const mevcut = snap.exists() ? snap.data() : {};
+            await setDoc(ref, { ...mevcut, toplam: toplam, oncekiKullanim: onceki });
             showToast('✅ İzin kaydı eklendi', 'success');
-            // Temizle
+            // Tarihleri ve özet paneli sıfırla
             document.getElementById('izinBasTarih').value = '';
             document.getElementById('izinBitTarih').value = '';
             document.getElementById('izinBasTarihGoster').value = '';
             document.getElementById('izinBitTarihGoster').value = '';
             document.getElementById('izinGunSayisi').value = '';
             document.getElementById('izinIsBasiTarih').value = '';
-            document.getElementById('izinIsBasiTarihGoster').value = '';
+            document.getElementById('izinOzetPanel').style.display = 'none';
+            izinDetayKartHesapla();
             await izinKayitlarYukle(_izinAktifPersonel.sicil);
         } catch(e) { showToast('⚠️ Hata: ' + e.message, 'warn'); }
     };
@@ -8869,11 +8910,17 @@ document.addEventListener('DOMContentLoaded', function() {
             isBasiD.setDate(isBasiD.getDate() + 1);
             const isBasiISO = isBasiD.toISOString().slice(0, 10);
             document.getElementById('izinIsBasiTarih').value = isBasiISO;
-            document.getElementById('izinIsBasiTarihGoster').value = isoToGoster(isBasiISO);
-            // Kalan preview: toplam - kayıtlardaki mevcut - yeni seçilen
-            const toplam = parseInt(document.getElementById('izinKartToplam').textContent) || 0;
-            const mevcutKul = _izinKayitlar ? _izinKayitlar.reduce((s, k) => s + (k.gunSayisi || 0), 0) : 0;
-            document.getElementById('izinKartKalan').textContent = toplam - mevcutKul - gun;
+            // Özet paneli güncelle ve göster
+            const ozetPanel = document.getElementById('izinOzetPanel');
+            if (ozetPanel) {
+                ozetPanel.style.display = 'block';
+                document.getElementById('izinOzetBas').textContent = isoToGoster(bas);
+                document.getElementById('izinOzetBit').textContent = isoToGoster(bit);
+                document.getElementById('izinOzetIsBasi').textContent = isoToGoster(isBasiISO);
+                document.getElementById('izinOzetGun').textContent = gun;
+            }
+            // Kalan kartı güncelle
+            izinDetayKartHesapla();
         }
     };
 
