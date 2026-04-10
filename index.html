@@ -2396,13 +2396,11 @@
                                             <th style="padding:9px 12px;text-align:left;color:#F0B323;font-weight:700;">Başlangıç</th>
                                             <th style="padding:9px 12px;text-align:left;color:#F0B323;font-weight:700;">Bitiş</th>
                                             <th style="padding:9px 12px;text-align:left;color:#22c55e;font-weight:700;">İş Başı</th>
-                                            <th style="padding:9px 12px;text-align:center;color:#F0B323;font-weight:700;">Gün</th>
-                                            <th style="padding:9px 12px;text-align:center;color:#22c55e;font-weight:700;">Kalan</th>
                                             <th style="padding:9px 12px;text-align:center;color:#F0B323;font-weight:700;width:120px;"></th>
                                         </tr>
                                     </thead>
                                     <tbody id="izinKayitlarBody">
-                                        <tr><td colspan="7" style="text-align:center;padding:20px;color:rgba(255,255,255,0.35);font-size:13px;">Henüz izin kaydı yok</td></tr>
+                                        <tr><td colspan="5" style="text-align:center;padding:20px;color:rgba(255,255,255,0.35);font-size:13px;">Henüz izin kaydı yok</td></tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -8645,22 +8643,22 @@ document.addEventListener('DOMContentLoaded', function() {
         await izinKayitlarYukle(sicil);
     };
 
-    // ── Kart hesaplama (Toplam - OncekiKullanan - SecilenGun = Kalan) ──
+    // ── Kart hesaplama (Toplam - OncekiKullanan - KayıtlıGünler = Kalan) ──
+    // Seçilen tarih aralığı kaydet basılmadan kartları ETKİLEMEZ
     window.izinDetayKartHesapla = function() {
-        const toplam      = parseInt(document.getElementById('izinToplamInput')?.value)     || 0;
-        const onceki      = parseInt(document.getElementById('izinOncekiKullanimi')?.value) || 0;
-        const secilenGun  = parseInt(document.getElementById('izinGunSayisi')?.value)       || 0;
-        const kalan = toplam - onceki - secilenGun;
+        const toplam  = parseInt(document.getElementById('izinToplamInput')?.value)     || 0;
+        const onceki  = parseInt(document.getElementById('izinOncekiKullanimi')?.value) || 0;
+        const kayitToplamGun = (_izinKayitlar || []).reduce((s, k) => s + (k.gunSayisi || 0), 0);
+        const kalan = toplam - onceki - kayitToplamGun;
         const kalanEl = document.getElementById('izinKartKalan');
         if (kalanEl) {
             kalanEl.textContent = toplam > 0 ? String(kalan) : '—';
             kalanEl.style.color = kalan < 0 ? '#ef4444' : '#22c55e';
         }
-        // Gizli uyumluluk elementlerini güncelle
         const kartToplam = document.getElementById('izinKartToplam');
         if (kartToplam) kartToplam.textContent = String(toplam);
         const kartKul = document.getElementById('izinKartKullanilan');
-        if (kartKul) kartKul.textContent = String(onceki + secilenGun);
+        if (kartKul) kartKul.textContent = String(onceki + kayitToplamGun);
     };
 
     window.izinDetayKapat = function() {
@@ -8680,7 +8678,7 @@ document.addEventListener('DOMContentLoaded', function() {
     async function izinKayitlarYukle(sicil) {
         const tbody = document.getElementById('izinKayitlarBody');
         if (!tbody) return;
-        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:20px;color:rgba(255,255,255,0.35);">⏳ Yükleniyor...</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:20px;color:rgba(255,255,255,0.35);">⏳ Yükleniyor...</td></tr>`;
         try {
             const { collection, getDocs, query, where, orderBy, db } = window._fb;
             const q = query(collection(db, 'personel_izin_kayit'), where('sicil', '==', sicil), orderBy('basTarih', 'asc'));
@@ -8727,29 +8725,35 @@ document.addEventListener('DOMContentLoaded', function() {
     function izinKayitlarRender() {
         const tbody = document.getElementById('izinKayitlarBody');
         if (!tbody) return;
-        // Kartları her zaman güncelle
-        izinKartlarGuncelle();
+        // Kayıtlardaki toplam kullanılan günü hesapla ve kartları güncelle
+        const kayitToplamGun = _izinKayitlar.reduce((s, k) => s + (k.gunSayisi || 0), 0);
+        const toplam  = parseInt(document.getElementById('izinToplamInput')?.value)     || 0;
+        const onceki  = parseInt(document.getElementById('izinOncekiKullanimi')?.value) || 0;
+        const kalan   = toplam - onceki - kayitToplamGun;
+        const kalanEl = document.getElementById('izinKartKalan');
+        if (kalanEl) {
+            kalanEl.textContent = toplam > 0 ? String(kalan) : '—';
+            kalanEl.style.color = kalan < 0 ? '#ef4444' : '#22c55e';
+        }
+        const kartToplam = document.getElementById('izinKartToplam');
+        if (kartToplam) kartToplam.textContent = String(toplam);
+        const kartKul = document.getElementById('izinKartKullanilan');
+        if (kartKul) kartKul.textContent = String(onceki + kayitToplamGun);
+
         if (!_izinKayitlar.length) {
-            tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:20px;color:rgba(255,255,255,0.35);font-size:13px;">Henüz izin kaydı yok</td></tr>`;
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;color:rgba(255,255,255,0.35);font-size:13px;">Henüz izin kaydı yok</td></tr>';
             return;
         }
-        const toplam = parseInt(document.getElementById('izinKartToplam')?.textContent) || 0;
-        let kalanSayac = toplam;
         tbody.innerHTML = _izinKayitlar.map((k, i) => {
-            kalanSayac -= (k.gunSayisi || 0);
-            const renk = kalanSayac >= 0 ? '#22c55e' : '#ef4444';
-            return `<tr style="border-bottom:1px solid rgba(255,255,255,0.07);">
-                <td style="padding:8px 12px;text-align:center;color:rgba(255,255,255,0.4);font-size:11px;">${i+1}</td>
-                <td style="padding:8px 12px;color:#fff;font-size:12px;">${isoToGoster(k.basTarih)}</td>
-                <td style="padding:8px 12px;color:#fff;font-size:12px;">${isoToGoster(k.bitTarih)}</td>
-                <td style="padding:8px 12px;color:#22c55e;font-size:12px;">${isoToGoster(k.isBasiTarih)}</td>
-                <td style="padding:8px 12px;text-align:center;color:#F0B323;font-weight:700;">${k.gunSayisi || 0}</td>
-                <td style="padding:8px 12px;text-align:center;color:${renk};font-weight:700;">${kalanSayac}</td>
-                <td style="padding:8px 12px;text-align:center;">
-                    <button onclick="izinKayitGuncelleAc('${k._id}')" style="padding:4px 10px;border-radius:6px;border:none;background:rgba(96,165,250,0.2);color:#60a5fa;font-size:11px;font-weight:700;cursor:pointer;margin-right:4px;">✏️</button>
-                    <button onclick="izinSilModalAc('${k._id}')" style="padding:4px 10px;border-radius:6px;border:none;background:rgba(239,68,68,0.2);color:#ef4444;font-size:11px;font-weight:700;cursor:pointer;">🗑️</button>
-                </td>
-            </tr>`;
+            return '<tr style="border-bottom:1px solid rgba(255,255,255,0.07);">'
+                + '<td style="padding:8px 12px;text-align:center;color:rgba(255,255,255,0.4);font-size:11px;">' + (i+1) + '</td>'
+                + '<td style="padding:8px 12px;color:#fff;font-size:12px;">' + isoToGoster(k.basTarih) + '</td>'
+                + '<td style="padding:8px 12px;color:#fff;font-size:12px;">' + isoToGoster(k.bitTarih) + '</td>'
+                + '<td style="padding:8px 12px;color:#22c55e;font-size:12px;">' + isoToGoster(k.isBasiTarih) + '</td>'
+                + '<td style="padding:8px 12px;text-align:center;">'
+                + '<button onclick="izinKayitGuncelleAc(\'' + k._id + '\')" style="padding:4px 10px;border-radius:6px;border:none;background:rgba(96,165,250,0.2);color:#60a5fa;font-size:11px;font-weight:700;cursor:pointer;margin-right:4px;">✏️</button>'
+                + '<button onclick="izinSilModalAc(\'' + k._id + '\')" style="padding:4px 10px;border-radius:6px;border:none;background:rgba(239,68,68,0.2);color:#ef4444;font-size:11px;font-weight:700;cursor:pointer;">🗑️</button>'
+                + '</td></tr>';
         }).join('');
     }
 
