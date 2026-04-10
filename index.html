@@ -7996,19 +7996,16 @@ document.addEventListener('DOMContentLoaded', function() {
         [btnPersonel, btnEldiven, btnIzin].forEach(b => { if(b) { b.style.background=PASIF_STYLE.background; b.style.color=PASIF_STYLE.color; } });
 
         if (tab === 'personel') {
-            panelPersonel.style.display = 'block';
-            btnPersonel.style.background = AKTIF_STYLE.background;
-            btnPersonel.style.color      = AKTIF_STYLE.color;
+            if (panelPersonel) panelPersonel.style.display = 'block';
+            if (btnPersonel) { btnPersonel.style.background = AKTIF_STYLE.background; btnPersonel.style.color = AKTIF_STYLE.color; }
         } else if (tab === 'eldiven') {
-            panelEldiven.style.display = 'block';
-            btnEldiven.style.background = AKTIF_STYLE.background;
-            btnEldiven.style.color      = AKTIF_STYLE.color;
-            eldivenIlkYukle();
+            if (panelEldiven) panelEldiven.style.display = 'block';
+            if (btnEldiven) { btnEldiven.style.background = AKTIF_STYLE.background; btnEldiven.style.color = AKTIF_STYLE.color; }
+            if (typeof eldivenIlkYukle === 'function') eldivenIlkYukle();
         } else if (tab === 'izin') {
-            panelIzin.style.display = 'block';
-            btnIzin.style.background = AKTIF_STYLE.background;
-            btnIzin.style.color      = AKTIF_STYLE.color;
-            izinListeYukle();
+            if (panelIzin) panelIzin.style.display = 'block';
+            if (btnIzin) { btnIzin.style.background = AKTIF_STYLE.background; btnIzin.style.color = AKTIF_STYLE.color; }
+            if (typeof izinListeYukle === 'function') izinListeYukle();
         }
     };
 
