@@ -2366,9 +2366,10 @@
                                         <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.45);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">Bitiş Tarihi</div>
                                         <div id="izinOzetBit" style="font-size:15px;font-weight:800;color:#F0B323;font-family:'Inter',sans-serif;">—</div>
                                     </div>
-                                    <div>
-                                        <div style="font-size:10px;font-weight:700;color:rgba(34,197,94,0.7);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">İş Başı Tarihi</div>
-                                        <div id="izinOzetIsBasi" style="font-size:15px;font-weight:800;color:#22c55e;font-family:'Inter',sans-serif;">—</div>
+                                    <div style="position:relative;">
+                                        <div style="font-size:10px;font-weight:700;color:rgba(34,197,94,0.7);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">İş Başı Tarihi <span style="font-size:9px;color:rgba(255,255,255,0.35);">(değiştirmek için tıkla)</span></div>
+                                        <div id="izinOzetIsBasi" onclick="izinIsBasiTakvimAc()" style="font-size:15px;font-weight:800;color:#22c55e;font-family:'Inter',sans-serif;cursor:pointer;padding:4px 8px;border-radius:6px;border:1px solid rgba(34,197,94,0.3);display:inline-block;">—</div>
+                                        <div id="izinIsBasiTakvimWrap" style="display:none;position:absolute;z-index:700;top:calc(100% + 4px);left:0;"></div>
                                     </div>
                                 </div>
                                 <div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;gap:8px;">
@@ -8793,7 +8794,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const toplam = parseInt(document.getElementById('izinToplamInput')?.value) || 0;
         const onceki = parseInt(document.getElementById('izinOncekiKullanimi')?.value) || 0;
         if (!bas || !bit) { showToast('⚠️ Başlangıç ve bitiş tarihi seçin', 'warn'); return; }
-        if (gun <= 0)     { showToast('⚠️ Geçerli tarih aralığı seçin', 'warn'); return; }
+        // gun sıfır olsa bile kullanıcı kaydetmek isteyebilir, kısıtlama yok
         try {
             const { doc, setDoc, getDoc, db } = window._fb;
             // İzin kaydını kaydet
@@ -8910,26 +8911,58 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         const bas = document.getElementById('izinBasTarih').value;
         const bit = document.getElementById('izinBitTarih').value;
-        if (bas && bit && bas <= bit) {
+        if (bas && bit) {
             const gun = izinIsGunuHesapla(bas, bit);
             document.getElementById('izinGunSayisi').value = gun;
-            // İş başı = bitiş + 1 gün
-            const isBasiD = new Date(bit + 'T00:00:00');
-            isBasiD.setDate(isBasiD.getDate() + 1);
-            const isBasiISO = isBasiD.toISOString().slice(0, 10);
-            document.getElementById('izinIsBasiTarih').value = isBasiISO;
+            // İş başı = bitiş + 1 gün (otomatik, kullanıcı sonra değiştirebilir)
+            if (_izinTakvimTip === 'bit') {
+                const isBasiD = new Date(bit + 'T00:00:00');
+                isBasiD.setDate(isBasiD.getDate() + 1);
+                const isBasiISO = isBasiD.toISOString().slice(0, 10);
+                document.getElementById('izinIsBasiTarih').value = isBasiISO;
+                document.getElementById('izinOzetIsBasi') && (document.getElementById('izinOzetIsBasi').textContent = isoToGoster(isBasiISO));
+            }
             // Özet paneli göster
             const ozetPanel = document.getElementById('izinOzetPanel');
             if (ozetPanel) {
                 ozetPanel.style.display = 'block';
-                document.getElementById('izinOzetBas').textContent    = isoToGoster(bas);
-                document.getElementById('izinOzetBit').textContent    = isoToGoster(bit);
-                document.getElementById('izinOzetIsBasi').textContent = isoToGoster(isBasiISO);
-                document.getElementById('izinOzetGun').textContent    = gun;
+                document.getElementById('izinOzetBas').textContent = isoToGoster(bas);
+                document.getElementById('izinOzetBit').textContent = isoToGoster(bit);
+                const isBasiMevcut = document.getElementById('izinIsBasiTarih').value;
+                if (document.getElementById('izinOzetIsBasi')) document.getElementById('izinOzetIsBasi').textContent = isoToGoster(isBasiMevcut);
+                document.getElementById('izinOzetGun').textContent = gun;
             }
-            // Kalan kutusunu güncelle
             izinDetayKartHesapla();
         }
+    };
+
+    window.izinIsBasiTakvimAc = function() {
+        const wrap = document.getElementById('izinIsBasiTakvimWrap');
+        if (!wrap) return;
+        const mevcut = document.getElementById('izinIsBasiTarih').value;
+        const tkv = mevcut
+            ? { yil: parseInt(mevcut.slice(0,4)), ay: parseInt(mevcut.slice(5,7))-1 }
+            : { yil: new Date().getFullYear(), ay: new Date().getMonth() };
+        wrap.style.display = wrap.style.display === 'block' ? 'none' : 'block';
+        if (wrap.style.display === 'block') {
+            _izinTakvimRender(wrap, tkv, 'isbasi', 'izinIsBasiGunSec', 'izinIsBasiNav');
+            wrap._tkv = tkv;
+        }
+    };
+    window.izinIsBasiNav = function(yon) {
+        const wrap = document.getElementById('izinIsBasiTakvimWrap');
+        if (!wrap || !wrap._tkv) return;
+        wrap._tkv.ay += yon;
+        if (wrap._tkv.ay > 11) { wrap._tkv.ay = 0; wrap._tkv.yil++; }
+        if (wrap._tkv.ay < 0)  { wrap._tkv.ay = 11; wrap._tkv.yil--; }
+        _izinTakvimRender(wrap, wrap._tkv, 'isbasi', 'izinIsBasiGunSec', 'izinIsBasiNav');
+    };
+    window.izinIsBasiGunSec = function(tarih) {
+        document.getElementById('izinIsBasiTarih').value = tarih;
+        const el = document.getElementById('izinOzetIsBasi');
+        if (el) el.textContent = isoToGoster(tarih);
+        const wrap = document.getElementById('izinIsBasiTakvimWrap');
+        if (wrap) { wrap.style.display = 'none'; wrap.innerHTML = ''; }
     };
 
     // ── Takvim: güncelleme modali ──
@@ -8977,7 +9010,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         const bas = document.getElementById('guncelleBasTarih').value;
         const bit = document.getElementById('guncelleBitTarih').value;
-        if (bas && bit && bas <= bit) {
+        if (bas && bit) {
             document.getElementById('guncelleGunSayisi').value = izinIsGunuHesapla(bas, bit);
         }
     };
