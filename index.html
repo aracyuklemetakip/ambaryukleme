@@ -9051,14 +9051,59 @@ document.addEventListener('DOMContentLoaded', function() {
         if (p.length < 3) return iso;
         return p[2] + '.' + p[1] + '.' + p[0];
     }
+    // Türkiye Resmi Tatilleri (MM-DD sabit, Ramazan/Kurban yıldan yıla değişir - sabit olanlar)
+    function _resmiTatilMi(d) {
+        const ay  = d.getMonth() + 1; // 1-12
+        const gun = d.getDate();
+        const yil = d.getFullYear();
+        // Sabit resmi tatiller
+        const sabitTatiller = [
+            '01-01', // Yılbaşı
+            '04-23', // Ulusal Egemenlik ve Çocuk Bayramı
+            '05-01', // Emek ve Dayanışma Günü
+            '05-19', // Atatürk'ü Anma, Gençlik ve Spor Bayramı
+            '07-15', // Demokrasi ve Millî Birlik Günü
+            '08-30', // Zafer Bayramı
+            '10-29', // Cumhuriyet Bayramı
+        ];
+        const anahtar = String(ay).padStart(2,'0') + '-' + String(gun).padStart(2,'0');
+        if (sabitTatiller.includes(anahtar)) return true;
+        // Yaklaşık Ramazan ve Kurban Bayramı tarihleri (2024-2030)
+        // Ramazan Bayramı: 3 gün | Kurban Bayramı: 4 gün
+        const hareketliTatiller = {
+            2024: { ramazan: ['04-10','04-11','04-12'], kurban: ['06-16','06-17','06-18','06-19'] },
+            2025: { ramazan: ['03-30','03-31','04-01'], kurban: ['06-06','06-07','06-08','06-09'] },
+            2026: { ramazan: ['03-20','03-21','03-22'], kurban: ['05-27','05-28','05-29','05-30'] },
+            2027: { ramazan: ['03-09','03-10','03-11'], kurban: ['05-16','05-17','05-18','05-19'] },
+            2028: { ramazan: ['02-26','02-27','02-28'], kurban: ['05-05','05-06','05-07','05-08'] },
+            2029: { ramazan: ['02-14','02-15','02-16'], kurban: ['04-24','04-25','04-26','04-27'] },
+            2030: { ramazan: ['02-04','02-05','02-06'], kurban: ['04-13','04-14','04-15','04-16'] },
+        };
+        const yilTatil = hareketliTatiller[yil];
+        if (yilTatil) {
+            if (yilTatil.ramazan.includes(anahtar)) return true;
+            if (yilTatil.kurban.includes(anahtar)) return true;
+        }
+        return false;
+    }
+
     function izinIsGunuHesapla(bas, bit) {
-        // Başlangıç ve bitiş dahil, tüm günler (takvim günü, pazar dahil)
+        // Başlangıç ve bitiş dahil, pazar ve resmi tatil günleri sayılmaz
         const p1 = bas.split('-');
         const p2 = bit.split('-');
         const d1 = new Date(parseInt(p1[0]), parseInt(p1[1])-1, parseInt(p1[2]));
         const d2 = new Date(parseInt(p2[0]), parseInt(p2[1])-1, parseInt(p2[2]));
-        const fark = Math.round((d2 - d1) / (1000 * 60 * 60 * 24)) + 1;
-        return fark > 0 ? fark : 0;
+        if (d2 < d1) return 0;
+        let sayac = 0;
+        const iter = new Date(d1);
+        while (iter <= d2) {
+            const gunNo = iter.getDay(); // 0=Pazar
+            if (gunNo !== 0 && !_resmiTatilMi(iter)) {
+                sayac++;
+            }
+            iter.setDate(iter.getDate() + 1);
+        }
+        return sayac;
     }
 
     // ── Takvim: izin kaydı ekle ──
@@ -9218,9 +9263,13 @@ document.addEventListener('DOMContentLoaded', function() {
         for (let i = 0; i < ilkPt; i++) html += `<div></div>`;
         for (let g = 1; g <= sonGun; g++) {
             const tarih = `${yil}-${String(ay+1).padStart(2,'0')}-${String(g).padStart(2,'0')}`;
-            const gun = new Date(tarih + 'T00:00:00').getDay();
-            if (gun === 0) {
-                html += `<div style="text-align:center;font-size:11px;color:rgba(239,68,68,0.3);padding:5px 2px;cursor:default;">${g}</div>`;
+            const gunObj = new Date(yil, ay, g);
+            const gunNo = gunObj.getDay();
+            const tatilMi = typeof _resmiTatilMi === 'function' && _resmiTatilMi(gunObj);
+            if (gunNo === 0) {
+                html += `<div title="Pazar" style="text-align:center;font-size:11px;color:rgba(239,68,68,0.3);padding:5px 2px;cursor:default;">${g}</div>`;
+            } else if (tatilMi) {
+                html += `<div title="Resmi Tatil" style="text-align:center;font-size:11px;color:rgba(251,146,60,0.4);padding:5px 2px;cursor:default;text-decoration:line-through;">${g}</div>`;
             } else {
                 html += `<button onclick="${gunSecFn}('${tarih}')" style="text-align:center;font-size:11px;font-weight:600;color:#fff;background:rgba(255,255,255,0.08);border:none;border-radius:4px;padding:5px 2px;cursor:pointer;" onmouseover="this.style.background='rgba(240,179,35,0.4)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">${g}</button>`;
             }
