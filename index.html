@@ -2291,6 +2291,7 @@
                                 <input type="text" id="izinAraInput" placeholder="🔍  İsim veya sicil ara..."
                                     style="width:200px;padding:7px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.08);color:#fff;font-family:'Inter',sans-serif;font-size:12px;outline:none;">
                                 <button onclick="izinAylikPdfIndir()" style="padding:7px 14px;border-radius:8px;border:none;background:#F0B323;color:#1C2B6E;font-family:'Inter',sans-serif;font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap;">📄 PDF İndir</button>
+                                <button onclick="izinHepsiniSifirla()" style="padding:7px 14px;border-radius:8px;border:1px solid rgba(239,68,68,0.4);background:rgba(239,68,68,0.08);color:#ef4444;font-family:'Inter',sans-serif;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;">🗑️ Sıfırla</button>
                             </div>
                         </div>
                         <div class="sef-bolum" style="padding:0;overflow:hidden;">
@@ -3157,7 +3158,7 @@
                 <td style="padding:8px 10px;color:rgba(255,255,255,0.5);font-size:11px;">${i+1}</td>
                 <td id="personelRowAd_${p.sicil}" style="padding:8px 10px;color:#ffffff;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;">${p.ad}</td>
                 <td id="personelRowSicil_${p.sicil}" style="padding:8px 10px;color:rgba(255,255,255,0.6);font-family:'Inter',sans-serif;font-size:12px;font-weight:500;">${p.sicil}</td>
-                <td style="padding:8px 10px;">${tipLabel}</td>
+                <td id="personelRowTip_${p.sicil}" style="padding:8px 10px;">${tipLabel}</td>
                 <td id="personelRowIslem_${p.sicil}" style="padding:6px 8px;">
                     <button onclick="personelInlineAc('${sicilSafe}')" style="background:rgba(240,179,35,0.12);border:1px solid rgba(240,179,35,0.35);color:#F0B323;border-radius:6px;padding:3px 8px;cursor:pointer;font-size:11px;font-weight:700;">✏️ Güncelle</button>
                 </td>
@@ -3295,13 +3296,25 @@
         const islemTd = document.getElementById('personelRowIslem_' + sicil);
         const adTd    = document.getElementById('personelRowAd_' + sicil);
         const sicilTd = document.getElementById('personelRowSicil_' + sicil);
+        const tipTd   = document.getElementById('personelRowTip_' + sicil);
         if (!islemTd) return;
 
         // Ad & sicil sütunlarını input'a çevir
-        const adVal = p.ad || '';
+        const adVal    = p.ad || '';
         const sicilVal = p.sicil || '';
+        const mevcutTip = p.tip || 'gecici'; // 'gecici' veya 'kadrolu'
         if (adTd) adTd.innerHTML = `<input id="inlineAd_${sicil}" value="${adVal.replace(/"/g,'&quot;')}" style="width:100%;padding:4px 8px;border-radius:6px;border:1px solid rgba(240,179,35,0.5);background:rgba(240,179,35,0.08);color:#fff;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;outline:none;box-sizing:border-box;" oninput="this.value=window.trUpper(this.value)">`;
         if (sicilTd) sicilTd.innerHTML = `<input id="inlineSicil_${sicil}" value="${sicilVal.replace(/"/g,'&quot;')}" style="width:90px;padding:4px 8px;border-radius:6px;border:1px solid rgba(240,179,35,0.5);background:rgba(240,179,35,0.08);color:#fff;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;outline:none;box-sizing:border-box;">`;
+
+        // Tip toggle butonu
+        if (tipTd) {
+            const isGecici = mevcutTip === 'gecici';
+            tipTd.innerHTML = `<button id="inlineTipBtn_${sicil}" onclick="personelInlineTipToggle('${sicil}')"
+                style="font-size:10px;font-weight:700;padding:3px 9px;border-radius:4px;cursor:pointer;border:1.5px solid ${isGecici ? 'rgba(249,115,22,0.4)' : 'rgba(37,99,235,0.35)'};background:${isGecici ? 'rgba(249,115,22,0.12)' : 'rgba(37,99,235,0.1)'};color:${isGecici ? '#ea580c' : '#2563eb'};">
+                ${isGecici ? 'GEÇİCİ ⇄' : 'KADROLU ⇄'}
+            </button>
+            <input type="hidden" id="inlineTip_${sicil}" value="${mevcutTip}">`;
+        }
 
         // Butonları güncelle
         islemTd.innerHTML = `
@@ -3325,6 +3338,20 @@
         }, 50);
     };
 
+    // Tip toggle: GEÇİCİ ↔ KADROLU
+    window.personelInlineTipToggle = function(sicil) {
+        const hiddenEl = document.getElementById('inlineTip_' + sicil);
+        const btnEl    = document.getElementById('inlineTipBtn_' + sicil);
+        if (!hiddenEl || !btnEl) return;
+        const yeniTip = hiddenEl.value === 'gecici' ? 'kadrolu' : 'gecici';
+        hiddenEl.value = yeniTip;
+        const isGecici = yeniTip === 'gecici';
+        btnEl.textContent = isGecici ? 'GEÇİCİ ⇄' : 'KADROLU ⇄';
+        btnEl.style.border = isGecici ? '1.5px solid rgba(249,115,22,0.4)' : '1.5px solid rgba(37,99,235,0.35)';
+        btnEl.style.background = isGecici ? 'rgba(249,115,22,0.12)' : 'rgba(37,99,235,0.1)';
+        btnEl.style.color = isGecici ? '#ea580c' : '#2563eb';
+    };
+
     window.personelInlineKapat = function(sicil, rerender) {
         _inlineEditSicil = null;
         if (rerender) { personelListeRender(); return; }
@@ -3342,9 +3369,11 @@
     window.personelInlineKaydet = async function(eskiSicil) {
         const adEl    = document.getElementById('inlineAd_' + eskiSicil);
         const sicilEl = document.getElementById('inlineSicil_' + eskiSicil);
+        const tipEl   = document.getElementById('inlineTip_' + eskiSicil);
         if (!adEl || !sicilEl) return;
         const yeniAd    = adEl.value.trim().toUpperCase();
         const yeniSicil = sicilEl.value.trim();
+        const yeniTip   = tipEl ? tipEl.value : (personelListesi.find(p => p.sicil === eskiSicil) || {}).tip || 'gecici';
         if (!yeniAd || !yeniSicil) { showToast('Ad ve sicil boş olamaz', 'warn'); return; }
         if (yeniSicil !== eskiSicil && personelListesi.find(p => p.sicil === yeniSicil)) {
             showToast('Bu sicil başka personelde kayıtlı!', 'warn'); return;
@@ -3353,7 +3382,7 @@
             const { doc, setDoc, deleteDoc, db } = window._fb;
             if (yeniSicil !== eskiSicil) await deleteDoc(doc(db, 'personel', eskiSicil));
             const eskiP = personelListesi.find(p => p.sicil === eskiSicil) || {};
-            const guncellendi = { ...eskiP, ad: yeniAd, sicil: yeniSicil };
+            const guncellendi = { ...eskiP, ad: yeniAd, sicil: yeniSicil, tip: yeniTip };
             await setDoc(doc(db, 'personel', yeniSicil), guncellendi);
             const idx = personelListesi.findIndex(p => p.sicil === eskiSicil);
             if (idx !== -1) personelListesi[idx] = guncellendi;
@@ -8804,6 +8833,31 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     // ── Aylık İzin PDF ──
+    // ── Tüm izin verilerini sıfırla (kayıtlar + özetler) ──
+    window.izinHepsiniSifirla = async function() {
+        const onay = confirm('⚠️ DİKKAT!\n\nTüm personelin izin kayıtları ve istatistikleri (toplam / kullanılan gün) silinecek.\n\nBu işlem geri alınamaz. Devam etmek istiyor musunuz?');
+        if (!onay) return;
+        const onay2 = confirm('Emin misiniz? Tüm izin verileri kalıcı olarak silinecek.');
+        if (!onay2) return;
+        try {
+            showToast('⏳ Sıfırlanıyor...', 'warn');
+            const { collection, getDocs, deleteDoc, doc, db } = window._fb;
+            // personel_izin_kayit koleksiyonunu sil
+            const kayitSnap = await getDocs(collection(db, 'personel_izin_kayit'));
+            const silPromises = [];
+            kayitSnap.forEach(d => silPromises.push(deleteDoc(doc(db, 'personel_izin_kayit', d.id))));
+            // personel_izin_ozet koleksiyonunu sil
+            const ozetSnap = await getDocs(collection(db, 'personel_izin_ozet'));
+            ozetSnap.forEach(d => silPromises.push(deleteDoc(doc(db, 'personel_izin_ozet', d.id))));
+            await Promise.all(silPromises);
+            showToast('✓ Tüm izin verileri sıfırlandı', 'success');
+            if (typeof izinListeYukle === 'function') izinListeYukle();
+        } catch(err) {
+            console.error('İzin sıfırlama hatası:', err);
+            showToast('Hata: ' + err.message, 'warn');
+        }
+    };
+
     window.izinAylikPdfIndir = async function() {
         if (typeof window.jspdf === 'undefined' && typeof jsPDF === 'undefined') {
             showToast('PDF kütüphanesi yüklenmedi', 'warn'); return;
