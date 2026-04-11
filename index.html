@@ -2158,7 +2158,7 @@
                     <button id="statToplam" onclick="personelVardiyaFiltrele(null)" style="font-size:12px;font-weight:800;padding:4px 12px;border-radius:6px;background:#F0B323;color:#1C2B6E;white-space:nowrap;cursor:pointer;transition:all 0.15s;border:2px solid #F0B323;font-family:'Inter',sans-serif;">Toplam: 0</button>
                 </div>
 
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;">
+                <div style="display:grid;grid-template-columns:1fr;gap:16px;align-items:start;">
 
                     <!-- SOL: PERSONEL EKLE -->
                     <div class="sef-bolum">
@@ -2195,37 +2195,7 @@
                         </div>
                     </div>
 
-                    <!-- SAĞ: PERSONEL GÜNCELLE -->
-                    <div class="sef-bolum">
-                        <div class="sef-bolum-baslik">✏️ Personel Güncelle</div>
-                        <div style="display:flex;flex-direction:column;gap:12px;">
-                            <div class="filtre-group">
-                                <div class="filtre-label">Güncellenecek Personel</div>
-                                <button onclick="personelSecModalAc()" id="personelSecBtn"
-                                    style="width:100%;padding:9px 12px;border-radius:8px;border:1px solid #E5E7EB;background:#fff;color:#0F172A;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;cursor:pointer;text-align:left;display:flex;align-items:center;justify-content:space-between;transition:all 0.15s;"
-                                   >
-                                    <span id="personelSecBtnText">— Personel Seç —</span>
-                                    <span style="font-size:16px;opacity:0.6;">▾</span>
-                                </button>
-                            </div>
-                            <div class="filtre-group">
-                                <div class="filtre-label">Ad Soyad</div>
-                                <input type="text" id="guncelPersonelAd" class="filtre-input" placeholder=""
-                                    style="width:100%;text-transform:uppercase;background:#F9FAFB;"
-                                    oninput="this.value=window.trUpper(this.value)">
-                            </div>
-                            <div class="filtre-group">
-                                <div class="filtre-label">Sicil No</div>
-                                <input type="text" id="guncelPersonelSicil" class="filtre-input" placeholder="" style="width:100%;background:#F9FAFB;">
-                            </div>
-                            <div id="personelGuncelMsg" style="display:none;font-size:12px;font-weight:700;text-align:center;padding:8px;border-radius:8px;"></div>
-                            <div style="display:flex;gap:8px;">
-                                <button id="personelGuncelBtn" onclick="personelGuncelle()" style="flex:1;padding:10px;border-radius:8px;border:none;background:#F0B323;color:#1C2B6E;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.15s;">✏️ GÜNCELLE</button>
-                                <button id="personelGuncelSilBtn" onclick="personelGuncelleSil()" style="display:none;padding:10px 14px;border-radius:8px;border:1px solid rgba(239,68,68,0.4);background:rgba(239,68,68,0.08);color:#ef4444;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.15s;">🗑️</button>
-                                <button id="personelGuncelleIptal" onclick="personelGuncelleSifirla()" style="display:none;padding:10px 14px;border-radius:8px;border:1px solid #E5E7EB;background:#F9FAFB;color:#6B7280;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;cursor:pointer;">✕</button>
-                            </div>
-                        </div>
-                    </div>
+
 
                 </div>
 
@@ -2315,10 +2285,13 @@
 
                     <!-- İZİN PERSONEL LİSTESİ -->
                     <div id="izinListeView">
-                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+                        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:14px;">
                             <div style="font-family:'Inter',sans-serif;font-size:18px;font-weight:800;color:#F0B323;letter-spacing:0.5px;">🏖️ Personel İzin Takip</div>
-                            <input type="text" id="izinAraInput" placeholder="🔍  İsim veya sicil ara..."
-                                style="width:220px;padding:7px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.08);color:#fff;font-family:'Inter',sans-serif;font-size:12px;outline:none;">
+                            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                                <input type="text" id="izinAraInput" placeholder="🔍  İsim veya sicil ara..."
+                                    style="width:200px;padding:7px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.08);color:#fff;font-family:'Inter',sans-serif;font-size:12px;outline:none;">
+                                <button onclick="izinAylikPdfIndir()" style="padding:7px 14px;border-radius:8px;border:none;background:#F0B323;color:#1C2B6E;font-family:'Inter',sans-serif;font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap;">📄 PDF İndir</button>
+                            </div>
                         </div>
                         <div class="sef-bolum" style="padding:0;overflow:hidden;">
                             <div style="overflow-x:auto;">
@@ -3178,15 +3151,15 @@
             const tipLabel = isGecici
                 ? `<span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;background:rgba(249,115,22,0.12);color:#ea580c;border:1px solid rgba(249,115,22,0.3);">GEÇİCİ</span>`
                 : `<span style="font-size:10px;font-weight:600;padding:2px 7px;border-radius:4px;background:rgba(37,99,235,0.08);color:#2563eb;border:1px solid rgba(37,99,235,0.2);">KADROLU</span>`;
+            const sicilSafe = p.sicil.replace(/'/g,"\\\'");
             return `
-            <tr id="personelRow_${p.sicil}" style="background:${rowBg};border-bottom:1px solid #F3F4F6;">
+            <tr id="personelRow_${p.sicil}" style="background:${rowBg};border-bottom:1px solid rgba(255,255,255,0.07);">
                 <td style="padding:8px 10px;color:rgba(255,255,255,0.5);font-size:11px;">${i+1}</td>
-                <td style="padding:8px 10px;color:#ffffff;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;">${p.ad}</td>
-                <td style="padding:8px 10px;color:rgba(255,255,255,0.6);font-family:'Inter',sans-serif;font-size:12px;font-weight:500;">${p.sicil}</td>
+                <td id="personelRowAd_${p.sicil}" style="padding:8px 10px;color:#ffffff;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;">${p.ad}</td>
+                <td id="personelRowSicil_${p.sicil}" style="padding:8px 10px;color:rgba(255,255,255,0.6);font-family:'Inter',sans-serif;font-size:12px;font-weight:500;">${p.sicil}</td>
                 <td style="padding:8px 10px;">${tipLabel}</td>
-                <td style="padding:8px 10px;display:flex;gap:6px;align-items:center;">
-                    <button onclick="personelDuzenlemeSec('${p.sicil.replace(/'/g,"\\'")}')" style="background:rgba(240,179,35,0.12);border:1px solid rgba(240,179,35,0.35);color:#F0B323;border-radius:6px;padding:3px 8px;cursor:pointer;font-size:11px;font-weight:700;">✏️ GÜNCELLE</button>
-                    <button onclick="personelSil('${p.sicil.replace(/'/g,"\\'")}');event.stopPropagation();" style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.25);color:#ef4444;border-radius:6px;padding:3px 8px;cursor:pointer;font-size:11px;font-weight:700;">🗑️ SİL</button>
+                <td id="personelRowIslem_${p.sicil}" style="padding:6px 8px;">
+                    <button onclick="personelInlineAc('${sicilSafe}')" style="background:rgba(240,179,35,0.12);border:1px solid rgba(240,179,35,0.35);color:#F0B323;border-radius:6px;padding:3px 8px;cursor:pointer;font-size:11px;font-weight:700;">✏️ Güncelle</button>
                 </td>
             </tr>`;
         }).join('');
@@ -3309,6 +3282,107 @@
         personelSecModalKapat();
     }
 
+    // ── PERSONEL SATIR INLINE DÜZENLEME ──
+    let _inlineEditSicil = null;
+    window.personelInlineAc = function(sicil) {
+        // Önceki açık inline'ı kapat
+        if (_inlineEditSicil && _inlineEditSicil !== sicil) {
+            personelInlineKapat(_inlineEditSicil, false);
+        }
+        _inlineEditSicil = sicil;
+        const p = personelListesi.find(x => x.sicil === sicil);
+        if (!p) return;
+        const islemTd = document.getElementById('personelRowIslem_' + sicil);
+        const adTd    = document.getElementById('personelRowAd_' + sicil);
+        const sicilTd = document.getElementById('personelRowSicil_' + sicil);
+        if (!islemTd) return;
+
+        // Ad & sicil sütunlarını input'a çevir
+        const adVal = p.ad || '';
+        const sicilVal = p.sicil || '';
+        if (adTd) adTd.innerHTML = `<input id="inlineAd_${sicil}" value="${adVal.replace(/"/g,'&quot;')}" style="width:100%;padding:4px 8px;border-radius:6px;border:1px solid rgba(240,179,35,0.5);background:rgba(240,179,35,0.08);color:#fff;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;outline:none;box-sizing:border-box;" oninput="this.value=window.trUpper(this.value)">`;
+        if (sicilTd) sicilTd.innerHTML = `<input id="inlineSicil_${sicil}" value="${sicilVal.replace(/"/g,'&quot;')}" style="width:90px;padding:4px 8px;border-radius:6px;border:1px solid rgba(240,179,35,0.5);background:rgba(240,179,35,0.08);color:#fff;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;outline:none;box-sizing:border-box;">`;
+
+        // Butonları güncelle
+        islemTd.innerHTML = `
+            <div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap;">
+                <button onclick="personelInlineKaydet('${sicil}')" style="background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.4);color:#4ade80;border-radius:6px;padding:3px 9px;cursor:pointer;font-size:11px;font-weight:700;">✓ Kaydet</button>
+                <button onclick="personelInlineSil('${sicil}')" style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.3);color:#ef4444;border-radius:6px;padding:3px 9px;cursor:pointer;font-size:11px;font-weight:700;">🗑️ Sil</button>
+                <button onclick="personelInlineKapat('${sicil}',true)" style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.5);border-radius:6px;padding:3px 8px;cursor:pointer;font-size:11px;">✕</button>
+            </div>`;
+
+        // Enter ile kaydet
+        setTimeout(() => {
+            const adInp = document.getElementById('inlineAd_' + sicil);
+            const sicilInp = document.getElementById('inlineSicil_' + sicil);
+            [adInp, sicilInp].forEach(inp => {
+                if (inp) inp.addEventListener('keydown', e => {
+                    if (e.key === 'Enter') personelInlineKaydet(sicil);
+                    if (e.key === 'Escape') personelInlineKapat(sicil, true);
+                });
+            });
+            if (adInp) { adInp.focus(); adInp.select(); }
+        }, 50);
+    };
+
+    window.personelInlineKapat = function(sicil, rerender) {
+        _inlineEditSicil = null;
+        if (rerender) { personelListeRender(); return; }
+        // Sadece o satırı geri al
+        const p = personelListesi.find(x => x.sicil === sicil);
+        if (!p) { personelListeRender(); return; }
+        const adTd = document.getElementById('personelRowAd_' + sicil);
+        const sicilTd = document.getElementById('personelRowSicil_' + sicil);
+        const islemTd = document.getElementById('personelRowIslem_' + sicil);
+        if (adTd) adTd.innerHTML = p.ad;
+        if (sicilTd) sicilTd.innerHTML = p.sicil;
+        if (islemTd) islemTd.innerHTML = `<button onclick="personelInlineAc('${sicil.replace(/'/g,"\'")}') " style="background:rgba(240,179,35,0.12);border:1px solid rgba(240,179,35,0.35);color:#F0B323;border-radius:6px;padding:3px 8px;cursor:pointer;font-size:11px;font-weight:700;">✏️ Güncelle</button>`;
+    };
+
+    window.personelInlineKaydet = async function(eskiSicil) {
+        const adEl    = document.getElementById('inlineAd_' + eskiSicil);
+        const sicilEl = document.getElementById('inlineSicil_' + eskiSicil);
+        if (!adEl || !sicilEl) return;
+        const yeniAd    = adEl.value.trim().toUpperCase();
+        const yeniSicil = sicilEl.value.trim();
+        if (!yeniAd || !yeniSicil) { showToast('Ad ve sicil boş olamaz', 'warn'); return; }
+        if (yeniSicil !== eskiSicil && personelListesi.find(p => p.sicil === yeniSicil)) {
+            showToast('Bu sicil başka personelde kayıtlı!', 'warn'); return;
+        }
+        try {
+            const { doc, setDoc, deleteDoc, db } = window._fb;
+            if (yeniSicil !== eskiSicil) await deleteDoc(doc(db, 'personel', eskiSicil));
+            const eskiP = personelListesi.find(p => p.sicil === eskiSicil) || {};
+            const guncellendi = { ...eskiP, ad: yeniAd, sicil: yeniSicil };
+            await setDoc(doc(db, 'personel', yeniSicil), guncellendi);
+            const idx = personelListesi.findIndex(p => p.sicil === eskiSicil);
+            if (idx !== -1) personelListesi[idx] = guncellendi;
+            else personelListesi.push(guncellendi);
+            personelListesi.sort((a,b) => (a.ad||'').localeCompare(b.ad||'','tr'));
+            _inlineEditSicil = null;
+            personelListeRender();
+            playSoundGuncelle(); showToast('✓ ' + yeniAd + ' güncellendi', 'success');
+        } catch(e) { showToast('Hata: ' + e.message, 'warn'); }
+    };
+
+    window.personelInlineSil = function(sicil) {
+        const p = personelListesi.find(x => x.sicil === sicil);
+        if (!p) return;
+        document.getElementById('personelSilBilgi').textContent = p.ad + ' · ' + p.sicil;
+        document.getElementById('personelSilModal').classList.add('show');
+        document.getElementById('personelSilOnayBtn').onclick = async function() {
+            document.getElementById('personelSilModal').classList.remove('show');
+            try {
+                const { doc, deleteDoc, db } = window._fb;
+                await deleteDoc(doc(db, 'personel', sicil));
+                window.personelListesi = window.personelListesi.filter(x => x.sicil !== sicil);
+                _inlineEditSicil = null;
+                personelListeRender();
+                playSoundSil(); showToast('🗑️ Personel silindi', 'warn');
+            } catch(e) { showToast('Hata: ' + e.message, 'warn'); }
+        };
+    };
+
     function personelGuncelleSifirla() {
         _personelDuzenleSicil = null;
         const adEl = document.getElementById('guncelPersonelAd');
@@ -3417,7 +3491,7 @@
             const sicilSafe = p.sicil.replace(/'/g,"\\'");
             return `
             <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-radius:10px;background:#fff;border:1px solid #E5E7EB;gap:10px;">
-                <div onclick="personelDuzenlemeSec('${sicilSafe}');" style="display:flex;flex-direction:column;gap:3px;flex:1;cursor:pointer;">
+                <div onclick="personelSecModalKapat();personelInlineAc('${sicilSafe}');" style="display:flex;flex-direction:column;gap:3px;flex:1;cursor:pointer;">
                     <span style="font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:#0F172A;">${p.ad}</span>
                     <span style="font-family:'Inter',sans-serif;font-size:11px;font-weight:600;color:#6B7280;">${p.sicil} &nbsp;${tipBadge}</span>
                 </div>
@@ -8263,6 +8337,10 @@ document.addEventListener('DOMContentLoaded', function() {
                                     onmouseover="this.style.background='${o.bg}'" onmouseout="this.style.background='transparent'">
                                     ${o.label}
                                 </div>`).join('')}
+                                <div data-val="__SIL__" style="display:flex;align-items:center;gap:8px;padding:8px 12px;cursor:pointer;color:#f87171;font-size:12px;font-weight:700;font-family:'Inter',sans-serif;border-top:1px solid rgba(239,68,68,0.2);transition:background 0.1s;"
+                                    onmouseover="this.style.background='rgba(239,68,68,0.12)'" onmouseout="this.style.background='transparent'">
+                                    ✕ Rengi Sil
+                                </div>
                             </div>
                         </div>
                         <input type="hidden" id="${renkId}" value="${mevcutRenk}">
@@ -8311,16 +8389,44 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Seçenek tıklama
                     if (renkDrop) {
                         renkDrop.querySelectorAll('[data-val]').forEach(item => {
-                            item.addEventListener('click', function(e) {
+                            item.addEventListener('click', async function(e) {
                                 e.stopPropagation();
                                 const val = this.dataset.val;
+                                renkDrop.style.display = 'none';
+                                // Rengi sil seçeneği
+                                if (val === '__SIL__') {
+                                    renkHidden.value = '';
+                                    renkLabel.textContent = '— Renk Seç —';
+                                    renkBtn.style.color = 'rgba(255,255,255,0.4)';
+                                    renkBtn.style.borderColor = 'rgba(255,255,255,0.18)';
+                                    renkBtn.style.background  = 'rgba(255,255,255,0.06)';
+                                    // Firestore kaydını sil
+                                    try {
+                                        const yil = window._eldivenAktifYil;
+                                        const ay  = window._eldivenAktifAy;
+                                        const lockKey = `${sicilRef}_${yil}_${ay}`;
+                                        const kayitRef = window._eldivenKayitMap[lockKey];
+                                        if (kayitRef && kayitRef.docId) {
+                                            const { doc, deleteDoc, db } = window._fb;
+                                            await deleteDoc(doc(db, 'eldiven_dagitim', kayitRef.docId));
+                                            delete window._eldivenKayitMap[lockKey];
+                                            const adetEl2 = document.getElementById(`eldAdet_${sicilRef}`);
+                                            if (adetEl2) adetEl2.value = '';
+                                            const durumEl2 = document.getElementById(`eldDurum_${sicilRef}`);
+                                            if (durumEl2) { durumEl2.textContent = '○'; durumEl2.title = 'Girilmedi'; }
+                                            const tr2 = adetEl2 ? adetEl2.closest('tr') : null;
+                                            if (tr2) tr2.style.background = '';
+                                            if (typeof showToast === 'function') showToast('🗑️ Renk silindi', 'warn');
+                                        }
+                                    } catch(err) { console.error('Renk sil hatası:', err); }
+                                    return;
+                                }
                                 const opt = RENK_OPTIONS.find(o => o.val === val);
                                 renkHidden.value = val;
                                 renkLabel.textContent = opt ? opt.label : '— Renk Seç —';
                                 renkBtn.style.color = opt ? opt.clr : 'rgba(255,255,255,0.4)';
                                 renkBtn.style.borderColor = val ? (RENK_CLR_REF[val] + '80') : 'rgba(255,255,255,0.18)';
                                 renkBtn.style.background  = val ? (RENK_BG_REF[val] || 'rgba(255,255,255,0.06)') : 'rgba(255,255,255,0.06)';
-                                renkDrop.style.display = 'none';
                                 eldivenSatirKaydet(sicilRef, adRef, 'renk');
                             });
                         });
@@ -8695,6 +8801,140 @@ document.addEventListener('DOMContentLoaded', function() {
             const metin = tr.textContent.toUpperCase();
             tr.style.display = (!val || metin.includes(val)) ? '' : 'none';
         });
+    };
+
+    // ── Aylık İzin PDF ──
+    window.izinAylikPdfIndir = async function() {
+        if (typeof window.jspdf === 'undefined' && typeof jsPDF === 'undefined') {
+            showToast('PDF kütüphanesi yüklenmedi', 'warn'); return;
+        }
+        const { jsPDF } = window.jspdf || window;
+        try {
+            const { collection, getDocs, db } = window._fb;
+
+            // Tüm izin kayıtlarını çek
+            const snap = await getDocs(collection(db, 'personel_izin_kayit'));
+            const ozSnap = await getDocs(collection(db, 'personel_izin_ozet'));
+
+            const izinOzetMap = {};
+            ozSnap.forEach(d => { izinOzetMap[d.id] = d.data(); });
+
+            const kayitlar = [];
+            snap.forEach(d => kayitlar.push({ id: d.id, ...d.data() }));
+
+            if (!kayitlar.length) { showToast('Kayıt bulunamadı', 'warn'); return; }
+
+            // Aylara göre grupla
+            const ayGrubu = {};
+            kayitlar.forEach(k => {
+                if (!k.bas) return;
+                const parts = k.bas.split('-');
+                if (parts.length < 2) return;
+                const key = parts[0] + '-' + parts[1]; // YYYY-MM
+                if (!ayGrubu[key]) ayGrubu[key] = [];
+                ayGrubu[key].push(k);
+            });
+
+            const ayKeys = Object.keys(ayGrubu).sort();
+            if (!ayKeys.length) { showToast('Kayıt bulunamadı', 'warn'); return; }
+
+            const AY_AD = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+
+            const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+            const pageW = doc.internal.pageSize.getWidth();
+            const pageH = doc.internal.pageSize.getHeight();
+            const margin = 14;
+            let firstPage = true;
+
+            ayKeys.forEach(ayKey => {
+                if (!firstPage) doc.addPage();
+                firstPage = false;
+
+                const [yilStr, ayStr] = ayKey.split('-');
+                const ayIdx = parseInt(ayStr) - 1;
+                const ayAd  = AY_AD[ayIdx] + ' ' + yilStr;
+
+                const satirlar = ayGrubu[ayKey].slice().sort((a, b) => (a.ad || '').localeCompare(b.ad || '', 'tr'));
+
+                // Başlık
+                doc.setFillColor(28, 43, 110);
+                doc.rect(0, 0, pageW, 18, 'F');
+                doc.setFontSize(14);
+                doc.setTextColor(240, 179, 35);
+                doc.setFont('helvetica', 'bold');
+                doc.text('Goodyear Adapazari - Personel Izin Raporu  |  ' + ayAd, margin, 12);
+
+                // Tablo
+                const headers = [['#','Ad Soyad','Sicil','Toplam Izin','Kullanilan','Kalan','Baslangic','Bitis','Is Basi']];
+                const rows = satirlar.map((k, i) => {
+                    const oz = izinOzetMap[k.sicil] || {};
+                    const toplam    = oz.toplam    !== undefined ? oz.toplam    : '-';
+                    const kullanilan = oz.kullanilan !== undefined ? oz.kullanilan : '-';
+                    const kalan = (oz.toplam !== undefined && oz.kullanilan !== undefined) ? (oz.toplam - oz.kullanilan) : '-';
+                    const fmtISO = s => { if(!s) return '-'; const p=s.split('-'); return p.length===3 ? p[2]+'.'+p[1]+'.'+p[0] : s; };
+                    return [
+                        i + 1,
+                        k.ad || k.sicil || '-',
+                        k.sicil || '-',
+                        toplam,
+                        kullanilan,
+                        kalan,
+                        fmtISO(k.bas),
+                        fmtISO(k.bit),
+                        fmtISO(k.isbasi)
+                    ];
+                });
+
+                doc.autoTable({
+                    head: headers,
+                    body: rows,
+                    startY: 22,
+                    margin: { left: margin, right: margin },
+                    styles: { font: 'helvetica', fontSize: 9, cellPadding: 3, halign: 'center', textColor: [15, 30, 80] },
+                    headStyles: { fillColor: [240, 179, 35], textColor: [28, 43, 110], fontStyle: 'bold', fontSize: 9 },
+                    alternateRowStyles: { fillColor: [240, 245, 255] },
+                    columnStyles: {
+                        0: { cellWidth: 8,  halign: 'center' },
+                        1: { cellWidth: 55, halign: 'left'   },
+                        2: { cellWidth: 22, halign: 'center' },
+                        3: { cellWidth: 22, halign: 'center' },
+                        4: { cellWidth: 22, halign: 'center' },
+                        5: { cellWidth: 18, halign: 'center' },
+                        6: { cellWidth: 28, halign: 'center' },
+                        7: { cellWidth: 28, halign: 'center' },
+                        8: { cellWidth: 28, halign: 'center' },
+                    },
+                    didDrawCell: function(data) {
+                        // Kalan < 0 ise kırmızı
+                        if (data.section === 'body' && data.column.index === 5) {
+                            const v = parseInt(data.cell.raw);
+                            if (!isNaN(v) && v < 0) {
+                                doc.setTextColor(220, 38, 38);
+                                doc.setFont('helvetica', 'bold');
+                                doc.text(String(data.cell.raw), data.cell.x + data.cell.width / 2, data.cell.y + data.cell.height / 2 + 1, { align: 'center' });
+                                doc.setTextColor(15, 30, 80);
+                                doc.setFont('helvetica', 'normal');
+                            }
+                        }
+                    }
+                });
+
+                // Alt bilgi
+                doc.setFontSize(8);
+                doc.setTextColor(150);
+                doc.setFont('helvetica', 'normal');
+                doc.text('Goodyear Adapazari Fabrikasi — On Ambar Yukleme Takip Sistemi', margin, pageH - 6);
+                doc.text(ayAd + ' — ' + satirlar.length + ' kayit', pageW - margin, pageH - 6, { align: 'right' });
+            });
+
+            const ts = new Date();
+            const dosyaAd = 'personel_izin_' + ts.getFullYear() + ('0'+(ts.getMonth()+1)).slice(-2) + ('0'+ts.getDate()).slice(-2) + '.pdf';
+            doc.save(dosyaAd);
+            showToast('📄 PDF indirildi — ' + ayKeys.length + ' ay', 'success');
+        } catch(err) {
+            console.error('İzin PDF hatası:', err);
+            showToast('PDF hatası: ' + err.message, 'warn');
+        }
     };
 
     // ── Personel izin detayına git ──
