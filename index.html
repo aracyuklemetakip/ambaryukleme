@@ -2409,9 +2409,10 @@
                                 <div style="display:flex;flex-direction:column;gap:5px;">
                                     <div style="font-size:11px;color:rgba(34,197,94,0.8);font-weight:600;">İş Başı Tarihi</div>
                                     <div style="position:relative;">
-                                        <input type="text" id="izinIsBasiTarih" placeholder="Tarih seç..." readonly onclick="izinIsBasiTakvimAc()"
-                                            style="width:100%;padding:9px 12px;border-radius:8px;border:1px solid rgba(34,197,94,0.3);background:rgba(34,197,94,0.06);color:#22c55e;font-family:'Inter',sans-serif;font-size:13px;cursor:pointer;outline:none;box-sizing:border-box;">
-                                        <div id="izinIsBasiTakvimWrap" style="display:none;position:absolute;z-index:700;top:calc(100% + 4px);left:0;"></div>
+                                        <input type="text" id="izinIsBasiTarihGoster" placeholder="Tarih seç..." readonly onclick="izinIsBasiTakvimAc()"
+                                            style="width:100%;padding:9px 12px;border-radius:8px;border:1px solid rgba(34,197,94,0.3);background:rgba(34,197,94,0.06);color:#22c55e;font-family:Inter,sans-serif;font-size:13px;cursor:pointer;outline:none;box-sizing:border-box;">
+                                        <input type="hidden" id="izinIsBasiTarih">
+                                        <div id="izinIsBasiTakvimWrap" style="display:none;position:absolute;z-index:700;top:calc(100%+4px);left:0;"></div>
                                     </div>
                                 </div>
                                 <!-- Gün Sayısı -->
@@ -2521,7 +2522,7 @@
                         </div>
                     </div>
                     <div style="display:flex;gap:10px;justify-content:flex-end;">
-                        <button onclick="izinSilModalAc()" style="padding:10px 18px;border-radius:9px;border:1px solid rgba(239,68,68,0.4);background:rgba(239,68,68,0.1);color:#ef4444;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">🗑️ Sil</button>
+                        <button onclick="izinSilModalAc(_izinGuncelleHedef)" style="padding:10px 18px;border-radius:9px;border:1px solid rgba(239,68,68,0.4);background:rgba(239,68,68,0.1);color:#ef4444;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">🗑️ Sil</button>
                         <button onclick="izinGuncelleKapat()" style="padding:10px 20px;border-radius:9px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.08);color:#fff;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">İptal</button>
                         <button onclick="izinKayitGuncelleKaydet()" style="padding:10px 24px;border-radius:9px;border:none;background:#F0B323;color:#1C2B6E;font-family:'Inter',sans-serif;font-size:13px;font-weight:800;cursor:pointer;">💾 Kaydet</button>
                     </div>
@@ -8899,7 +8900,7 @@ document.addEventListener('DOMContentLoaded', function() {
             showToast('✅ İzin kaydedildi', 'ok');
             // Formu temizle
             ['izinBasTarih','izinBitTarih','izinIsBasiTarih'].forEach(id => { const el = document.getElementById(id); if(el) el.value=''; });
-            ['izinBasTarihGoster','izinBitTarihGoster'].forEach(id => { const el = document.getElementById(id); if(el) el.value=''; });
+            ['izinBasTarihGoster','izinBitTarihGoster','izinIsBasiTarihGoster'].forEach(id => { const el = document.getElementById(id); if(el) el.value=''; });
             const gunEl = document.getElementById('izinGunSayisi'); if(gunEl) gunEl.value='';
             const ozetEl = document.getElementById('izinOzetPanel'); if(ozetEl) ozetEl.style.display='none';
             await izinKayitListesiYukle(_izinAktifPersonel.sicil);
@@ -8975,7 +8976,7 @@ document.addEventListener('DOMContentLoaded', function() {
         await izinKayitListesiYukle(sicil);
         // Formu temizle
         ['izinBasTarih','izinBitTarih','izinIsBasiTarih'].forEach(id => { const el = document.getElementById(id); if(el) el.value=''; });
-        ['izinBasTarihGoster','izinBitTarihGoster'].forEach(id => { const el = document.getElementById(id); if(el) el.value=''; });
+        ['izinBasTarihGoster','izinBitTarihGoster','izinIsBasiTarihGoster'].forEach(id => { const el = document.getElementById(id); if(el) el.value=''; });
         const gunEl = document.getElementById('izinGunSayisi'); if(gunEl) gunEl.value='';
         const ozetEl = document.getElementById('izinOzetPanel'); if(ozetEl) ozetEl.style.display='none';
     };
@@ -9043,6 +9044,8 @@ document.addEventListener('DOMContentLoaded', function() {
             isBasiD.setDate(isBasiD.getDate() + 1);
             const isBasiISO = isBasiD.toISOString().slice(0, 10);
             document.getElementById('izinIsBasiTarih').value = isBasiISO;
+            const isBasiGoster = document.getElementById('izinIsBasiTarihGoster');
+            if (isBasiGoster) isBasiGoster.value = isoToGoster(isBasiISO);
             const isBasiEl = document.getElementById('izinOzetIsBasi');
             if (isBasiEl) isBasiEl.textContent = isoToGoster(isBasiISO);
         }
@@ -9088,6 +9091,8 @@ document.addEventListener('DOMContentLoaded', function() {
     };
     window.izinIsBasiGunSec = function(tarih) {
         document.getElementById('izinIsBasiTarih').value = tarih;
+        const goster = document.getElementById('izinIsBasiTarihGoster');
+        if (goster) goster.value = isoToGoster(tarih);
         const el = document.getElementById('izinOzetIsBasi');
         if (el) el.textContent = isoToGoster(tarih);
         const wrap = document.getElementById('izinIsBasiTakvimWrap');
