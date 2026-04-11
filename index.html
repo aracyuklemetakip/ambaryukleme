@@ -8771,7 +8771,10 @@ document.addEventListener('DOMContentLoaded', function() {
             const ref = doc(db, 'personel_izin_ozet', _izinAktifPersonel.sicil);
             const snap = await getDoc(ref);
             const mevcut = snap.exists() ? snap.data() : {};
-            const update = { ...mevcut, [tip]: val };
+            // kullanilan manuel girilince baslangicKullanilan olarak sakla
+            const update = tip === 'kullanilan'
+                ? { ...mevcut, kullanilan: val, baslangicKullanilan: val }
+                : { ...mevcut, [tip]: val };
             await setDoc(ref, update);
         } catch(e) { console.error("Kaydetme hatası:", e); }
 
@@ -8933,12 +8936,16 @@ document.addEventListener('DOMContentLoaded', function() {
     async function izinOzetGuncelle(sicil) {
         try {
             const { collection, getDocs, query, where, doc, getDoc, setDoc, db } = window._fb;
+            // Kayıtların gün toplamı
             const snap = await getDocs(query(collection(db, 'personel_izin_kayit'), where('sicil', '==', sicil)));
-            let toplamKullanilan = 0;
-            snap.forEach(d => { toplamKullanilan += (d.data().gun || 0); });
+            let kayitToplamı = 0;
+            snap.forEach(d => { kayitToplamı += (d.data().gun || 0); });
+            // Mevcut özetten başlangıç bakiyesini al (manuel girilen önceki kullanılan)
             const ozetRef = doc(db, 'personel_izin_ozet', sicil);
             const ozetSnap = await getDoc(ozetRef);
             const mevcut = ozetSnap.exists() ? ozetSnap.data() : {};
+            const baslangicBakiye = mevcut.baslangicKullanilan || 0;
+            const toplamKullanilan = baslangicBakiye + kayitToplamı;
             await setDoc(ozetRef, { ...mevcut, kullanilan: toplamKullanilan });
             // UI güncelle
             const kulGoster = document.getElementById('izinKullanilanGoster');
