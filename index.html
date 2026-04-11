@@ -8911,47 +8911,70 @@ document.addEventListener('DOMContentLoaded', function() {
         const bas = document.getElementById('izinBasTarih').value;
         const bit = document.getElementById('izinBitTarih').value;
         const isbasi = document.getElementById('izinIsBasiTarih').value;
-        const gun = parseInt(document.getElementById('izinGunSayisi').value) || 0;
+        const gun = Number(document.getElementById('izinGunSayisi').value) || 0;
         if (!bas || !bit) { showToast('⚠️ Başlangıç ve bitiş tarihi seçiniz', 'warn'); return; }
+        if (gun <= 0) { showToast('⚠️ Geçerli tarih seçiniz', 'warn'); return; }
         try {
-            const { doc, setDoc, collection, db } = window._fb;
-            const id = _izinAktifPersonel.sicil + '_' + bas + '_' + bit;
-            await setDoc(doc(db, 'personel_izin_kayit', id), {
+            const { doc, setDoc, getDoc, db } = window._fb;
+            // 1. Kaydı yaz
+            const kayitId = _izinAktifPersonel.sicil + '_' + bas + '_' + bit;
+            await setDoc(doc(db, 'personel_izin_kayit', kayitId), {
                 sicil: _izinAktifPersonel.sicil,
                 bas, bit, isbasi, gun,
                 kayit: new Date().toISOString()
             });
-            await izinOzetGuncelle(_izinAktifPersonel.sicil);
+            // 2. Mevcut özeti oku
+            const ozetRef = doc(db, 'personel_izin_ozet', _izinAktifPersonel.sicil);
+            const ozetSnap = await getDoc(ozetRef);
+            const ozet = ozetSnap.exists() ? ozetSnap.data() : {};
+            const mevcutToplam    = Number(ozet.toplam)    || 0;
+            const mevcutKullanilan = Number(ozet.kullanilan) || 0;
+            // 3. Yeni değerleri hesapla
+            const yeniKullanilan = mevcutKullanilan + gun;
+            const yeniKalan      = mevcutToplam - yeniKullanilan;
+            // 4. Firestore'a yaz
+            await setDoc(ozetRef, { ...ozet, kullanilan: yeniKullanilan, kalan: yeniKalan });
+            // 5. UI güncelle
+            const kulGoster = document.getElementById('izinKullanilanGoster');
+            const kulInput  = document.getElementById('izinKullanilanInput');
+            if (kulGoster) kulGoster.textContent = yeniKullanilan;
+            if (kulInput)  kulInput.value = yeniKullanilan;
+            izinHesaplaKalan();
             showToast('✅ İzin kaydedildi', 'ok');
-            // Formu temizle
-            ['izinBasTarih','izinBitTarih','izinIsBasiTarih'].forEach(id => { const el = document.getElementById(id); if(el) el.value=''; });
-            ['izinBasTarihGoster','izinBitTarihGoster','izinIsBasiTarihGoster'].forEach(id => { const el = document.getElementById(id); if(el) el.value=''; });
+            // 6. Formu temizle
+            ['izinBasTarih','izinBitTarih','izinIsBasiTarih'].forEach(fid => { const el = document.getElementById(fid); if(el) el.value=''; });
+            ['izinBasTarihGoster','izinBitTarihGoster','izinIsBasiTarihGoster'].forEach(fid => { const el = document.getElementById(fid); if(el) el.value=''; });
             const gunEl = document.getElementById('izinGunSayisi'); if(gunEl) gunEl.value='';
             const ozetEl = document.getElementById('izinOzetPanel'); if(ozetEl) ozetEl.style.display='none';
+            // 7. Listeyi ve tabloyu yenile
             await izinKayitListesiYukle(_izinAktifPersonel.sicil);
+            if (typeof izinListeYukle === 'function') izinListeYukle();
         } catch(e) { showToast('❌ Kaydedilemedi: ' + e.message, 'error'); }
     };
 
-    // ── İzin özet güncelle (kullanilan otomatik hesap) ──
+    // ── İzin özet güncelle (sil/güncelle sonrası tüm kayıtları yeniden hesapla) ──
     async function izinOzetGuncelle(sicil) {
         try {
             const { collection, getDocs, query, where, doc, getDoc, setDoc, db } = window._fb;
-            // Kayıtların gün toplamı
+            // Tüm kayıtların gün toplamı
             const snap = await getDocs(query(collection(db, 'personel_izin_kayit'), where('sicil', '==', sicil)));
-            let kayitToplamı = 0;
-            snap.forEach(d => { kayitToplamı += (d.data().gun || 0); });
-            // Mevcut özetten başlangıç bakiyesini al (manuel girilen önceki kullanılan)
+            let kayitlardanKullanilan = 0;
+            snap.forEach(d => { kayitlardanKullanilan += Number(d.data().gun) || 0; });
+            // Mevcut özeti oku
             const ozetRef = doc(db, 'personel_izin_ozet', sicil);
             const ozetSnap = await getDoc(ozetRef);
             const mevcut = ozetSnap.exists() ? ozetSnap.data() : {};
-            const baslangicBakiye = mevcut.baslangicKullanilan || 0;
-            const toplamKullanilan = baslangicBakiye + kayitToplamı;
-            await setDoc(ozetRef, { ...mevcut, kullanilan: toplamKullanilan });
+            const mevcutToplam = Number(mevcut.toplam) || 0;
+            // baslangicKullanilan: kayıt sisteminden önce elle girilen değer
+            const baslangic = Number(mevcut.baslangicKullanilan) || 0;
+            const yeniKullanilan = baslangic + kayitlardanKullanilan;
+            const yeniKalan = mevcutToplam - yeniKullanilan;
+            await setDoc(ozetRef, { ...mevcut, kullanilan: yeniKullanilan, kalan: yeniKalan });
             // UI güncelle
             const kulGoster = document.getElementById('izinKullanilanGoster');
-            const kulInput = document.getElementById('izinKullanilanInput');
-            if (kulGoster) kulGoster.textContent = toplamKullanilan;
-            if (kulInput) kulInput.value = toplamKullanilan;
+            const kulInput  = document.getElementById('izinKullanilanInput');
+            if (kulGoster) kulGoster.textContent = yeniKullanilan;
+            if (kulInput)  kulInput.value = yeniKullanilan;
             izinHesaplaKalan();
         } catch(e) { console.warn('Özet güncelleme hatası:', e); }
     }
@@ -9029,15 +9052,13 @@ document.addEventListener('DOMContentLoaded', function() {
         return p[2] + '.' + p[1] + '.' + p[0];
     }
     function izinIsGunuHesapla(bas, bit) {
-        let gun = 0;
-        const d = new Date(bas + 'T00:00:00');
-        const son = new Date(bit + 'T00:00:00');
-        while (d <= son) {
-            const g = d.getDay();
-            if (g !== 0) gun++; // Pazar hariç
-            d.setDate(d.getDate() + 1);
-        }
-        return gun;
+        // Başlangıç ve bitiş dahil, tüm günler (takvim günü, pazar dahil)
+        const p1 = bas.split('-');
+        const p2 = bit.split('-');
+        const d1 = new Date(parseInt(p1[0]), parseInt(p1[1])-1, parseInt(p1[2]));
+        const d2 = new Date(parseInt(p2[0]), parseInt(p2[1])-1, parseInt(p2[2]));
+        const fark = Math.round((d2 - d1) / (1000 * 60 * 60 * 24)) + 1;
+        return fark > 0 ? fark : 0;
     }
 
     // ── Takvim: izin kaydı ekle ──
