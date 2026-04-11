@@ -1125,6 +1125,33 @@
   font-weight: 500;
 }
 
+.neu-btn-yetkili {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 13px 20px;
+  border-radius: 12px;
+  border: 1.5px solid rgba(240,179,35,0.4);
+  background: rgba(240,179,35,0.08);
+  color: #F0B323;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.neu-btn-yetkili:hover {
+  background: rgba(240,179,35,0.18);
+  border-color: rgba(240,179,35,0.7);
+  transform: translateY(-1px);
+}
+.neu-btn-yetkili:active {
+  transform: translateY(0);
+}
+
 .neu-error {
   display: none;
   margin-top: 14px;
@@ -1212,6 +1239,21 @@
     </button>
 
     <div class="neu-hint">Google hesabınızla giriş yapın</div>
+
+    <div style="display:flex;align-items:center;gap:10px;margin:8px 0 4px 0;width:100%;">
+      <div style="flex:1;height:1px;background:rgba(255,255,255,0.12);"></div>
+      <span style="color:rgba(255,255,255,0.3);font-size:11px;font-weight:600;letter-spacing:1px;white-space:nowrap;">ya da</span>
+      <div style="flex:1;height:1px;background:rgba(255,255,255,0.12);"></div>
+    </div>
+
+    <button onclick="sifreModalAc()" class="neu-btn-yetkili">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="5" y="11" width="14" height="10" rx="2.5" fill="#F0B323" opacity="0.9"/>
+        <path d="M8 11V7.5a4 4 0 0 1 8 0V11" stroke="#F0B323" stroke-width="2" stroke-linecap="round" fill="none"/>
+        <circle cx="12" cy="16" r="1.5" fill="#78350f"/>
+      </svg>
+      YETKİLİ GİRİŞİ
+    </button>
 
     <div id="yetkisizUyari" class="neu-error">
       <div class="neu-error-icon">🚫</div>
@@ -8546,9 +8588,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 : `<span style="color:${kalanRenk};font-weight:800;">${kalan}</span>`;
 
             return '<tr style="border-bottom:1px solid rgba(255,255,255,0.07);cursor:pointer;transition:background 0.15s;"'
-                + ' onmouseover="this.style.background='rgba(240,179,35,0.06)'"'
-                + ' onmouseout="this.style.background=''"'
-                + ' onclick="izinDetayAc('' + p.sicil + '')">'
+                + ' onmouseover="this.style.background=\'rgba(240,179,35,0.06)\'"'
+                + ' onmouseout="this.style.background=\'\'"'
+                + ' onclick="izinDetayAc(\'' + p.sicil + '\')">'
                 + '<td style="padding:10px 14px;text-align:center;color:rgba(255,255,255,0.3);font-size:11px;">' + (i+1) + '</td>'
                 + '<td style="padding:10px 14px;color:#fff;font-weight:600;font-size:13px;">' + (p.ad || '') + '</td>'
                 + '<td style="padding:10px 10px;text-align:center;color:rgba(255,255,255,0.5);font-size:12px;font-family:monospace;">' + (p.sicil || '') + '</td>'
