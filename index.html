@@ -8880,6 +8880,28 @@ document.addEventListener('DOMContentLoaded', function() {
         izinHesaplaKalan();
     };
 
+    // ── Üst kutuları yenile ──
+    async function _izinDetayKutulariYenile(sicil) {
+        try {
+            const { doc, getDoc, db } = window._fb;
+            const snap = await getDoc(doc(db, 'personel_izin_ozet', sicil));
+            let toplam = 0, kullanilan = 0;
+            if (snap.exists()) {
+                toplam    = snap.data().toplam    || 0;
+                kullanilan = snap.data().kullanilan || 0;
+            }
+            const topGoster = document.getElementById('izinToplamGoster');
+            const topInput  = document.getElementById('izinToplamInput');
+            const kulGoster = document.getElementById('izinKullanilanGoster');
+            const kulInput  = document.getElementById('izinKullanilanInput');
+            if (topGoster) topGoster.textContent = toplam;
+            if (topInput)  topInput.value = toplam;
+            if (kulGoster) kulGoster.textContent = kullanilan;
+            if (kulInput)  kulInput.value = kullanilan;
+            izinHesaplaKalan();
+        } catch(e) { console.warn('Kutu yenileme hatası:', e); }
+    }
+
     // ── İzin kaydı kaydet ──
     window.izinKayitKaydet = async function() {
         if (!_izinAktifPersonel) return;
@@ -8904,7 +8926,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const gunEl = document.getElementById('izinGunSayisi'); if(gunEl) gunEl.value='';
             const ozetEl = document.getElementById('izinOzetPanel'); if(ozetEl) ozetEl.style.display='none';
             await izinKayitListesiYukle(_izinAktifPersonel.sicil);
-            izinHesaplaKalan();
+            // Üst kutuları da güncelle (Toplam/Kullanılan/Kalan)
+            await _izinDetayKutulariYenile(_izinAktifPersonel.sicil);
         } catch(e) { showToast('❌ Kaydedilemedi: ' + e.message, 'error'); }
     };
 
@@ -9039,10 +9062,10 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             document.getElementById('izinBitTarih').value = tarih;
             document.getElementById('izinBitTarihGoster').value = isoToGoster(tarih);
-            // Bitiş seçilince iş başı OTOMATİK = bitiş + 1 gün
-            const isBasiD = new Date(tarih + 'T00:00:00');
-            isBasiD.setDate(isBasiD.getDate() + 1);
-            const isBasiISO = isBasiD.toISOString().slice(0, 10);
+            // Bitiş seçilince iş başı OTOMATİK = bitiş + 1 gün (timezone-safe)
+            const _bitParts = tarih.split('-');
+            const isBasiD = new Date(parseInt(_bitParts[0]), parseInt(_bitParts[1])-1, parseInt(_bitParts[2])+1);
+            const isBasiISO = isBasiD.getFullYear() + '-' + String(isBasiD.getMonth()+1).padStart(2,'0') + '-' + String(isBasiD.getDate()).padStart(2,'0');
             document.getElementById('izinIsBasiTarih').value = isBasiISO;
             const isBasiGoster = document.getElementById('izinIsBasiTarihGoster');
             if (isBasiGoster) isBasiGoster.value = isoToGoster(isBasiISO);
