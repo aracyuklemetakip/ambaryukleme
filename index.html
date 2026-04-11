@@ -8781,10 +8781,11 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     window.izinHesaplaKalan = function() {
-        const tInput = document.getElementById('izinToplamInput');
-        const kInput = document.getElementById('izinKullanilanInput');
-        const t = tInput ? (parseInt(tInput.value) || 0) : 0;
-        const k = kInput ? (parseInt(kInput.value) || 0) : 0;
+        // Göster elementlerinden oku (input hidden olabilir)
+        const topGoster = document.getElementById('izinToplamGoster');
+        const kulGoster = document.getElementById('izinKullanilanGoster');
+        const t = topGoster ? (parseInt(topGoster.textContent) || 0) : 0;
+        const k = kulGoster ? (parseInt(kulGoster.textContent) || 0) : 0;
         const kalan = t - k;
         const kalanEl = document.getElementById('izinKalanGoster');
         if (kalanEl) {
@@ -8877,7 +8878,6 @@ document.addEventListener('DOMContentLoaded', function() {
         } catch(e) { showToast('❌ Güncellenemedi: ' + e.message, 'error'); }
         izinGuncelleKapat();
         await izinKayitListesiYukle(_izinAktifPersonel.sicil);
-        izinHesaplaKalan();
     };
 
     // ── Üst kutuları yenile ──
@@ -8926,8 +8926,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const gunEl = document.getElementById('izinGunSayisi'); if(gunEl) gunEl.value='';
             const ozetEl = document.getElementById('izinOzetPanel'); if(ozetEl) ozetEl.style.display='none';
             await izinKayitListesiYukle(_izinAktifPersonel.sicil);
-            // Üst kutuları da güncelle (Toplam/Kullanılan/Kalan)
-            await _izinDetayKutulariYenile(_izinAktifPersonel.sicil);
         } catch(e) { showToast('❌ Kaydedilemedi: ' + e.message, 'error'); }
     };
 
