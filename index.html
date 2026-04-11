@@ -2378,6 +2378,86 @@
                                 <div style="font-size:11px;color:rgba(255,255,255,0.4);">gün — otomatik</div>
                             </div>
                         </div>
+
+                        <!-- İZİN KAYIT EKLEME FORMU -->
+                        <div style="background:rgba(240,179,35,0.06);border:1.5px solid rgba(240,179,35,0.25);border-radius:16px;padding:20px;margin-bottom:18px;">
+                            <div style="font-size:12px;font-weight:800;color:#F0B323;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:14px;">➕ Yeni İzin Kaydı Ekle</div>
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+                                <!-- Başlangıç Tarihi -->
+                                <div style="display:flex;flex-direction:column;gap:5px;">
+                                    <div style="font-size:11px;color:rgba(255,255,255,0.6);font-weight:600;">Başlangıç Tarihi</div>
+                                    <div style="position:relative;">
+                                        <input type="text" id="izinBasTarihGoster" placeholder="Tarih seç..." readonly onclick="izinTakvimAc('bas')"
+                                            style="width:100%;padding:9px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.08);color:#fff;font-family:'Inter',sans-serif;font-size:13px;cursor:pointer;outline:none;box-sizing:border-box;">
+                                        <input type="hidden" id="izinBasTarih">
+                                        <div id="izinBasTakvimWrap" style="display:none;position:absolute;z-index:700;top:calc(100% + 4px);left:0;"></div>
+                                    </div>
+                                </div>
+                                <!-- Bitiş Tarihi -->
+                                <div style="display:flex;flex-direction:column;gap:5px;">
+                                    <div style="font-size:11px;color:rgba(255,255,255,0.6);font-weight:600;">Bitiş Tarihi</div>
+                                    <div style="position:relative;">
+                                        <input type="text" id="izinBitTarihGoster" placeholder="Tarih seç..." readonly onclick="izinTakvimAc('bit')"
+                                            style="width:100%;padding:9px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.08);color:#fff;font-family:'Inter',sans-serif;font-size:13px;cursor:pointer;outline:none;box-sizing:border-box;">
+                                        <input type="hidden" id="izinBitTarih">
+                                        <div id="izinBitTakvimWrap" style="display:none;position:absolute;z-index:700;top:calc(100% + 4px);left:0;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">
+                                <!-- İş Başı Tarihi -->
+                                <div style="display:flex;flex-direction:column;gap:5px;">
+                                    <div style="font-size:11px;color:rgba(34,197,94,0.8);font-weight:600;">İş Başı Tarihi</div>
+                                    <div style="position:relative;">
+                                        <input type="text" id="izinIsBasiTarih" placeholder="Tarih seç..." readonly onclick="izinIsBasiTakvimAc()"
+                                            style="width:100%;padding:9px 12px;border-radius:8px;border:1px solid rgba(34,197,94,0.3);background:rgba(34,197,94,0.06);color:#22c55e;font-family:'Inter',sans-serif;font-size:13px;cursor:pointer;outline:none;box-sizing:border-box;">
+                                        <div id="izinIsBasiTakvimWrap" style="display:none;position:absolute;z-index:700;top:calc(100% + 4px);left:0;"></div>
+                                    </div>
+                                </div>
+                                <!-- Gün Sayısı -->
+                                <div style="display:flex;flex-direction:column;gap:5px;">
+                                    <div style="font-size:11px;color:rgba(255,255,255,0.6);font-weight:600;">Gün Sayısı (iş günü)</div>
+                                    <input type="number" id="izinGunSayisi" min="1" placeholder="—"
+                                        style="width:100%;padding:9px 12px;border-radius:8px;border:1px solid rgba(240,179,35,0.3);background:rgba(240,179,35,0.06);color:#F0B323;font-family:'Inter',sans-serif;font-size:14px;font-weight:800;outline:none;box-sizing:border-box;" readonly>
+                                </div>
+                            </div>
+
+                            <!-- Özet Paneli (tarihler seçilince görünür) -->
+                            <div id="izinOzetPanel" style="display:none;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:10px;padding:12px;margin-bottom:14px;">
+                                <div style="display:flex;gap:18px;flex-wrap:wrap;font-family:'Inter',sans-serif;font-size:12px;">
+                                    <div style="display:flex;flex-direction:column;gap:2px;">
+                                        <span style="color:rgba(255,255,255,0.4);font-size:10px;font-weight:700;letter-spacing:0.8px;">BAŞLANGIÇ</span>
+                                        <span id="izinOzetBas" style="color:#fff;font-weight:700;">—</span>
+                                    </div>
+                                    <div style="display:flex;flex-direction:column;gap:2px;">
+                                        <span style="color:rgba(255,255,255,0.4);font-size:10px;font-weight:700;letter-spacing:0.8px;">BİTİŞ</span>
+                                        <span id="izinOzetBit" style="color:#fff;font-weight:700;">—</span>
+                                    </div>
+                                    <div style="display:flex;flex-direction:column;gap:2px;">
+                                        <span style="color:rgba(34,197,94,0.7);font-size:10px;font-weight:700;letter-spacing:0.8px;">İŞ BAŞI</span>
+                                        <span id="izinOzetIsBasi" style="color:#22c55e;font-weight:700;">—</span>
+                                    </div>
+                                    <div style="display:flex;flex-direction:column;gap:2px;">
+                                        <span style="color:rgba(240,179,35,0.7);font-size:10px;font-weight:700;letter-spacing:0.8px;">SÜRE</span>
+                                        <span id="izinOzetGun" style="color:#F0B323;font-weight:900;">—</span>
+                                    </div>
+                                    <div style="display:flex;flex-direction:column;gap:2px;">
+                                        <span style="color:rgba(255,255,255,0.4);font-size:10px;font-weight:700;letter-spacing:0.8px;">KALANTAN DÜŞÜLECEK</span>
+                                        <span id="izinDetayKalanStr" style="font-weight:800;">—</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button onclick="izinKayitKaydet()" style="width:100%;padding:12px;border-radius:10px;border:none;background:#F0B323;color:#1C2B6E;font-family:'Inter',sans-serif;font-size:14px;font-weight:800;cursor:pointer;letter-spacing:0.5px;">💾 İzin Kaydını Kaydet</button>
+                        </div>
+
+                        <!-- İZİN KAYIT LİSTESİ -->
+                        <div>
+                            <div style="font-size:12px;font-weight:800;color:rgba(255,255,255,0.6);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:10px;">📋 Geçmiş İzin Kayıtları</div>
+                            <div id="izinKayitListesi" style="display:flex;flex-direction:column;gap:8px;">
+                                <div style="text-align:center;padding:20px;color:rgba(255,255,255,0.3);font-size:13px;">⏳ Yükleniyor...</div>
+                            </div>
+                        </div>
                     </div>
 
                 </div><!-- /ps5PanelIzin -->
@@ -8734,15 +8814,202 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     // ── Silme modal ──
-    window.izinSilModalAc = function(id) {};
-    window.izinSilIptal = function() {};
-    window.izinSilOnayla = async function() {};
+    window.izinSilModalAc = function(id) {
+        _izinSilHedef = id;
+        const modal = document.getElementById('izinSilModal');
+        if (modal) modal.style.display = 'flex';
+    };
+    window.izinSilIptal = function() {
+        _izinSilHedef = null;
+        const modal = document.getElementById('izinSilModal');
+        if (modal) modal.style.display = 'none';
+    };
+    window.izinSilOnayla = async function() {
+        if (!_izinSilHedef || !_izinAktifPersonel) return;
+        try {
+            const { doc, deleteDoc, db } = window._fb;
+            await deleteDoc(doc(db, 'personel_izin_kayit', _izinSilHedef));
+            // Özet güncelle
+            await izinOzetGuncelle(_izinAktifPersonel.sicil);
+            showToast('🗑️ İzin kaydı silindi', 'warn');
+        } catch(e) { showToast('❌ Silinemedi: ' + e.message, 'error'); }
+        izinSilIptal();
+        izinGuncelleKapat();
+        await izinKayitListesiYukle(_izinAktifPersonel.sicil);
+        izinHesaplaKalan();
+    };
+
+    window.izinKayitGuncelleAc = function(id) {
+        const kayit = _izinKayitlar.find(k => k.id === id);
+        if (!kayit) return;
+        _izinGuncelleHedef = id;
+        document.getElementById('guncelleBasTarih').value = kayit.bas || '';
+        document.getElementById('guncelleBasTarihGoster').value = kayit.bas ? isoToGoster(kayit.bas) : '';
+        document.getElementById('guncelleBitTarih').value = kayit.bit || '';
+        document.getElementById('guncelleBitTarihGoster').value = kayit.bit ? isoToGoster(kayit.bit) : '';
+        document.getElementById('guncelleIsBasiTarih').value = kayit.isbasi || '';
+        document.getElementById('guncelleGunSayisi').value = kayit.gun || '';
+        const modal = document.getElementById('izinGuncelleModal');
+        if (modal) modal.style.display = 'flex';
+    };
+    window.izinGuncelleKapat = function() {
+        _izinGuncelleHedef = null;
+        const modal = document.getElementById('izinGuncelleModal');
+        if (modal) modal.style.display = 'none';
+    };
+    window.izinKayitGuncelleKaydet = async function() {
+        if (!_izinGuncelleHedef || !_izinAktifPersonel) return;
+        const bas = document.getElementById('guncelleBasTarih').value;
+        const bit = document.getElementById('guncelleBitTarih').value;
+        const isbasi = document.getElementById('guncelleIsBasiTarih').value;
+        const gun = parseInt(document.getElementById('guncelleGunSayisi').value) || 0;
+        if (!bas || !bit) { showToast('⚠️ Tarih seçiniz', 'warn'); return; }
+        try {
+            const { doc, setDoc, db } = window._fb;
+            await setDoc(doc(db, 'personel_izin_kayit', _izinGuncelleHedef), {
+                sicil: _izinAktifPersonel.sicil,
+                bas, bit, isbasi, gun,
+                guncelleme: new Date().toISOString()
+            });
+            await izinOzetGuncelle(_izinAktifPersonel.sicil);
+            showToast('✅ İzin kaydı güncellendi', 'ok');
+        } catch(e) { showToast('❌ Güncellenemedi: ' + e.message, 'error'); }
+        izinGuncelleKapat();
+        await izinKayitListesiYukle(_izinAktifPersonel.sicil);
+        izinHesaplaKalan();
+    };
+
+    // ── İzin kaydı kaydet ──
+    window.izinKayitKaydet = async function() {
+        if (!_izinAktifPersonel) return;
+        const bas = document.getElementById('izinBasTarih').value;
+        const bit = document.getElementById('izinBitTarih').value;
+        const isbasi = document.getElementById('izinIsBasiTarih').value;
+        const gun = parseInt(document.getElementById('izinGunSayisi').value) || 0;
+        if (!bas || !bit) { showToast('⚠️ Başlangıç ve bitiş tarihi seçiniz', 'warn'); return; }
+        try {
+            const { doc, setDoc, collection, db } = window._fb;
+            const id = _izinAktifPersonel.sicil + '_' + bas + '_' + bit;
+            await setDoc(doc(db, 'personel_izin_kayit', id), {
+                sicil: _izinAktifPersonel.sicil,
+                bas, bit, isbasi, gun,
+                kayit: new Date().toISOString()
+            });
+            await izinOzetGuncelle(_izinAktifPersonel.sicil);
+            showToast('✅ İzin kaydedildi', 'ok');
+            // Formu temizle
+            ['izinBasTarih','izinBitTarih','izinIsBasiTarih'].forEach(id => { const el = document.getElementById(id); if(el) el.value=''; });
+            ['izinBasTarihGoster','izinBitTarihGoster'].forEach(id => { const el = document.getElementById(id); if(el) el.value=''; });
+            const gunEl = document.getElementById('izinGunSayisi'); if(gunEl) gunEl.value='';
+            const ozetEl = document.getElementById('izinOzetPanel'); if(ozetEl) ozetEl.style.display='none';
+            await izinKayitListesiYukle(_izinAktifPersonel.sicil);
+            izinHesaplaKalan();
+        } catch(e) { showToast('❌ Kaydedilemedi: ' + e.message, 'error'); }
+    };
+
+    // ── İzin özet güncelle (kullanilan otomatik hesap) ──
+    async function izinOzetGuncelle(sicil) {
+        try {
+            const { collection, getDocs, query, where, doc, getDoc, setDoc, db } = window._fb;
+            const snap = await getDocs(query(collection(db, 'personel_izin_kayit'), where('sicil', '==', sicil)));
+            let toplamKullanilan = 0;
+            snap.forEach(d => { toplamKullanilan += (d.data().gun || 0); });
+            const ozetRef = doc(db, 'personel_izin_ozet', sicil);
+            const ozetSnap = await getDoc(ozetRef);
+            const mevcut = ozetSnap.exists() ? ozetSnap.data() : {};
+            await setDoc(ozetRef, { ...mevcut, kullanilan: toplamKullanilan });
+            // UI güncelle
+            const kulGoster = document.getElementById('izinKullanilanGoster');
+            const kulInput = document.getElementById('izinKullanilanInput');
+            if (kulGoster) kulGoster.textContent = toplamKullanilan;
+            if (kulInput) kulInput.value = toplamKullanilan;
+            izinHesaplaKalan();
+        } catch(e) { console.warn('Özet güncelleme hatası:', e); }
+    }
+
+    // ── İzin kayıt listesini yükle ──
+    async function izinKayitListesiYukle(sicil) {
+        const listEl = document.getElementById('izinKayitListesi');
+        if (!listEl) return;
+        listEl.innerHTML = '<div style="text-align:center;padding:16px;color:rgba(255,255,255,0.3);font-size:13px;">⏳ Yükleniyor...</div>';
+        try {
+            const { collection, getDocs, query, where, db } = window._fb;
+            const snap = await getDocs(query(collection(db, 'personel_izin_kayit'), where('sicil', '==', sicil)));
+            _izinKayitlar = [];
+            snap.forEach(d => _izinKayitlar.push({ id: d.id, ...d.data() }));
+            _izinKayitlar.sort((a, b) => (b.bas || '').localeCompare(a.bas || ''));
+            if (!_izinKayitlar.length) {
+                listEl.innerHTML = '<div style="text-align:center;padding:20px;color:rgba(255,255,255,0.25);font-size:13px;">Henüz izin kaydı yok</div>';
+                return;
+            }
+            listEl.innerHTML = _izinKayitlar.map(k => `
+                <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+                    <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;">
+                        <div style="display:flex;flex-direction:column;gap:2px;">
+                            <span style="font-size:10px;color:rgba(255,255,255,0.4);font-weight:700;letter-spacing:0.8px;">BAŞLANGIÇ</span>
+                            <span style="font-size:13px;color:#fff;font-weight:700;">${isoToGoster(k.bas)}</span>
+                        </div>
+                        <div style="color:rgba(255,255,255,0.3);font-size:16px;">→</div>
+                        <div style="display:flex;flex-direction:column;gap:2px;">
+                            <span style="font-size:10px;color:rgba(255,255,255,0.4);font-weight:700;letter-spacing:0.8px;">BİTİŞ</span>
+                            <span style="font-size:13px;color:#fff;font-weight:700;">${isoToGoster(k.bit)}</span>
+                        </div>
+                        <div style="display:flex;flex-direction:column;gap:2px;">
+                            <span style="font-size:10px;color:rgba(34,197,94,0.6);font-weight:700;letter-spacing:0.8px;">İŞ BAŞI</span>
+                            <span style="font-size:13px;color:#22c55e;font-weight:700;">${k.isbasi ? isoToGoster(k.isbasi) : '—'}</span>
+                        </div>
+                        <div style="background:rgba(240,179,35,0.15);border:1px solid rgba(240,179,35,0.3);border-radius:8px;padding:4px 12px;font-size:14px;font-weight:900;color:#F0B323;">${k.gun || 0} gün</div>
+                    </div>
+                    <button onclick="izinKayitGuncelleAc('${k.id}')" style="padding:6px 14px;border-radius:7px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.7);font-family:'Inter',sans-serif;font-size:12px;font-weight:700;cursor:pointer;">✏️ Düzenle</button>
+                </div>
+            `).join('');
+        } catch(e) {
+            listEl.innerHTML = '<div style="text-align:center;padding:16px;color:#f87171;font-size:13px;">Kayıtlar yüklenemedi</div>';
+        }
+    }
+
+    // izinDetayAc'ı extend et — kayıt listesini de yüklesin
+    const _origIzinDetayAc = window.izinDetayAc;
+    window.izinDetayAc = async function(sicil) {
+        await _origIzinDetayAc(sicil);
+        await izinKayitListesiYukle(sicil);
+        // Formu temizle
+        ['izinBasTarih','izinBitTarih','izinIsBasiTarih'].forEach(id => { const el = document.getElementById(id); if(el) el.value=''; });
+        ['izinBasTarihGoster','izinBitTarihGoster'].forEach(id => { const el = document.getElementById(id); if(el) el.value=''; });
+        const gunEl = document.getElementById('izinGunSayisi'); if(gunEl) gunEl.value='';
+        const ozetEl = document.getElementById('izinOzetPanel'); if(ozetEl) ozetEl.style.display='none';
+    };
+
+    // ── Ozet kalan hesapla (detay kart) ──
+    window.izinDetayKartHesapla = function() {
+        const gun = parseInt(document.getElementById('izinGunSayisi')?.value) || 0;
+        const kalan = parseInt(document.getElementById('izinKalanGoster')?.textContent) || 0;
+        const el = document.getElementById('izinDetayKalanStr');
+        if (!el) return;
+        const sonra = kalan - gun;
+        el.textContent = kalan + ' → ' + sonra + ' gün';
+        el.style.color = sonra < 0 ? '#ef4444' : '#22c55e';
+    };
 
 
-    window.izinKayitGuncelleAc = function(id) {};
-    window.izinGuncelleKapat = function() {};
-    window.izinKayitGuncelleKaydet = async function() {};
-
+    // ── Tarih yardımcıları ──
+    function isoToGoster(iso) {
+        if (!iso) return '—';
+        const p = iso.split('-');
+        if (p.length < 3) return iso;
+        return p[2] + '.' + p[1] + '.' + p[0];
+    }
+    function izinIsGunuHesapla(bas, bit) {
+        let gun = 0;
+        const d = new Date(bas + 'T00:00:00');
+        const son = new Date(bit + 'T00:00:00');
+        while (d <= son) {
+            const g = d.getDay();
+            if (g !== 0) gun++; // Pazar hariç
+            d.setDate(d.getDate() + 1);
+        }
+        return gun;
+    }
 
     // ── Takvim: izin kaydı ekle ──
     window.izinTakvimAc = function(tip) {
