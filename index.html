@@ -8986,7 +8986,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const start = new Date(bas + 'T00:00:00');
         const end   = new Date(bit + 'T00:00:00');
         let cur = new Date(start);
-        while (cur <= end) {
+        // Bitiş tarihi dahil değil: 01.04 çıkış → 02.04 bitiş = 1 gün
+        while (cur < end) {
             const gunNo = cur.getDay();
             if (gunNo !== 0 && !_resmiTatilMi(cur)) count++;
             cur.setDate(cur.getDate() + 1);
