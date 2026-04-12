@@ -1240,8 +1240,6 @@
 
     <div class="neu-hint">Google hesabınızla giriş yapın</div>
 
-
-
     <div id="yetkisizUyari" class="neu-error">
       <div class="neu-error-icon">🚫</div>
       <div>
@@ -8813,13 +8811,11 @@ document.addEventListener('DOMContentLoaded', function() {
         const bas    = document.getElementById('izinBasTarih').value;
         const bit    = document.getElementById('izinBitTarih').value;
         const gun    = parseInt(document.getElementById('izinGunSayisi').value) || 0;
+        const _bd = new Date(bit + 'T00:00:00'); _bd.setDate(_bd.getDate() + 1);
+        while (_bd.getDay() === 0 || _resmiTatilMi(_bd)) { _bd.setDate(_bd.getDate() + 1); }
+        const isbasi = _bd.toISOString().slice(0, 10);
         if (!bas || !bit) { showToast('⚠️ Başlangıç ve bitiş tarihi seçiniz', 'warn'); return; }
         if (gun <= 0)     { showToast('⚠️ Geçerli tarih aralığı seçiniz', 'warn'); return; }
-        // İş başı: bitiş + 1, pazar/tatil ise atla
-        const _isbasiD = new Date(bit + 'T00:00:00');
-        _isbasiD.setDate(_isbasiD.getDate() + 1);
-        while (_isbasiD.getDay() === 0 || _resmiTatilMi(_isbasiD)) { _isbasiD.setDate(_isbasiD.getDate() + 1); }
-        const isbasi = _isbasiD.toISOString().slice(0, 10);
         try {
             const { doc, setDoc, getDoc, db } = window._fb;
             // 1. İzin kaydını yaz
