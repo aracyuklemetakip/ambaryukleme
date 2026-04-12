@@ -8966,26 +8966,24 @@ document.addEventListener('DOMContentLoaded', function() {
         return false;
     }
 
-    // ── İş günü hesapla (Pazar ve resmi tatil hariç, bitiş dahil) ──
-    // v3: bas=2026-06-01 bit=2026-06-17 → 15 gün
-    window.izinIsGunuHesapla = function(bas, bit) {
+    // ── İş günü hesapla (Pazar ve resmi tatil hariç) ──
+    function izinIsGunuHesapla(bas, bit) {
         if (!bas || !bit) return 0;
         let count = 0;
         const start = new Date(bas + 'T00:00:00');
         const end   = new Date(bit + 'T00:00:00');
         let cur = new Date(start);
+        // Bitiş tarihi dahil, sadece Pazar ve resmi tatil çıkar
         while (cur <= end) {
             const gunNo = cur.getDay();
             if (gunNo !== 0 && !_resmiTatilMi(cur)) count++;
             cur.setDate(cur.getDate() + 1);
         }
         return count;
-    };
-    function izinIsGunuHesapla(bas, bit) { return window.izinIsGunuHesapla(bas, bit); }
+    }
 
     // ── İş başı tarihi hesapla (bitiş + 1, Pazar/tatil ise atla) ──
-    // v3: bit=2026-06-17 → 2026-06-18
-    window.izinIsBasiHesapla = function(bit) {
+    function izinIsBasiHesapla(bit) {
         if (!bit) return '';
         const d = new Date(bit + 'T00:00:00');
         d.setDate(d.getDate() + 1);
@@ -8993,8 +8991,7 @@ document.addEventListener('DOMContentLoaded', function() {
             d.setDate(d.getDate() + 1);
         }
         return d.toISOString().slice(0, 10);
-    };
-    function izinIsBasiHesapla(bit) { return window.izinIsBasiHesapla(bit); }
+    }
 
     // ── Takvim aç ──
     window.izinTakvimAc = function(tip) {
@@ -9037,8 +9034,13 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             document.getElementById('izinBitTarih').value = tarih;
             document.getElementById('izinBitTarihGoster').value = isoToGoster(tarih);
-            // İş başı otomatik hesapla
-            const isbasi = window.izinIsBasiHesapla(tarih);
+            // İş başı: bitiş + 1, pazar/tatil ise atla
+            const bitD = new Date(tarih + 'T00:00:00');
+            bitD.setDate(bitD.getDate() + 1);
+            while (bitD.getDay() === 0 || _resmiTatilMi(bitD)) {
+                bitD.setDate(bitD.getDate() + 1);
+            }
+            const isbasi = bitD.toISOString().slice(0, 10);
             document.getElementById('izinIsBasiTarih').value = isbasi;
             document.getElementById('izinIsBasiTarihGoster').value = isoToGoster(isbasi);
         }
@@ -9046,7 +9048,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const bas = document.getElementById('izinBasTarih').value;
         const bit = document.getElementById('izinBitTarih').value;
         if (bas && bit) {
-            const gun = window.izinIsGunuHesapla(bas, bit);
+            const gun = izinIsGunuHesapla(bas, bit);
             document.getElementById('izinGunSayisi').value = gun > 0 ? gun : '';
         }
     };
