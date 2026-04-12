@@ -1240,20 +1240,7 @@
 
     <div class="neu-hint">Google hesabınızla giriş yapın</div>
 
-    <div style="display:flex;align-items:center;gap:10px;margin:8px 0 4px 0;width:100%;">
-      <div style="flex:1;height:1px;background:rgba(255,255,255,0.12);"></div>
-      <span style="color:rgba(255,255,255,0.3);font-size:11px;font-weight:600;letter-spacing:1px;white-space:nowrap;">ya da</span>
-      <div style="flex:1;height:1px;background:rgba(255,255,255,0.12);"></div>
-    </div>
 
-    <button onclick="sifreModalAc()" class="neu-btn-yetkili">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect x="5" y="11" width="14" height="10" rx="2.5" fill="#F0B323" opacity="0.9"/>
-        <path d="M8 11V7.5a4 4 0 0 1 8 0V11" stroke="#F0B323" stroke-width="2" stroke-linecap="round" fill="none"/>
-        <circle cx="12" cy="16" r="1.5" fill="#78350f"/>
-      </svg>
-      YETKİLİ GİRİŞİ
-    </button>
 
     <div id="yetkisizUyari" class="neu-error">
       <div class="neu-error-icon">🚫</div>
@@ -8979,24 +8966,26 @@ document.addEventListener('DOMContentLoaded', function() {
         return false;
     }
 
-    // ── İş günü hesapla (Pazar ve resmi tatil hariç) ──
-    function izinIsGunuHesapla(bas, bit) {
+    // ── İş günü hesapla (Pazar ve resmi tatil hariç, bitiş dahil) ──
+    // v3: bas=2026-06-01 bit=2026-06-17 → 15 gün
+    window.izinIsGunuHesapla = function(bas, bit) {
         if (!bas || !bit) return 0;
         let count = 0;
         const start = new Date(bas + 'T00:00:00');
         const end   = new Date(bit + 'T00:00:00');
         let cur = new Date(start);
-        // Bitiş tarihi dahil değil: 01.04 çıkış → 02.04 bitiş = 1 gün
-        while (cur < end) {
+        while (cur <= end) {
             const gunNo = cur.getDay();
             if (gunNo !== 0 && !_resmiTatilMi(cur)) count++;
             cur.setDate(cur.getDate() + 1);
         }
         return count;
-    }
+    };
+    function izinIsGunuHesapla(bas, bit) { return window.izinIsGunuHesapla(bas, bit); }
 
     // ── İş başı tarihi hesapla (bitiş + 1, Pazar/tatil ise atla) ──
-    function izinIsBasiHesapla(bit) {
+    // v3: bit=2026-06-17 → 2026-06-18
+    window.izinIsBasiHesapla = function(bit) {
         if (!bit) return '';
         const d = new Date(bit + 'T00:00:00');
         d.setDate(d.getDate() + 1);
@@ -9004,7 +8993,8 @@ document.addEventListener('DOMContentLoaded', function() {
             d.setDate(d.getDate() + 1);
         }
         return d.toISOString().slice(0, 10);
-    }
+    };
+    function izinIsBasiHesapla(bit) { return window.izinIsBasiHesapla(bit); }
 
     // ── Takvim aç ──
     window.izinTakvimAc = function(tip) {
@@ -9048,7 +9038,7 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('izinBitTarih').value = tarih;
             document.getElementById('izinBitTarihGoster').value = isoToGoster(tarih);
             // İş başı otomatik hesapla
-            const isbasi = izinIsBasiHesapla(tarih);
+            const isbasi = window.izinIsBasiHesapla(tarih);
             document.getElementById('izinIsBasiTarih').value = isbasi;
             document.getElementById('izinIsBasiTarihGoster').value = isoToGoster(isbasi);
         }
@@ -9056,7 +9046,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const bas = document.getElementById('izinBasTarih').value;
         const bit = document.getElementById('izinBitTarih').value;
         if (bas && bit) {
-            const gun = izinIsGunuHesapla(bas, bit);
+            const gun = window.izinIsGunuHesapla(bas, bit);
             document.getElementById('izinGunSayisi').value = gun > 0 ? gun : '';
         }
     };
