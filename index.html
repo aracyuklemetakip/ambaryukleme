@@ -8812,10 +8812,14 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!_izinAktifPersonel) return;
         const bas    = document.getElementById('izinBasTarih').value;
         const bit    = document.getElementById('izinBitTarih').value;
-        const isbasi = document.getElementById('izinIsBasiTarih').value;
         const gun    = parseInt(document.getElementById('izinGunSayisi').value) || 0;
         if (!bas || !bit) { showToast('⚠️ Başlangıç ve bitiş tarihi seçiniz', 'warn'); return; }
         if (gun <= 0)     { showToast('⚠️ Geçerli tarih aralığı seçiniz', 'warn'); return; }
+        // İş başı: bitiş + 1, pazar/tatil ise atla
+        const _isbasiD = new Date(bit + 'T00:00:00');
+        _isbasiD.setDate(_isbasiD.getDate() + 1);
+        while (_isbasiD.getDay() === 0 || _resmiTatilMi(_isbasiD)) { _isbasiD.setDate(_isbasiD.getDate() + 1); }
+        const isbasi = _isbasiD.toISOString().slice(0, 10);
         try {
             const { doc, setDoc, getDoc, db } = window._fb;
             // 1. İzin kaydını yaz
@@ -9034,13 +9038,8 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             document.getElementById('izinBitTarih').value = tarih;
             document.getElementById('izinBitTarihGoster').value = isoToGoster(tarih);
-            // İş başı: bitiş + 1, pazar/tatil ise atla
-            const bitD = new Date(tarih + 'T00:00:00');
-            bitD.setDate(bitD.getDate() + 1);
-            while (bitD.getDay() === 0 || _resmiTatilMi(bitD)) {
-                bitD.setDate(bitD.getDate() + 1);
-            }
-            const isbasi = bitD.toISOString().slice(0, 10);
+            // İş başı otomatik hesapla
+            const isbasi = izinIsBasiHesapla(tarih);
             document.getElementById('izinIsBasiTarih').value = isbasi;
             document.getElementById('izinIsBasiTarihGoster').value = isoToGoster(isbasi);
         }
